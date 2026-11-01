@@ -1,0 +1,229 @@
+[CmdletBinding()]
+param()
+$ErrorActionPreference = 'Stop'
+Add-Type -AssemblyName System.Drawing
+$assetRoot = Join-Path (Split-Path -Parent $PSScriptRoot) 'watchface\src\main\res\drawable-nodpi'
+New-Item -ItemType Directory -Path $assetRoot -Force | Out-Null
+
+# Original vector construction, referenced to Mockup Images/Original Mockup.png.
+# Only static artwork is baked. All displayed runtime values live in WFF XML.
+function C([string]$hex) { [System.Drawing.ColorTranslator]::FromHtml($hex) }
+function Brush([string]$hex) { New-Object System.Drawing.SolidBrush((C $hex)) }
+function Pen([string]$hex, [float]$width) { New-Object System.Drawing.Pen((C $hex), $width) }
+function Canvas([int]$width, [int]$height) {
+    $script:logicalWidth=$width; $script:logicalHeight=$height
+    $script:bitmap = New-Object System.Drawing.Bitmap(($width*2), ($height*2))
+    $script:g = [System.Drawing.Graphics]::FromImage($script:bitmap)
+    $script:g.SmoothingMode = 'AntiAlias'
+    $script:g.TextRenderingHint = 'AntiAliasGridFit'
+    $script:g.Clear([System.Drawing.Color]::Transparent)
+    $script:g.ScaleTransform(2,2)
+}
+function Save([string]$name) {
+    $output = New-Object System.Drawing.Bitmap($script:logicalWidth, $script:logicalHeight)
+    $outputGraphics = [System.Drawing.Graphics]::FromImage($output)
+    $outputGraphics.CompositingMode = 'SourceCopy'
+    $outputGraphics.InterpolationMode = 'HighQualityBicubic'
+    $outputGraphics.DrawImage($script:bitmap, 0,0,$script:logicalWidth,$script:logicalHeight)
+    $output.Save((Join-Path $assetRoot ($name+'.png')), [System.Drawing.Imaging.ImageFormat]::Png)
+    $outputGraphics.Dispose(); $output.Dispose(); $script:g.Dispose(); $script:bitmap.Dispose()
+}
+function Ellipse([string]$color,[float]$x,[float]$y,[float]$w,[float]$h) {
+    $b=Brush $color; $script:g.FillEllipse($b,$x,$y,$w,$h); $b.Dispose()
+}
+function Line([string]$color,[float]$thickness,[float]$x1,[float]$y1,[float]$x2,[float]$y2) {
+    $p=Pen $color $thickness; $p.StartCap='Round'; $p.EndCap='Round'
+    $script:g.DrawLine($p,$x1,$y1,$x2,$y2); $p.Dispose()
+}
+function RoundPath([float]$x,[float]$y,[float]$w,[float]$h,[float]$r) {
+    $p=New-Object System.Drawing.Drawing2D.GraphicsPath
+    $d=$r*2
+    $p.AddArc($x,$y,$d,$d,180,90); $p.AddArc(($x+$w-$d),$y,$d,$d,270,90)
+    $p.AddArc(($x+$w-$d),($y+$h-$d),$d,$d,0,90); $p.AddArc($x,($y+$h-$d),$d,$d,90,90)
+    $p.CloseFigure(); return $p
+}
+function RoundFill([string]$color,[float]$x,[float]$y,[float]$w,[float]$h,[float]$r) {
+    $p=RoundPath $x $y $w $h $r; $b=Brush $color; $script:g.FillPath($b,$p); $b.Dispose(); $p.Dispose()
+}
+function Label([string]$text,[float]$x,[float]$y,[float]$size,[string]$color,[float]$width=80) {
+    $font=New-Object System.Drawing.Font('Arial Narrow',$size,[System.Drawing.FontStyle]::Bold,[System.Drawing.GraphicsUnit]::Pixel)
+    $format=New-Object System.Drawing.StringFormat
+    $format.Alignment='Center'; $format.LineAlignment='Center'
+    $format.FormatFlags='NoWrap'
+    $b=Brush $color; $script:g.DrawString($text,$font,$b,([System.Drawing.RectangleF]::new($x,$y,$width,($size*1.35))),$format)
+    $b.Dispose(); $font.Dispose(); $format.Dispose()
+}
+function Feet([float]$x,[float]$y,[string]$color) {
+    Ellipse $color $x $y 4 8; Ellipse $color ($x+6) ($y-3) 4 8
+    Ellipse $color $x ($y+9) 3 3; Ellipse $color ($x+6) ($y+6) 3 3
+}
+function Runner([float]$x,[float]$y,[string]$color) {
+    Ellipse $color ($x+7) $y 5 5
+    Line $color 2.4 ($x+8) ($y+7) ($x+5) ($y+13)
+    Line $color 2.4 ($x+8) ($y+7) ($x+13) ($y+10)
+    Line $color 2.4 ($x+5) ($y+13) ($x+1) ($y+18)
+    Line $color 2.4 ($x+5) ($y+13) ($x+10) ($y+16)
+    Line $color 2.4 ($x+10) ($y+16) ($x+8) ($y+21)
+    Line $color 2 ($x+6) ($y+7) ($x+2) ($y+9)
+}
+function Flame([float]$x,[float]$y,[string]$color) {
+    $p=New-Object System.Drawing.Drawing2D.GraphicsPath
+    $p.AddBezier(($x+8),$y,($x+15),($y+7),($x+7),($y+8),($x+14),($y+11))
+    $p.AddBezier(($x+14),($y+11),($x+19),($y+24),($x-3),($y+25),($x+1),($y+12))
+    $p.AddBezier(($x+1),($y+12),($x+1),($y+8),($x+8),($y+6),($x+8),$y)
+    $p.CloseFigure(); $b=Brush $color; $script:g.FillPath($b,$p); $b.Dispose(); $p.Dispose()
+}
+function Track([float]$height,[float]$progress=0,[string]$color='#151515') {
+    $rect=[System.Drawing.RectangleF]::new(106, (274-$height/2),238,$height)
+    foreach($layer in @(@('#080808',17),@('#3a3c3d',14),@('#090a0b',11))) {
+        $p=Pen $layer[0] $layer[1]; $p.StartCap='Round'; $p.EndCap='Round'
+        $script:g.DrawArc($p,$rect,135,-90); $p.Dispose()
+    }
+    if($progress -gt 0) {
+        $p=Pen $color 10; $p.StartCap='Round'; $p.EndCap='Round'
+        $script:g.DrawArc($p,$rect,135,(-90*[math]::Min(1,$progress))); $p.Dispose()
+    }
+    # Fine recessed graduations, drawn only into the static base.
+    for($t=0;$t -le 20;$t++) {
+        $a=(135-4.5*$t)*[math]::PI/180
+        $x=225+119*[math]::Cos($a); $y=274+($height/2)*[math]::Sin($a)
+        Line '#232527' 1 $x ($y-3) $x ($y+3)
+    }
+}
+
+# Twin-moon wheel, rotating once per two lunations behind a fixed aperture.
+Canvas 180 180
+Ellipse '#02040a' 0 0 180 180; Ellipse '#071627' 3 3 174 174
+$random=New-Object System.Random(950)
+for($i=0;$i -lt 100;$i++) {
+    $x=$random.Next(8,171); $y=$random.Next(8,171)
+    if(([math]::Pow($x-90,2)+[math]::Pow($y-90,2)) -lt 7200) {
+        $d=1+($i%3)*0.4; Ellipse '#8297aa' $x $y $d $d
+    }
+}
+foreach($cy in @(35,145)) {
+    $moonRect=[System.Drawing.RectangleF]::new(64,($cy-26),52,52)
+    $moonBrush=New-Object System.Drawing.Drawing2D.LinearGradientBrush($moonRect,(C '#fff2d7'),(C '#8d8b83'),45)
+    $script:g.FillEllipse($moonBrush,$moonRect); $moonBrush.Dispose()
+    $moonClip=$script:g.Save(); $script:g.SetClip($moonRect)
+    foreach($crater in @(@(77,-10,10),@(96,1,13),@(84,13,7),@(102,-15,6),@(72,8,4))) {
+        $x=[float]$crater[0]; $y=$cy+[float]$crater[1]; $d=[float]$crater[2]
+        Ellipse '#888b87' $x $y $d $d; Ellipse '#b9b8ac' ($x+1) ($y+1) ($d-2) ($d-2)
+    }
+    $script:g.Restore($moonClip)
+}
+Save 'moon_disc'
+
+# Bevelled black dial, minute track, drums, and recessed activity channels.
+Canvas 450 450
+Ellipse '#181818' 1 1 448 448
+$p=Pen '#a9a9a5' 0.8; $script:g.DrawEllipse($p,2,2,446,446); $p.Dispose()
+Ellipse '#020202' 5 5 440 440; Ellipse '#101112' 31 31 388 388
+$facePath=New-Object System.Drawing.Drawing2D.GraphicsPath; $facePath.AddEllipse(32,32,386,386)
+$faceBrush=New-Object System.Drawing.Drawing2D.PathGradientBrush($facePath)
+$faceBrush.CenterColor=C '#121414'; $faceBrush.SurroundColors=@((C '#030404'))
+$script:g.FillPath($faceBrush,$facePath); $faceBrush.Dispose(); $facePath.Dispose()
+for($index=0;$index -lt 60;$index++) {
+    $angle=$index*6*[math]::PI/180
+    $hour=($index%5 -eq 0); $outer=213; $inner=202; $thickness=2.8; $color='#ff5d0a'
+    if($hour) { $inner=197; $thickness=6; $color='#eeeeea' }
+    if($index -eq 0) { continue }
+    Line $color $thickness (225+$inner*[math]::Sin($angle)) (225-$inner*[math]::Cos($angle)) (225+$outer*[math]::Sin($angle)) (225-$outer*[math]::Cos($angle))
+}
+foreach($hour in @(1,2,3,4,8,9,10,11,12)) {
+    $a=$hour*30*[math]::PI/180; $radius=174; $size=26
+    if($hour -in @(3,9,12)) { $radius=201; $size=29 }
+    $x=225+$radius*[math]::Sin($a); $y=225-$radius*[math]::Cos($a)
+    Label ([string]$hour) ($x-25) ($y-$size*0.65) $size '#f4f4f0' 50
+}
+$aperture=New-Object System.Drawing.Drawing2D.GraphicsPath
+$aperture.AddArc(162,42,126,126,180,180)
+$aperture.AddBezier(288,105,272,89,255,90,246,108)
+$aperture.AddBezier(246,108,231,103,219,103,204,108)
+$aperture.AddBezier(204,108,195,90,178,89,162,105); $aperture.CloseFigure()
+$p=Pen '#494b48' 3; $script:g.DrawPath($p,$aperture); $p.Dispose()
+$script:g.CompositingMode='SourceCopy'; $transparent=New-Object System.Drawing.SolidBrush([System.Drawing.Color]::Transparent)
+$script:g.FillPath($transparent,$aperture); $transparent.Dispose(); $script:g.CompositingMode='SourceOver'; $aperture.Dispose()
+
+RoundFill '#555653' 128 110 194 58 8
+RoundFill '#080909' 129 111 192 56 8
+RoundFill '#292b2c' 132 115 186 49 5
+RoundFill '#000000' 135 118 180 43 3
+foreach($divider in @(194,254)) { Line '#55534c' 2 $divider 119 $divider 160; Line '#0e0e0e' 1 ($divider+2) 119 ($divider+2) 160 }
+for($i=0;$i -lt 11;$i++) {
+    $alphaShade=18+$i*2; $shade='#{0:X2}{0:X2}{0:X2}' -f $alphaShade
+    Line $shade 1 136 (118+$i) 314 (118+$i); Line $shade 1 136 (161-$i) 314 (161-$i)
+}
+RoundFill '#41413f' 361 161 33 129 7; RoundFill '#090909' 363 163 29 125 6
+RoundFill '#000000' 366 166 23 119 4
+for($i=0;$i -le 10;$i++) { $y=175+$i*10; Line '#b3b9b7' 1 374 $y 381 $y }
+Label 'F' 343 169 14 '#e7e8e6' 16; Label 'BAT' 324 216 13 '#e7e8e6' 36; Label 'E' 343 273 14 '#e7e8e6' 16
+RoundFill '#202016' 366 274 5 13 2; RoundFill '#241415' 385 274 5 13 2
+Label 'STEPS' 188 292 12 '#e2e3df' 74
+Runner 160 310 '#00d8eb'; Label 'MIN' 176 328 11 '#e2e3df' 42
+Flame 240 309 '#72f000'; Label 'CAL' 257 328 11 '#e2e3df' 50
+Track 170; Track 200; Track 230
+Feet 120 329 '#ff6814'; Runner 117 347 '#00d8eb'; Flame 117 370 '#72f000'
+Save 'dial_frame'
+
+Canvas 22 150
+$hand=New-Object System.Drawing.Drawing2D.GraphicsPath
+$hand.AddPolygon([System.Drawing.PointF[]]@([System.Drawing.PointF]::new(11,1),[System.Drawing.PointF]::new(18,11),[System.Drawing.PointF]::new(17,95),[System.Drawing.PointF]::new(21,127),[System.Drawing.PointF]::new(16,145),[System.Drawing.PointF]::new(6,145),[System.Drawing.PointF]::new(1,127),[System.Drawing.PointF]::new(5,95),[System.Drawing.PointF]::new(4,11)))
+$b=Brush '#f5f5ef'; $script:g.FillPath($b,$hand); $b.Dispose(); $hand.Dispose()
+RoundFill '#050606' 7 14 8 72 3
+Save 'hour_hand'
+Canvas 16 198
+$hand=New-Object System.Drawing.Drawing2D.GraphicsPath
+$hand.AddPolygon([System.Drawing.PointF[]]@([System.Drawing.PointF]::new(8,1),[System.Drawing.PointF]::new(15,10),[System.Drawing.PointF]::new(12,151),[System.Drawing.PointF]::new(15,180),[System.Drawing.PointF]::new(11,193),[System.Drawing.PointF]::new(5,193),[System.Drawing.PointF]::new(1,180),[System.Drawing.PointF]::new(4,151),[System.Drawing.PointF]::new(1,10)))
+$b=Brush '#f5f5ef'; $script:g.FillPath($b,$hand); $b.Dispose(); $hand.Dispose()
+RoundFill '#050606' 5 14 6 133 2
+Save 'minute_hand'
+Canvas 6 230
+Line '#ff5b07' 2.6 3 2 3 228; Line '#ffc26b' 0.7 2 3 2 226
+Save 'second_hand'
+Canvas 28 28
+Ellipse '#070808' 0 0 28 28
+$rect=[System.Drawing.RectangleF]::new(1,1,26,26)
+$b=New-Object System.Drawing.Drawing2D.LinearGradientBrush($rect,(C '#ffb15b'),(C '#e24100'),45)
+$script:g.FillEllipse($b,$rect); $b.Dispose(); Ellipse '#070909' 8.5 8.5 11 11
+Save 'center_cap'
+Canvas 21 13
+RoundFill '#8e2900' 0 0 21 13 2
+$rect=[System.Drawing.RectangleF]::new(1,1,19,11)
+$b=New-Object System.Drawing.Drawing2D.LinearGradientBrush($rect,(C '#ffb056'),(C '#ff5900'),90)
+$p=RoundPath 1 1 19 11 2; $script:g.FillPath($b,$p); $b.Dispose(); $p.Dispose()
+Save 'battery_slider'
+
+Canvas 450 450
+foreach($i in @(0,5,10,15,20,25,30,35,40,45,50,55)) {
+    $a=$i*6*[math]::PI/180
+    Line '#757b7d' 1.5 (225+195*[math]::Sin($a)) (225-195*[math]::Cos($a)) (225+202*[math]::Sin($a)) (225-202*[math]::Cos($a))
+}
+Label '12' 200 21 18 '#8f9595' 50; Label '3' 390 211 18 '#8f9595' 24
+Label '6' 213 398 18 '#8f9595' 24; Label '9' 37 211 18 '#8f9595' 24
+Save 'ambient_indices'
+
+function Sun { Ellipse '#ffdc26' 10 8 20 20; for($i=0;$i -lt 8;$i++) { $a=$i*[math]::PI/4; Line '#ffdc26' 2 (20+13*[math]::Sin($a)) (18-13*[math]::Cos($a)) (20+17*[math]::Sin($a)) (18-17*[math]::Cos($a)) } }
+function Moon { Ellipse '#e8e7d6' 9 5 23 23; Ellipse '#000000' 18 2 20 22 }
+function Cloud { Ellipse '#b7c5cf' 5 19 29 14; Ellipse '#d5e0e6' 11 11 19 20; Ellipse '#e2e9ec' 2 23 35 11 }
+for($condition=0;$condition -le 17;$condition++) {
+    Canvas 40 40
+    switch($condition) {
+        0 { Label '?' 3 3 26 '#7d8b91' 34 }
+        1 { Sun }
+        8 { Sun }
+        14 { Sun; Cloud }
+        16 { Moon }
+        17 { Moon; Cloud }
+        default {
+            Cloud
+            if($condition -in @(4,6,10,12)) { foreach($x in @(10,20,30)) { Line '#39bfe6' 2 $x 34 ($x-2) 39 } }
+            if($condition -in @(5,7,10,11)) { foreach($x in @(10,20,30)) { Line '#d2eff9' 1 ($x-2) 36 ($x+2) 36; Line '#d2eff9' 1 $x 34 $x 38 } }
+            if($condition -eq 9) { Line '#ffd328' 3 22 25 16 33; Line '#ffd328' 3 16 33 22 33; Line '#ffd328' 3 22 33 18 39 }
+            if($condition -in @(3,13,15)) { Line '#829ca8' 1.5 3 34 34 34; Line '#829ca8' 1.5 8 38 37 38 }
+        }
+    }
+    Save ('wx_'+$condition)
+}
+
+Write-Host "Static dial, hand, moon, and weather artwork written to $assetRoot"
