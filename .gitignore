@@ -1,0 +1,23 @@
+# Android build output and local SDK configuration
+.gradle/
+**/build/
+local.properties
+.cxx/
+.externalNativeBuild/
+.android/
+
+# Android Studio files specific to this computer
+.idea/
+*.iml
+
+# Signing credentials and local environment files
+*.jks
+*.keystore
+keystore.properties
+.env
+.env.*
+!.env.example
+
+# Operating system files
+.DS_Store
+Thumbs.db
