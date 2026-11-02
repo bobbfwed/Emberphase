@@ -1,7 +1,7 @@
 # Validation record
 
 2026-11-01. Windows, Android SDK 36 / build-tools 36.0.0, Android Studio JDK 25,
-Gradle 9.3.1, AGP 9.1.1. Version 0.1.3 was installed and activated on the
+Gradle 9.3.1, AGP 9.1.1. Version 0.2.0 was installed and activated on the
 physical SM-R950. Awake rendering, live step text/gauge, and native weather
 current temperature / high / condition were observed. Goal synchronization,
 source-app comparisons, ambient behavior, and battery-life checks are pending.
@@ -18,7 +18,7 @@ source-app comparisons, ambient behavior, and battery-life checks are pending.
 | Google WFF memory evaluator | Passed 10 MiB active / 4 MiB ambient budgets |
 | Maximum active decoded-resource estimate | 4,272,132 bytes (4.07 MiB) |
 | Maximum ambient decoded-resource estimate | 835,872 bytes (0.80 MiB) |
-| Physical watch install / activation / awake rendering | Passed with 0.1.3; observed via ADB screenshot |
+| Physical watch install / activation / awake rendering | Passed with 0.2.0; observed via ADB screenshot, including concentric tracks and live metal band |
 | Samsung steps payload | Live RANGED_VALUE observed from Samsung Health steps service; explicit goal not established |
 | Native weather availability | Unavailable state followed by current temperature, daily high, and condition icon |
 | Other activity payloads / source-app comparisons / ambient / battery life | Pending |
@@ -52,3 +52,14 @@ Previews are illustrative artwork composites. The native moon position is
 coarse; the rotating disc is decorative. Decoded-resource estimates are not
 measurements of RAM resident on Samsung firmware or of battery consumption.
 Use `device-acceptance.md` for the remaining physical-device checks.
+
+The 0.2.0 activity redesign replaces the offset elliptical gauges with circular
+arcs centered at (225,225), using radii 150, 168, and 186. Recessed bevels and
+subtle radial rack teeth are baked into the dial. Opaque native radial-gradient
+strokes conceal the teeth behind filled progress; butt caps and a narrow moving
+cut-edge highlight keep the leading edge sharp. Geometry checks cover circular
+centers/radii, full progress clip bounds, monotonic gradient stops, and edge
+alignment with both goal and ranged progress. No animation, sensor subscription,
+or additional complication subscription was added. The host preview also fixes
+PowerShell's integer-overload rounding of fractional progress, so its fixture
+bands now show their actual partial fills.

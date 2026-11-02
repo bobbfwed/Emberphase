@@ -8,7 +8,9 @@ scaled by Wear OS to the display. Artwork follows
 The native face includes skeleton analog hands, a two-moon mechanical disc
 behind a cut-out aperture, month/weekday/date drums with adjacent entries, a
 battery slider and steady low-battery lamps, a weather/custom-data inset, and
-three recessed activity gauges. Date changes are instantaneous, not animated.
+three concentric activity bands centered on the hand spindle. The colored
+bands have a metallic sheen and sharp cut edges; fine rack teeth are exposed
+in the unfilled recessed tracks. Date changes are instantaneous, not animated.
 Optional seconds tick at 1 Hz and default **off**. Seconds disappear at 15%
 battery or below. Always-on mode keeps only dimmed hour/minute hands and sparse
 indices on black.
@@ -27,7 +29,7 @@ The [data-source verification](docs/data-sources.md) was written before the data
 displays. Samsung Health phone SDK data and actual on-watch complication
 availability are different interfaces. Installed service declarations and their
 supported types have now been [verified on the watch](docs/device-providers.md).
-Version 0.1.3 is installed and active on the physical watch. Awake rendering,
+Version 0.2.0 is installed and active on the physical watch. Awake rendering,
 live Samsung Health steps (`RANGED_VALUE`), and native weather current / high /
 condition have been observed. Goal synchronization, source-app comparisons,
 other activity payloads, ambient behavior, and battery-life measurements still
@@ -110,7 +112,7 @@ face, add **Emberphase**, and open its editor. For activity source selection use
 | Slot | Editor selection point |
 | --- | --- |
 | Steps (20) | Large steps number |
-| Active minutes (30) | Cyan runner at the left of the gauges |
+| Active minutes (30) | Left side of the cyan runner beside the tracks |
 | Activity calories (40) | Bottom of the green gauge |
 | Custom left inset (10) | Left weather area, after choosing Custom complication |
 
@@ -118,7 +120,10 @@ The activity clip bounds contain both each value and its separated gauge, so
 the rectangular regions overlap. These selection points do not overlap. A tap
 elsewhere inside overlapping regions can resolve to another activity slot.
 One provider subscription per metric keeps the numeric value and its gauge in
-the same data context.
+the same data context. In 450-unit canvas coordinates the distinct activity
+anchors are steps `(225,275)`, minutes `(110,372)`, and calories `(225,411)`.
+The teeth and bevels are static artwork; the native gradient bands and their
+edges change only with provider data. All activity artwork is hidden in ambient.
 
 Capture available provider declarations:
 

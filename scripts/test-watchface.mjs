@@ -72,21 +72,27 @@ for (const [name, id] of [['steps',20], ['minutes',30], ['calories',40]]) {
   const ranged = slot.match(/<Complication type="RANGED_VALUE">([\s\S]*?)<\/Complication>/)[1];
   const goalArc = unescapeXml(goal.match(/<Transform target="endAngle" value="([^"]+)"/)[1]);
   const rangeArc = unescapeXml(ranged.match(/<Transform target="endAngle" value="([^"]+)"/)[1]);
+  const goalEdge = unescapeXml(goal.match(/<Transform target="angle" value="([^"]+)"/)[1]);
+  const rangeEdge = unescapeXml(ranged.match(/<Transform target="angle" value="([^"]+)"/)[1]);
   for (const target of [-1, 0, 60, 8000]) for (const value of [-5, 0, 1, 42, 8000, 10000]) {
     const data = {'COMPLICATION.GOAL_PROGRESS_VALUE':value, 'COMPLICATION.GOAL_PROGRESS_TARGET_VALUE':target};
     const valid = evaluate(expressions.get(`${name}_target_valid`), data);
     assert.equal(valid, target > 0 && value > 0);
     if (valid) {
       const angle = evaluate(goalArc, data);
-      assert.ok(Number.isFinite(angle) && angle >= 135 && angle < 225);
-      if (value >= target) assert.equal(angle, 135, 'Over-goal totals must clamp only the drawing');
+      assert.ok(Number.isFinite(angle) && angle >= 146 && angle < 214);
+      assert.ok(Math.abs(evaluate(goalEdge,data)+180-angle)<1e-9, 'Cut edge must follow the goal band tip');
+      if (value >= target) assert.equal(angle, 146, 'Over-goal totals must clamp only the drawing');
     }
   }
   for (const [min,max,value] of [[0,0,0],[1,0,5],[10,100,10],[10,100,55],[10,100,200],[-10,100,-11]]) {
     const data = {'COMPLICATION.RANGED_VALUE_MIN':min,'COMPLICATION.RANGED_VALUE_MAX':max,'COMPLICATION.RANGED_VALUE_VALUE':value};
     const valid = evaluate(expressions.get(`${name}_range_valid`), data);
     assert.equal(valid, max > min && value > min);
-    if (valid) assert.ok(evaluate(rangeArc,data) >= 135 && evaluate(rangeArc,data) < 225);
+    if (valid) {
+      assert.ok(evaluate(rangeArc,data) >= 146 && evaluate(rangeArc,data) < 214);
+      assert.ok(Math.abs(evaluate(rangeEdge,data)+180-evaluate(rangeArc,data))<1e-9, 'Cut edge must follow the ranged band tip');
+    }
   }
   // Ranged providers cannot silently turn an arbitrary upper bound into a goal.
   const rangeTexts = [...ranged.matchAll(/<PartText[\s\S]*?<\/PartText>/g)].map(m => m[0]);
@@ -127,13 +133,24 @@ for (const id of [20,30,40]) {
     const x=attribute(text[0],'x'), y=attribute(text[0],'y'), w=attribute(text[0],'width'), h=attribute(text[0],'height');
     assert.ok(x>=b.x && y>=b.y && x+w<=b.x+b.width && y+h<=b.y+b.height, `Slot ${id} clips a text field`);
   }
-  const height = {20:170,30:200,40:230}[id];
-  for (let angle=135; angle<=225; angle++) {
-    const x=225+119*Math.sin(angle*Math.PI/180), y=274-height/2*Math.cos(angle*Math.PI/180);
-    assert.ok(x-5>=b.x && x+5<=b.x+b.width && y-5>=b.y && y+5<=b.y+b.height, `Slot ${id} clips its recessed gauge`);
+  const radius = {20:150,30:168,40:186}[id];
+  for (const arc of slot.matchAll(/<Arc\b[\s\S]*?<\/Arc>/g)) {
+    assert.equal(attribute(arc[0],'centerX'),225);
+    assert.equal(attribute(arc[0],'centerY'),225);
+    assert.equal(attribute(arc[0],'width'),radius*2);
+    assert.equal(attribute(arc[0],'height'),radius*2);
+    assert.match(arc[0], /thickness="12" cap="BUTT"/);
+    assert.match(arc[0], /<RadialGradient centerX="225" centerY="225"/);
+    const stops=arc[0].match(/positions="([^"]+)"/)[1].split(' ').map(Number);
+    assert.ok(stops.length>=3 && stops[0]>=0 && stops.at(-1)===1);
+    assert.ok(stops.every((stop,i)=>i===0 || stop>stops[i-1]), 'Metal gradient stops must be strictly increasing');
+  }
+  for (let angle=146; angle<=214; angle++) {
+    const x=225+radius*Math.sin(angle*Math.PI/180), y=225-radius*Math.cos(angle*Math.PI/180);
+    assert.ok(x-7>=b.x && x+7<=b.x+b.width && y-7>=b.y && y+7<=b.y+b.height, `Slot ${id} clips its metal band or cut edge`);
   }
 }
-for (const [id,x,y] of [[20,225,275],[30,124,360],[40,225,390]]) {
+for (const [id,x,y] of [[20,225,275],[30,110,372],[40,225,411]]) {
   const hits = [...activityBounds].filter(([,b]) => x>b.x && y>b.y && x<b.x+b.width && y<b.y+b.height).map(([id])=>id);
   assert.deepEqual(hits,[id], `Editor anchor for slot ${id} must not overlap another activity slot`);
 }

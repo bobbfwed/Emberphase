@@ -10,8 +10,8 @@ android {
         applicationId = "com.bobbfwed.emberphase"
         minSdk = 36
         targetSdk = 36
-        versionCode = 4
-        versionName = "0.1.3"
+        versionCode = 5
+        versionName = "0.2.0"
     }
     buildTypes {
         // AGP emits resource R classes even without source code. R8 removes

@@ -1,12 +1,18 @@
 # Watch6 device acceptance
 
-Status: **0.1.3 installed, activated, and rendering on the SM-R950** on
+Status: **0.2.0 installed, activated, and rendering on the SM-R950** on
 2026-11-01. ADB activation succeeded and an awake screenshot confirmed the
 analog hands, moon disc, correct NOV / SUN / 01 drums, battery slider, live
 steps, and native current temperature / daily high / weather icon. Weather
 initially showed the unavailable state, then populated without changing the
 selected mode. The step source resolved to Samsung Health's steps service and
 returned `RANGED_VALUE`; its explicit goal remains unknown.
+
+The 0.2.0 awake screenshot also confirms the activity channels are concentric
+with the hand spindle, with metallic orange progress and a sharp cut edge over
+the exposed toothed track. Cyan/green filled bands are shown in the illustrative
+previews; their providers remain unset on the watch. Schema, memory, Gradle
+resource-only, lint, and expression/geometry checks pass for this revision.
 
 See [installed provider findings](device-providers.md). Goal synchronization,
 active minutes/calories, comparison against the source apps, editor behavior,

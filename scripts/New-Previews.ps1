@@ -23,10 +23,22 @@ function Asset([string]$name,[float]$x,[float]$y,[float]$w,[float]$h,[float]$ang
     } else { $script:g.DrawImage($image,[float]0,[float]0,$w,$h) }
     $script:g.Restore($state); $image.Dispose()
 }
-function FillGauge([float]$height,[float]$ratio,[string]$color) {
-    $p=Pen $color 10; $p.StartCap='Round'; $p.EndCap='Round'
-    $script:g.DrawArc($p,([System.Drawing.RectangleF]::new(106,(274-$height/2),238,$height)),135,(-90*[math]::Min(1,[math]::Max(0,$ratio))))
-    $p.Dispose()
+function FillGauge([float]$radius,[float]$ratio,[string[]]$colors) {
+    $ratio=[math]::Min(1.0,[math]::Max(0.0,[double]$ratio))
+    if($ratio -le 0) { return }
+    # Sample the same radial metal gradient used by the native WFF stroke.
+    $stops=@(0,0.12,0.32,0.45,0.58,0.84,1)
+    for($i=0;$i -lt 32;$i++) {
+        $position=($i+0.5)/32; $j=0
+        while($j -lt 5 -and $position -gt $stops[$j+1]) { $j++ }
+        $mix=($position-$stops[$j])/($stops[$j+1]-$stops[$j]); $a=C $colors[$j]; $b=C $colors[$j+1]
+        $color=[System.Drawing.Color]::FromArgb([int]($a.R+($b.R-$a.R)*$mix),[int]($a.G+($b.G-$a.G)*$mix),[int]($a.B+($b.B-$a.B)*$mix))
+        $r=$radius-6+12*$position; $p=New-Object System.Drawing.Pen($color,0.6); $p.StartCap='Flat'; $p.EndCap='Flat'
+        $script:g.DrawArc($p,([System.Drawing.RectangleF]::new((225-$r),(225-$r),($r*2),($r*2))),124,(-68*$ratio)); $p.Dispose()
+    }
+    $angle=214-68*$ratio
+    $p=Pen $colors[3] 1; $p.StartCap='Flat'; $p.EndCap='Flat'
+    $script:g.DrawLine($p,(RingPoint ($radius-5.5) $angle),(RingPoint ($radius+5.5) $angle)); $p.Dispose()
 }
 
 foreach($mode in @('normal','low-battery','ambient','unavailable','seconds')) {
@@ -52,14 +64,16 @@ foreach($mode in @('normal','low-battery','ambient','unavailable','seconds')) {
             Asset 'wx_0' 63 212 47 47
             Label $dash 52 254 29 '#f4f4ef' 75; Label ('H '+$dash) 52 285 14 '#f4f4ef' 75
             Label $dash 169 257 34 '#f4f4ef' 112; Label $dash 178 307 23 '#f4f4ef' 53; Label $dash 262 307 23 '#f4f4ef' 57
-            foreach($goalY in @(330,347,365)) { Label $dash 316 $goalY 13 '#eeeeeb' 43 }
+            Label $dash 316 341 13 '#eeeeeb' 43; Label $dash 326 358 13 '#eeeeeb' 43; Label $dash 336 375 13 '#eeeeeb' 43
         } else {
             # These are mockup fixtures, never production data or WFF constants.
             Asset 'wx_14' 63 212 47 47
             Label ('56'+$degree) 52 254 29 '#f4f4ef' 75; Label ('H 61'+$degree+'F') 52 285 14 '#f4f4ef' 75
             Label '6,482' 169 257 34 '#f4f4ef' 112; Label '42' 178 307 23 '#f4f4ef' 53; Label '380' 262 307 23 '#f4f4ef' 57
-            FillGauge 170 (6482/8000) '#ff6a15'; FillGauge 200 (42/60) '#00dbef'; FillGauge 230 (380/500) '#76f400'
-            Label '8,000' 316 330 13 '#eeeeeb' 43; Label '60' 316 347 13 '#eeeeeb' 43; Label '500' 316 365 13 '#eeeeeb' 43
+            FillGauge 150 (6482/8000) @('#662400','#bf4005','#ff7415','#ffd79b','#ff9c40','#df5206','#702500')
+            FillGauge 168 (42/60) @('#004955','#008f9e','#00d6e9','#b2faff','#38e9f4','#00a7bc','#004e60')
+            FillGauge 186 (380/500) @('#254d00','#4a9700','#79ef06','#e0ffad','#a0ff30','#65c900','#2b5b00')
+            Label '8,000' 316 341 13 '#eeeeeb' 43; Label '60' 326 358 13 '#eeeeeb' 43; Label '500' 336 375 13 '#eeeeeb' 43
         }
         Asset 'hour_hand' 214 93 22 150 305 0.5 0.88
         Asset 'minute_hand' 217 45 16 198 60 0.5 0.9090909

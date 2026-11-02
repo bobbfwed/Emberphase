@@ -73,21 +73,29 @@ function Flame([float]$x,[float]$y,[string]$color) {
     $p.AddBezier(($x+1),($y+12),($x+1),($y+8),($x+8),($y+6),($x+8),$y)
     $p.CloseFigure(); $b=Brush $color; $script:g.FillPath($b,$p); $b.Dispose(); $p.Dispose()
 }
-function Track([float]$height,[float]$progress=0,[string]$color='#151515') {
-    $rect=[System.Drawing.RectangleF]::new(106, (274-$height/2),238,$height)
-    foreach($layer in @(@('#080808',17),@('#3a3c3d',14),@('#090a0b',11))) {
+function RingPoint([float]$radius,[float]$angle) {
+    $a=$angle*[math]::PI/180
+    return [System.Drawing.PointF]::new((225+$radius*[math]::Sin($a)),(225-$radius*[math]::Cos($a)))
+}
+function Track([float]$radius) {
+    # All three channels share the hand spindle, with equally spaced radii.
+    $rect=[System.Drawing.RectangleF]::new((225-$radius),(225-$radius),($radius*2),($radius*2))
+    foreach($layer in @(@('#010202',20),@('#292d2d',17),@('#07090a',13))) {
         $p=Pen $layer[0] $layer[1]; $p.StartCap='Round'; $p.EndCap='Round'
-        $script:g.DrawArc($p,$rect,135,-90); $p.Dispose()
+        $script:g.DrawArc($p,$rect,124,-68); $p.Dispose()
     }
-    if($progress -gt 0) {
-        $p=Pen $color 10; $p.StartCap='Round'; $p.EndCap='Round'
-        $script:g.DrawArc($p,$rect,135,(-90*[math]::Min(1,$progress))); $p.Dispose()
+    # Narrow bevels catch the light, leaving a dark recessed toothed bed.
+    foreach($edge in @(@(($radius-7),'#414645'),@(($radius+7),'#171b1c'))) {
+        $r=[float]$edge[0]; $p=Pen $edge[1] 0.65
+        $script:g.DrawArc($p,([System.Drawing.RectangleF]::new((225-$r),(225-$r),($r*2),($r*2))),124,-68); $p.Dispose()
     }
-    # Fine recessed graduations, drawn only into the static base.
-    for($t=0;$t -le 20;$t++) {
-        $a=(135-4.5*$t)*[math]::PI/180
-        $x=225+119*[math]::Cos($a); $y=274+($height/2)*[math]::Sin($a)
-        Line '#232527' 1 $x ($y-3) $x ($y+3)
+    # Small radial rack teeth are baked into the dial. The opaque live band
+    # covers them as progress advances, exposing teeth only in unfilled areas.
+    for($t=0;$t -lt 31;$t++) {
+        $angle=213-2.2*$t
+        $points=[System.Drawing.PointF[]]@((RingPoint ($radius-4.6) ($angle-0.48)),(RingPoint ($radius+4.6) ($angle-0.38)),(RingPoint ($radius+4.6) ($angle+0.38)),(RingPoint ($radius-4.6) ($angle+0.48)))
+        $b=Brush '#191d1f'; $script:g.FillPolygon($b,$points); $b.Dispose()
+        $p=Pen '#282d2e' 0.55; $script:g.DrawLine($p,$points[0],$points[1]); $p.Dispose()
     }
 }
 
@@ -162,8 +170,8 @@ RoundFill '#202016' 366 274 5 13 2; RoundFill '#241415' 385 274 5 13 2
 Label 'STEPS' 188 292 12 '#e2e3df' 74
 Runner 160 310 '#00d8eb'; Label 'MIN' 176 328 11 '#e2e3df' 42
 Flame 240 309 '#72f000'; Label 'CAL' 257 328 11 '#e2e3df' 50
-Track 170; Track 200; Track 230
-Feet 120 329 '#ff6814'; Runner 117 347 '#00d8eb'; Flame 117 370 '#72f000'
+Track 150; Track 168; Track 186
+Feet 125 339 '#ff6814'; Runner 105 357 '#00d8eb'; Flame 104 385 '#72f000'
 Save 'dial_frame'
 
 Canvas 22 150

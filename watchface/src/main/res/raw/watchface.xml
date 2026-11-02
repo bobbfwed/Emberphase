@@ -393,10 +393,10 @@
                 </Group>
             </Complication>
         </ComplicationSlot>
-        <!-- Activity bounds include both the numeric inset and its arc (WFF clips at bounds). Unique editor anchors: steps number, cyan runner at x=124,y=360, green arc at x=225,y=390. -->
+        <!-- Activity bounds include both the numeric inset and its arc (WFF clips at bounds). Concentric radii 150/168/186 share the spindle at 225,225. Unique editor anchors: steps number, cyan runner at x=110,y=372, green arc at x=225,y=411. -->
         <ComplicationSlot slotId="20" displayName="steps_slot" x="0" y="0" width="450" height="450" supportedTypes="GOAL_PROGRESS RANGED_VALUE SHORT_TEXT EMPTY" isCustomizable="TRUE">
             <Variant mode="AMBIENT" target="alpha" value="0" />
-            <BoundingRoundBox x="132" y="257" width="230" height="110" cornerRadius="8" />
+            <BoundingRoundBox x="132" y="257" width="230" height="126" cornerRadius="8" />
             <DefaultProviderPolicy defaultSystemProvider="STEP_COUNT" defaultSystemProviderType="RANGED_VALUE" />
             <Complication type="GOAL_PROGRESS">
                 <PartText x="169" y="259" width="112" height="39">
@@ -406,7 +406,7 @@
                         </Font>
                     </Text>
                 </PartText>
-                <PartText x="316" y="330" width="43" height="18">
+                <PartText x="316" y="343" width="43" height="18">
                     <Text align="START" isAutoSize="TRUE">
                         <Font family="sans-serif-condensed" size="13">
                             <Template>%s<Parameter expression="[COMPLICATION.GOAL_PROGRESS_TARGET_VALUE] &gt; 0 ? numberFormat(&quot;#,##0&quot;, [COMPLICATION.GOAL_PROGRESS_TARGET_VALUE]) : &quot;—&quot;" /></Template>
@@ -419,11 +419,24 @@
                     </Expressions>
                     <Compare expression="steps_target_valid">
                         <PartDraw x="0" y="0" width="450" height="450">
-                            <Arc centerX="225" centerY="274" width="238" height="170" startAngle="225" endAngle="225" direction="COUNTER_CLOCKWISE">
-                                <Transform target="endAngle" value="225 - 90 * clamp([COMPLICATION.GOAL_PROGRESS_VALUE] / [COMPLICATION.GOAL_PROGRESS_TARGET_VALUE], 0, 1)" />
-                                <Stroke color="#FF6A15" thickness="10" cap="ROUND" />
+                            <Arc centerX="225" centerY="225" width="300" height="300" startAngle="214" endAngle="214" direction="COUNTER_CLOCKWISE">
+                                <Transform target="endAngle" value="214 - 68 * clamp([COMPLICATION.GOAL_PROGRESS_VALUE] / [COMPLICATION.GOAL_PROGRESS_TARGET_VALUE], 0, 1)" />
+                                <Stroke color="#FF7415" thickness="12" cap="BUTT">
+                                    <RadialGradient centerX="225" centerY="225" radius="156" colors="#662400 #BF4005 #FF7415 #FFD79B #FF9C40 #DF5206 #702500" positions="0.923077 0.932308 0.947692 0.957692 0.967692 0.987692 1.000000" />
+                                </Stroke>
                             </Arc>
                         </PartDraw>
+                        <Group name="steps_goal_cut_edge" x="0" y="0" width="450" height="450" pivotX="0.5" pivotY="0.5">
+                            <Transform target="angle" value="34 - 68 * clamp([COMPLICATION.GOAL_PROGRESS_VALUE] / [COMPLICATION.GOAL_PROGRESS_TARGET_VALUE], 0, 1)" />
+                            <PartDraw x="0" y="0" width="450" height="450">
+                                <Line startX="224.3" startY="369.5" endX="224.3" endY="380.5">
+                                    <Stroke color="#A0000000" thickness="1.2" cap="BUTT" />
+                                </Line>
+                                <Line startX="225" startY="369.5" endX="225" endY="380.5">
+                                    <Stroke color="#FFD79B" thickness="0.8" cap="BUTT" />
+                                </Line>
+                            </PartDraw>
+                        </Group>
                     </Compare>
                 </Condition>
             </Complication>
@@ -435,7 +448,7 @@
                         </Font>
                     </Text>
                 </PartText>
-                <PartText x="316" y="330" width="43" height="18">
+                <PartText x="316" y="343" width="43" height="18">
                     <Text align="START">
                         <Font family="sans-serif-condensed" size="13">—</Font>
                     </Text>
@@ -446,11 +459,24 @@
                     </Expressions>
                     <Compare expression="steps_range_valid">
                         <PartDraw x="0" y="0" width="450" height="450">
-                            <Arc centerX="225" centerY="274" width="238" height="170" startAngle="225" endAngle="225" direction="COUNTER_CLOCKWISE">
-                                <Transform target="endAngle" value="225 - 90 * clamp(([COMPLICATION.RANGED_VALUE_VALUE] - [COMPLICATION.RANGED_VALUE_MIN]) / ([COMPLICATION.RANGED_VALUE_MAX] - [COMPLICATION.RANGED_VALUE_MIN]), 0, 1)" />
-                                <Stroke color="#FF6A15" thickness="10" cap="ROUND" />
+                            <Arc centerX="225" centerY="225" width="300" height="300" startAngle="214" endAngle="214" direction="COUNTER_CLOCKWISE">
+                                <Transform target="endAngle" value="214 - 68 * clamp(([COMPLICATION.RANGED_VALUE_VALUE] - [COMPLICATION.RANGED_VALUE_MIN]) / ([COMPLICATION.RANGED_VALUE_MAX] - [COMPLICATION.RANGED_VALUE_MIN]), 0, 1)" />
+                                <Stroke color="#FF7415" thickness="12" cap="BUTT">
+                                    <RadialGradient centerX="225" centerY="225" radius="156" colors="#662400 #BF4005 #FF7415 #FFD79B #FF9C40 #DF5206 #702500" positions="0.923077 0.932308 0.947692 0.957692 0.967692 0.987692 1.000000" />
+                                </Stroke>
                             </Arc>
                         </PartDraw>
+                        <Group name="steps_range_cut_edge" x="0" y="0" width="450" height="450" pivotX="0.5" pivotY="0.5">
+                            <Transform target="angle" value="34 - 68 * clamp(([COMPLICATION.RANGED_VALUE_VALUE] - [COMPLICATION.RANGED_VALUE_MIN]) / ([COMPLICATION.RANGED_VALUE_MAX] - [COMPLICATION.RANGED_VALUE_MIN]), 0, 1)" />
+                            <PartDraw x="0" y="0" width="450" height="450">
+                                <Line startX="224.3" startY="369.5" endX="224.3" endY="380.5">
+                                    <Stroke color="#A0000000" thickness="1.2" cap="BUTT" />
+                                </Line>
+                                <Line startX="225" startY="369.5" endX="225" endY="380.5">
+                                    <Stroke color="#FFD79B" thickness="0.8" cap="BUTT" />
+                                </Line>
+                            </PartDraw>
+                        </Group>
                     </Compare>
                 </Condition>
             </Complication>
@@ -462,7 +488,7 @@
                         </Font>
                     </Text>
                 </PartText>
-                <PartText x="316" y="330" width="43" height="18">
+                <PartText x="316" y="343" width="43" height="18">
                     <Text align="START">
                         <Font family="sans-serif-condensed" size="13">—</Font>
                     </Text>
@@ -474,7 +500,7 @@
                         <Font family="sans-serif-condensed" size="34" weight="BOLD">—</Font>
                     </Text>
                 </PartText>
-                <PartText x="316" y="330" width="43" height="18">
+                <PartText x="316" y="343" width="43" height="18">
                     <Text align="START">
                         <Font family="sans-serif-condensed" size="13">—</Font>
                     </Text>
@@ -483,7 +509,7 @@
         </ComplicationSlot>
         <ComplicationSlot slotId="30" displayName="minutes_slot" x="0" y="0" width="450" height="450" supportedTypes="GOAL_PROGRESS RANGED_VALUE SHORT_TEXT EMPTY" isCustomizable="TRUE">
             <Variant mode="AMBIENT" target="alpha" value="0" />
-            <BoundingRoundBox x="114" y="307" width="248" height="75" cornerRadius="6" />
+            <BoundingRoundBox x="108" y="307" width="266" height="94" cornerRadius="6" />
             <DefaultProviderPolicy defaultSystemProvider="EMPTY" defaultSystemProviderType="EMPTY" />
             <Complication type="GOAL_PROGRESS">
                 <PartText x="178" y="309" width="53" height="29">
@@ -493,7 +519,7 @@
                         </Font>
                     </Text>
                 </PartText>
-                <PartText x="316" y="347" width="43" height="18">
+                <PartText x="326" y="360" width="43" height="18">
                     <Text align="START" isAutoSize="TRUE">
                         <Font family="sans-serif-condensed" size="13">
                             <Template>%s<Parameter expression="[COMPLICATION.GOAL_PROGRESS_TARGET_VALUE] &gt; 0 ? numberFormat(&quot;#,##0&quot;, [COMPLICATION.GOAL_PROGRESS_TARGET_VALUE]) : &quot;—&quot;" /></Template>
@@ -506,11 +532,24 @@
                     </Expressions>
                     <Compare expression="minutes_target_valid">
                         <PartDraw x="0" y="0" width="450" height="450">
-                            <Arc centerX="225" centerY="274" width="238" height="200" startAngle="225" endAngle="225" direction="COUNTER_CLOCKWISE">
-                                <Transform target="endAngle" value="225 - 90 * clamp([COMPLICATION.GOAL_PROGRESS_VALUE] / [COMPLICATION.GOAL_PROGRESS_TARGET_VALUE], 0, 1)" />
-                                <Stroke color="#00DBEF" thickness="10" cap="ROUND" />
+                            <Arc centerX="225" centerY="225" width="336" height="336" startAngle="214" endAngle="214" direction="COUNTER_CLOCKWISE">
+                                <Transform target="endAngle" value="214 - 68 * clamp([COMPLICATION.GOAL_PROGRESS_VALUE] / [COMPLICATION.GOAL_PROGRESS_TARGET_VALUE], 0, 1)" />
+                                <Stroke color="#00D6E9" thickness="12" cap="BUTT">
+                                    <RadialGradient centerX="225" centerY="225" radius="174" colors="#004955 #008F9E #00D6E9 #B2FAFF #38E9F4 #00A7BC #004E60" positions="0.931034 0.939310 0.953103 0.962069 0.971034 0.988966 1.000000" />
+                                </Stroke>
                             </Arc>
                         </PartDraw>
+                        <Group name="minutes_goal_cut_edge" x="0" y="0" width="450" height="450" pivotX="0.5" pivotY="0.5">
+                            <Transform target="angle" value="34 - 68 * clamp([COMPLICATION.GOAL_PROGRESS_VALUE] / [COMPLICATION.GOAL_PROGRESS_TARGET_VALUE], 0, 1)" />
+                            <PartDraw x="0" y="0" width="450" height="450">
+                                <Line startX="224.3" startY="387.5" endX="224.3" endY="398.5">
+                                    <Stroke color="#A0000000" thickness="1.2" cap="BUTT" />
+                                </Line>
+                                <Line startX="225" startY="387.5" endX="225" endY="398.5">
+                                    <Stroke color="#B2FAFF" thickness="0.8" cap="BUTT" />
+                                </Line>
+                            </PartDraw>
+                        </Group>
                     </Compare>
                 </Condition>
             </Complication>
@@ -522,7 +561,7 @@
                         </Font>
                     </Text>
                 </PartText>
-                <PartText x="316" y="347" width="43" height="18">
+                <PartText x="326" y="360" width="43" height="18">
                     <Text align="START">
                         <Font family="sans-serif-condensed" size="13">—</Font>
                     </Text>
@@ -533,11 +572,24 @@
                     </Expressions>
                     <Compare expression="minutes_range_valid">
                         <PartDraw x="0" y="0" width="450" height="450">
-                            <Arc centerX="225" centerY="274" width="238" height="200" startAngle="225" endAngle="225" direction="COUNTER_CLOCKWISE">
-                                <Transform target="endAngle" value="225 - 90 * clamp(([COMPLICATION.RANGED_VALUE_VALUE] - [COMPLICATION.RANGED_VALUE_MIN]) / ([COMPLICATION.RANGED_VALUE_MAX] - [COMPLICATION.RANGED_VALUE_MIN]), 0, 1)" />
-                                <Stroke color="#00DBEF" thickness="10" cap="ROUND" />
+                            <Arc centerX="225" centerY="225" width="336" height="336" startAngle="214" endAngle="214" direction="COUNTER_CLOCKWISE">
+                                <Transform target="endAngle" value="214 - 68 * clamp(([COMPLICATION.RANGED_VALUE_VALUE] - [COMPLICATION.RANGED_VALUE_MIN]) / ([COMPLICATION.RANGED_VALUE_MAX] - [COMPLICATION.RANGED_VALUE_MIN]), 0, 1)" />
+                                <Stroke color="#00D6E9" thickness="12" cap="BUTT">
+                                    <RadialGradient centerX="225" centerY="225" radius="174" colors="#004955 #008F9E #00D6E9 #B2FAFF #38E9F4 #00A7BC #004E60" positions="0.931034 0.939310 0.953103 0.962069 0.971034 0.988966 1.000000" />
+                                </Stroke>
                             </Arc>
                         </PartDraw>
+                        <Group name="minutes_range_cut_edge" x="0" y="0" width="450" height="450" pivotX="0.5" pivotY="0.5">
+                            <Transform target="angle" value="34 - 68 * clamp(([COMPLICATION.RANGED_VALUE_VALUE] - [COMPLICATION.RANGED_VALUE_MIN]) / ([COMPLICATION.RANGED_VALUE_MAX] - [COMPLICATION.RANGED_VALUE_MIN]), 0, 1)" />
+                            <PartDraw x="0" y="0" width="450" height="450">
+                                <Line startX="224.3" startY="387.5" endX="224.3" endY="398.5">
+                                    <Stroke color="#A0000000" thickness="1.2" cap="BUTT" />
+                                </Line>
+                                <Line startX="225" startY="387.5" endX="225" endY="398.5">
+                                    <Stroke color="#B2FAFF" thickness="0.8" cap="BUTT" />
+                                </Line>
+                            </PartDraw>
+                        </Group>
                     </Compare>
                 </Condition>
             </Complication>
@@ -549,7 +601,7 @@
                         </Font>
                     </Text>
                 </PartText>
-                <PartText x="316" y="347" width="43" height="18">
+                <PartText x="326" y="360" width="43" height="18">
                     <Text align="START">
                         <Font family="sans-serif-condensed" size="13">—</Font>
                     </Text>
@@ -561,7 +613,7 @@
                         <Font family="sans-serif-condensed" size="23" weight="BOLD">—</Font>
                     </Text>
                 </PartText>
-                <PartText x="316" y="347" width="43" height="18">
+                <PartText x="326" y="360" width="43" height="18">
                     <Text align="START">
                         <Font family="sans-serif-condensed" size="13">—</Font>
                     </Text>
@@ -570,7 +622,7 @@
         </ComplicationSlot>
         <ComplicationSlot slotId="40" displayName="calories_slot" x="0" y="0" width="450" height="450" supportedTypes="GOAL_PROGRESS RANGED_VALUE SHORT_TEXT EMPTY" isCustomizable="TRUE">
             <Variant mode="AMBIENT" target="alpha" value="0" />
-            <BoundingRoundBox x="132" y="307" width="230" height="90" cornerRadius="6" />
+            <BoundingRoundBox x="112" y="307" width="270" height="113" cornerRadius="6" />
             <DefaultProviderPolicy defaultSystemProvider="EMPTY" defaultSystemProviderType="EMPTY" />
             <Complication type="GOAL_PROGRESS">
                 <PartText x="262" y="309" width="57" height="29">
@@ -580,7 +632,7 @@
                         </Font>
                     </Text>
                 </PartText>
-                <PartText x="316" y="365" width="43" height="18">
+                <PartText x="336" y="377" width="43" height="18">
                     <Text align="START" isAutoSize="TRUE">
                         <Font family="sans-serif-condensed" size="13">
                             <Template>%s<Parameter expression="[COMPLICATION.GOAL_PROGRESS_TARGET_VALUE] &gt; 0 ? numberFormat(&quot;#,##0&quot;, [COMPLICATION.GOAL_PROGRESS_TARGET_VALUE]) : &quot;—&quot;" /></Template>
@@ -593,11 +645,24 @@
                     </Expressions>
                     <Compare expression="calories_target_valid">
                         <PartDraw x="0" y="0" width="450" height="450">
-                            <Arc centerX="225" centerY="274" width="238" height="230" startAngle="225" endAngle="225" direction="COUNTER_CLOCKWISE">
-                                <Transform target="endAngle" value="225 - 90 * clamp([COMPLICATION.GOAL_PROGRESS_VALUE] / [COMPLICATION.GOAL_PROGRESS_TARGET_VALUE], 0, 1)" />
-                                <Stroke color="#76F400" thickness="10" cap="ROUND" />
+                            <Arc centerX="225" centerY="225" width="372" height="372" startAngle="214" endAngle="214" direction="COUNTER_CLOCKWISE">
+                                <Transform target="endAngle" value="214 - 68 * clamp([COMPLICATION.GOAL_PROGRESS_VALUE] / [COMPLICATION.GOAL_PROGRESS_TARGET_VALUE], 0, 1)" />
+                                <Stroke color="#79EF06" thickness="12" cap="BUTT">
+                                    <RadialGradient centerX="225" centerY="225" radius="192" colors="#254D00 #4A9700 #79EF06 #E0FFAD #A0FF30 #65C900 #2B5B00" positions="0.937500 0.945000 0.957500 0.965625 0.973750 0.990000 1.000000" />
+                                </Stroke>
                             </Arc>
                         </PartDraw>
+                        <Group name="calories_goal_cut_edge" x="0" y="0" width="450" height="450" pivotX="0.5" pivotY="0.5">
+                            <Transform target="angle" value="34 - 68 * clamp([COMPLICATION.GOAL_PROGRESS_VALUE] / [COMPLICATION.GOAL_PROGRESS_TARGET_VALUE], 0, 1)" />
+                            <PartDraw x="0" y="0" width="450" height="450">
+                                <Line startX="224.3" startY="405.5" endX="224.3" endY="416.5">
+                                    <Stroke color="#A0000000" thickness="1.2" cap="BUTT" />
+                                </Line>
+                                <Line startX="225" startY="405.5" endX="225" endY="416.5">
+                                    <Stroke color="#E0FFAD" thickness="0.8" cap="BUTT" />
+                                </Line>
+                            </PartDraw>
+                        </Group>
                     </Compare>
                 </Condition>
             </Complication>
@@ -609,7 +674,7 @@
                         </Font>
                     </Text>
                 </PartText>
-                <PartText x="316" y="365" width="43" height="18">
+                <PartText x="336" y="377" width="43" height="18">
                     <Text align="START">
                         <Font family="sans-serif-condensed" size="13">—</Font>
                     </Text>
@@ -620,11 +685,24 @@
                     </Expressions>
                     <Compare expression="calories_range_valid">
                         <PartDraw x="0" y="0" width="450" height="450">
-                            <Arc centerX="225" centerY="274" width="238" height="230" startAngle="225" endAngle="225" direction="COUNTER_CLOCKWISE">
-                                <Transform target="endAngle" value="225 - 90 * clamp(([COMPLICATION.RANGED_VALUE_VALUE] - [COMPLICATION.RANGED_VALUE_MIN]) / ([COMPLICATION.RANGED_VALUE_MAX] - [COMPLICATION.RANGED_VALUE_MIN]), 0, 1)" />
-                                <Stroke color="#76F400" thickness="10" cap="ROUND" />
+                            <Arc centerX="225" centerY="225" width="372" height="372" startAngle="214" endAngle="214" direction="COUNTER_CLOCKWISE">
+                                <Transform target="endAngle" value="214 - 68 * clamp(([COMPLICATION.RANGED_VALUE_VALUE] - [COMPLICATION.RANGED_VALUE_MIN]) / ([COMPLICATION.RANGED_VALUE_MAX] - [COMPLICATION.RANGED_VALUE_MIN]), 0, 1)" />
+                                <Stroke color="#79EF06" thickness="12" cap="BUTT">
+                                    <RadialGradient centerX="225" centerY="225" radius="192" colors="#254D00 #4A9700 #79EF06 #E0FFAD #A0FF30 #65C900 #2B5B00" positions="0.937500 0.945000 0.957500 0.965625 0.973750 0.990000 1.000000" />
+                                </Stroke>
                             </Arc>
                         </PartDraw>
+                        <Group name="calories_range_cut_edge" x="0" y="0" width="450" height="450" pivotX="0.5" pivotY="0.5">
+                            <Transform target="angle" value="34 - 68 * clamp(([COMPLICATION.RANGED_VALUE_VALUE] - [COMPLICATION.RANGED_VALUE_MIN]) / ([COMPLICATION.RANGED_VALUE_MAX] - [COMPLICATION.RANGED_VALUE_MIN]), 0, 1)" />
+                            <PartDraw x="0" y="0" width="450" height="450">
+                                <Line startX="224.3" startY="405.5" endX="224.3" endY="416.5">
+                                    <Stroke color="#A0000000" thickness="1.2" cap="BUTT" />
+                                </Line>
+                                <Line startX="225" startY="405.5" endX="225" endY="416.5">
+                                    <Stroke color="#E0FFAD" thickness="0.8" cap="BUTT" />
+                                </Line>
+                            </PartDraw>
+                        </Group>
                     </Compare>
                 </Condition>
             </Complication>
@@ -636,7 +714,7 @@
                         </Font>
                     </Text>
                 </PartText>
-                <PartText x="316" y="365" width="43" height="18">
+                <PartText x="336" y="377" width="43" height="18">
                     <Text align="START">
                         <Font family="sans-serif-condensed" size="13">—</Font>
                     </Text>
@@ -648,7 +726,7 @@
                         <Font family="sans-serif-condensed" size="23" weight="BOLD">—</Font>
                     </Text>
                 </PartText>
-                <PartText x="316" y="365" width="43" height="18">
+                <PartText x="336" y="377" width="43" height="18">
                     <Text align="START">
                         <Font family="sans-serif-condensed" size="13">—</Font>
                     </Text>
