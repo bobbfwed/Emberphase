@@ -1,10 +1,10 @@
 # Activity and weather verification
 
-Checked 2026-11-01, before implementing data displays. Target: Galaxy Watch6
-Classic SM-R950, Wear OS 6 / API 36. No physical watch was connected. The owner
-asked to continue and will connect it later. Documentation verification and
-device verification are separate; Samsung's installed services and payloads
-remain unverified.
+Documentation checked 2026-11-01 before implementing data displays. Target:
+Galaxy Watch6 Classic SM-R950, Wear OS 6 / API 36. The watch was subsequently
+connected and its installed provider declarations verified; see
+[device findings](device-providers.md). Actual payloads, goal synchronization,
+and native weather availability remain unverified.
 
 ## What Samsung Health exposes
 
@@ -63,10 +63,10 @@ avoids subscribing twice to each provider just to reproduce a detached gauge.
 There is no cross-slot data sharing, private Samsung API, guessed component name, background
 service, health permission request, or sensor polling in this APK.
 
-Samsung does not publish a stable service-name/payload contract guaranteeing all
-six activity values and goals as third-party complications on this firmware.
-Therefore this project does **not** claim Samsung Health integration is already
-verified. Before assigning defaults, run `Inspect-WatchProviders.ps1` and compare
+The installed Steps provider declares `GOAL_PROGRESS`; Daily Activity does not
+declare numeric progress types. No separately named active-time or calorie
+provider was found. These declarations do **not** prove live Samsung Health
+integration or goal synchronization. Before assigning defaults, compare
 the watch's chooser/payloads with Samsung Health while changing each goal. If
 Samsung only offers an image or combined daily-activity complication, WFF cannot
 extract the three numbers from it. A separate consent-based phone bridge and

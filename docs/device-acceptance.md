@@ -1,7 +1,9 @@
 # Watch6 device acceptance
 
-Status: **pending physical watch connection**. Static schema/build/memory checks
-do not validate Samsung's providers or measure battery life.
+Status: **watch connected; provider declarations verified**. See
+[installed provider findings](device-providers.md). Live payloads, rendering,
+and battery-life verification remain pending; declarations alone do not prove
+these behaviors.
 
 1. Confirm `SM-R950`, API 36, and the installed One UI/Samsung Health/Weather
    versions. Run `Inspect-WatchProviders.ps1` with the explicit watch serial.

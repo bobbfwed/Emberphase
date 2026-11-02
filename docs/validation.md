@@ -1,7 +1,8 @@
 # Validation record
 
 2026-11-01. Windows, Android SDK 36 / build-tools 36.0.0, Android Studio JDK 25,
-Gradle 9.3.1, AGP 9.1.1. Physical watch verification is pending.
+Gradle 9.3.1, AGP 9.1.1. Provider declarations have subsequently been verified
+on the physical watch; live data, rendering, and battery-life checks are pending.
 
 | Check | Result |
 | --- | --- |
@@ -16,6 +17,7 @@ Gradle 9.3.1, AGP 9.1.1. Physical watch verification is pending.
 | Maximum active decoded-resource estimate | 4,272,132 bytes (4.07 MiB) |
 | Maximum ambient decoded-resource estimate | 835,872 bytes (0.80 MiB) |
 | Actual Samsung provider payloads, weather availability, rendering, battery life | Not yet tested on the watch |
+| Watch identity and installed provider declarations | Verified; see `device-providers.md` |
 
 The five lint warnings are the available newer Gradle version and four sets of
 intentional shared weather icon artwork (clear/sunny, light/heavy rain,

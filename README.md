@@ -25,8 +25,10 @@ weather come from the mockup and are not built into the live face.
 
 The [data-source verification](docs/data-sources.md) was written before the data
 displays. Samsung Health phone SDK data and actual on-watch complication
-availability are different interfaces. The watch was not connected; the owner
-asked to continue and will connect it later.
+availability are different interfaces. Installed service declarations and their
+supported types have now been [verified on the watch](docs/device-providers.md).
+Actual data payloads, goal synchronization, and native weather availability
+still need device acceptance checks.
 
 * Steps default to the system step-count complication. Do not assume this is the
   phone-merged Samsung Health count or Samsung's personal goal.
