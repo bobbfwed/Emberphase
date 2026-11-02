@@ -167,3 +167,7 @@ release-asset SHA-256 verification. Memory budgets are 10 MiB active and 4 MiB
 ambient; these are decoded-resource checks, not a battery-life measurement.
 Standard Android lint cannot follow WFF's renderer-resolved resource names;
 `watchface/lint.xml` scopes that unused-resource false positive to WFF resources.
+
+## License
+
+Emberphase is licensed under the [MIT License](LICENSE).
