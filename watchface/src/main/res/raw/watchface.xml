@@ -800,7 +800,7 @@
                         <Transform target="alpha" value="[BATTERY_PERCENT] &gt; 15 ? 255 : 0" />
                         <AnalogClock x="0" y="0" width="450" height="450">
                             <SecondHand resource="second_hand" x="222" y="23" width="6" height="230" pivotX="0.5" pivotY="0.8782609">
-                                <Tick duration="0.18" strength="0.5" />
+                                <Tick duration="0.13" strength="0.5" />
                             </SecondHand>
                         </AnalogClock>
                     </Group>

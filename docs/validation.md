@@ -20,7 +20,7 @@ pending. Ambient rendering and Samsung display offload were observed on-device.
 | Maximum active decoded-resource estimate | 4,356,632 bytes (4.15 MiB) |
 | Maximum ambient decoded-resource estimate | 1,645,872 bytes (1.57 MiB) |
 | Physical watch install / activation / awake rendering | Passed with 0.4.1; activity symbols/targets follow the tracks and weather clears the 8 |
-| Mechanical tick motion | Native 180 ms Tick, strength 0.5; about 1.4–1.5 degrees of overshoot and return observed |
+| Mechanical tick motion | Native 130 ms Tick, strength 0.5; the earlier 180 ms setting had about 1.4–1.5 degrees of overshoot and return observed |
 | Ambient rendering | Orange hands, selected calendar and battery; white hour markers on black; captured while Dozing with display offload active |
 | Samsung steps payload | Live RANGED_VALUE observed from Samsung Health steps service; explicit goal not established |
 | Native weather availability | Unavailable state followed by current temperature, daily high, and condition icon |
@@ -100,3 +100,8 @@ and the alternative custom inset move up 18 units, leaving a clear gap above
 the hour 8. A physical-watch screenshot confirms the new layout with live steps,
 weather, and unavailable-goal dashes. Ambient artwork is unchanged; its recorded
 device verification remains from 0.4.0. Decoded-resource estimates are unchanged.
+
+Version 0.4.2 shortens the native seconds tick from 180 ms to 130 ms, retaining
+strength 0.5. The faster setting was built, schema/memory checked, and installed
+on the SM-R950. The earlier motion recording describes the 180 ms setting;
+the 130 ms setting has not been measured from a new recording.

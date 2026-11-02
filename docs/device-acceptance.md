@@ -1,6 +1,6 @@
 # Watch6 device acceptance
 
-Status: **0.4.1 installed and rendering on the SM-R950** on
+Status: **0.4.2 installed on the SM-R950** on
 2026-11-01. ADB activation succeeded and an awake screenshot confirmed the
 analog hands, moon disc, correct SUN / NOV / 01 drums, battery slider, live
 steps, and native current temperature / daily high / weather icon. Weather
@@ -13,6 +13,10 @@ their concentric track radii. The weather inset sits 18 units higher, separating
 its high-temperature line from the hour 8. The minute editor selection point
 moves to (110,350) at the left side of the smaller cyan runner. Ambient graphics
 are unchanged from 0.4.0; the ambient observations below are from that version.
+
+Version 0.4.2 shortens the seconds tick to 130 ms at strength 0.5. Installation
+and the reported package version were verified; the motion measurements below
+are from the previous 180 ms setting.
 
 The 0.2.0 awake screenshot also confirms the activity channels are concentric
 with the hand spindle, with metallic orange progress and a sharp cut edge over

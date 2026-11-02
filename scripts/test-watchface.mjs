@@ -132,7 +132,7 @@ assert.match(face, /ListConfiguration id="left_inset"[^>]*defaultValue="0"/);
 assert.match(face, /<BooleanConfiguration id="mechanical_seconds">\s*<BooleanOption id="TRUE">\s*<Group name="seconds_visibility"/);
 const tick=face.match(/<SecondHand\b[^>]*>\s*<Tick duration="([^"]+)" strength="([^"]+)"\s*\/>\s*<\/SecondHand>/);
 assert.ok(tick, 'Use the native overshooting Tick for seconds');
-assert.ok(Number(tick[1])>=0.15 && Number(tick[1])<=0.25, 'Allow a visible tick but hold still for most of each second');
+assert.ok(Number(tick[1])>=0.1 && Number(tick[1])<=0.2, 'Allow a brief tick but hold still for most of each second');
 assert.ok(Number(tick[2])>=0.4 && Number(tick[2])<=0.6, 'Overshoot must be visible without a full-step bounce');
 assert.doesNotMatch(face, /\[CONFIGURATION\./, 'Use native list/boolean branches for editor options');
 assert.match(face, /<Group name="optional_ticking_seconds"[^>]*>\s*<Variant mode="AMBIENT" target="alpha" value="0"/);
