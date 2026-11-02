@@ -1,12 +1,18 @@
 # Watch6 device acceptance
 
-Status: **0.4.0 installed, activated, and rendering on the SM-R950** on
+Status: **0.4.1 installed and rendering on the SM-R950** on
 2026-11-01. ADB activation succeeded and an awake screenshot confirmed the
 analog hands, moon disc, correct SUN / NOV / 01 drums, battery slider, live
 steps, and native current temperature / daily high / weather icon. Weather
 initially showed the unavailable state, then populated without changing the
 selected mode. The step source resolved to Samsung Health's steps service and
 returned `RANGED_VALUE`; its explicit goal remains unknown.
+
+The 0.4.1 screenshot confirms the activity symbols and target/dash labels follow
+their concentric track radii. The weather inset sits 18 units higher, separating
+its high-temperature line from the hour 8. The minute editor selection point
+moves to (110,350) at the left side of the smaller cyan runner. Ambient graphics
+are unchanged from 0.4.0; the ambient observations below are from that version.
 
 The 0.2.0 awake screenshot also confirms the activity channels are concentric
 with the hand spindle, with metallic orange progress and a sharp cut edge over

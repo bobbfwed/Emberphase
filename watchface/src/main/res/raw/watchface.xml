@@ -107,7 +107,7 @@
             </PartDraw>
             <!-- Default weather uses the native system data contract. A separate
                  custom mode prevents pretending generic text contains a high. -->
-            <Group name="weather" x="0" y="0" width="450" height="450">
+            <Group name="weather" x="0" y="-18" width="450" height="450">
                 <ListConfiguration id="left_inset">
                     <ListOption id="0">
                         <Group name="weather_content" x="0" y="0" width="450" height="450">
@@ -276,7 +276,7 @@
             </Group>
         </Group>
         <!-- In custom mode, providers own text/title/icon semantics. No parsing. -->
-        <ComplicationSlot slotId="10" displayName="left_slot" x="52" y="212" width="76" height="94" supportedTypes="SHORT_TEXT LONG_TEXT RANGED_VALUE MONOCHROMATIC_IMAGE SMALL_IMAGE EMPTY" isCustomizable="TRUE">
+        <ComplicationSlot slotId="10" displayName="left_slot" x="52" y="194" width="76" height="94" supportedTypes="SHORT_TEXT LONG_TEXT RANGED_VALUE MONOCHROMATIC_IMAGE SMALL_IMAGE EMPTY" isCustomizable="TRUE">
             <Variant mode="AMBIENT" target="alpha" value="0" />
             <BoundingRoundBox x="0" y="0" width="76" height="94" cornerRadius="8" />
             <DefaultProviderPolicy defaultSystemProvider="EMPTY" defaultSystemProviderType="EMPTY" />
@@ -396,7 +396,7 @@
                 </Group>
             </Complication>
         </ComplicationSlot>
-        <!-- Activity bounds include both the numeric inset and its arc (WFF clips at bounds). Concentric radii 150/168/186 share the spindle at 225,225. Unique editor anchors: steps number, cyan runner at x=110,y=372, green arc at x=225,y=411. -->
+        <!-- Activity bounds include both the numeric inset and its arc (WFF clips at bounds). Concentric radii 150/168/186 share the spindle at 225,225. Unique editor anchors: steps number, cyan runner at x=110,y=350, green arc at x=225,y=411. -->
         <ComplicationSlot slotId="20" displayName="steps_slot" x="0" y="0" width="450" height="450" supportedTypes="GOAL_PROGRESS RANGED_VALUE SHORT_TEXT EMPTY" isCustomizable="TRUE">
             <Variant mode="AMBIENT" target="alpha" value="0" />
             <BoundingRoundBox x="132" y="257" width="230" height="126" cornerRadius="8" />
@@ -409,8 +409,8 @@
                         </Font>
                     </Text>
                 </PartText>
-                <PartText x="316" y="343" width="43" height="18">
-                    <Text align="START" isAutoSize="TRUE">
+                <PartText x="312" y="320" width="43" height="18">
+                    <Text align="CENTER" isAutoSize="TRUE">
                         <Font family="sans-serif-condensed" size="13">
                             <Template>%s<Parameter expression="[COMPLICATION.GOAL_PROGRESS_TARGET_VALUE] &gt; 0 ? numberFormat(&quot;#,##0&quot;, [COMPLICATION.GOAL_PROGRESS_TARGET_VALUE]) : &quot;—&quot;" /></Template>
                         </Font>
@@ -451,8 +451,8 @@
                         </Font>
                     </Text>
                 </PartText>
-                <PartText x="316" y="343" width="43" height="18">
-                    <Text align="START">
+                <PartText x="312" y="320" width="43" height="18">
+                    <Text align="CENTER">
                         <Font family="sans-serif-condensed" size="13">—</Font>
                     </Text>
                 </PartText>
@@ -491,8 +491,8 @@
                         </Font>
                     </Text>
                 </PartText>
-                <PartText x="316" y="343" width="43" height="18">
-                    <Text align="START">
+                <PartText x="312" y="320" width="43" height="18">
+                    <Text align="CENTER">
                         <Font family="sans-serif-condensed" size="13">—</Font>
                     </Text>
                 </PartText>
@@ -503,8 +503,8 @@
                         <Font family="sans-serif-condensed" size="34" weight="BOLD">—</Font>
                     </Text>
                 </PartText>
-                <PartText x="316" y="343" width="43" height="18">
-                    <Text align="START">
+                <PartText x="312" y="320" width="43" height="18">
+                    <Text align="CENTER">
                         <Font family="sans-serif-condensed" size="13">—</Font>
                     </Text>
                 </PartText>
@@ -522,8 +522,8 @@
                         </Font>
                     </Text>
                 </PartText>
-                <PartText x="326" y="360" width="43" height="18">
-                    <Text align="START" isAutoSize="TRUE">
+                <PartText x="325" y="333" width="43" height="18">
+                    <Text align="CENTER" isAutoSize="TRUE">
                         <Font family="sans-serif-condensed" size="13">
                             <Template>%s<Parameter expression="[COMPLICATION.GOAL_PROGRESS_TARGET_VALUE] &gt; 0 ? numberFormat(&quot;#,##0&quot;, [COMPLICATION.GOAL_PROGRESS_TARGET_VALUE]) : &quot;—&quot;" /></Template>
                         </Font>
@@ -564,8 +564,8 @@
                         </Font>
                     </Text>
                 </PartText>
-                <PartText x="326" y="360" width="43" height="18">
-                    <Text align="START">
+                <PartText x="325" y="333" width="43" height="18">
+                    <Text align="CENTER">
                         <Font family="sans-serif-condensed" size="13">—</Font>
                     </Text>
                 </PartText>
@@ -604,8 +604,8 @@
                         </Font>
                     </Text>
                 </PartText>
-                <PartText x="326" y="360" width="43" height="18">
-                    <Text align="START">
+                <PartText x="325" y="333" width="43" height="18">
+                    <Text align="CENTER">
                         <Font family="sans-serif-condensed" size="13">—</Font>
                     </Text>
                 </PartText>
@@ -616,8 +616,8 @@
                         <Font family="sans-serif-condensed" size="23" weight="BOLD">—</Font>
                     </Text>
                 </PartText>
-                <PartText x="326" y="360" width="43" height="18">
-                    <Text align="START">
+                <PartText x="325" y="333" width="43" height="18">
+                    <Text align="CENTER">
                         <Font family="sans-serif-condensed" size="13">—</Font>
                     </Text>
                 </PartText>
@@ -635,8 +635,8 @@
                         </Font>
                     </Text>
                 </PartText>
-                <PartText x="336" y="377" width="43" height="18">
-                    <Text align="START" isAutoSize="TRUE">
+                <PartText x="337" y="345" width="43" height="18">
+                    <Text align="CENTER" isAutoSize="TRUE">
                         <Font family="sans-serif-condensed" size="13">
                             <Template>%s<Parameter expression="[COMPLICATION.GOAL_PROGRESS_TARGET_VALUE] &gt; 0 ? numberFormat(&quot;#,##0&quot;, [COMPLICATION.GOAL_PROGRESS_TARGET_VALUE]) : &quot;—&quot;" /></Template>
                         </Font>
@@ -677,8 +677,8 @@
                         </Font>
                     </Text>
                 </PartText>
-                <PartText x="336" y="377" width="43" height="18">
-                    <Text align="START">
+                <PartText x="337" y="345" width="43" height="18">
+                    <Text align="CENTER">
                         <Font family="sans-serif-condensed" size="13">—</Font>
                     </Text>
                 </PartText>
@@ -717,8 +717,8 @@
                         </Font>
                     </Text>
                 </PartText>
-                <PartText x="336" y="377" width="43" height="18">
-                    <Text align="START">
+                <PartText x="337" y="345" width="43" height="18">
+                    <Text align="CENTER">
                         <Font family="sans-serif-condensed" size="13">—</Font>
                     </Text>
                 </PartText>
@@ -729,8 +729,8 @@
                         <Font family="sans-serif-condensed" size="23" weight="BOLD">—</Font>
                     </Text>
                 </PartText>
-                <PartText x="336" y="377" width="43" height="18">
-                    <Text align="START">
+                <PartText x="337" y="345" width="43" height="18">
+                    <Text align="CENTER">
                         <Font family="sans-serif-condensed" size="13">—</Font>
                     </Text>
                 </PartText>

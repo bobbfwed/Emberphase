@@ -1,7 +1,7 @@
 # Validation record
 
 2026-11-01. Windows, Android SDK 36 / build-tools 36.0.0, Android Studio JDK 25,
-Gradle 9.3.1, AGP 9.1.1. Version 0.4.0 was installed and activated on the
+Gradle 9.3.1, AGP 9.1.1. Version 0.4.1 was installed and rendered on the
 physical SM-R950. Awake rendering, live step text/gauge, and native weather
 current temperature / high / condition were observed. Goal synchronization,
 source-app comparisons, extended ambient behavior, and battery-life checks are
@@ -19,7 +19,7 @@ pending. Ambient rendering and Samsung display offload were observed on-device.
 | Google WFF memory evaluator | Passed 10 MiB active / 4 MiB ambient budgets |
 | Maximum active decoded-resource estimate | 4,356,632 bytes (4.15 MiB) |
 | Maximum ambient decoded-resource estimate | 1,645,872 bytes (1.57 MiB) |
-| Physical watch install / activation / awake rendering | Passed with 0.4.0; weekday/month/date order and stronger tick |
+| Physical watch install / activation / awake rendering | Passed with 0.4.1; activity symbols/targets follow the tracks and weather clears the 8 |
 | Mechanical tick motion | Native 180 ms Tick, strength 0.5; about 1.4–1.5 degrees of overshoot and return observed |
 | Ambient rendering | Orange hands, selected calendar and battery; white hour markers on black; captured while Dozing with display offload active |
 | Samsung steps payload | Live RANGED_VALUE observed from Samsung Health steps service; explicit goal not established |
@@ -90,3 +90,13 @@ and activity graphics are absent in ambient. The physical watch reported
 Dozing and active display offload when its ambient screenshot was captured.
 The preview renderer uses typographic text bounds to avoid losing the final
 letter when Windows substitutes a wider font for unavailable Arial Narrow.
+
+Version 0.4.1 places the left activity symbols on their respective 150/168/186
+unit radii beyond the track ends. The runner and flame are reduced to keep the
+symbols separate. Right-side target labels are centered on those same radii;
+geometry checks allow less than one unit of rounding error. The minute slot's
+distinct editor selection point follows the runner to (110,350). Both weather
+and the alternative custom inset move up 18 units, leaving a clear gap above
+the hour 8. A physical-watch screenshot confirms the new layout with live steps,
+weather, and unavailable-goal dashes. Ambient artwork is unchanged; its recorded
+device verification remains from 0.4.0. Decoded-resource estimates are unchanged.

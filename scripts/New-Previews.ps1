@@ -77,19 +77,19 @@ foreach($mode in @('normal','low-battery','ambient','ambient-low-battery','unava
         if($battery -le 20) { RoundFill '#ffd535' 358 274 5 13 2 }
         if($battery -le 10) { RoundFill '#ff352a' 377 274 5 13 2 }
         if($mode -eq 'unavailable') {
-            Asset 'wx_0' 63 212 47 47
-            Label $dash 52 254 29 '#f4f4ef' 75; Label ('H '+$dash) 52 285 14 '#f4f4ef' 75
+            Asset 'wx_0' 63 194 47 47
+            Label $dash 52 236 29 '#f4f4ef' 75; Label ('H '+$dash) 52 267 14 '#f4f4ef' 75
             Label $dash 169 257 34 '#f4f4ef' 112; Label $dash 178 307 23 '#f4f4ef' 53; Label $dash 262 307 23 '#f4f4ef' 57
-            Label $dash 316 341 13 '#eeeeeb' 43; Label $dash 326 358 13 '#eeeeeb' 43; Label $dash 336 375 13 '#eeeeeb' 43
+            Label $dash 312 318 13 '#eeeeeb' 43; Label $dash 325 331 13 '#eeeeeb' 43; Label $dash 337 343 13 '#eeeeeb' 43
         } else {
             # These are mockup fixtures, never production data or WFF constants.
-            Asset 'wx_14' 63 212 47 47
-            Label ('56'+$degree) 52 254 29 '#f4f4ef' 75; Label ('H 61'+$degree+'F') 52 285 14 '#f4f4ef' 75
+            Asset 'wx_14' 63 194 47 47
+            Label ('56'+$degree) 52 236 29 '#f4f4ef' 75; Label ('H 61'+$degree+'F') 52 267 14 '#f4f4ef' 75
             Label '6,482' 169 257 34 '#f4f4ef' 112; Label '42' 178 307 23 '#f4f4ef' 53; Label '380' 262 307 23 '#f4f4ef' 57
             FillGauge 150 (6482/8000) @('#662400','#bf4005','#ff7415','#ffd79b','#ff9c40','#df5206','#702500')
             FillGauge 168 (42/60) @('#004955','#008f9e','#00d6e9','#b2faff','#38e9f4','#00a7bc','#004e60')
             FillGauge 186 (380/500) @('#254d00','#4a9700','#79ef06','#e0ffad','#a0ff30','#65c900','#2b5b00')
-            Label '8,000' 316 341 13 '#eeeeeb' 43; Label '60' 326 358 13 '#eeeeeb' 43; Label '500' 336 375 13 '#eeeeeb' 43
+            Label '8,000' 312 318 13 '#eeeeeb' 43; Label '60' 325 331 13 '#eeeeeb' 43; Label '500' 337 343 13 '#eeeeeb' 43
         }
         Asset 'hour_hand' 214 93 22 150 305 0.5 0.88
         Asset 'minute_hand' 217 45 16 198 60 0.5 0.9090909

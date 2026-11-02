@@ -176,7 +176,14 @@ Label 'STEPS' 188 292 12 '#e2e3df' 74
 Runner 160 310 '#00d8eb'; Label 'MIN' 176 328 11 '#e2e3df' 42
 Flame 240 309 '#72f000'; Label 'CAL' 257 328 11 '#e2e3df' 50
 Track 150; Track 168; Track 186
-Feet 125 339 '#ff6814'; Runner 105 357 '#00d8eb'; Flame 104 385 '#72f000'
+# Continue each track's radius just beyond its left end (222 degrees).
+# Icon offsets account for the centers of the individual drawing primitives.
+$stepsIcon=RingPoint 150 222; $minutesIcon=RingPoint 168 222; $caloriesIcon=RingPoint 186 222
+Feet ($stepsIcon.X-5) ($stepsIcon.Y-4.5) '#ff6814'
+$iconState=$script:g.Save(); $script:g.TranslateTransform($minutesIcon.X,$minutesIcon.Y); $script:g.ScaleTransform(0.72,0.72)
+Runner -7 -10.5 '#00d8eb'; $script:g.Restore($iconState)
+$iconState=$script:g.Save(); $script:g.TranslateTransform($caloriesIcon.X,$caloriesIcon.Y); $script:g.ScaleTransform(0.72,0.72)
+Flame -7.5 -11.5 '#72f000'; $script:g.Restore($iconState)
 Save 'dial_frame'
 
 # Foreground calendar rim: transparent aperture, opaque lips, and shadows over

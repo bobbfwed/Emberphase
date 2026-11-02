@@ -149,11 +149,14 @@ for (const id of [20,30,40]) {
   const attribute = (tag, name) => Number(tag.match(new RegExp(`\\b${name}="([^"]+)"`))[1]);
   const b = Object.fromEntries(['x','y','width','height'].map(n => [n,attribute(tag,n)]));
   activityBounds.set(id,b);
+  const radius = {20:150,30:168,40:186}[id];
   for (const text of slot.matchAll(/<PartText[^>]+/g)) {
     const x=attribute(text[0],'x'), y=attribute(text[0],'y'), w=attribute(text[0],'width'), h=attribute(text[0],'height');
     assert.ok(x>=b.x && y>=b.y && x+w<=b.x+b.width && y+h<=b.y+b.height, `Slot ${id} clips a text field`);
+    if (w===43 && h===18) {
+      assert.ok(Math.abs(Math.hypot(x+w/2-225,y+h/2-225)-radius)<1, `Slot ${id} goal must follow its track radius`);
+    }
   }
-  const radius = {20:150,30:168,40:186}[id];
   for (const arc of slot.matchAll(/<Arc\b[\s\S]*?<\/Arc>/g)) {
     assert.equal(attribute(arc[0],'centerX'),225);
     assert.equal(attribute(arc[0],'centerY'),225);
@@ -170,7 +173,7 @@ for (const id of [20,30,40]) {
     assert.ok(x-7>=b.x && x+7<=b.x+b.width && y-7>=b.y && y+7<=b.y+b.height, `Slot ${id} clips its metal band or cut edge`);
   }
 }
-for (const [id,x,y] of [[20,225,275],[30,110,372],[40,225,411]]) {
+for (const [id,x,y] of [[20,225,275],[30,110,350],[40,225,411]]) {
   const hits = [...activityBounds].filter(([,b]) => x>b.x && y>b.y && x<b.x+b.width && y<b.y+b.height).map(([id])=>id);
   assert.deepEqual(hits,[id], `Editor anchor for slot ${id} must not overlap another activity slot`);
 }
