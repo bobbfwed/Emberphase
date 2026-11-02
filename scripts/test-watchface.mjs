@@ -6,13 +6,31 @@ import { fileURLToPath } from 'node:url';
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const face = fs.readFileSync(path.join(root, 'watchface/src/main/res/raw/watchface.xml'), 'utf8');
 const manifest = fs.readFileSync(path.join(root, 'watchface/src/main/AndroidManifest.xml'), 'utf8');
+const stringsXml = fs.readFileSync(path.join(root, 'watchface/src/main/res/values/strings.xml'), 'utf8');
 const unescapeXml = s => s.replace(/&quot;/g, '"').replace(/&apos;/g, "'")
   .replace(/&gt;/g, '>').replace(/&lt;/g, '<').replace(/&amp;/g, '&');
+const strings = new Map([...stringsXml.matchAll(/<string\b([^>]*)>([\s\S]*?)<\/string>/g)]
+  .map(m => [m[1].match(/\bname="([^"]+)"/)[1],unescapeXml(m[2])]));
+for (const match of face.matchAll(/\bdisplayName="([^"]+)"/g)) {
+  const label = strings.get(match[1]);
+  assert.ok(label !== undefined, `Missing editor label ${match[1]}`);
+  // Samsung formats schema labels even with Android formatted="false".
+  assert.ok(!label.replace(/%%/g,'').includes('%'), `Unsafe percent format in static editor label ${match[1]}: ${label}`);
+}
 const compiled = new Map();
 const clamp = (n, lo, hi) => Math.min(hi, Math.max(lo, n));
 function numberFormat(format, n) {
   if (format === '00') return Math.round(n).toString().padStart(2, '0');
+  assert.equal(format, '#,##0');
   return Math.round(n).toLocaleString('en-US');
+}
+// WFF string literals require double quotes. JavaScript also accepts single
+// quotes, so the expression evaluator alone cannot catch this device failure.
+for (const match of face.matchAll(/\b(?:expression|value)="([^"]*)"/g)) {
+  assert.ok(!match[1].includes("'"), `Use XML-escaped double quotes in WFF expressions: ${match[1]}`);
+}
+for (const match of unescapeXml(face).matchAll(/numberFormat\("([^"]*)"/g)) {
+  assert.ok(['#,##0', '00'].includes(match[1]), `Untested number pattern: ${match[1]}`);
 }
 function evaluate(expression, data) {
   if (!compiled.has(expression)) {

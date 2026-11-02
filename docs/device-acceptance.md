@@ -1,9 +1,17 @@
 # Watch6 device acceptance
 
-Status: **watch connected; provider declarations verified**. See
-[installed provider findings](device-providers.md). Live payloads, rendering,
-and battery-life verification remain pending; declarations alone do not prove
-these behaviors.
+Status: **0.1.3 installed, activated, and rendering on the SM-R950** on
+2026-11-01. ADB activation succeeded and an awake screenshot confirmed the
+analog hands, moon disc, correct NOV / SUN / 01 drums, battery slider, live
+steps, and native current temperature / daily high / weather icon. Weather
+initially showed the unavailable state, then populated without changing the
+selected mode. The step source resolved to Samsung Health's steps service and
+returned `RANGED_VALUE`; its explicit goal remains unknown.
+
+See [installed provider findings](device-providers.md). Goal synchronization,
+active minutes/calories, comparison against the source apps, editor behavior,
+ambient rendering, and battery-life measurements remain pending. The successful
+activation does not by itself confirm the face appears in every picker view.
 
 1. Confirm `SM-R950`, API 36, and the installed One UI/Samsung Health/Weather
    versions. Run `Inspect-WatchProviders.ps1` with the explicit watch serial.
@@ -41,10 +49,10 @@ these behaviors.
 
 | Metric | Provider / component | Returned type | Units | Value matches | Goal matches / follows changes |
 | --- | --- | --- | --- | --- | --- |
-| Steps | Pending | Pending | Pending | Pending | Pending |
+| Steps | Samsung Health `StepsComplicationProviderService`, selected through system STEP_COUNT | RANGED_VALUE observed | Steps | Live text and gauge rendered; source-app comparison pending | Explicit goal absent; goal label remains unknown |
 | Active minutes | Pending | Pending | Pending | Pending | Pending |
 | Activity calories | Pending | Pending | Pending | Pending | Pending |
-| Current temp / high / condition | Pending | Native WFF or chosen complication | Pending | Pending | N/A |
+| Current temp / high / condition | Native WFF weather | Current / daily high / condition observed | Fahrenheit on this watch | Rendered after initial unavailable state; source-app comparison pending | N/A |
 
 If there is no individual provider with the required numeric values and goals,
 stop at this supported boundary. Do not replace it with estimates or hidden

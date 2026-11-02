@@ -27,8 +27,11 @@ The [data-source verification](docs/data-sources.md) was written before the data
 displays. Samsung Health phone SDK data and actual on-watch complication
 availability are different interfaces. Installed service declarations and their
 supported types have now been [verified on the watch](docs/device-providers.md).
-Actual data payloads, goal synchronization, and native weather availability
-still need device acceptance checks.
+Version 0.1.3 is installed and active on the physical watch. Awake rendering,
+live Samsung Health steps (`RANGED_VALUE`), and native weather current / high /
+condition have been observed. Goal synchronization, source-app comparisons,
+other activity payloads, ambient behavior, and battery-life measurements still
+need [device acceptance checks](docs/device-acceptance.md).
 
 * Steps default to the system step-count complication. Do not assume this is the
   phone-merged Samsung Health count or Samsung's personal goal.

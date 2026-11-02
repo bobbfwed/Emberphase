@@ -8,5 +8,5 @@
     <string name="steps_slot">Steps · choose a steps provider</string>
     <string name="minutes_slot">Active minutes · choose an activity provider</string>
     <string name="calories_slot">Active calories · choose an activity provider</string>
-    <string name="seconds_hand" formatted="false">Ticking seconds · off below 15% battery</string>
+    <string name="seconds_hand">Ticking seconds · off at 15 percent or less</string>
 </resources>

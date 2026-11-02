@@ -1,8 +1,10 @@
 # Validation record
 
 2026-11-01. Windows, Android SDK 36 / build-tools 36.0.0, Android Studio JDK 25,
-Gradle 9.3.1, AGP 9.1.1. Provider declarations have subsequently been verified
-on the physical watch; live data, rendering, and battery-life checks are pending.
+Gradle 9.3.1, AGP 9.1.1. Version 0.1.3 was installed and activated on the
+physical SM-R950. Awake rendering, live step text/gauge, and native weather
+current temperature / high / condition were observed. Goal synchronization,
+source-app comparisons, ambient behavior, and battery-life checks are pending.
 
 | Check | Result |
 | --- | --- |
@@ -16,7 +18,10 @@ on the physical watch; live data, rendering, and battery-life checks are pending
 | Google WFF memory evaluator | Passed 10 MiB active / 4 MiB ambient budgets |
 | Maximum active decoded-resource estimate | 4,272,132 bytes (4.07 MiB) |
 | Maximum ambient decoded-resource estimate | 835,872 bytes (0.80 MiB) |
-| Actual Samsung provider payloads, weather availability, rendering, battery life | Not yet tested on the watch |
+| Physical watch install / activation / awake rendering | Passed with 0.1.3; observed via ADB screenshot |
+| Samsung steps payload | Live RANGED_VALUE observed from Samsung Health steps service; explicit goal not established |
+| Native weather availability | Unavailable state followed by current temperature, daily high, and condition icon |
+| Other activity payloads / source-app comparisons / ambient / battery life | Pending |
 | Watch identity and installed provider declarations | Verified; see `device-providers.md` |
 
 The five lint warnings are the available newer Gradle version and four sets of
@@ -31,6 +36,17 @@ including calendar rollovers/leap years (2000 and 2100), invalid targets/ranges,
 values beyond a goal, battery slider endpoints, seconds cutoff, complete gauge
 clip bounds, distinct editor anchors, resource presence, and the polling policy.
 They do not emulate the Wear OS renderer or prove a provider's units/semantics.
+
+The physical-device run caught two issues that schema validation did not:
+Samsung formats editor labels even when Android's `formatted="false"` is set,
+so a literal percent in a label caused `FormatFlagsConversionMismatchException`.
+The label now spells out "percent". WFF expressions also require double-quoted
+string literals; the original single quotes produced shifted calendar text and
+a malformed DecimalFormat pattern that stopped rendering. All expression
+strings now use `&quot;`, including grouped numeric patterns. See the official
+[expression string and formatting rules](https://developer.android.com/reference/wear-os/wff/common/attributes/arithmetic-expression).
+Regression guards cover both failures, since the JavaScript expression test
+alone accepts single quotes that the WFF runtime does not.
 
 Previews are illustrative artwork composites. The native moon position is
 coarse; the rotating disc is decorative. Decoded-resource estimates are not
