@@ -40,6 +40,17 @@ function FillGauge([float]$radius,[float]$ratio,[string[]]$colors) {
     $p=Pen $colors[3] 1; $p.StartCap='Flat'; $p.EndCap='Flat'
     $script:g.DrawLine($p,(RingPoint ($radius-5.5) $angle),(RingPoint ($radius+5.5) $angle)); $p.Dispose()
 }
+function DrumLabel([string]$text,[float]$x,[float]$y,[float]$width,[bool]$receding,[string]$color='#f6f6f0') {
+    $state=$script:g.Save()
+    if($receding) {
+        $script:g.TranslateTransform(($x+$width/2),($y+13))
+        $script:g.ScaleTransform(0.94,0.58)
+        $script:g.TranslateTransform((-$x-$width/2),(-$y-13))
+        $color='#c3c3c3'
+    }
+    Label $text $x ($y-2) 22 $color $width
+    $script:g.Restore($state)
+}
 
 foreach($mode in @('normal','low-battery','ambient','unavailable','seconds')) {
     Canvas 450 450
@@ -53,13 +64,14 @@ foreach($mode in @('normal','low-battery','ambient','unavailable','seconds')) {
     } else {
         Asset 'moon_disc' 135 40 180 180 (90-14*180/29.530588853)
         Asset 'dial_frame' 0 0 450 450
-        Label 'OCT' 136 116 14 '#555555' 57; Label 'NOV' 136 131 21 '#f6f6f0' 57; Label 'DEC' 136 152 12 '#454545' 57
-        Label 'SAT' 197 116 14 '#555555' 55; Label 'SUN' 197 131 21 '#ff6a15' 55; Label 'MON' 197 152 12 '#454545' 55
-        Label '31' 258 116 14 '#555555' 55; Label '01' 258 131 21 '#f6f6f0' 55; Label '02' 258 152 12 '#454545' 55
+        DrumLabel 'OCT' 136 126 57 $true; DrumLabel 'NOV' 136 149 57 $false; DrumLabel 'DEC' 136 167 57 $true
+        DrumLabel 'SAT' 197 126 55 $true; DrumLabel 'SUN' 197 149 55 $false '#ff6a15'; DrumLabel 'MON' 197 167 55 $true
+        DrumLabel '31' 258 126 55 $true; DrumLabel '01' 258 149 55 $false; DrumLabel '02' 258 167 55 $true
+        Asset 'calendar_bezel' 125 125 200 68
         $battery=73; if($mode -eq 'low-battery') { $battery=5 }
-        Asset 'battery_slider' 367 (274-99*$battery/100) 21 13
-        if($battery -le 20) { RoundFill '#ffd535' 366 274 5 13 2 }
-        if($battery -le 10) { RoundFill '#ff352a' 385 274 5 13 2 }
+        Asset 'battery_slider' 359 (274-99*$battery/100) 21 13
+        if($battery -le 20) { RoundFill '#ffd535' 358 274 5 13 2 }
+        if($battery -le 10) { RoundFill '#ff352a' 377 274 5 13 2 }
         if($mode -eq 'unavailable') {
             Asset 'wx_0' 63 212 47 47
             Label $dash 52 254 29 '#f4f4ef' 75; Label ('H '+$dash) 52 285 14 '#f4f4ef' 75
@@ -77,7 +89,7 @@ foreach($mode in @('normal','low-battery','ambient','unavailable','seconds')) {
         }
         Asset 'hour_hand' 214 93 22 150 305 0.5 0.88
         Asset 'minute_hand' 217 45 16 198 60 0.5 0.9090909
-        if($mode -eq 'seconds') { Asset 'second_hand' 222 23 6 230 132 0.5 0.8782609 }
+        if($battery -gt 15) { Asset 'second_hand' 222 23 6 230 132 0.5 0.8782609 }
         Asset 'center_cap' 211 211 28 28
     }
     Save $mode

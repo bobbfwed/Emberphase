@@ -1,7 +1,7 @@
 # Validation record
 
 2026-11-01. Windows, Android SDK 36 / build-tools 36.0.0, Android Studio JDK 25,
-Gradle 9.3.1, AGP 9.1.1. Version 0.2.0 was installed and activated on the
+Gradle 9.3.1, AGP 9.1.1. Version 0.3.0 was installed and activated on the
 physical SM-R950. Awake rendering, live step text/gauge, and native weather
 current temperature / high / condition were observed. Goal synchronization,
 source-app comparisons, ambient behavior, and battery-life checks are pending.
@@ -16,9 +16,10 @@ source-app comparisons, ambient behavior, and battery-life checks are pending.
 | Gradle resource-only assertion and Android lint | Passed; lint has 0 errors and 5 warnings |
 | Calendar / data / bounds contracts | Passed, including 2,192 dates |
 | Google WFF memory evaluator | Passed 10 MiB active / 4 MiB ambient budgets |
-| Maximum active decoded-resource estimate | 4,272,132 bytes (4.07 MiB) |
+| Maximum active decoded-resource estimate | 4,326,532 bytes (4.13 MiB) |
 | Maximum ambient decoded-resource estimate | 835,872 bytes (0.80 MiB) |
-| Physical watch install / activation / awake rendering | Passed with 0.2.0; observed via ADB screenshot, including concentric tracks and live metal band |
+| Physical watch install / activation / awake rendering | Passed with 0.3.0; inset 3/9, lowered calendar, live metal band, and enabled seconds observed |
+| Mechanical tick motion | Native 80 ms Tick; overshoot and return observed in screen recording |
 | Samsung steps payload | Live RANGED_VALUE observed from Samsung Health steps service; explicit goal not established |
 | Native weather availability | Unavailable state followed by current temperature, daily high, and condition icon |
 | Other activity payloads / source-app comparisons / ambient / battery life | Pending |
@@ -63,3 +64,19 @@ alignment with both goal and ranged progress. No animation, sensor subscription,
 or additional complication subscription was added. The host preview also fixes
 PowerShell's integer-overload rounding of fractional progress, so its fixture
 bands now show their actual partial fills.
+
+The 0.3.0 layout moves 3/9 to radius 174 and shifts the battery assembly eight
+units inward to leave the 3 clear. The calendar rim moves down 18 units; the
+adjacent live text is compressed vertically to 58% and partly hidden by a
+cropped 200-by-68 foreground bezel with shadows. This is a static visual
+projection of a drum, with calendar fields still updating only as needed.
+
+Seconds now use native [`Tick`](https://developer.android.com/reference/wear-os/wff/clock/tick)
+with duration 0.08 and strength 0.2. The option defaults to enabled, with a new
+configuration ID so an existing installation receives the requested default.
+Two ticks in a 4.35-second recording exhibited approximately 0.28 degrees of
+overshoot followed by return; sparse captured frames do not establish an exact
+frame count for every tick. No continuous sweep or millisecond expression was
+introduced. The native renderer handles the short burst; real battery impact
+still needs measurement. The cropped rim is hidden with the active dial in
+ambient, and seconds remain gated by ambient mode and the 15% cutoff.

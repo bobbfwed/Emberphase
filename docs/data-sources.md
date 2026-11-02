@@ -100,8 +100,9 @@ Sources: [WFF weather availability and staleness](https://developer.android.com/
 
 No executable application code, networking permission, location polling, heart
 rate sampling, alarms, or wake locks. Native clock hands and provider/system
-updates drive the face. Seconds default off; optional seconds tick at 1 Hz,
-never sweep, and disappear at 15% battery or less. Date drums and the mechanical
+updates drive the face. Mechanical seconds default on, with a native 80 ms
+overshoot-and-return tick once per second. They can be disabled in the editor
+and disappear at 15% battery or less. Date drums and the mechanical
 disc use date/moon sources rather than millisecond expressions. The native moon
 position is coarse (0–28); the decorative two-moon disc is not an astronomical
 ephemeris. Ambient mode displays dimmed hour/minute hands and sparse white

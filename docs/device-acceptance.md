@@ -1,6 +1,6 @@
 # Watch6 device acceptance
 
-Status: **0.2.0 installed, activated, and rendering on the SM-R950** on
+Status: **0.3.0 installed, activated, and rendering on the SM-R950** on
 2026-11-01. ADB activation succeeded and an awake screenshot confirmed the
 analog hands, moon disc, correct NOV / SUN / 01 drums, battery slider, live
 steps, and native current temperature / daily high / weather icon. Weather
@@ -13,6 +13,14 @@ with the hand spindle, with metallic orange progress and a sharp cut edge over
 the exposed toothed track. Cyan/green filled bands are shown in the illustrative
 previews; their providers remain unset on the watch. Schema, memory, Gradle
 resource-only, lint, and expression/geometry checks pass for this revision.
+
+The 0.3.0 screenshot confirms clear inner-radius 3/9 numerals, the inset battery
+assembly, and the lowered calendar with foreshortened neighbors behind its rim.
+A short screen recording confirms seconds moving past a mark and returning:
+two captured ticks show about 0.28 degrees of settling motion (roughly 5% of a
+six-degree step). This is a pixel-derived observation, not precision timing.
+The native Tick is configured for 80 ms, strength 0.2, with seconds enabled by
+default. Ambient and low-battery suppression still require physical testing.
 
 See [installed provider findings](device-providers.md). Goal synchronization,
 active minutes/calories, comparison against the source apps, editor behavior,
@@ -44,7 +52,7 @@ activation does not by itself confirm the face appears in every picker view.
    twin-moon mechanism driven by WFF's coarse 0–28 moon position, not a precise
    astronomical calculation. Do not adjust the date of a watch collecting live
    health data solely to test rollover; use a test device or controlled preview.
-9. Enable optional seconds, then test at 15% and below: seconds must disappear,
+9. Check the default mechanical seconds and editor toggle, then test at 15% and below: seconds must disappear,
    with no flashing effects. Yellow lamp activates at 20%, red at 10%.
 10. Check always-on: no weather, activity tracks, moon, calendar, seconds, or
     bright texture. Only dim hour/minute hands and sparse indices remain. Check

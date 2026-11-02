@@ -11,15 +11,18 @@ battery slider and steady low-battery lamps, a weather/custom-data inset, and
 three concentric activity bands centered on the hand spindle. The colored
 bands have a metallic sheen and sharp cut edges; fine rack teeth are exposed
 in the unfilled recessed tracks. Date changes are instantaneous, not animated.
-Optional seconds tick at 1 Hz and default **off**. Seconds disappear at 15%
-battery or below. Always-on mode keeps only dimmed hour/minute hands and sparse
-indices on black.
+The 3 and 9 share the inner numeral radius. The lowered calendar window partly
+covers vertically foreshortened adjacent labels to suggest rotating drums.
+Mechanical seconds default **on**: each second has a brief native 80 ms tick,
+a small overshoot, and a return to the correct mark. The editor can disable
+seconds; they disappear at 15% battery or below. Always-on mode keeps only
+dimmed hour/minute hands and sparse indices on black.
 
 ![Illustrative normal artwork composite](docs/previews/normal.png)
 
 These [normal](docs/previews/normal.png), [low-battery](docs/previews/low-battery.png),
 [ambient](docs/previews/ambient.png), [empty-data](docs/previews/unavailable.png),
-and [optional-seconds](docs/previews/seconds.png) previews are Windows artwork
+and [seconds](docs/previews/seconds.png) previews are Windows artwork
 composites, **not Wear OS screenshots**. Their example activity values/goals and
 weather come from the mockup and are not built into the live face.
 
@@ -29,7 +32,7 @@ The [data-source verification](docs/data-sources.md) was written before the data
 displays. Samsung Health phone SDK data and actual on-watch complication
 availability are different interfaces. Installed service declarations and their
 supported types have now been [verified on the watch](docs/device-providers.md).
-Version 0.2.0 is installed and active on the physical watch. Awake rendering,
+Version 0.3.0 is installed and active on the physical watch. Awake rendering,
 live Samsung Health steps (`RANGED_VALUE`), and native weather current / high /
 condition have been observed. Goal synchronization, source-app comparisons,
 other activity payloads, ambient behavior, and battery-life measurements still

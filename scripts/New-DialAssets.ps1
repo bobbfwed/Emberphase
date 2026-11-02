@@ -140,7 +140,7 @@ for($index=0;$index -lt 60;$index++) {
 }
 foreach($hour in @(1,2,3,4,8,9,10,11,12)) {
     $a=$hour*30*[math]::PI/180; $radius=174; $size=26
-    if($hour -in @(3,9,12)) { $radius=201; $size=29 }
+    if($hour -eq 12) { $radius=201; $size=29 }
     $x=225+$radius*[math]::Sin($a); $y=225-$radius*[math]::Cos($a)
     Label ([string]$hour) ($x-25) ($y-$size*0.65) $size '#f4f4f0' 50
 }
@@ -153,26 +153,58 @@ $p=Pen '#494b48' 3; $script:g.DrawPath($p,$aperture); $p.Dispose()
 $script:g.CompositingMode='SourceCopy'; $transparent=New-Object System.Drawing.SolidBrush([System.Drawing.Color]::Transparent)
 $script:g.FillPath($transparent,$aperture); $transparent.Dispose(); $script:g.CompositingMode='SourceOver'; $aperture.Dispose()
 
-RoundFill '#555653' 128 110 194 58 8
-RoundFill '#080909' 129 111 192 56 8
-RoundFill '#292b2c' 132 115 186 49 5
-RoundFill '#000000' 135 118 180 43 3
-foreach($divider in @(194,254)) { Line '#55534c' 2 $divider 119 $divider 160; Line '#0e0e0e' 1 ($divider+2) 119 ($divider+2) 160 }
-for($i=0;$i -lt 11;$i++) {
-    $alphaShade=18+$i*2; $shade='#{0:X2}{0:X2}{0:X2}' -f $alphaShade
-    Line $shade 1 136 (118+$i) 314 (118+$i); Line $shade 1 136 (161-$i) 314 (161-$i)
+# The drum body sits lower, with a cylindrical light band behind live text.
+# A separate foreground bezel occludes the receding rows after text is drawn.
+RoundFill '#030404' 128 128 194 62 8
+foreach($drumX in @(135,195,255)) {
+    $rect=[System.Drawing.RectangleF]::new($drumX,134,60,50)
+    $b=New-Object System.Drawing.Drawing2D.LinearGradientBrush($rect,(C '#030404'),(C '#030404'),90)
+    $blend=New-Object System.Drawing.Drawing2D.ColorBlend(5)
+    $blend.Colors=@((C '#030404'),(C '#181c1e'),(C '#111416'),(C '#1c2022'),(C '#020303'))
+    $blend.Positions=[single[]]@(0,0.24,0.5,0.76,1)
+    $b.InterpolationColors=$blend; $script:g.FillRectangle($b,$rect); $b.Dispose()
 }
+# Move the battery assembly inward so the inner-radius 3 remains unobstructed.
+$batteryState=$script:g.Save(); $script:g.TranslateTransform(-8,0)
 RoundFill '#41413f' 361 161 33 129 7; RoundFill '#090909' 363 163 29 125 6
 RoundFill '#000000' 366 166 23 119 4
 for($i=0;$i -le 10;$i++) { $y=175+$i*10; Line '#b3b9b7' 1 374 $y 381 $y }
 Label 'F' 343 169 14 '#e7e8e6' 16; Label 'BAT' 324 216 13 '#e7e8e6' 36; Label 'E' 343 273 14 '#e7e8e6' 16
 RoundFill '#202016' 366 274 5 13 2; RoundFill '#241415' 385 274 5 13 2
+$script:g.Restore($batteryState)
 Label 'STEPS' 188 292 12 '#e2e3df' 74
 Runner 160 310 '#00d8eb'; Label 'MIN' 176 328 11 '#e2e3df' 42
 Flame 240 309 '#72f000'; Label 'CAL' 257 328 11 '#e2e3df' 50
 Track 150; Track 168; Track 186
 Feet 125 339 '#ff6814'; Runner 105 357 '#00d8eb'; Flame 104 385 '#72f000'
 Save 'dial_frame'
+
+# Foreground calendar rim: transparent aperture, opaque lips, and shadows over
+# the compressed neighboring labels. Cropped to avoid a full-face extra layer.
+Canvas 200 68
+$script:g.TranslateTransform(-125,-125)
+RoundFill '#020303' 126 127 198 66 9
+RoundFill '#5b615f' 128 128 194 62 8
+RoundFill '#151819' 129 130 192 59 7
+RoundFill '#343a3c' 132 133 186 53 5
+$opening=RoundPath 135 135 180 48 3
+$script:g.CompositingMode='SourceCopy'; $clear=New-Object System.Drawing.SolidBrush([System.Drawing.Color]::Transparent)
+$script:g.FillPath($clear,$opening); $clear.Dispose(); $script:g.CompositingMode='SourceOver'
+$clipState=$script:g.Save(); $script:g.SetClip($opening)
+foreach($strip in @(@(135,145,175,0),@(175,183,0,200))) {
+    $rect=[System.Drawing.RectangleF]::new(135,$strip[0],180,($strip[1]-$strip[0]))
+    $b=New-Object System.Drawing.Drawing2D.LinearGradientBrush($rect,([System.Drawing.Color]::FromArgb($strip[2],0,0,0)),([System.Drawing.Color]::FromArgb($strip[3],0,0,0)),90)
+    $script:g.FillRectangle($b,$rect); $b.Dispose()
+}
+foreach($divider in @(194,254)) {
+    Line '#010202' 4 $divider 135 $divider 183
+    Line '#616665' 0.8 ($divider-1.5) 137 ($divider-1.5) 181
+    Line '#262b2d' 1 ($divider+1) 135 ($divider+1) 183
+}
+$script:g.Restore($clipState); $opening.Dispose()
+Line '#080b0c' 1.2 138 135 312 135
+Line '#686e6a' 0.7 138 184 312 184
+Save 'calendar_bezel'
 
 Canvas 22 150
 $hand=New-Object System.Drawing.Drawing2D.GraphicsPath
@@ -207,8 +239,8 @@ foreach($i in @(0,5,10,15,20,25,30,35,40,45,50,55)) {
     $a=$i*6*[math]::PI/180
     Line '#757b7d' 1.5 (225+195*[math]::Sin($a)) (225-195*[math]::Cos($a)) (225+202*[math]::Sin($a)) (225-202*[math]::Cos($a))
 }
-Label '12' 200 21 18 '#8f9595' 50; Label '3' 390 211 18 '#8f9595' 24
-Label '6' 213 398 18 '#8f9595' 24; Label '9' 37 211 18 '#8f9595' 24
+Label '12' 200 21 18 '#8f9595' 50; Label '3' 387 211 18 '#8f9595' 24
+Label '6' 213 398 18 '#8f9595' 24; Label '9' 39 211 18 '#8f9595' 24
 Save 'ambient_indices'
 
 function Sun { Ellipse '#ffdc26' 10 8 20 20; for($i=0;$i -lt 8;$i++) { $a=$i*[math]::PI/4; Line '#ffdc26' 2 (20+13*[math]::Sin($a)) (18-13*[math]::Cos($a)) (20+17*[math]::Sin($a)) (18-17*[math]::Cos($a)) } }
