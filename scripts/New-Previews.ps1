@@ -52,20 +52,24 @@ function DrumLabel([string]$text,[float]$x,[float]$y,[float]$width,[bool]$recedi
     $script:g.Restore($state)
 }
 
-foreach($mode in @('normal','low-battery','ambient','unavailable','seconds')) {
+foreach($mode in @('normal','low-battery','ambient','ambient-low-battery','unavailable','seconds')) {
     Canvas 450 450
     $script:g.Clear([System.Drawing.Color]::Black)
-    if($mode -eq 'ambient') {
+    if($mode.StartsWith('ambient')) {
         Asset 'ambient_indices' 0 0 450 450
-        # Host artwork composite, not a screenshot of Wear OS. Native mode uses
-        # the same resources with alpha 150; this preview shows the geometry.
-        Asset 'hour_hand' 214 93 22 150 305 0.5 0.88 (150/255)
-        Asset 'minute_hand' 217 45 16 198 60 0.5 0.9090909 (150/255)
+        Label 'SUN' 136 109 23 '#d94c20' 57; Label 'NOV' 197 109 23 '#d94c20' 55; Label '01' 258 109 23 '#d94c20' 55
+        $battery=73; if($mode -eq 'ambient-low-battery') { $battery=5 }
+        Asset 'ambient_battery_slider' 359 (274-99*$battery/100) 21 13
+        if($battery -le 20) { RoundFill '#d8b32a' 358 274 5 13 2 }
+        if($battery -le 10) { RoundFill '#dc3020' 377 274 5 13 2 }
+        Asset 'ambient_hour_hand' 214 93 22 150 305 0.5 0.88
+        Asset 'ambient_minute_hand' 217 45 16 198 60 0.5 0.9090909
+        Asset 'ambient_center_cap' 211 211 28 28
     } else {
         Asset 'moon_disc' 135 40 180 180 (90-14*180/29.530588853)
         Asset 'dial_frame' 0 0 450 450
-        DrumLabel 'OCT' 136 126 57 $true; DrumLabel 'NOV' 136 149 57 $false; DrumLabel 'DEC' 136 167 57 $true
-        DrumLabel 'SAT' 197 126 55 $true; DrumLabel 'SUN' 197 149 55 $false '#ff6a15'; DrumLabel 'MON' 197 167 55 $true
+        DrumLabel 'SAT' 136 126 57 $true; DrumLabel 'SUN' 136 149 57 $false '#ff6a15'; DrumLabel 'MON' 136 167 57 $true
+        DrumLabel 'OCT' 197 126 55 $true; DrumLabel 'NOV' 197 149 55 $false; DrumLabel 'DEC' 197 167 55 $true
         DrumLabel '31' 258 126 55 $true; DrumLabel '01' 258 149 55 $false; DrumLabel '02' 258 167 55 $true
         Asset 'calendar_bezel' 125 125 200 68
         $battery=73; if($mode -eq 'low-battery') { $battery=5 }

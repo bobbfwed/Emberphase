@@ -1,10 +1,11 @@
 # Validation record
 
 2026-11-01. Windows, Android SDK 36 / build-tools 36.0.0, Android Studio JDK 25,
-Gradle 9.3.1, AGP 9.1.1. Version 0.3.0 was installed and activated on the
+Gradle 9.3.1, AGP 9.1.1. Version 0.4.0 was installed and activated on the
 physical SM-R950. Awake rendering, live step text/gauge, and native weather
 current temperature / high / condition were observed. Goal synchronization,
-source-app comparisons, ambient behavior, and battery-life checks are pending.
+source-app comparisons, extended ambient behavior, and battery-life checks are
+pending. Ambient rendering and Samsung display offload were observed on-device.
 
 | Check | Result |
 | --- | --- |
@@ -16,13 +17,14 @@ source-app comparisons, ambient behavior, and battery-life checks are pending.
 | Gradle resource-only assertion and Android lint | Passed; lint has 0 errors and 5 warnings |
 | Calendar / data / bounds contracts | Passed, including 2,192 dates |
 | Google WFF memory evaluator | Passed 10 MiB active / 4 MiB ambient budgets |
-| Maximum active decoded-resource estimate | 4,326,532 bytes (4.13 MiB) |
-| Maximum ambient decoded-resource estimate | 835,872 bytes (0.80 MiB) |
-| Physical watch install / activation / awake rendering | Passed with 0.3.0; inset 3/9, lowered calendar, live metal band, and enabled seconds observed |
-| Mechanical tick motion | Native 80 ms Tick; overshoot and return observed in screen recording |
+| Maximum active decoded-resource estimate | 4,356,632 bytes (4.15 MiB) |
+| Maximum ambient decoded-resource estimate | 1,645,872 bytes (1.57 MiB) |
+| Physical watch install / activation / awake rendering | Passed with 0.4.0; weekday/month/date order and stronger tick |
+| Mechanical tick motion | Native 180 ms Tick, strength 0.5; about 1.4–1.5 degrees of overshoot and return observed |
+| Ambient rendering | Orange hands, selected calendar and battery; white hour markers on black; captured while Dozing with display offload active |
 | Samsung steps payload | Live RANGED_VALUE observed from Samsung Health steps service; explicit goal not established |
 | Native weather availability | Unavailable state followed by current temperature, daily high, and condition icon |
-| Other activity payloads / source-app comparisons / ambient / battery life | Pending |
+| Other activity payloads / source-app comparisons / extended ambient transitions / battery life | Pending |
 | Watch identity and installed provider declarations | Verified; see `device-providers.md` |
 
 The five lint warnings are the available newer Gradle version and four sets of
@@ -71,12 +73,20 @@ adjacent live text is compressed vertically to 58% and partly hidden by a
 cropped 200-by-68 foreground bezel with shadows. This is a static visual
 projection of a drum, with calendar fields still updating only as needed.
 
-Seconds now use native [`Tick`](https://developer.android.com/reference/wear-os/wff/clock/tick)
-with duration 0.08 and strength 0.2. The option defaults to enabled, with a new
-configuration ID so an existing installation receives the requested default.
-Two ticks in a 4.35-second recording exhibited approximately 0.28 degrees of
-overshoot followed by return; sparse captured frames do not establish an exact
-frame count for every tick. No continuous sweep or millisecond expression was
-introduced. The native renderer handles the short burst; real battery impact
-still needs measurement. The cropped rim is hidden with the active dial in
-ambient, and seconds remain gated by ambient mode and the 15% cutoff.
+Seconds use native [`Tick`](https://developer.android.com/reference/wear-os/wff/clock/tick),
+enabled by default. The original 80 ms / strength 0.2 setting produced only
+about 0.28 degrees of settling and was not noticeable on the wrist. Version
+0.4.0 uses 180 ms / strength 0.5. A 4.78-second recording captured several ticks
+with about 1.4–1.5 degrees of overshoot and return. Sparse recorded frames do
+not establish an exact frame count for every tick. No continuous sweep or
+millisecond expression was introduced; battery impact still needs measurement.
+
+The always-on scene follows `Always On Original Mockup.png`, with dedicated
+orange skeleton hand assets, a black-centered orange hub, selected calendar
+fields, and an orange battery gauge with threshold lamps. White hour markers
+and 12/3/6/9 sit on black. Both calendars use weekday/month/date order and share
+the same date expressions. Seconds, neighboring drum entries, moon, weather,
+and activity graphics are absent in ambient. The physical watch reported
+Dozing and active display offload when its ambient screenshot was captured.
+The preview renderer uses typographic text bounds to avoid losing the final
+letter when Windows substitutes a wider font for unavailable Arial Narrow.

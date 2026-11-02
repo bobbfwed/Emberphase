@@ -1,8 +1,8 @@
 # Watch6 device acceptance
 
-Status: **0.3.0 installed, activated, and rendering on the SM-R950** on
+Status: **0.4.0 installed, activated, and rendering on the SM-R950** on
 2026-11-01. ADB activation succeeded and an awake screenshot confirmed the
-analog hands, moon disc, correct NOV / SUN / 01 drums, battery slider, live
+analog hands, moon disc, correct SUN / NOV / 01 drums, battery slider, live
 steps, and native current temperature / daily high / weather icon. Weather
 initially showed the unavailable state, then populated without changing the
 selected mode. The step source resolved to Samsung Health's steps service and
@@ -14,17 +14,22 @@ the exposed toothed track. Cyan/green filled bands are shown in the illustrative
 previews; their providers remain unset on the watch. Schema, memory, Gradle
 resource-only, lint, and expression/geometry checks pass for this revision.
 
-The 0.3.0 screenshot confirms clear inner-radius 3/9 numerals, the inset battery
-assembly, and the lowered calendar with foreshortened neighbors behind its rim.
-A short screen recording confirms seconds moving past a mark and returning:
-two captured ticks show about 0.28 degrees of settling motion (roughly 5% of a
-six-degree step). This is a pixel-derived observation, not precision timing.
-The native Tick is configured for 80 ms, strength 0.2, with seconds enabled by
-default. Ambient and low-battery suppression still require physical testing.
+The awake layout has clear inner-radius 3/9 numerals, an inset battery assembly,
+and a lowered calendar with foreshortened neighbors behind its rim. Both modes
+now read weekday / month / date. The initial 80 ms tick was too subtle on the
+wrist; 0.4.0 uses 180 ms and strength 0.5. A recording captured about 1.4–1.5
+degrees of overshoot and return, roughly 25% of a six-degree step. These are
+pixel-derived observations, not precision timing.
+
+Ambient rendering was captured while the watch reported `Dozing`, with Samsung
+display offload active. The new mockup's orange hands/calendar/battery and white
+hour markers render on black; seconds and the normal mode's other displays are
+absent. Low-battery behavior and longer-term ambient transitions still need
+physical testing.
 
 See [installed provider findings](device-providers.md). Goal synchronization,
 active minutes/calories, comparison against the source apps, editor behavior,
-ambient rendering, and battery-life measurements remain pending. The successful
+extended ambient transitions, and battery-life measurements remain pending. The successful
 activation does not by itself confirm the face appears in every picker view.
 
 1. Confirm `SM-R950`, API 36, and the installed One UI/Samsung Health/Weather
@@ -54,8 +59,9 @@ activation does not by itself confirm the face appears in every picker view.
    health data solely to test rollover; use a test device or controlled preview.
 9. Check the default mechanical seconds and editor toggle, then test at 15% and below: seconds must disappear,
    with no flashing effects. Yellow lamp activates at 20%, red at 10%.
-10. Check always-on: no weather, activity tracks, moon, calendar, seconds, or
-    bright texture. Only dim hour/minute hands and sparse indices remain. Check
+10. Check always-on: orange hands, weekday/month/date, battery and low-battery
+    lamps; white hour markers and 12/3/6/9; black background. No weather,
+    activity tracks, moon, neighboring drum labels, or seconds. Check
     ambient transitions, burn-in shifting, lock/unlock, wake, and relaunch.
 11. Measure a representative full-day battery run against a stock face with
     equal AOD, brightness, connectivity, and activity settings. Turn off wireless

@@ -47,9 +47,9 @@ function RoundFill([string]$color,[float]$x,[float]$y,[float]$w,[float]$h,[float
 }
 function Label([string]$text,[float]$x,[float]$y,[float]$size,[string]$color,[float]$width=80) {
     $font=New-Object System.Drawing.Font('Arial Narrow',$size,[System.Drawing.FontStyle]::Bold,[System.Drawing.GraphicsUnit]::Pixel)
-    $format=New-Object System.Drawing.StringFormat
+    $format=[System.Drawing.StringFormat]::GenericTypographic.Clone()
     $format.Alignment='Center'; $format.LineAlignment='Center'
-    $format.FormatFlags='NoWrap'
+    $format.FormatFlags='NoWrap,NoClip'
     $b=Brush $color; $script:g.DrawString($text,$font,$b,([System.Drawing.RectangleF]::new($x,$y,$width,($size*1.35))),$format)
     $b.Dispose(); $font.Dispose(); $format.Dispose()
 }
@@ -218,6 +218,35 @@ $hand.AddPolygon([System.Drawing.PointF[]]@([System.Drawing.PointF]::new(8,1),[S
 $b=Brush '#f5f5ef'; $script:g.FillPath($b,$hand); $b.Dispose(); $hand.Dispose()
 RoundFill '#050606' 5 14 6 133 2
 Save 'minute_hand'
+
+# Always-on skeleton hands use orange metal and transparent cutouts on black.
+# Draw from geometry so a tint cannot accidentally fill the skeleton openings.
+foreach($kind in @('hour','minute')) {
+    if($kind -eq 'hour') {
+        Canvas 22 150
+        $points=@(@(11,1),@(18,11),@(17,95),@(21,127),@(16,145),@(6,145),@(1,127),@(5,95),@(4,11))
+        $cutout=RoundPath 7 14 8 72 3
+    } else {
+        Canvas 16 198
+        $points=@(@(8,1),@(15,10),@(12,151),@(15,180),@(11,193),@(5,193),@(1,180),@(4,151),@(1,10))
+        $cutout=RoundPath 5 14 6 133 2
+    }
+    $polygon=[System.Drawing.PointF[]]@($points | ForEach-Object { [System.Drawing.PointF]::new($_[0],$_[1]) })
+    $rect=[System.Drawing.RectangleF]::new(0,0,$script:logicalWidth,$script:logicalHeight)
+    $b=New-Object System.Drawing.Drawing2D.LinearGradientBrush($rect,(C '#ef5926'),(C '#bb3b16'),45)
+    $script:g.FillPolygon($b,$polygon); $b.Dispose()
+    $script:g.CompositingMode='SourceCopy'; $clear=New-Object System.Drawing.SolidBrush([System.Drawing.Color]::Transparent)
+    $script:g.FillPath($clear,$cutout); $clear.Dispose(); $cutout.Dispose(); $script:g.CompositingMode='SourceOver'
+    Save ('ambient_'+$kind+'_hand')
+}
+Canvas 28 28
+Ellipse '#d94c20' 1 1 26 26
+Ellipse '#000000' 8.5 8.5 11 11
+Save 'ambient_center_cap'
+Canvas 21 13
+RoundFill '#db4c1b' 1 1 19 11 2
+Save 'ambient_battery_slider'
+
 Canvas 6 230
 Line '#ff5b07' 2.6 3 2 3 228; Line '#ffc26b' 0.7 2 3 2 226
 Save 'second_hand'
@@ -237,10 +266,15 @@ Save 'battery_slider'
 Canvas 450 450
 foreach($i in @(0,5,10,15,20,25,30,35,40,45,50,55)) {
     $a=$i*6*[math]::PI/180
-    Line '#757b7d' 1.5 (225+195*[math]::Sin($a)) (225-195*[math]::Cos($a)) (225+202*[math]::Sin($a)) (225-202*[math]::Cos($a))
+    $p=Pen '#deded8' 6; $p.StartCap='Flat'; $p.EndCap='Flat'
+    $script:g.DrawLine($p,[float](225+197*[math]::Sin($a)),[float](225-197*[math]::Cos($a)),[float](225+213*[math]::Sin($a)),[float](225-213*[math]::Cos($a))); $p.Dispose()
 }
-Label '12' 200 21 18 '#8f9595' 50; Label '3' 387 211 18 '#8f9595' 24
-Label '6' 213 398 18 '#8f9595' 24; Label '9' 39 211 18 '#8f9595' 24
+Label '12' 200 34 27 '#deded8' 50; Label '3' 387 207 27 '#deded8' 24
+Label '6' 213 381 27 '#deded8' 24; Label '9' 39 207 27 '#deded8' 24
+$outline=RoundPath 353 161 33 129 6; $p=Pen '#c5461c' 1; $script:g.DrawPath($p,$outline); $p.Dispose(); $outline.Dispose()
+for($i=0;$i -le 10;$i++) { $y=175+$i*10; Line '#b54220' 0.8 366 $y 373 $y }
+Label 'F' 335 169 14 '#d74d20' 16; Label 'BAT' 316 216 13 '#d74d20' 36; Label 'E' 335 273 14 '#d74d20' 16
+RoundFill '#211a09' 358 274 5 13 2; RoundFill '#25100c' 377 274 5 13 2
 Save 'ambient_indices'
 
 function Sun { Ellipse '#ffdc26' 10 8 20 20; for($i=0;$i -lt 8;$i++) { $a=$i*[math]::PI/4; Line '#ffdc26' 2 (20+13*[math]::Sin($a)) (18-13*[math]::Cos($a)) (20+17*[math]::Sin($a)) (18-17*[math]::Cos($a)) } }

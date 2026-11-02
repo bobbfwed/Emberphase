@@ -23,45 +23,45 @@
             </PartImage>
             <!-- The adjacent drum labels use calendar fields, never an animation
                  or UTC millisecond source. English abbreviations match the art. -->
-            <PartText name="drum_month_prev" x="136" y="126" width="57" height="26" alpha="195" pivotX="0.5" pivotY="0.5" scaleX="0.94" scaleY="0.58">
-                <Text align="CENTER">
-                    <Font family="sans-serif-condensed" size="22" weight="BOLD">
-                        <Template>%s<Parameter expression="subText(&quot;JANFEBMARAPRMAYJUNJULAUGSEPOCTNOVDEC&quot;, (([MONTH]+10)%12)*3, (([MONTH]+10)%12)*3+3)" /></Template>
-                    </Font>
-                </Text>
-            </PartText>
-            <PartText name="drum_month" x="136" y="149" width="57" height="27">
-                <Text align="CENTER">
-                    <Font family="sans-serif-condensed" size="22" weight="BOLD">
-                        <Template>%s<Parameter expression="subText(&quot;JANFEBMARAPRMAYJUNJULAUGSEPOCTNOVDEC&quot;, ([MONTH]-1)*3, [MONTH]*3)" /></Template>
-                    </Font>
-                </Text>
-            </PartText>
-            <PartText name="drum_month_next" x="136" y="167" width="57" height="26" alpha="195" pivotX="0.5" pivotY="0.5" scaleX="0.94" scaleY="0.58">
-                <Text align="CENTER">
-                    <Font family="sans-serif-condensed" size="22" weight="BOLD">
-                        <Template>%s<Parameter expression="subText(&quot;JANFEBMARAPRMAYJUNJULAUGSEPOCTNOVDEC&quot;, ([MONTH]%12)*3, ([MONTH]%12)*3+3)" /></Template>
-                    </Font>
-                </Text>
-            </PartText>
-            <PartText name="drum_weekday_prev" x="197" y="126" width="55" height="26" alpha="195" pivotX="0.5" pivotY="0.5" scaleX="0.94" scaleY="0.58">
+            <PartText name="drum_weekday_prev" x="136" y="126" width="57" height="26" alpha="195" pivotX="0.5" pivotY="0.5" scaleX="0.94" scaleY="0.58">
                 <Text align="CENTER">
                     <Font family="sans-serif-condensed" size="22" weight="BOLD">
                         <Template>%s<Parameter expression="subText(&quot;SUNMONTUEWEDTHUFRISAT&quot;, (([DAY_OF_WEEK]+5)%7)*3, (([DAY_OF_WEEK]+5)%7)*3+3)" /></Template>
                     </Font>
                 </Text>
             </PartText>
-            <PartText name="drum_weekday" x="197" y="149" width="55" height="27">
+            <PartText name="drum_weekday" x="136" y="149" width="57" height="27">
                 <Text align="CENTER">
                     <Font family="sans-serif-condensed" size="22" weight="BOLD" color="#FF6A15">
                         <Template>%s<Parameter expression="subText(&quot;SUNMONTUEWEDTHUFRISAT&quot;, ([DAY_OF_WEEK]-1)*3, [DAY_OF_WEEK]*3)" /></Template>
                     </Font>
                 </Text>
             </PartText>
-            <PartText name="drum_weekday_next" x="197" y="167" width="55" height="26" alpha="195" pivotX="0.5" pivotY="0.5" scaleX="0.94" scaleY="0.58">
+            <PartText name="drum_weekday_next" x="136" y="167" width="57" height="26" alpha="195" pivotX="0.5" pivotY="0.5" scaleX="0.94" scaleY="0.58">
                 <Text align="CENTER">
                     <Font family="sans-serif-condensed" size="22" weight="BOLD">
                         <Template>%s<Parameter expression="subText(&quot;SUNMONTUEWEDTHUFRISAT&quot;, ([DAY_OF_WEEK]%7)*3, ([DAY_OF_WEEK]%7)*3+3)" /></Template>
+                    </Font>
+                </Text>
+            </PartText>
+            <PartText name="drum_month_prev" x="197" y="126" width="55" height="26" alpha="195" pivotX="0.5" pivotY="0.5" scaleX="0.94" scaleY="0.58">
+                <Text align="CENTER">
+                    <Font family="sans-serif-condensed" size="22" weight="BOLD">
+                        <Template>%s<Parameter expression="subText(&quot;JANFEBMARAPRMAYJUNJULAUGSEPOCTNOVDEC&quot;, (([MONTH]+10)%12)*3, (([MONTH]+10)%12)*3+3)" /></Template>
+                    </Font>
+                </Text>
+            </PartText>
+            <PartText name="drum_month" x="197" y="149" width="55" height="27">
+                <Text align="CENTER">
+                    <Font family="sans-serif-condensed" size="22" weight="BOLD">
+                        <Template>%s<Parameter expression="subText(&quot;JANFEBMARAPRMAYJUNJULAUGSEPOCTNOVDEC&quot;, ([MONTH]-1)*3, [MONTH]*3)" /></Template>
+                    </Font>
+                </Text>
+            </PartText>
+            <PartText name="drum_month_next" x="197" y="167" width="55" height="26" alpha="195" pivotX="0.5" pivotY="0.5" scaleX="0.94" scaleY="0.58">
+                <Text align="CENTER">
+                    <Font family="sans-serif-condensed" size="22" weight="BOLD">
+                        <Template>%s<Parameter expression="subText(&quot;JANFEBMARAPRMAYJUNJULAUGSEPOCTNOVDEC&quot;, ([MONTH]%12)*3, ([MONTH]%12)*3+3)" /></Template>
                     </Font>
                 </Text>
             </PartText>
@@ -741,10 +741,54 @@
             <PartImage x="0" y="0" width="450" height="450">
                 <Image resource="ambient_indices" />
             </PartImage>
+            <PartText name="ambient_weekday" x="136" y="111" width="57" height="30">
+                <Text align="CENTER">
+                    <Font family="sans-serif-condensed" size="23" weight="BOLD" color="#D94C20">
+                        <Template>%s<Parameter expression="subText(&quot;SUNMONTUEWEDTHUFRISAT&quot;, ([DAY_OF_WEEK]-1)*3, [DAY_OF_WEEK]*3)" /></Template>
+                    </Font>
+                </Text>
+            </PartText>
+            <PartText name="ambient_month" x="197" y="111" width="55" height="30">
+                <Text align="CENTER">
+                    <Font family="sans-serif-condensed" size="23" weight="BOLD" color="#D94C20">
+                        <Template>%s<Parameter expression="subText(&quot;JANFEBMARAPRMAYJUNJULAUGSEPOCTNOVDEC&quot;, ([MONTH]-1)*3, [MONTH]*3)" /></Template>
+                    </Font>
+                </Text>
+            </PartText>
+            <PartText name="ambient_date" x="258" y="111" width="55" height="30">
+                <Text align="CENTER">
+                    <Font family="sans-serif-condensed" size="23" weight="BOLD" color="#D94C20">
+                        <Template>%s<Parameter expression="[DAY_Z]" /></Template>
+                    </Font>
+                </Text>
+            </PartText>
+            <PartImage name="ambient_battery_slider" x="359" y="274" width="21" height="13">
+                <Transform target="y" value="274 - 99 * clamp([BATTERY_PERCENT], 0, 100) / 100" />
+                <Image resource="ambient_battery_slider" />
+            </PartImage>
+            <PartDraw x="0" y="0" width="450" height="450">
+                <Transform target="alpha" value="[BATTERY_PERCENT] &lt;= 20 ? 255 : 0" />
+                <RoundRectangle x="358" y="274" width="5" height="13" cornerRadiusX="2" cornerRadiusY="2">
+                    <Fill color="#D8B32A" />
+                </RoundRectangle>
+            </PartDraw>
+            <PartDraw x="0" y="0" width="450" height="450">
+                <Transform target="alpha" value="[BATTERY_PERCENT] &lt;= 10 ? 255 : 0" />
+                <RoundRectangle x="377" y="274" width="5" height="13" cornerRadiusX="2" cornerRadiusY="2">
+                    <Fill color="#DC3020" />
+                </RoundRectangle>
+            </PartDraw>
+            <AnalogClock x="0" y="0" width="450" height="450">
+                <HourHand resource="ambient_hour_hand" x="214" y="93" width="22" height="150" pivotX="0.5" pivotY="0.88" />
+                <MinuteHand resource="ambient_minute_hand" x="217" y="45" width="16" height="198" pivotX="0.5" pivotY="0.9090909" />
+            </AnalogClock>
+            <PartImage x="211" y="211" width="28" height="28">
+                <Image resource="ambient_center_cap" />
+            </PartImage>
         </Group>
         <!-- The native clock owns hand rotation and ambient minute cadence. -->
         <AnalogClock x="0" y="0" width="450" height="450">
-            <Variant mode="AMBIENT" target="alpha" value="150" />
+            <Variant mode="AMBIENT" target="alpha" value="0" />
             <HourHand resource="hour_hand" x="214" y="93" width="22" height="150" pivotX="0.5" pivotY="0.88" />
             <MinuteHand resource="minute_hand" x="217" y="45" width="16" height="198" pivotX="0.5" pivotY="0.9090909" />
         </AnalogClock>
@@ -756,7 +800,7 @@
                         <Transform target="alpha" value="[BATTERY_PERCENT] &gt; 15 ? 255 : 0" />
                         <AnalogClock x="0" y="0" width="450" height="450">
                             <SecondHand resource="second_hand" x="222" y="23" width="6" height="230" pivotX="0.5" pivotY="0.8782609">
-                                <Tick duration="0.08" strength="0.2" />
+                                <Tick duration="0.18" strength="0.5" />
                             </SecondHand>
                         </AnalogClock>
                     </Group>

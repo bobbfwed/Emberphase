@@ -53,7 +53,7 @@ let calendarCases = 0;
 for (const year of [1999, 2000, 2024, 2025, 2026, 2100]) {
   for (let d = new Date(Date.UTC(year, 0, 1, 12)); d.getUTCFullYear() === year; d = new Date(+d + 86400000)) {
     const prev = new Date(+d - 86400000), next = new Date(+d + 86400000);
-    const data = { YEAR: year, MONTH: d.getUTCMonth()+1, DAY: d.getUTCDate(), DAY_OF_WEEK: d.getUTCDay()+1 };
+    const data = { YEAR: year, MONTH: d.getUTCMonth()+1, DAY: d.getUTCDate(), DAY_Z: String(d.getUTCDate()).padStart(2,'0'), DAY_OF_WEEK: d.getUTCDay()+1 };
     assert.equal(evaluate(part('drum_date_prev'), data), String(prev.getUTCDate()).padStart(2, '0'));
     assert.equal(evaluate(part('drum_date_next'), data), String(next.getUTCDate()).padStart(2, '0'));
     assert.equal(evaluate(part('drum_month_prev'), data), months[(d.getUTCMonth()+11)%12]);
@@ -62,9 +62,25 @@ for (const year of [1999, 2000, 2024, 2025, 2026, 2100]) {
     assert.equal(evaluate(part('drum_weekday_prev'), data), weekdays[prev.getUTCDay()]);
     assert.equal(evaluate(part('drum_weekday_next'), data), weekdays[next.getUTCDay()]);
     assert.equal(evaluate(part('drum_weekday'), data), weekdays[d.getUTCDay()]);
+    assert.equal(evaluate(part('ambient_weekday'), data), weekdays[d.getUTCDay()]);
+    assert.equal(evaluate(part('ambient_month'), data), months[d.getUTCMonth()]);
+    assert.equal(evaluate(part('ambient_date'), data), data.DAY_Z);
     calendarCases++;
   }
 }
+
+for (const prefix of ['drum','ambient']) {
+  const positions=['weekday','month','date'].map(name=>Number(face.match(new RegExp(`<PartText name="${prefix}_${name}" x="(\\d+)"`))[1]));
+  assert.ok(positions[0]<positions[1] && positions[1]<positions[2], `${prefix} calendar must read weekday, month, date`);
+}
+const ambient=face.match(/<Group name="ambient_dial"[\s\S]*?<\/Group>/)[0];
+assert.match(ambient, /alpha="0">\s*<Variant mode="AMBIENT" target="alpha" value="255"/);
+assert.doesNotMatch(ambient, /<SecondHand|<Tick|<Sweep|COMPLICATION\.|WEATHER\.|MOON_PHASE|drum_\w+_(?:prev|next)/);
+assert.match(ambient, /resource="ambient_hour_hand"/);
+assert.match(ambient, /resource="ambient_minute_hand"/);
+const ambientBattery=unescapeXml(ambient.match(/<Transform target="y" value="([^"]+)"/)[1]);
+assert.equal(evaluate(ambientBattery,{BATTERY_PERCENT:0}),274);
+assert.equal(evaluate(ambientBattery,{BATTERY_PERCENT:100}),175);
 
 for (const [name, id] of [['steps',20], ['minutes',30], ['calories',40]]) {
   const slot = face.match(new RegExp(`<ComplicationSlot slotId="${id}"[\\s\\S]*?<\\/ComplicationSlot>`))[0];
@@ -116,8 +132,8 @@ assert.match(face, /ListConfiguration id="left_inset"[^>]*defaultValue="0"/);
 assert.match(face, /<BooleanConfiguration id="mechanical_seconds">\s*<BooleanOption id="TRUE">\s*<Group name="seconds_visibility"/);
 const tick=face.match(/<SecondHand\b[^>]*>\s*<Tick duration="([^"]+)" strength="([^"]+)"\s*\/>\s*<\/SecondHand>/);
 assert.ok(tick, 'Use the native overshooting Tick for seconds');
-assert.ok(Number(tick[1])>0 && Number(tick[1])<=0.1, 'Motion must settle within 100 ms of each tick');
-assert.ok(Number(tick[2])>0 && Number(tick[2])<=0.25, 'Keep the overshoot subtle');
+assert.ok(Number(tick[1])>=0.15 && Number(tick[1])<=0.25, 'Allow a visible tick but hold still for most of each second');
+assert.ok(Number(tick[2])>=0.4 && Number(tick[2])<=0.6, 'Overshoot must be visible without a full-step bounce');
 assert.doesNotMatch(face, /\[CONFIGURATION\./, 'Use native list/boolean branches for editor options');
 assert.match(face, /<Group name="optional_ticking_seconds"[^>]*>\s*<Variant mode="AMBIENT" target="alpha" value="0"/);
 assert.doesNotMatch(face, /\[(?:UTC_TIMESTAMP|MILLISECOND|SECOND_MILLISECOND|ACCELEROMETER[^\]]*)\]|<Sweep\b|<Gyro\b/);

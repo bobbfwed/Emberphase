@@ -100,10 +100,13 @@ Sources: [WFF weather availability and staleness](https://developer.android.com/
 
 No executable application code, networking permission, location polling, heart
 rate sampling, alarms, or wake locks. Native clock hands and provider/system
-updates drive the face. Mechanical seconds default on, with a native 80 ms
+updates drive the face. Mechanical seconds default on, with a native 180 ms
 overshoot-and-return tick once per second. They can be disabled in the editor
 and disappear at 15% battery or less. Date drums and the mechanical
 disc use date/moon sources rather than millisecond expressions. The native moon
 position is coarse (0–28); the decorative two-moon disc is not an astronomical
-ephemeris. Ambient mode displays dimmed hour/minute hands and sparse white
-indices only. Actual battery life must be measured on the watch.
+ephemeris. Ambient mode displays orange hour/minute hands, the selected weekday,
+month, and date, a battery slider with threshold lamps, and white hour markers
+with 12/3/6/9. The ambient scene has no seconds, weather, moon, activity tracks,
+or adjacent calendar entries. Samsung display offload was observed active.
+Actual battery life must be measured on the watch.
