@@ -18,6 +18,21 @@ Version 0.4.2 shortens the seconds tick to 130 ms at strength 0.5. Installation
 and the reported package version were verified; the motion measurements below
 are from the previous 180 ms setting.
 
+Follow-up on 2026-11-02: **0.4.4 installed and rendering**, with a 6,000-step
+target visible alongside live steps. Samsung Health's Steps screen shows the
+same goal. The Samsung Steps compatibility option handles the retained ranged
+payload; native WFF step sources returned zero in a temporary test and are not
+used. Goal-change synchronization remains untested. Active minutes, calories,
+and their targets remain unavailable through the installed providers; see
+`device-providers.md` for the runtime findings.
+
+Version 0.4.5 replaces the moon-age source with a date-based approximation,
+updates its position twice per UTC day, corrects waxing/waning direction, and
+calibrates the quarter positions to the artwork's window. Awake rendering was
+checked on the watch; the exact midnight/noon transitions remain covered by
+expression tests rather than an overnight device observation. The display is
+an approximate mechanical phase indication, not a precise lunar ephemeris.
+
 The 0.2.0 awake screenshot also confirms the activity channels are concentric
 with the hand spindle, with metallic orange progress and a sharp cut edge over
 the exposed toothed track. Cyan/green filled bands are shown in the illustrative
@@ -64,8 +79,9 @@ activation does not by itself confirm the face appears in every picker view.
    available-plus-error condition. In custom mode, verify the provider's own
    fields render without parsing or claiming nonexistent weather fields.
 8. Test month-end/leap-day and time-zone/date changes. The wheel is a decorative
-   twin-moon mechanism driven by WFF's coarse 0–28 moon position, not a precise
-   astronomical calculation. Do not adjust the date of a watch collecting live
+   twin-moon mechanism uses an approximate mean lunar cycle from UTC date fields,
+   with two updates per day. Compare waxing/waning and new/full/quarter positions
+   against known phase dates; see `moon-phase.md`. Do not adjust the date of a watch collecting live
    health data solely to test rollover; use a test device or controlled preview.
 9. Check the default mechanical seconds and editor toggle, then test at 15% and below: seconds must disappear,
    with no flashing effects. Yellow lamp activates at 20%, red at 10%.

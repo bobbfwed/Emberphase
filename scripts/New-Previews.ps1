@@ -52,6 +52,14 @@ function DrumLabel([string]$text,[float]$x,[float]$y,[float]$width,[bool]$recedi
     $script:g.Restore($state)
 }
 
+# Evaluate the production moon expression for the same date as the fixture drums.
+# Never use the build date or the platform's coarse moon-phase field in previews.
+$moonFixture=[DateTime]::new(2026,11,1,12,0,0,[DateTimeKind]::Utc)
+[xml]$faceXml=Get-Content -LiteralPath (Join-Path $PSScriptRoot '..\watchface\src\main\res\raw\watchface.xml') -Raw -Encoding UTF8
+$moonExpression=$faceXml.SelectSingleNode('//PartImage[@name="moon_disc_rotation"]/Transform').value
+$moonExpression=$moonExpression.Replace('[YEAR]',[string]$moonFixture.Year).Replace('[DAY_OF_YEAR]',[string]$moonFixture.DayOfYear).Replace('[AMPM_STATE]','1').Replace('floor(', '[math]::Floor(').Replace('sin(', '[math]::Sin(')
+$moonAngle=& ([scriptblock]::Create($moonExpression))
+
 foreach($mode in @('normal','low-battery','ambient','ambient-low-battery','unavailable','seconds')) {
     Canvas 450 450
     $script:g.Clear([System.Drawing.Color]::Black)
@@ -66,7 +74,7 @@ foreach($mode in @('normal','low-battery','ambient','ambient-low-battery','unava
         Asset 'ambient_minute_hand' 217 45 16 198 60 0.5 0.9090909
         Asset 'ambient_center_cap' 211 211 28 28
     } else {
-        Asset 'moon_disc' 135 40 180 180 (90-14*180/29.530588853)
+        Asset 'moon_disc' 135 40 180 180 $moonAngle
         Asset 'dial_frame' 0 0 450 450
         DrumLabel 'SAT' 136 126 57 $true; DrumLabel 'SUN' 136 149 57 $false '#ff6a15'; DrumLabel 'MON' 136 167 57 $true
         DrumLabel 'OCT' 197 126 55 $true; DrumLabel 'NOV' 197 149 55 $false; DrumLabel 'DEC' 197 167 55 $true
@@ -99,4 +107,18 @@ foreach($mode in @('normal','low-battery','ambient','ambient-low-battery','unava
     Save $mode
 }
 Copy-Item -LiteralPath (Join-Path $assetRoot 'normal.png') -Destination (Join-Path $sourceAssetRoot 'preview.png') -Force
+Canvas 600 150
+$script:g.Clear([System.Drawing.Color]::Black)
+$phases=@(@('NEW',0),@('FIRST QUARTER',0.25),@('FULL',0.5),@('LAST QUARTER',0.75))
+for($i=0;$i -lt $phases.Count;$i++) {
+    $state=$script:g.Save()
+    $script:g.SetClip([System.Drawing.RectangleF]::new(($i*150),0,150,110))
+    $script:g.TranslateTransform(($i*150-150),-30)
+    $linearAngle=-90+180*$phases[$i][1]
+    Asset 'moon_disc' 135 40 180 180 ($linearAngle+7.5*[math]::Sin($linearAngle*[math]::PI/90))
+    Asset 'dial_frame' 0 0 450 450
+    $script:g.Restore($state)
+    Label $phases[$i][0] ($i*150) 118 12 '#eeeeee' 150
+}
+Save 'moon-phases'
 Write-Host "Illustrative artwork composites (not device screenshots): $assetRoot"

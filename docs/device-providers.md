@@ -87,3 +87,15 @@ a separate consent-based phone bridge and watch complication provider; the
 resource-only face cannot read Samsung Health's private database or split a
 combined image into independent metrics. Live steps and native weather do render
 on this watch; the earlier declaration-only findings above are historical.
+
+Version 0.4.4 adds a Samsung Steps compatibility option, enabled by default,
+that displays the selected step range's positive maximum as the target when its
+minimum is zero. This uses the verified Samsung payload, without requiring an
+editor reselection; the physical watch now displays the matching 6,000 target.
+The option can be disabled for other step providers. No other metric infers
+targets from range limits. Goal-change synchronization has not been tested.
+
+A temporary on-device probe of WFF `STEP_COUNT` and `STEP_GOAL` returned 0 / 0
+while the Samsung complication supplied live steps. Those native fields were
+therefore not used as a substitute. The probe was removed before the final
+build. No health goal or persistent watch setting was changed during testing.

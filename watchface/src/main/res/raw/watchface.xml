@@ -8,14 +8,18 @@
             <ListOption id="1" displayName="custom_complication" />
         </ListConfiguration>
         <BooleanConfiguration id="mechanical_seconds" displayName="seconds_hand" defaultValue="TRUE" />
+        <BooleanConfiguration id="samsung_steps_target" displayName="samsung_steps_target" defaultValue="TRUE" />
     </UserConfigurations>
     <Scene backgroundColor="#000000">
-        <!-- The wheel is below an opaque dial with a real transparent aperture.
-             Its only time dependency is the daily native moon position. -->
+        <!-- The twin-moon wheel uses a mean lunation from 2000-01-06 18:14 UTC.
+             Gregorian date plus AM/PM changes only at 00:00/12:00 UTC. Sample
+             each half-day at its midpoint; modulo two keeps the wheel continuous
+             across alternating moons. See docs/moon-phase.md for the formula. -->
         <Group name="interactive_dial" x="0" y="0" width="450" height="450">
             <Variant mode="AMBIENT" target="alpha" value="0" />
-            <PartImage x="135" y="40" width="180" height="180" pivotX="0.5" pivotY="0.5">
-                <Transform target="angle" value="90 - [MOON_PHASE_POSITION] * 180 / 29.530588853" />
+            <PartImage name="moon_disc_rotation" x="135" y="40" width="180" height="180" pivotX="0.5" pivotY="0.5">
+                <Localization timeZone="UTC" calendar="GREGORIAN" />
+                <Transform target="angle" value="(-90 + 180 * ((((365 * ([YEAR] - 2000) + floor(([YEAR] - 1) / 4) - floor(([YEAR] - 1) / 100) + floor(([YEAR] - 1) / 400) - 484 + [DAY_OF_YEAR] - 1 + 0.5 * [AMPM_STATE] + 0.25 - 5.7597222222) / 29.530588853) % 2 + 2) % 2)) + 7.5 * sin(0.03490658503988659 * (-90 + 180 * ((((365 * ([YEAR] - 2000) + floor(([YEAR] - 1) / 4) - floor(([YEAR] - 1) / 100) + floor(([YEAR] - 1) / 400) - 484 + [DAY_OF_YEAR] - 1 + 0.5 * [AMPM_STATE] + 0.25 - 5.7597222222) / 29.530588853) % 2 + 2) % 2)))" />
                 <Image resource="moon_disc" />
             </PartImage>
             <PartImage x="0" y="0" width="450" height="450">
@@ -451,11 +455,24 @@
                         </Font>
                     </Text>
                 </PartText>
-                <PartText x="312" y="320" width="43" height="18">
-                    <Text align="CENTER">
-                        <Font family="sans-serif-condensed" size="13">—</Font>
-                    </Text>
-                </PartText>
+                <Group name="samsung_steps_range_target" x="0" y="0" width="450" height="450">
+                    <BooleanConfiguration id="samsung_steps_target">
+                        <BooleanOption id="TRUE">
+                            <PartText x="312" y="320" width="43" height="18">
+                                <Text align="CENTER" isAutoSize="TRUE">
+                                    <Font family="sans-serif-condensed" size="13">
+                                        <Template>%s<Parameter expression="[COMPLICATION.RANGED_VALUE_MIN] == 0 &amp;&amp; [COMPLICATION.RANGED_VALUE_MAX] &gt; 0 ? numberFormat(&quot;#,##0&quot;, [COMPLICATION.RANGED_VALUE_MAX]) : &quot;—&quot;" /></Template>
+                                    </Font>
+                                </Text>
+                            </PartText>
+                        </BooleanOption>
+                        <BooleanOption id="FALSE">
+                            <PartText x="312" y="320" width="43" height="18">
+                                <Text align="CENTER"><Font family="sans-serif-condensed" size="13">—</Font></Text>
+                            </PartText>
+                        </BooleanOption>
+                    </BooleanConfiguration>
+                </Group>
                 <Condition>
                     <Expressions>
                         <Expression name="steps_range_valid">[COMPLICATION.RANGED_VALUE_MAX] &gt; [COMPLICATION.RANGED_VALUE_MIN] &amp;&amp; [COMPLICATION.RANGED_VALUE_VALUE] &gt; [COMPLICATION.RANGED_VALUE_MIN]</Expression>

@@ -52,7 +52,11 @@ select a suitable installed activity provider.
   zero targets have no fill and display no target.
 * `RANGED_VALUE`: render supplied text (or its numeric value when text is empty)
   and normalize the gauge using its minimum and maximum. The goal label remains
-  `—`: a range maximum is not a verified Samsung Health goal.
+  `—`, except for the explicit Samsung Health Steps compatibility option. That
+  option displays a positive range maximum when its minimum is zero; the watch's
+  range maximum was compared with its Samsung Health Steps goal. Disable it for
+  another steps provider whose range limit is not a personal goal. Minutes and
+  calorie targets never use this exception.
 * `SHORT_TEXT`: display the provider's text. Do not parse it for numbers or infer
   a goal. The gauge remains unfilled and the goal remains `—`.
 * Empty/unavailable: `—`, unfilled track, no fabricated zero or mockup sample.
@@ -107,9 +111,11 @@ rate sampling, alarms, or wake locks. Native clock hands and provider/system
 updates drive the face. Mechanical seconds default on, with a native 130 ms
 overshoot-and-return tick once per second. They can be disabled in the editor
 and disappear at 15% battery or less. Date drums and the mechanical
-disc use date/moon sources rather than millisecond expressions. The native moon
-position is coarse (0–28); the decorative two-moon disc is not an astronomical
-ephemeris. Ambient mode displays orange hour/minute hands, the selected weekday,
+disc use date fields rather than millisecond expressions. The moon calculation
+uses UTC year, day-of-year, and AM/PM, so its time inputs change only twice daily.
+It estimates the phase from a known new moon and the mean synodic month, with no
+moon API or native moon-phase source. See [moon calculation](moon-phase.md) for
+accuracy limits. Ambient mode displays orange hour/minute hands, the selected weekday,
 month, and date, a battery slider with threshold lamps, and white hour markers
 with 12/3/6/9. The ambient scene has no seconds, weather, moon, activity tracks,
 or adjacent calendar entries. Samsung display offload was observed active.

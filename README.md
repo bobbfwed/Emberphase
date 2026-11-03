@@ -53,8 +53,9 @@ activity calories start unset**, and the tested Samsung Health installation did
 not expose suitable individual providers for those two values. The face does
 not include a phone companion or health-data bridge. Missing data displays `—`.
 
-The moon disc is a decorative display driven by WFF's coarse moon-phase value,
-not a precise astronomical calculation.
+The moon disc uses an offline date-based approximation of the lunar cycle,
+advancing twice a day at midnight and noon UTC. Its mechanical aperture gives
+a stylized view of the phase. See [the calculation and accuracy limits](docs/moon-phase.md).
 
 ## Build from source
 
@@ -166,18 +167,21 @@ Some editor regions overlap, so use these selection points if a tap selects
 the wrong display. Choose a provider that supplies the corresponding metric;
 the face displays the provider's data and does not calculate activity totals.
 
-Explicit goals are shown only when a provider supplies `GOAL_PROGRESS` data.
-A `RANGED_VALUE` provider can fill a track, but its range maximum is not assumed
-to be your personal goal; the goal label remains `—`. A `SHORT_TEXT` provider
+Explicit goals are shown when a provider supplies `GOAL_PROGRESS` data.
+For Samsung Health Steps, the enabled **Samsung Health steps target** editor
+option also displays the range maximum as the target: this was compared with
+the goal in Samsung Health on the tested watch. Disable this option if you
+select a different steps provider whose range limit is not your personal goal.
+Other `RANGED_VALUE` providers can fill a track, but their goal labels remain
+`—`. A `SHORT_TEXT` provider
 shows text without filling the track. System steps may differ from phone-merged
 Samsung Health totals, and automatic Samsung Health goal synchronization has
 not been verified.
 
-If the steps target remains a dash after updating the face, reselect **Samsung
-Health → Steps** in the editor and save. Existing face instances can retain an
-older range-based selection even when the default now requests `GOAL_PROGRESS`.
-If the provider still supplies only a range, the target remains unavailable.
-Active minutes and calories require separate suitable providers; choosing the
+Existing face instances can retain a range-based steps selection even when the
+default requests `GOAL_PROGRESS`; the Samsung compatibility option handles that
+case without reselection. Active minutes and calories require separate suitable
+providers; choosing the
 combined Samsung Health Daily Activity display cannot supply those two numeric
 values and goals independently.
 

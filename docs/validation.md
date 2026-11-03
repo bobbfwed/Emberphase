@@ -51,8 +51,8 @@ strings now use `&quot;`, including grouped numeric patterns. See the official
 Regression guards cover both failures, since the JavaScript expression test
 alone accepts single quotes that the WFF runtime does not.
 
-Previews are illustrative artwork composites. The native moon position is
-coarse; the rotating disc is decorative. Decoded-resource estimates are not
+Previews are illustrative artwork composites. The moon uses a mean-cycle date
+calculation and a stylized mechanical aperture; see `moon-phase.md`. Decoded-resource estimates are not
 measurements of RAM resident on Samsung firmware or of battery consumption.
 Use `device-acceptance.md` for the remaining physical-device checks.
 
@@ -114,3 +114,23 @@ editor reselection. The other activity slots were confirmed empty, with no
 separate installed Samsung active-time/calorie provider. See the live follow-up
 in `device-providers.md`. No health permissions, background service, or extra
 complication subscriptions were added.
+
+The 0.4.4 follow-up adds the explicit Samsung Steps range-target compatibility
+option and displays the verified 6,000-step target on the physical watch. Tests
+cover positive targets, invalid/nonzero-based ranges, the disabled option, and
+the exclusion of minutes/calories from this exception. The temporary native
+step-source probe was removed; those fields returned zero on this firmware.
+Schema, SDK-native build/signature/memory, Gradle resource-only/lint, and the
+expression/geometry checks passed. Goal-change synchronization and the two
+unavailable activity metrics remain pending.
+
+Version 0.4.5 replaces the platform moon-age field with a UTC Gregorian
+date-based mean-lunation calculation. Its only time sources are year,
+day-of-year, and AM/PM, changing at midnight/noon UTC. A small periodic angle
+correction calibrates quarter positions to the scalloped window, and rotation
+now follows waxing/waning correctly. Tests cover 4,384 half-days, calendar and
+cycle rollover, fixed positions within each half-day, and 12 published USNO
+phase events (maximum fixture error 0.81 days). The corrected moon and the
+6,000-step target were inspected on the physical watch. See `moon-phase.md`
+for the formula, references, and approximation limits. No network call, timer,
+or new high-frequency source was added; decoded-resource estimates are unchanged.

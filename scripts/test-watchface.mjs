@@ -36,9 +36,9 @@ function evaluate(expression, data) {
   if (!compiled.has(expression)) {
     // Evaluate only the arithmetic in this locally authored WFF document.
     const js = expression.replace(/\[([A-Za-z0-9_.]+)\]/g, (_, key) => `data[${JSON.stringify(key)}]`);
-    compiled.set(expression, new Function('data', 'clamp', 'numberFormat', 'subText', 'textLength', `"use strict"; return (${js});`));
+    compiled.set(expression, new Function('data', 'clamp', 'numberFormat', 'subText', 'textLength', 'floor', 'sin', `"use strict"; return (${js});`));
   }
-  return compiled.get(expression)(data, clamp, numberFormat, (s, a, b) => s.substring(a, b), s => s?.length ?? 0);
+  return compiled.get(expression)(data, clamp, numberFormat, (s, a, b) => s.substring(a, b), s => s?.length ?? 0, Math.floor, Math.sin);
 }
 function part(name) {
   const match = face.match(new RegExp(`<PartText[^>]*name="${name}"[^>]*>([\\s\\S]*?)<\\/PartText>`));
@@ -47,6 +47,60 @@ function part(name) {
 }
 const expressions = new Map([...face.matchAll(/<Expression name="([^"]+)">([\s\S]*?)<\/Expression>/g)]
   .map(m => [m[1], unescapeXml(m[2])]));
+const moonPart=face.match(/<PartImage name="moon_disc_rotation"[\s\S]*?<\/PartImage>/)[0];
+assert.match(moonPart, /<Localization timeZone="UTC" calendar="GREGORIAN"/);
+const moonExpression=unescapeXml(moonPart.match(/<Transform target="angle" value="([^"]+)"/)[1]);
+const moonSources=[...moonExpression.matchAll(/\[([^\]]+)\]/g)].map(m=>m[1]);
+assert.deepEqual([...new Set(moonSources)].sort(), ['AMPM_STATE','DAY_OF_YEAR','YEAR']);
+assert.doesNotMatch(face, /MOON_PHASE_POSITION|MOON_PHASE_TYPE/);
+const lunarMonth=29.530588853, moonEpoch=Date.parse('2000-01-06T18:14:00Z');
+const wrap=(n,period)=>((n%period)+period)%period;
+function moonAngle(date) {
+  const year=date.getUTCFullYear();
+  return evaluate(moonExpression, {YEAR:year,DAY_OF_YEAR:Math.floor((+date-Date.UTC(year,0,1))/86400000)+1,AMPM_STATE:date.getUTCHours()<12?0:1});
+}
+const calibratedAngle=angle=>angle+7.5*Math.sin(angle*Math.PI/90);
+function meanPhase(date) {
+  // Undo the monotonic aperture calibration to check astronomical cycle age.
+  const target=moonAngle(date);
+  let lo=-90,hi=270;
+  for(let i=0;i<48;i++) { const mid=(lo+hi)/2; if(calibratedAngle(mid)<target) lo=mid; else hi=mid; }
+  return wrap(((lo+hi)/2+90)/180,1);
+}
+let moonCases=0;
+for (const year of [1902,1999,2000,2024,2026,2100]) {
+  for (let date=new Date(Date.UTC(year,0,1)); date.getUTCFullYear()===year; date=new Date(+date+86400000)) {
+    for (const hour of [0,12]) {
+      const start=new Date(+date+hour*3600000);
+      const angle=moonAngle(start);
+      assert.ok(angle>=-90 && angle<270);
+      const midpoint=+start+6*3600000;
+      const expected=calibratedAngle(-90+180*wrap((midpoint-moonEpoch)/86400000/lunarMonth,2));
+      assert.ok(Math.abs(angle-expected)<1e-7, 'Gregorian date math must match an independent UTC timestamp calculation');
+      assert.equal(moonAngle(new Date(+start+43199999)),angle, 'Moon must stay fixed throughout a UTC half-day');
+      const next=moonAngle(new Date(+start+43200000));
+      const advance=wrap(next-angle,360);
+      assert.ok(advance>2 && advance<4, 'Disc must advance clockwise once per half-day across date/year/cycle rollovers');
+      moonCases++;
+    }
+  }
+}
+// USNO primary phases, 2026. This is a mean-cycle display, not an ephemeris.
+const lunarFixtures=[
+  ['2026-01-18T19:52Z',0],['2026-03-19T01:23Z',0],['2026-06-15T02:54Z',0],
+  ['2026-09-11T03:27Z',0],['2026-10-10T15:50Z',0],['2026-10-26T04:12Z',0.5],
+  ['2026-11-01T20:28Z',0.75],['2026-11-09T07:02Z',0],['2026-11-17T11:48Z',0.25],
+  ['2026-11-24T14:53Z',0.5],['2026-12-01T06:08Z',0.75],['2026-12-09T00:52Z',0],
+];
+let maxMoonErrorDays=0;
+for (const [time,expected] of lunarFixtures) {
+  const delta=wrap(meanPhase(new Date(time))-expected+0.5,1)-0.5;
+  maxMoonErrorDays=Math.max(maxMoonErrorDays,Math.abs(delta)*lunarMonth);
+  assert.ok(Math.abs(delta)*lunarMonth<1.5, `Mean moon phase is outside its approximation tolerance at ${time}`);
+}
+const currentPhase=meanPhase(new Date('2026-11-03T03:00Z'));
+assert.ok(currentPhase>0.75 && currentPhase<0.9, 'Early November 2026 must be waning after last quarter');
+console.log(`PASS: ${moonCases} moon half-days; twice-daily UTC cadence; phase wrap/direction; 12 USNO phase fixtures (max mean-cycle error ${maxMoonErrorDays.toFixed(2)} days).`);
 const months = ['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'];
 const weekdays = ['SUN','MON','TUE','WED','THU','FRI','SAT'];
 let calendarCases = 0;
@@ -116,10 +170,21 @@ for (const [name, id] of [['steps',20], ['minutes',30], ['calories',40]]) {
       assert.ok(Math.abs(evaluate(rangeEdge,data)+180-evaluate(rangeArc,data))<1e-9, 'Cut edge must follow the ranged band tip');
     }
   }
-  // Ranged providers cannot silently turn an arbitrary upper bound into a goal.
+  // Only the explicit Samsung steps compatibility option may show a range target.
   const rangeTexts = [...ranged.matchAll(/<PartText[\s\S]*?<\/PartText>/g)].map(m => m[0]);
   assert.ok(rangeTexts.at(-1).includes('\u2014'));
-  assert.ok(!rangeTexts.at(-1).includes('RANGED_VALUE_MAX'));
+  if (name==='steps') {
+    assert.match(ranged, /<BooleanConfiguration id="samsung_steps_target">/);
+    const targetText=unescapeXml(rangeTexts[1].match(/<Parameter expression="([^"]+)"/)[1]);
+    for (const [min,max,expected] of [[0,6000,'6,000'],[0,8000,'8,000'],[0,0,'—'],[0,-1,'—'],[10,6000,'—']]) {
+      assert.equal(evaluate(targetText,{'COMPLICATION.RANGED_VALUE_MIN':min,'COMPLICATION.RANGED_VALUE_MAX':max}),expected);
+    }
+    assert.match(face, /BooleanConfiguration id="samsung_steps_target"[^>]*defaultValue="TRUE"/);
+    assert.match(ranged, /<BooleanOption id="FALSE">[\s\S]*?<Font[^>]*>—<\/Font>/);
+  } else {
+    assert.ok(!ranged.includes('samsung_steps_target'));
+    assert.ok(!rangeTexts.at(-1).includes('RANGED_VALUE_MAX'));
+  }
   assert.ok(slot.includes('<Complication type="EMPTY">'));
 }
 
