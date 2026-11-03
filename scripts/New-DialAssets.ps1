@@ -145,10 +145,15 @@ foreach($hour in @(1,2,3,4,8,9,10,11,12)) {
     Label ([string]$hour) ($x-25) ($y-$size*0.65) $size '#f4f4f0' 50
 }
 $aperture=New-Object System.Drawing.Drawing2D.GraphicsPath
-$aperture.AddArc(162,42,126,126,180,180)
-$aperture.AddBezier(288,105,272,89,255,90,246,108)
+# Center the outer arch on the wheel pivot (225,130). Its 87-unit radius
+# clears the moon's 55-unit orbit plus 26-unit radius by 6 units throughout
+# the cycle. The former arch was centered higher and shaved off the moon rim.
+$archStart=180+[math]::Asin(25/87)*180/[math]::PI
+$archEdge=[math]::Sqrt(87*87-25*25)
+$aperture.AddArc(138,43,174,174,$archStart,(540-2*$archStart))
+$aperture.AddBezier((225+$archEdge),105,291,88,258,88,246,108)
 $aperture.AddBezier(246,108,231,103,219,103,204,108)
-$aperture.AddBezier(204,108,195,90,178,89,162,105); $aperture.CloseFigure()
+$aperture.AddBezier(204,108,192,88,159,88,(225-$archEdge),105); $aperture.CloseFigure()
 $p=Pen '#494b48' 3; $script:g.DrawPath($p,$aperture); $p.Dispose()
 $script:g.CompositingMode='SourceCopy'; $transparent=New-Object System.Drawing.SolidBrush([System.Drawing.Color]::Transparent)
 $script:g.FillPath($transparent,$aperture); $transparent.Dispose(); $script:g.CompositingMode='SourceOver'; $aperture.Dispose()

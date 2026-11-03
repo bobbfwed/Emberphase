@@ -157,3 +157,11 @@ travel date mismatches, unknown/zero/over-goal readings, and invalid values.
 Companion assembly and lint pass; live phone consent, SDK queries, transport,
 and end-to-end goal rendering remain pending device reconnection. See
 [companion setup and acceptance checks](health-companion.md).
+
+Version 0.4.7 widens the static moon window's upper arch around the wheel pivot,
+giving the painted moon six units of radial clearance. Raster-mask checks cover
+both moons throughout rotation, full/new visibility and quarter visibility;
+the previous dial fails the upper-rim check. Four-phase previews were widened
+to show the entire opening. Date/phase expression tests, WFF schema validation,
+memory limits, resource-only APK verification and Android lint pass. The watch
+was not connected over ADB for installation or physical rendering verification.

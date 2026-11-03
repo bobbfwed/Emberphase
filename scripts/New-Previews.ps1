@@ -107,18 +107,18 @@ foreach($mode in @('normal','low-battery','ambient','ambient-low-battery','unava
     Save $mode
 }
 Copy-Item -LiteralPath (Join-Path $assetRoot 'normal.png') -Destination (Join-Path $sourceAssetRoot 'preview.png') -Force
-Canvas 600 150
+Canvas 800 150
 $script:g.Clear([System.Drawing.Color]::Black)
 $phases=@(@('NEW',0),@('FIRST QUARTER',0.25),@('FULL',0.5),@('LAST QUARTER',0.75))
 for($i=0;$i -lt $phases.Count;$i++) {
     $state=$script:g.Save()
-    $script:g.SetClip([System.Drawing.RectangleF]::new(($i*150),0,150,110))
-    $script:g.TranslateTransform(($i*150-150),-30)
+    $script:g.SetClip([System.Drawing.RectangleF]::new(($i*200),0,200,110))
+    $script:g.TranslateTransform(($i*200-125),-30)
     $linearAngle=-90+180*$phases[$i][1]
     Asset 'moon_disc' 135 40 180 180 ($linearAngle+7.5*[math]::Sin($linearAngle*[math]::PI/90))
     Asset 'dial_frame' 0 0 450 450
     $script:g.Restore($state)
-    Label $phases[$i][0] ($i*150) 118 12 '#eeeeee' 150
+    Label $phases[$i][0] ($i*200) 118 12 '#eeeeee' 200
 }
 Save 'moon-phases'
 Write-Host "Illustrative artwork composites (not device screenshots): $assetRoot"

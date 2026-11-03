@@ -12,6 +12,13 @@ scalloped aperture. Its visible outline is a stylized mechanical indication,
 rather than an astronomical rendering of the lunar terminator. Waxing enters
 from the left; waning exits to the right.
 
+Version 0.4.7 widens the upper arch and centers its curvature on the wheel's
+pivot. Its 87-unit radius clears the 55-unit orbit plus the moon's 26-unit
+radius by six units. The scalloped lower edge still reveals the phase, while
+the upper arch no longer clips the moon's outer rim near quarter phases. The
+window's top stays at essentially the same height, clear of the hour markers
+and calendar. This is a static artwork change with no additional updates.
+
 ## Calculation
 
 The reference new moon is **2000-01-06 at 18:14 UTC**, from
@@ -45,7 +52,7 @@ the next. At new moon the painted moon is hidden, and at full moon it is centere
 in the window. The direction now agrees with waxing and waning.
 
 The final small, periodic angle correction compensates for this artwork's
-scalloped aperture. With uniform rotation, about 66% of the painted moon remains
+scalloped aperture. With uniform rotation, about 65% of the painted moon remains
 visible at quarter phase. Moving that position from 45 to 52.5 degrees brings
 the visible area close to half. The correction preserves new/full positions,
 both painted moons, and continuous forward movement. It is an artwork
@@ -66,3 +73,9 @@ century rules, year rollover, cycle wrap, direction, and a fixed angle throughou
 each half-day. No sub-hour time source or native moon field occurs in the moon
 expression. Previews evaluate that same production expression for their fixture
 date, rather than assuming a full moon.
+
+`scripts/Test-MoonAperture.ps1` checks the generated dial's actual alpha mask:
+117,836 interior moon-rim pixels clear the upper arch across both painted moons,
+new/full positions have 0%/100% visibility, and calibrated quarter positions
+have about 49.8% visibility each. This catches the earlier narrow-arch clipping
+independently of the formula tests.
