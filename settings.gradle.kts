@@ -7,3 +7,4 @@ dependencyResolutionManagement {
 }
 rootProject.name = "Emberphase"
 include(":watchface")
+include(":health-common", ":health-phone", ":health-watch")

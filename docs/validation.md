@@ -37,7 +37,8 @@ No Kotlin or other runtime libraries are dependencies of the face.
 The Node checks evaluate the expressions extracted from `watchface.xml`,
 including calendar rollovers/leap years (2000 and 2100), invalid targets/ranges,
 values beyond a goal, battery slider endpoints, seconds cutoff, complete gauge
-clip bounds, distinct editor anchors, resource presence, and the polling policy.
+unclipped scene geometry, disjoint editor bounds, reference defaults, resource
+presence, and the polling policy.
 They do not emulate the Wear OS renderer or prove a provider's units/semantics.
 
 The physical-device run caught two issues that schema validation did not:
@@ -134,3 +135,25 @@ phase events (maximum fixture error 0.81 days). The corrected moon and the
 6,000-step target were inspected on the physical watch. See `moon-phase.md`
 for the formula, references, and approximation limits. No network call, timer,
 or new high-frequency source was added; decoded-resource estimates are unchanged.
+
+Version 0.4.6 replaces the overlapping activity selection rectangles with compact
+boxes around the three value fields. WFF 4 `Reference` exports carry each slot's
+progress and target to scene-level drawing, retaining one subscription per
+metric. Goal and ranged progress share the same metal arc and cut-edge renderer.
+Unavailable/text-only types export no values, using empty-track and missing-goal
+defaults. Tests cover all four pairwise-disjoint selector boxes, selecting each
+number independently, reference names/defaults, zero/invalid/over-goal payloads,
+Samsung target opt-out, gradient geometry, and placement outside clipped slots.
+The physical watch's runtime reports the compact bounds, and live step progress
+and the 6,000-step target render outside them.
+
+The optional health companion adds separate phone/watch APKs, leaving the face's
+resource-only check intact. Samsung Health Data SDK 1.1.0 was imported locally
+from the developer-provided AAR; its proprietary binary is ignored by Git. The
+phone requests read access to activity summary and the two goal types. Samsung's
+LAST goal aggregate supplies actual goals, rather than guessed range limits.
+Five shared-model unit tests cover DST/midnight expiry, stale/future samples,
+travel date mismatches, unknown/zero/over-goal readings, and invalid values.
+Companion assembly and lint pass; live phone consent, SDK queries, transport,
+and end-to-end goal rendering remain pending device reconnection. See
+[companion setup and acceptance checks](health-companion.md).

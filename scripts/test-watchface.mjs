@@ -136,56 +136,76 @@ const ambientBattery=unescapeXml(ambient.match(/<Transform target="y" value="([^
 assert.equal(evaluate(ambientBattery,{BATTERY_PERCENT:0}),274);
 assert.equal(evaluate(ambientBattery,{BATTERY_PERCENT:100}),175);
 
+const referenceDefaults=Object.fromEntries([...face.matchAll(/<Reference name="([^"]+)" source="([^"]+)" defaultValue="([^"]+)"/g)].map(m=>['REFERENCE.'+m[1],Number(m[3])]));
+const referenceNames=[...face.matchAll(/<Reference name="([^"]+)"/g)].map(m=>m[1]);
+assert.equal(new Set(referenceNames).size,referenceNames.length,'Reference exports must have unique names');
+for(const match of face.matchAll(/\[REFERENCE\.([^\]]+)\]/g)) assert.ok(referenceNames.includes(match[1]),'Missing Reference export '+match[1]);
+function exportedExpression(name) {
+  const group=face.match(new RegExp('<Group name="'+name+'_export"[\\s\\S]*?</Group>'))[0];
+  assert.match(group,/<Reference[^>]*source="angle"/);
+  assert.doesNotMatch(group,/\[REFERENCE\./,'Export calculations must not depend on other references or form cycles');
+  return unescapeXml(group.match(/<Transform target="angle" value="([^"]+)"/)[1]);
+}
 for (const [name, id] of [['steps',20], ['minutes',30], ['calories',40]]) {
-  const slot = face.match(new RegExp(`<ComplicationSlot slotId="${id}"[\\s\\S]*?<\\/ComplicationSlot>`))[0];
-  if (name==='steps') {
+  const slot=face.match(new RegExp('<ComplicationSlot slotId="'+id+'"[\\s\\S]*?</ComplicationSlot>'))[0];
+  if(name==='steps') {
     const policy=slot.match(/<DefaultProviderPolicy\b[^>]+/)[0];
-    assert.match(policy, /primaryProvider="com\.samsung\.android\.wear\.shealth\/com\.samsung\.android\.wear\.shealth\.complications\.steps\.StepsComplicationProviderService"/);
-    assert.match(policy, /primaryProviderType="GOAL_PROGRESS"/);
-    assert.match(policy, /defaultSystemProvider="STEP_COUNT" defaultSystemProviderType="RANGED_VALUE"/);
+    assert.match(policy,/primaryProvider="com\.samsung\.android\.wear\.shealth\/com\.samsung\.android\.wear\.shealth\.complications\.steps\.StepsComplicationProviderService"/);
+    assert.match(policy,/primaryProviderType="GOAL_PROGRESS"/);
+    assert.match(policy,/defaultSystemProvider="STEP_COUNT" defaultSystemProviderType="RANGED_VALUE"/);
   }
-  const goal = slot.match(/<Complication type="GOAL_PROGRESS">([\s\S]*?)<\/Complication>/)[1];
-  const ranged = slot.match(/<Complication type="RANGED_VALUE">([\s\S]*?)<\/Complication>/)[1];
-  const goalArc = unescapeXml(goal.match(/<Transform target="endAngle" value="([^"]+)"/)[1]);
-  const rangeArc = unescapeXml(ranged.match(/<Transform target="endAngle" value="([^"]+)"/)[1]);
-  const goalEdge = unescapeXml(goal.match(/<Transform target="angle" value="([^"]+)"/)[1]);
-  const rangeEdge = unescapeXml(ranged.match(/<Transform target="angle" value="([^"]+)"/)[1]);
-  for (const target of [-1, 0, 60, 8000]) for (const value of [-5, 0, 1, 42, 8000, 10000]) {
-    const data = {'COMPLICATION.GOAL_PROGRESS_VALUE':value, 'COMPLICATION.GOAL_PROGRESS_TARGET_VALUE':target};
-    const valid = evaluate(expressions.get(`${name}_target_valid`), data);
-    assert.equal(valid, target > 0 && value > 0);
-    if (valid) {
-      const angle = evaluate(goalArc, data);
-      assert.ok(Number.isFinite(angle) && angle >= 146 && angle < 214);
-      assert.ok(Math.abs(evaluate(goalEdge,data)+180-angle)<1e-9, 'Cut edge must follow the goal band tip');
-      if (value >= target) assert.equal(angle, 146, 'Over-goal totals must clamp only the drawing');
+  const goalEnd=exportedExpression(name+'_goal_end');
+  const goalTarget=exportedExpression(name+'_goal_target');
+  const rangeEnd=exportedExpression(name+'_range_end');
+  const drawing=face.match(new RegExp('<PartDraw name="'+name+'_progress_band"[\\s\\S]*?</PartDraw>'))[0];
+  const endExpression=unescapeXml(drawing.match(/<Transform target="endAngle" value="([^"]+)"/)[1]);
+  const edge=face.match(new RegExp('<Group name="'+name+'_track_cut_edge"[\\s\\S]*?</Group>'))[0];
+  const edgeExpression=unescapeXml(edge.match(/<Transform target="angle" value="([^"]+)"/)[1]);
+  const targetText=part(name+'_target_display');
+  for(const target of [-1,0,60,8000]) for(const value of [-5,0,1,42,8000,10000]) {
+    const data={'COMPLICATION.GOAL_PROGRESS_VALUE':value,'COMPLICATION.GOAL_PROGRESS_TARGET_VALUE':target};
+    const angle=evaluate(goalEnd,data);
+    const refs={...referenceDefaults,['REFERENCE.'+name+'_goal_end']:angle,['REFERENCE.'+name+'_goal_target']:evaluate(goalTarget,data)};
+    const valid=target>0 && value>0;
+    assert.equal(evaluate(expressions.get(name+'_track_visible'),refs),valid);
+    assert.equal(evaluate(targetText,refs),target>0?numberFormat('#,##0',target):'—');
+    if(valid) {
+      assert.ok(Number.isFinite(angle) && angle>=146 && angle<214);
+      assert.equal(evaluate(endExpression,refs),angle);
+      assert.ok(Math.abs(evaluate(edgeExpression,refs)+180-angle)<1e-9);
+      if(value>=target) assert.equal(angle,146,'Only the progress drawing should clamp at the goal');
+    } else assert.equal(angle,214);
+  }
+  for(const [min,max,value] of [[0,0,0],[1,0,5],[10,100,10],[10,100,55],[10,100,200],[-10,100,-11],[0,6000,2199]]) {
+    const data={'COMPLICATION.RANGED_VALUE_MIN':min,'COMPLICATION.RANGED_VALUE_MAX':max,'COMPLICATION.RANGED_VALUE_VALUE':value};
+    const angle=evaluate(rangeEnd,data);
+    const refs={...referenceDefaults,['REFERENCE.'+name+'_range_end']:angle};
+    const valid=max>min && value>min;
+    assert.equal(evaluate(expressions.get(name+'_track_visible'),refs),valid);
+    assert.equal(evaluate(targetText,refs),'—','Disabled Samsung option and generic ranges must not invent personal targets');
+    if(valid) {
+      assert.ok(angle>=146 && angle<214);
+      assert.equal(evaluate(endExpression,refs),angle);
+      assert.ok(Math.abs(evaluate(edgeExpression,refs)+180-angle)<1e-9);
+    } else assert.equal(angle,214);
+    if(name==='steps') {
+      refs['REFERENCE.steps_range_target']=evaluate(exportedExpression('steps_range_target'),data);
+      assert.equal(evaluate(targetText,refs),min===0 && max>0?numberFormat('#,##0',max):'—');
     }
   }
-  for (const [min,max,value] of [[0,0,0],[1,0,5],[10,100,10],[10,100,55],[10,100,200],[-10,100,-11]]) {
-    const data = {'COMPLICATION.RANGED_VALUE_MIN':min,'COMPLICATION.RANGED_VALUE_MAX':max,'COMPLICATION.RANGED_VALUE_VALUE':value};
-    const valid = evaluate(expressions.get(`${name}_range_valid`), data);
-    assert.equal(valid, max > min && value > min);
-    if (valid) {
-      assert.ok(evaluate(rangeArc,data) >= 146 && evaluate(rangeArc,data) < 214);
-      assert.ok(Math.abs(evaluate(rangeEdge,data)+180-evaluate(rangeArc,data))<1e-9, 'Cut edge must follow the ranged band tip');
-    }
+  for(const type of ['SHORT_TEXT','EMPTY']) {
+    const body=slot.match(new RegExp('<Complication type="'+type+'">([\\s\\S]*?)</Complication>'))[1];
+    assert.doesNotMatch(body,/<Reference\b/,'Unavailable or text-only providers must clear detached progress and goals');
   }
-  // Only the explicit Samsung steps compatibility option may show a range target.
-  const rangeTexts = [...ranged.matchAll(/<PartText[\s\S]*?<\/PartText>/g)].map(m => m[0]);
-  assert.ok(rangeTexts.at(-1).includes('\u2014'));
-  if (name==='steps') {
-    assert.match(ranged, /<BooleanConfiguration id="samsung_steps_target">/);
-    const targetText=unescapeXml(rangeTexts[1].match(/<Parameter expression="([^"]+)"/)[1]);
-    for (const [min,max,expected] of [[0,6000,'6,000'],[0,8000,'8,000'],[0,0,'—'],[0,-1,'—'],[10,6000,'—']]) {
-      assert.equal(evaluate(targetText,{'COMPLICATION.RANGED_VALUE_MIN':min,'COMPLICATION.RANGED_VALUE_MAX':max}),expected);
-    }
-    assert.match(face, /BooleanConfiguration id="samsung_steps_target"[^>]*defaultValue="TRUE"/);
-    assert.match(ranged, /<BooleanOption id="FALSE">[\s\S]*?<Font[^>]*>—<\/Font>/);
-  } else {
-    assert.ok(!ranged.includes('samsung_steps_target'));
-    assert.ok(!rangeTexts.at(-1).includes('RANGED_VALUE_MAX'));
-  }
-  assert.ok(slot.includes('<Complication type="EMPTY">'));
+  assert.equal(evaluate(targetText,referenceDefaults),'—');
+  assert.equal(evaluate(expressions.get(name+'_track_visible'),referenceDefaults),false);
+  assert.doesNotMatch(slot,/<Arc\b|width="43" height="18"/,'Detached tracks and goals must not enlarge the editor slot');
+  if(name==='steps') {
+    assert.match(slot,/<BooleanConfiguration id="samsung_steps_target">/);
+    const disabled=slot.match(/<BooleanOption id="FALSE">([\s\S]*?)<\/BooleanOption>/)[1];
+    assert.doesNotMatch(disabled,/<Reference\b/);
+    assert.match(face,/BooleanConfiguration id="samsung_steps_target"[^>]*defaultValue="TRUE"/);
+  } else assert.ok(!slot.includes('samsung_steps_target'));
 }
 
 const slider = face.match(/<PartImage name="battery_slider"[\s\S]*?<\/PartImage>/)[0];
@@ -213,42 +233,52 @@ assert.match(manifest, /android:hasCode="false"/);
 assert.doesNotMatch(manifest, /<service\b|<activity\b|<uses-permission\b/);
 const slotIds = [...face.matchAll(/<ComplicationSlot slotId="(\d+)"/g)].map(m => m[1]);
 assert.equal(new Set(slotIds).size, 4);
-const activityBounds = new Map();
-for (const id of [20,30,40]) {
-  const slot = face.match(new RegExp(`<ComplicationSlot slotId="${id}"[\\s\\S]*?<\\/ComplicationSlot>`))[0];
-  const tag = slot.match(/<BoundingRoundBox[^>]+/)[0];
-  const attribute = (tag, name) => Number(tag.match(new RegExp(`\\b${name}="([^"]+)"`))[1]);
-  const b = Object.fromEntries(['x','y','width','height'].map(n => [n,attribute(tag,n)]));
+const activityBounds=new Map();
+const attribute=(tag,name)=>Number(tag.match(new RegExp('\\b'+name+'="([^"]+)"'))[1]);
+for(const [id,name] of [[20,'steps'],[30,'minutes'],[40,'calories']]) {
+  const slot=face.match(new RegExp('<ComplicationSlot slotId="'+id+'"[\\s\\S]*?</ComplicationSlot>'))[0];
+  const tag=slot.match(/<BoundingRoundBox[^>]+/)[0];
+  const b=Object.fromEntries(['x','y','width','height'].map(n=>[n,attribute(tag,n)]));
   activityBounds.set(id,b);
-  const radius = {20:150,30:168,40:186}[id];
-  for (const text of slot.matchAll(/<PartText[^>]+/g)) {
-    const x=attribute(text[0],'x'), y=attribute(text[0],'y'), w=attribute(text[0],'width'), h=attribute(text[0],'height');
-    assert.ok(x>=b.x && y>=b.y && x+w<=b.x+b.width && y+h<=b.y+b.height, `Slot ${id} clips a text field`);
-    if (w===43 && h===18) {
-      assert.ok(Math.abs(Math.hypot(x+w/2-225,y+h/2-225)-radius)<1, `Slot ${id} goal must follow its track radius`);
-    }
+  for(const text of slot.matchAll(/<PartText[^>]+/g)) {
+    const x=attribute(text[0],'x'),y=attribute(text[0],'y'),w=attribute(text[0],'width'),h=attribute(text[0],'height');
+    assert.ok(x>=b.x && y>=b.y && x+w<=b.x+b.width && y+h<=b.y+b.height,'Slot '+id+' clips its number');
   }
-  for (const arc of slot.matchAll(/<Arc\b[\s\S]*?<\/Arc>/g)) {
-    assert.equal(attribute(arc[0],'centerX'),225);
-    assert.equal(attribute(arc[0],'centerY'),225);
-    assert.equal(attribute(arc[0],'width'),radius*2);
-    assert.equal(attribute(arc[0],'height'),radius*2);
-    assert.match(arc[0], /thickness="12" cap="BUTT"/);
-    assert.match(arc[0], /<RadialGradient centerX="225" centerY="225"/);
-    const stops=arc[0].match(/positions="([^"]+)"/)[1].split(' ').map(Number);
-    assert.ok(stops.length>=3 && stops[0]>=0 && stops.at(-1)===1);
-    assert.ok(stops.every((stop,i)=>i===0 || stop>stops[i-1]), 'Metal gradient stops must be strictly increasing');
-  }
-  for (let angle=146; angle<=214; angle++) {
-    const x=225+radius*Math.sin(angle*Math.PI/180), y=225-radius*Math.cos(angle*Math.PI/180);
-    assert.ok(x-7>=b.x && x+7<=b.x+b.width && y-7>=b.y && y+7<=b.y+b.height, `Slot ${id} clips its metal band or cut edge`);
+  const target=face.match(new RegExp('<PartText name="'+name+'_target_display"[^>]+'))[0];
+  const radius={20:150,30:168,40:186}[id];
+  assert.ok(Math.abs(Math.hypot(attribute(target,'x')+attribute(target,'width')/2-225,attribute(target,'y')+attribute(target,'height')/2-225)-radius)<1,'Target must follow its track radius');
+  const drawing=face.match(new RegExp('<PartDraw name="'+name+'_progress_band"[\\s\\S]*?</PartDraw>'))[0];
+  const arc=drawing.match(/<Arc\b[\s\S]*?<\/Arc>/)[0];
+  assert.equal(attribute(arc,'centerX'),225); assert.equal(attribute(arc,'centerY'),225);
+  assert.equal(attribute(arc,'width'),radius*2); assert.equal(attribute(arc,'height'),radius*2);
+  assert.match(arc,/thickness="12" cap="BUTT"/);
+  assert.match(arc,/<RadialGradient centerX="225" centerY="225"/);
+  const stops=arc.match(/positions="([^"]+)"/)[1].split(' ').map(Number);
+  assert.ok(stops.length>=3 && stops[0]>=0 && stops.at(-1)===1);
+  assert.ok(stops.every((stop,i)=>i===0 || stop>stops[i-1]));
+  assert.match(drawing,/x="0" y="0" width="450" height="450"/);
+  assert.ok(face.indexOf('<Group name="'+name+'_track_render"')>face.lastIndexOf('</ComplicationSlot>'),'Tracks must render outside cropped complication slots');
+  assert.match(face,new RegExp('<Group name="'+name+'_track_render"[^>]*>\\s*<Variant mode="AMBIENT" target="alpha" value="0"'));
+  for(let angle=146;angle<=214;angle++) {
+    const x=225+radius*Math.sin(angle*Math.PI/180),y=225-radius*Math.cos(angle*Math.PI/180);
+    assert.ok(x-7>=0 && y-7>=0 && x+7<=450 && y+7<=450,'Track must fit the scene viewport');
   }
 }
-for (const [id,x,y] of [[20,225,275],[30,110,350],[40,225,411]]) {
-  const hits = [...activityBounds].filter(([,b]) => x>b.x && y>b.y && x<b.x+b.width && y<b.y+b.height).map(([id])=>id);
-  assert.deepEqual(hits,[id], `Editor anchor for slot ${id} must not overlap another activity slot`);
+const slotBounds=new Map([[10,{x:52,y:194,width:76,height:94}],...activityBounds]);
+for (const [id,provider] of [[30,'MinutesDataSource'],[40,'CaloriesDataSource']]) {
+  const slot=face.match(new RegExp('<ComplicationSlot slotId="'+id+'"[\\s\\S]*?</ComplicationSlot>'))[0];
+  assert.ok(slot.includes('primaryProvider="com.bobbfwed.emberphase.health/com.bobbfwed.emberphase.health.watch.'+provider+'" primaryProviderType="GOAL_PROGRESS"'));
+  assert.ok(slot.includes('defaultSystemProvider="EMPTY" defaultSystemProviderType="EMPTY"'));
+}
+for(const [id,a] of slotBounds) for(const [other,b] of slotBounds) {
+  if(id>=other) continue;
+  assert.ok(a.x+a.width<=b.x || b.x+b.width<=a.x || a.y+a.height<=b.y || b.y+b.height<=a.y,'Editor slots '+id+' and '+other+' must never overlap');
+}
+for(const [id,x,y] of [[20,225,275],[30,204,325],[40,290,325]]) {
+  const hits=[...slotBounds].filter(([,b])=>x>b.x && y>b.y && x<b.x+b.width && y<b.y+b.height).map(([id])=>id);
+  assert.deepEqual(hits,[id],'Each activity number must select only its own provider');
 }
 for (const match of face.matchAll(/\bresource="([a-z][a-z0-9_]*)"/g)) {
   assert.ok(fs.existsSync(path.join(root, 'watchface/src/main/res/drawable-nodpi', match[1]+'.png')), `Missing ${match[1]}`);
 }
-console.log(`PASS: ${calendarCases} calendar dates; activity goals/ranges/empty states; unclipped gauges and unique editor anchors; battery bounds; seconds cutoff; resources and battery policy.`);
+console.log(`PASS: ${calendarCases} calendar dates; activity goals/ranges/empty states; detached reference-driven gauges and disjoint editor targets; battery bounds; seconds cutoff; resources and battery policy.`);

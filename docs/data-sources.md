@@ -44,8 +44,8 @@ Each activity inset accepts `GOAL_PROGRESS`, `RANGED_VALUE`, `SHORT_TEXT`, and
 provider's `GOAL_PROGRESS` type, with the system `STEP_COUNT` provider's
 `RANGED_VALUE` type as a fallback. Existing selected sources/types can persist
 through updates; changing the default does not force them to change. The other
-two start empty, ready for the user to
-select a suitable installed activity provider.
+two prefer the optional Emberphase Health companion's individual `GOAL_PROGRESS`
+providers, falling back to empty when unavailable. See [companion setup](health-companion.md).
 
 * `GOAL_PROGRESS`: render the supplied numeric value and target; clamp only the
   drawing to 0–100%, allowing the numeric total to exceed the target. Invalid or
@@ -62,13 +62,17 @@ select a suitable installed activity provider.
 * Empty/unavailable: `—`, unfilled track, no fabricated zero or mockup sample.
 
 [WFF complication fields](https://developer.android.com/reference/wear-os/wff/complication/complication).
-The recessed track and numeric total are in the same slot context. The slot
-bounds cover both because WFF crops rendering at the bounds. These rectangular
-regions overlap; the editor has unique selection anchors at the steps number,
-the cyan runner left of the gauges, and the bottom of the green gauge. This
-avoids subscribing twice to each provider just to reproduce a detached gauge.
+Each activity slot subscribes to one provider and renders its numeric total in
+a compact box. WFF 4 `Reference` exports share the calculated progress angle and
+numeric target with separate scene elements that draw the track and target.
+The selection boxes around the three activity values do not overlap, and they
+do not have to contain the tracks. Missing or text-only data uses reference
+defaults (214 degrees for an empty track and zero for an unavailable target).
+The empty export groups use their transformable angle attribute as a numeric
+carrier and draw no artwork. This avoids extra complication subscriptions.
 [Bounding areas and clipping](https://developer.android.com/reference/wear-os/wff/complication/bounding).
-There is no cross-slot data sharing, private Samsung API, guessed component name, background
+See also [WFF references](https://developer.android.com/reference/wear-os/wff/common/reference/reference).
+There is no sharing between different providers, private Samsung API, guessed component name, background
 service, health permission request, or sensor polling in this APK.
 
 The installed Steps provider declares `GOAL_PROGRESS`; Daily Activity does not
@@ -77,9 +81,9 @@ provider was found. These declarations do **not** prove live Samsung Health
 integration or goal synchronization. Before assigning defaults, compare
 the watch's chooser/payloads with Samsung Health while changing each goal. If
 Samsung only offers an image or combined daily-activity complication, WFF cannot
-extract the three numbers from it. A separate consent-based phone bridge and
-Wear OS complication-provider app would be needed for exact Samsung totals and
-goals; neither is silently added here.
+extract the three numbers from it. The optional, separate consent-based phone
+bridge and Wear OS complication-provider app implement the SDK path for active
+minutes/calories and their goals. They are separate APKs; the face remains resource-only.
 
 ## Weather
 
@@ -106,7 +110,7 @@ Sources: [WFF weather availability and staleness](https://developer.android.com/
 
 ## Battery policy
 
-No executable application code, networking permission, location polling, heart
+The watch-face APK has no executable application code, networking permission, location polling, heart
 rate sampling, alarms, or wake locks. Native clock hands and provider/system
 updates drive the face. Mechanical seconds default on, with a native 130 ms
 overshoot-and-return tick once per second. They can be disabled in the editor
@@ -120,3 +124,9 @@ month, and date, a battery slider with threshold lamps, and white hour markers
 with 12/3/6/9. The ambient scene has no seconds, weather, moon, activity tracks,
 or adjacent calendar entries. Samsung display offload was observed active.
 Actual battery life must be measured on the watch.
+
+The optional companion schedules phone-side work about every 30 minutes using
+WorkManager (Android may delay it). Watch providers have no periodic polling:
+Data Layer changes trigger updates. Opening/activating a provider can request a
+phone refresh, throttled to once per five minutes. Explicit Sync now bypasses
+that throttle. Cached totals expire after two hours or at local midnight.

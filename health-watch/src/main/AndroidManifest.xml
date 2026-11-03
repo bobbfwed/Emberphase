@@ -1,0 +1,38 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <uses-feature android:name="android.hardware.type.watch" android:required="true" />
+    <application android:label="Emberphase Health" android:icon="@drawable/ic_emberphase_health"
+        android:allowBackup="false" android:dataExtractionRules="@xml/health_backup_rules"
+        android:theme="@android:style/Theme.Material.NoActionBar">
+        <meta-data android:name="com.google.android.wearable.standalone" android:value="false" />
+        <activity android:name="com.bobbfwed.emberphase.health.watch.HealthActivity" android:exported="true" android:taskAffinity="">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <service android:name="com.bobbfwed.emberphase.health.watch.ActivityDataListener" android:exported="true">
+            <intent-filter>
+                <action android:name="com.google.android.gms.wearable.DATA_CHANGED" />
+                <data android:scheme="wear" android:host="*" android:path="/emberphase/activity/v1" />
+            </intent-filter>
+        </service>
+        <service android:name="com.bobbfwed.emberphase.health.watch.MinutesDataSource"
+            android:label="Emberphase · Active minutes" android:icon="@drawable/ic_emberphase_health"
+            android:exported="true" android:permission="com.google.android.wearable.permission.BIND_COMPLICATION_PROVIDER">
+            <intent-filter><action android:name="android.support.wearable.complications.ACTION_COMPLICATION_UPDATE_REQUEST" /></intent-filter>
+            <meta-data android:name="android.support.wearable.complications.SUPPORTED_TYPES" android:value="GOAL_PROGRESS,SHORT_TEXT" />
+            <meta-data android:name="androidx.wear.watchface.complications.datasource.SAFE_WATCH_FACE_SUPPORTED_TYPES" android:value="GOAL_PROGRESS,SHORT_TEXT" />
+            <meta-data android:name="android.support.wearable.complications.SAFE_WATCH_FACES" android:value="com.bobbfwed.emberphase" />
+            <meta-data android:name="android.support.wearable.complications.UPDATE_PERIOD_SECONDS" android:value="0" />
+        </service>
+        <service android:name="com.bobbfwed.emberphase.health.watch.CaloriesDataSource"
+            android:label="Emberphase · Active calories" android:icon="@drawable/ic_emberphase_health"
+            android:exported="true" android:permission="com.google.android.wearable.permission.BIND_COMPLICATION_PROVIDER">
+            <intent-filter><action android:name="android.support.wearable.complications.ACTION_COMPLICATION_UPDATE_REQUEST" /></intent-filter>
+            <meta-data android:name="android.support.wearable.complications.SUPPORTED_TYPES" android:value="GOAL_PROGRESS,SHORT_TEXT" />
+            <meta-data android:name="androidx.wear.watchface.complications.datasource.SAFE_WATCH_FACE_SUPPORTED_TYPES" android:value="GOAL_PROGRESS,SHORT_TEXT" />
+            <meta-data android:name="android.support.wearable.complications.SAFE_WATCH_FACES" android:value="com.bobbfwed.emberphase" />
+            <meta-data android:name="android.support.wearable.complications.UPDATE_PERIOD_SECONDS" android:value="0" />
+        </service>
+    </application>
+</manifest>

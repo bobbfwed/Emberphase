@@ -33,6 +33,20 @@ checked on the watch; the exact midnight/noon transitions remain covered by
 expression tests rather than an overnight device observation. The display is
 an approximate mechanical phase indication, not a precise lunar ephemeris.
 
+Version 0.4.6 uses separate compact selector boxes around Steps, MIN, and CAL.
+The watch runtime reports non-overlapping bounds for these and the weather/custom
+inset. Steps and its 6,000 target still render, with the progress track outside
+the selector box through WFF references. Use the value fields in the editor;
+the earlier runner/track selection coordinates below describe older versions.
+
+The 0.4.6 companion defaults request Emberphase Health's active-minute and
+active-calorie GOAL_PROGRESS providers. The separate companion apps are built,
+but installation and consented end-to-end testing are pending: the phone USB
+connection and watch wireless-debugging connection dropped before installation.
+No live MIN/CAL values or goals have been verified yet. See
+[companion setup](health-companion.md). The earlier provider-availability results
+below describe Samsung's installed providers, not the new companion services.
+
 The 0.2.0 awake screenshot also confirms the activity channels are concentric
 with the hand spindle, with metallic orange progress and a sharp cut edge over
 the exposed toothed track. Cyan/green filled bands are shown in the illustrative

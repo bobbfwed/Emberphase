@@ -48,10 +48,12 @@ sizes have not yet been verified. See the
 
 Activity data depends on the complication providers installed on the watch.
 Steps prefer Samsung Health's steps-and-goal provider when available, with the
-system step-count provider as a fallback. **Active minutes and
-activity calories start unset**, and the tested Samsung Health installation did
-not expose suitable individual providers for those two values. The face does
-not include a phone companion or health-data bridge. Missing data displays `—`.
+system step-count provider as a fallback. Active minutes and activity calories
+use the optional **Emberphase Health** phone/watch companion, because the tested
+Samsung Health watch app does not expose individual numeric providers for them.
+The companion reads Samsung Health's totals and daily goals with permission.
+Without the companion and consent, these displays remain `—`.
+See [companion setup and current testing status](docs/health-companion.md).
 
 The moon disc uses an offline date-based approximation of the lunar cycle,
 advancing twice a day at midnight and noon UTC. Its mechanical aperture gives
@@ -159,12 +161,12 @@ For activity providers, select these areas in the watch-face editor:
 | Display | Selection point |
 | --- | --- |
 | Steps | Large steps number |
-| Active minutes | Left side of the cyan runner beside the tracks |
-| Activity calories | Bottom of the green gauge |
+| Active minutes | Number or dash above MIN |
+| Activity calories | Number or dash above CAL |
 | Custom left inset | Left weather area, after choosing Custom complication |
 
-Some editor regions overlap, so use these selection points if a tap selects
-the wrong display. Choose a provider that supplies the corresponding metric;
+The activity values have separate, non-overlapping selection boxes. Tap the
+number or dash for the metric you want to configure. Choose a provider that supplies the corresponding metric;
 the face displays the provider's data and does not calculate activity totals.
 
 Explicit goals are shown when a provider supplies `GOAL_PROGRESS` data.
@@ -180,10 +182,11 @@ not been verified.
 
 Existing face instances can retain a range-based steps selection even when the
 default requests `GOAL_PROGRESS`; the Samsung compatibility option handles that
-case without reselection. Active minutes and calories require separate suitable
-providers; choosing the
-combined Samsung Health Daily Activity display cannot supply those two numeric
-values and goals independently.
+case without reselection. For active minutes and calories, install and connect
+the companion, then select **Emberphase · Active minutes** for MIN and
+**Emberphase · Active calories** for CAL. New face instances prefer these
+providers when installed; existing selections may need changing once. The combined
+Samsung Health Daily Activity display cannot supply these numeric fields independently.
 
 For the technical findings, see [data sources](docs/data-sources.md) and
 [Samsung provider availability](docs/device-providers.md).
