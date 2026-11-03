@@ -1,6 +1,6 @@
 # Center-tap mechanical sweep
 
-Face 0.5.0 and watch companion 0.1.2 add a three-second sweep when the orange
+Face 0.5.1 and watch companion 0.1.3 run a six-second sweep when the orange
 center hub is tapped while the face is awake. A touch in always-on mode may
 only wake the screen; tap the hub again after the normal face appears.
 
@@ -32,9 +32,14 @@ Do not insert new slots before the existing ones.
 
 `SweepDataSource` publishes an idle ranged value with a broadcast tap action.
 The private `SweepReceiver` records the tap time and requests one provider
-update. A three-second complication timeline then supplies the timestamp and
-returns to idle. It does not publish animation frames or schedule background
-polling, alarms, health reads or a foreground service.
+update. A short complication timeline then supplies the timestamp and
+returns to idle. AndroidX stores the timeline bounds as whole epoch seconds,
+so the end is rounded up; otherwise the last part of the settle can be cut
+off. The face still clamps the motion at six seconds and then shows the native
+hands. A provider refresh during that extra fraction of a second republishes
+the same timestamp instead of idle. The sweep does not publish animation
+frames or schedule background polling, alarms, health reads or a foreground
+service.
 
 The timestamp is encoded as milliseconds within the UTC day, plus one, so zero
 means idle. Float quantization is at most four milliseconds; the WFF expression
@@ -44,9 +49,10 @@ face checks before consuming the value.
 
 WFF references coordinate all the motion. The millisecond clock source exists
 only in the tap-controlled branch; ordinary hands remain native clocks. Motion
-is divided into 360 ms to reach 12, 1,890 ms for the rotations, and 750 ms for
-settling, with eased movement. The artwork is reused, with no movie resources
-in the APK and no increase in the decoded-image memory estimate. Provider
+is divided into 720 ms to reach 12, 3,780 ms for the rotations, and 1,500 ms for
+settling. The return eases in and out so the hands are already at rest on the
+live time when the native hands take over. The artwork is reused, with no movie
+resources in the APK and no increase in the decoded-image memory estimate. Provider
 delivery and actual rendering cadence can affect the first visible frame.
 
 ## Preview and checks

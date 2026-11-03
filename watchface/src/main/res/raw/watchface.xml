@@ -13,7 +13,7 @@
     </UserConfigurations>
     <Scene backgroundColor="#000000">
         <!-- A user tap publishes one UTC-day timestamp through the watch companion.
-             Its three-second timeline returns to zero without polling. Only this
+             Its six-second timeline returns to zero without polling. Only this
              active branch uses subsecond time; ordinary operation stays unchanged. -->
         <Group name="sweep_control" x="0" y="0" width="450" height="450">
             <Variant mode="AMBIENT" target="alpha" value="0" duration="0" />
@@ -21,7 +21,7 @@
                 <Expressions><Expression name="sweep_requested">[REFERENCE.sweep_start] &gt; 0 &amp;&amp; [BATTERY_PERCENT] &gt; 15</Expression></Expressions>
                 <Compare expression="sweep_requested">
                     <Group name="sweep_progress_source" x="0" y="0" width="1" height="1">
-                        <Transform target="angle" value="clamp((([UTC_TIMESTAMP] % 86400000 - ([REFERENCE.sweep_start] - 1) + 86400000) % 86400000) / 3000, 0, 1)" />
+                        <Transform target="angle" value="clamp((([UTC_TIMESTAMP] % 86400000 - ([REFERENCE.sweep_start] - 1) + 86400000) % 86400000) / 6000, 0, 1)" />
                         <Reference name="sweep_progress" source="angle" defaultValue="1" />
                     </Group>
                     <Group name="sweep_home_source" x="0" y="0" width="1" height="1">
@@ -33,7 +33,7 @@
                         <Reference name="sweep_turn" source="angle" defaultValue="0" />
                     </Group>
                     <Group name="sweep_settle_source" x="0" y="0" width="1" height="1">
-                        <Transform target="angle" value="(clamp(([REFERENCE.sweep_progress] - 0.75) / 0.25, 0, 1)) * (clamp(([REFERENCE.sweep_progress] - 0.75) / 0.25, 0, 1)) * (3 - 2 * (clamp(([REFERENCE.sweep_progress] - 0.75) / 0.25, 0, 1)))" />
+                        <Transform target="angle" value="(clamp(([REFERENCE.sweep_progress] - 0.75) / 0.25, 0, 1)) * (clamp(([REFERENCE.sweep_progress] - 0.75) / 0.25, 0, 1)) * (clamp(([REFERENCE.sweep_progress] - 0.75) / 0.25, 0, 1)) * ((clamp(([REFERENCE.sweep_progress] - 0.75) / 0.25, 0, 1)) * (6 * (clamp(([REFERENCE.sweep_progress] - 0.75) / 0.25, 0, 1)) - 15) + 10)" />
                         <Reference name="sweep_settle" source="angle" defaultValue="1" />
                     </Group>
                 </Compare>

@@ -246,3 +246,15 @@ Decoded-resource estimates remain 4,444,248 active and 1,645,872 ambient bytes.
 The standalone browser preview is generated from production expressions and
 artwork and was rendered in headless Chrome. Physical transition timing and
 battery consumption have not been measured.
+
+Face 0.5.1 and watch companion 0.1.3 double that sweep to six seconds: 720 ms
+to reach 12, 3,780 ms of opposite rotation, and 1,500 ms of return. The return
+uses a smoother ease that is already at rest on the live time. AndroidX stores
+timeline bounds as whole epoch seconds, which could drop the last part of the
+settle; the published end is rounded up, and a provider refresh during that
+extra fraction republishes the same timestamp. Expression checks cover a
+monotonic return and final frames within one degree. Four JVM tests, WFF schema
+validation, the memory-footprint check, and the signed face APK build pass, as
+do the watch-companion unit tests, lint, and debug build. The browser preview
+was regenerated from the production expressions. A physical check of the slower
+settle is still pending.

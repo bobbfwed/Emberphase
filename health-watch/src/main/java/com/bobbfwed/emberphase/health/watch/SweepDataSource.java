@@ -22,17 +22,17 @@ public final class SweepDataSource extends ComplicationDataSourceService {
         long now = System.currentTimeMillis();
         try {
             var idle = data(0);
-            if (SweepTiming.active(start, now)) {
+            if (SweepTiming.publishing(start, now)) {
                 // The platform returns to idle without an alarm, timer, or another
                 // process wakeup. A late request never replays an expired session.
                 listener.onComplicationDataTimeline(new ComplicationDataTimeline(idle, List.of(
                         new TimelineEntry(new TimeInterval(Instant.ofEpochMilli(start),
-                                Instant.ofEpochMilli(start + SweepTiming.DURATION_MS)), data(SweepTiming.value(start))))));
+                                Instant.ofEpochMilli(SweepTiming.timelineEnd(start))), data(SweepTiming.value(start))))));
             } else {
                 listener.onComplicationData(idle);
             }
         } catch (android.os.RemoteException disconnected) {
-            // Nothing persists beyond the three-second session.
+            // The timestamp cannot replay an expired six-second session.
         }
     }
 

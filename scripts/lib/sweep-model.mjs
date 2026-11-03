@@ -21,7 +21,9 @@ export function loadSweepModel(file) {
     expressions[metric]=decode(band.match(/target="endAngle" value="([^"]+)"/)[1]);
   }
   const defaults=Object.fromEntries([...xml.matchAll(/<Reference name="([^"]+)" source="[^"]+" defaultValue="([^"]+)"/g)].map(m=>['REFERENCE.'+m[1],Number(m[2])]));
-  return {expressions,defaults};
+  const duration=expressions.progress.match(/\/\s*(\d+(?:\.\d+)?)\s*,\s*0\s*,\s*1\s*\)\s*$/);
+  if(!duration) throw new Error('Sweep duration missing from progress expression');
+  return {expressions,defaults,durationMs:Number(duration[1])};
 }
 
 // Shared by the expression tests and the standalone browser preview. All

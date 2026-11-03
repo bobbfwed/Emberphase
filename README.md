@@ -16,7 +16,7 @@ to the watch display.
   overshoot on each tick.
 * An optional hidden balance rim glimpsed through two small inner windows,
   alternating left and right once per second.
-* A center-hub tap runs a three-second mechanical sweep, then settles onto the
+* A center-hub tap runs a six-second mechanical sweep, then settles onto the
   live time, date and indicators. Requires the Emberphase Health watch companion.
 * A rotating twin-moon disc behind a recessed aperture.
 * Mechanical calendar drums showing **weekday, month, date**, with partially
