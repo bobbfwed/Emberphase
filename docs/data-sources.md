@@ -135,7 +135,10 @@ in ambient, and is omitted at 15% battery or below. Its movement uses WFF's
 [Transform Animation](https://developer.android.com/reference/wear-os/wff/common/transform/animation).
 
 The optional companion schedules phone-side work about every 30 minutes using
-WorkManager (Android may delay it). Watch providers have no periodic polling:
-Data Layer changes trigger updates. Opening/activating a provider can request a
+WorkManager (Android may delay it). Watch providers receive Data Layer pushes
+and a 30-minute system refresh fallback that checks the local cache.
+Opening/activating a provider can request a
 phone refresh, throttled to once per five minutes. Explicit Sync now bypasses
-that throttle. Cached totals expire after two hours or at local midnight.
+that throttle. Cached totals expire after two hours or at local midnight. An
+explicit unavailable-data timeline entry replaces expired totals even without
+a subsequent push. See [overnight sync setup](health-companion.md).

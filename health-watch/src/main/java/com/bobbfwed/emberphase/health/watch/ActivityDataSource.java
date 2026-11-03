@@ -27,8 +27,14 @@ public abstract class ActivityDataSource extends ComplicationDataSourceService {
             return;
         }
         ActivitySnapshot.Metric metric = isMinutes() ? snapshot.minutes : snapshot.calories;
-        deliver(listener, render(request.getComplicationType(), metric,
-                TimeRange.between(snapshot.capturedAt, snapshot.expiresAt)));
+        ComplicationData data = render(request.getComplicationType(), metric,
+                TimeRange.between(snapshot.capturedAt, snapshot.expiresAt));
+        try {
+            listener.onComplicationDataTimeline(SnapshotTimeline.create(
+                    snapshot, data, Instant.now(), ZoneId.systemDefault()));
+        } catch (android.os.RemoteException disconnected) {
+            // A later push or system refresh retries after a face transition.
+        }
     }
 
     private void deliver(ComplicationRequestListener listener, ComplicationData data) {

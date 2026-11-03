@@ -73,6 +73,11 @@ key and register the phone app's package and release SHA-256 with Samsung.
    goal, and active-calorie goal. The app requests no write permission.
 3. Tap **Sync now**. Keep the devices paired and let Samsung Health finish
    syncing watch activity to the phone.
+   On Samsung phones, also open **Settings → Apps → Emberphase Health → Battery**
+   and select **Unrestricted** if automatic sync stalls. The tested phone's
+   Optimized setting blocked the scheduled worker overnight. This setting applies
+   to the phone companion; it does not change watch-face animation or watch power
+   settings. Android can still delay work, and disconnected devices cannot sync.
 4. Edit the face's Complications. Tap the number/dash above **MIN**, select
    **Emberphase · Active minutes**; do the same for **CAL** with
    **Emberphase · Active calories**. Save the face. Existing selections persist
@@ -91,8 +96,11 @@ and [goal semantics](https://developer.samsung.com/health/data/api-reference/-sh
 Automatic phone sync is scheduled every 30 minutes with a 10-minute flex window;
 Android may batch or delay work. It does not promise exact-time refresh. Initial
 and manual syncs request urgent Data Layer delivery. Watch activation/stale-data
-refresh requests are throttled to five minutes. There is no watch polling loop,
-foreground service, sensor sampling, or new watch-face timer.
+refresh requests are throttled to five minutes. Starting with companion 0.1.1,
+Wear OS also requests each watch provider about every 30 minutes as a recovery
+path when pushes stop. These requests read the local cache and ask the phone for
+a refresh only when it is stale. There is no foreground service, sensor sampling,
+exact alarm, or new watch-face timer.
 
 Only dated totals and goals travel through Google's paired-device Data Layer.
 The watch caches them in private storage, excluded from backup and device
@@ -100,7 +108,16 @@ transfer. No raw health records are stored or logged, and there is no Emberphase
 backend. Unknown values remain unavailable. Snapshots expire at the earlier of
 two hours and the source's local midnight; a different display date also rejects
 them. A new day must receive new totals. The watch provider exposes the expiry
-to Wear OS through the complication's validity range.
+to Wear OS through the complication's validity range. Version 0.1.0 left expired
+values visible on the tested Samsung renderer despite that range. Version 0.1.1
+also sends an explicit `NO_DATA` timeline entry beginning at expiry (or an
+earlier watch-local midnight), so the renderer has a scheduled replacement even
+without another phone push. Expired totals become dashes and empty tracks;
+they are not represented as a measured zero. See Android's
+[complication timeline API](https://developer.android.com/reference/androidx/wear/watchface/complications/datasource/ComplicationDataTimeline).
+
+Sync failures show only exception class names to help diagnose permission,
+connection or SDK failures; exception messages and health records are not logged.
 
 Use **Stop sharing and clear watch data** on the phone to cancel sync and delete
 the shared data item. Failed deletions retry; an offline watch also expires its

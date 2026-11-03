@@ -22,7 +22,14 @@ public final class HealthSyncWorker extends Worker {
             return Result.failure();
         } catch (Exception unavailable) {
             // Never log health payloads or SDK errors that may contain records.
-            HealthSync.prefs(context).edit().putString("status", "Sync unavailable. Open Samsung Health, check read permissions, then try Sync now.").apply();
+            StringBuilder types = new StringBuilder();
+            Throwable cause = unavailable;
+            for (int depth = 0; cause != null && depth < 4; depth++, cause = cause.getCause()) {
+                if (depth > 0) types.append(" / ");
+                types.append(cause.getClass().getSimpleName());
+            }
+            HealthSync.prefs(context).edit().putString("status", "Sync unavailable (" + types
+                    + "). Open Samsung Health, check read permissions, then try Sync now.").apply();
             return getRunAttemptCount() < 2 ? Result.retry() : Result.failure();
         }
     }

@@ -199,3 +199,24 @@ to the openings, and both GIFs pass the two-second cycle/hold checks. WFF schema
 SDK-native build/signature/resource-only and memory checks, and expression tests
 pass. Version 0.4.9 was installed and its enlarged windows inspected on the
 SM-R950. No new artwork resource or ambient change was introduced.
+
+On 2026-11-03, the physical watch still displayed the previous day's MIN/CAL
+totals while Steps had rolled over. Its stored snapshot was dated November 2,
+and the phone's last successful sync was 22:55 PST. The phone's scheduled worker
+was in the RARE standby bucket, with background execution blocked and its next
+run overdue by more than nine hours. Changing only the phone companion's battery
+setting from Optimized to Unrestricted removed that block. A transient manual
+sync failure subsequently recovered on retry; today's SDK read and publish
+succeeded. The transient failure's cause was not established.
+
+Companion 0.1.1 adds an explicit NO_DATA complication timeline starting at expiry,
+plus a 30-minute cache-check fallback. AndroidX requires the default to retain the
+selected metric type; the scheduled NO_DATA entry is its supported type exception.
+The timeline accounts for an earlier watch-local midnight as well as the source
+date and two-hour expiry. Five instrumentation regression cases cover these
+boundaries, stale snapshot rejection and AndroidX timeline validation. Test APK
+assembly and both companion lint/build checks pass; existing shared-model unit
+tests pass. The phone update is installed. The watch disconnected before its
+update/test installation, so execution of the new instrumentation tests and
+physical timeline-expiry validation remain pending reconnection. No watch or
+phone clock was changed to simulate midnight.
