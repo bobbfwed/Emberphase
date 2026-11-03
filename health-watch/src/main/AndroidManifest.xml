@@ -4,6 +4,16 @@
         android:allowBackup="false" android:dataExtractionRules="@xml/health_backup_rules"
         android:theme="@android:style/Theme.Material.NoActionBar">
         <meta-data android:name="com.google.android.wearable.standalone" android:value="false" />
+        <receiver android:name="com.bobbfwed.emberphase.health.watch.SweepReceiver" android:exported="false" />
+        <service android:name="com.bobbfwed.emberphase.health.watch.SweepDataSource"
+            android:label="Emberphase · Mechanical sweep" android:icon="@drawable/ic_emberphase_health"
+            android:exported="true" android:permission="com.google.android.wearable.permission.BIND_COMPLICATION_PROVIDER">
+            <intent-filter><action android:name="android.support.wearable.complications.ACTION_COMPLICATION_UPDATE_REQUEST" /></intent-filter>
+            <meta-data android:name="android.support.wearable.complications.SUPPORTED_TYPES" android:value="RANGED_VALUE" />
+            <meta-data android:name="androidx.wear.watchface.complications.datasource.SAFE_WATCH_FACE_SUPPORTED_TYPES" android:value="RANGED_VALUE" />
+            <meta-data android:name="android.support.wearable.complications.SAFE_WATCH_FACES" android:value="com.bobbfwed.emberphase" />
+            <meta-data android:name="android.support.wearable.complications.UPDATE_PERIOD_SECONDS" android:value="0" />
+        </service>
         <activity android:name="com.bobbfwed.emberphase.health.watch.HealthActivity" android:exported="true" android:taskAffinity="">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

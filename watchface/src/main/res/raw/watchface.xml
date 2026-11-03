@@ -12,17 +12,47 @@
         <BooleanConfiguration id="samsung_steps_target" displayName="samsung_steps_target" defaultValue="TRUE" />
     </UserConfigurations>
     <Scene backgroundColor="#000000">
+        <!-- A user tap publishes one UTC-day timestamp through the watch companion.
+             Its three-second timeline returns to zero without polling. Only this
+             active branch uses subsecond time; ordinary operation stays unchanged. -->
+        <Group name="sweep_control" x="0" y="0" width="450" height="450">
+            <Variant mode="AMBIENT" target="alpha" value="0" duration="0" />
+            <Condition>
+                <Expressions><Expression name="sweep_requested">[REFERENCE.sweep_start] &gt; 0 &amp;&amp; [BATTERY_PERCENT] &gt; 15</Expression></Expressions>
+                <Compare expression="sweep_requested">
+                    <Group name="sweep_progress_source" x="0" y="0" width="1" height="1">
+                        <Transform target="angle" value="clamp((([UTC_TIMESTAMP] % 86400000 - ([REFERENCE.sweep_start] - 1) + 86400000) % 86400000) / 3000, 0, 1)" />
+                        <Reference name="sweep_progress" source="angle" defaultValue="1" />
+                    </Group>
+                    <Group name="sweep_home_source" x="0" y="0" width="1" height="1">
+                        <Transform target="angle" value="1 - ((clamp([REFERENCE.sweep_progress] / 0.12, 0, 1)) * (clamp([REFERENCE.sweep_progress] / 0.12, 0, 1)) * (3 - 2 * (clamp([REFERENCE.sweep_progress] / 0.12, 0, 1))))" />
+                        <Reference name="sweep_home" source="angle" defaultValue="0" />
+                    </Group>
+                    <Group name="sweep_turn_source" x="0" y="0" width="1" height="1">
+                        <Transform target="angle" value="(clamp(([REFERENCE.sweep_progress] - 0.12) / 0.63, 0, 1)) * (clamp(([REFERENCE.sweep_progress] - 0.12) / 0.63, 0, 1)) * (3 - 2 * (clamp(([REFERENCE.sweep_progress] - 0.12) / 0.63, 0, 1)))" />
+                        <Reference name="sweep_turn" source="angle" defaultValue="0" />
+                    </Group>
+                    <Group name="sweep_settle_source" x="0" y="0" width="1" height="1">
+                        <Transform target="angle" value="(clamp(([REFERENCE.sweep_progress] - 0.75) / 0.25, 0, 1)) * (clamp(([REFERENCE.sweep_progress] - 0.75) / 0.25, 0, 1)) * (3 - 2 * (clamp(([REFERENCE.sweep_progress] - 0.75) / 0.25, 0, 1)))" />
+                        <Reference name="sweep_settle" source="angle" defaultValue="1" />
+                    </Group>
+                </Compare>
+            </Condition>
+        </Group>
         <!-- The twin-moon wheel uses a mean lunation from 2000-01-06 18:14 UTC.
              Gregorian date plus AM/PM changes only at 00:00/12:00 UTC. Sample
              each half-day at its midpoint; modulo two keeps the wheel continuous
              across alternating moons. See docs/moon-phase.md for the formula. -->
         <Group name="interactive_dial" x="0" y="0" width="450" height="450">
             <Variant mode="AMBIENT" target="alpha" value="0" />
-            <PartImage name="moon_disc_rotation" x="135" y="40" width="180" height="180" pivotX="0.5" pivotY="0.5">
+            <Group name="moon_sweep" x="135" y="40" width="180" height="180" pivotX="0.5" pivotY="0.5">
+                <Transform target="angle" value="360 * [REFERENCE.sweep_turn]" />
+            <PartImage name="moon_disc_rotation" x="0" y="0" width="180" height="180" pivotX="0.5" pivotY="0.5">
                 <Localization timeZone="UTC" calendar="GREGORIAN" />
                 <Transform target="angle" value="(-90 + 180 * ((((365 * ([YEAR] - 2000) + floor(([YEAR] - 1) / 4) - floor(([YEAR] - 1) / 100) + floor(([YEAR] - 1) / 400) - 484 + [DAY_OF_YEAR] - 1 + 0.5 * [AMPM_STATE] + 0.25 - 5.7597222222) / 29.530588853) % 2 + 2) % 2)) + 7.5 * sin(0.03490658503988659 * (-90 + 180 * ((((365 * ([YEAR] - 2000) + floor(([YEAR] - 1) / 4) - floor(([YEAR] - 1) / 100) + floor(([YEAR] - 1) / 400) - 484 + [DAY_OF_YEAR] - 1 + 0.5 * [AMPM_STATE] + 0.25 - 5.7597222222) / 29.530588853) % 2 + 2) % 2)))" />
                 <Image resource="moon_disc" />
             </PartImage>
+            </Group>
             <!-- The shared wheel rocks behind two fixed dial openings. Native
                  interpolation runs briefly on each SECOND change, then rests. -->
             <Group name="optional_balance" x="0" y="0" width="450" height="450">
@@ -33,12 +63,15 @@
                             <Expressions><Expression name="balance_power_available">[BATTERY_PERCENT] &gt; 15</Expression></Expressions>
                             <Compare expression="balance_power_available">
                                 <Group name="balance_perspective" x="151" y="151" width="148" height="148" pivotX="0.5" pivotY="0.5" scaleY="0.38">
+                                    <Group name="balance_sweep" x="0" y="0" width="148" height="148" pivotX="0.5" pivotY="0.5">
+                                        <Transform target="angle" value="35 * sin([REFERENCE.sweep_progress] * 25.1327412287) * sin([REFERENCE.sweep_progress] * 3.14159265359)" />
                                     <PartImage name="balance_oscillator" x="0" y="0" width="148" height="148" pivotX="0.5" pivotY="0.5">
                                         <Transform target="angle" value="[SECOND] % 2 == 0 ? -55 : 55">
                                             <Animation duration="0.22" interpolation="CUBIC_BEZIER" controls="0.42 0 0.58 1" angleDirection="NONE" repeat="0" fps="30" />
                                         </Transform>
                                         <Image resource="balance_wheel" />
                                     </PartImage>
+                                    </Group>
                                 </Group>
                             </Compare>
                         </Condition>
@@ -48,68 +81,68 @@
             <PartImage x="0" y="0" width="450" height="450">
                 <Image resource="dial_frame" />
             </PartImage>
-            <!-- The adjacent drum labels use calendar fields, never an animation
-                 or UTC millisecond source. English abbreviations match the art. -->
+            <!-- Normal labels use calendar fields. A tap temporarily cycles each drum
+                 through a complete ring, returning to its live calendar value. -->
             <PartText name="drum_weekday_prev" x="136" y="126" width="57" height="26" alpha="195" pivotX="0.5" pivotY="0.5" scaleX="0.94" scaleY="0.58">
                 <Text align="CENTER">
                     <Font family="sans-serif-condensed" size="22" weight="BOLD">
-                        <Template>%s<Parameter expression="subText(&quot;SUNMONTUEWEDTHUFRISAT&quot;, (([DAY_OF_WEEK]+5)%7)*3, (([DAY_OF_WEEK]+5)%7)*3+3)" /></Template>
+                        <Template>%s<Parameter expression="[REFERENCE.sweep_turn] &gt; 0 &amp;&amp; [REFERENCE.sweep_turn] &lt; 1 ? subText(&quot;SUNMONTUEWEDTHUFRISAT&quot;, (([DAY_OF_WEEK]-1 + floor([REFERENCE.sweep_turn] * 7) + 6) % 7)*3, (([DAY_OF_WEEK]-1 + floor([REFERENCE.sweep_turn] * 7) + 6) % 7)*3+3) : subText(&quot;SUNMONTUEWEDTHUFRISAT&quot;, (([DAY_OF_WEEK]+5)%7)*3, (([DAY_OF_WEEK]+5)%7)*3+3)" /></Template>
                     </Font>
                 </Text>
             </PartText>
             <PartText name="drum_weekday" x="136" y="149" width="57" height="27">
                 <Text align="CENTER">
                     <Font family="sans-serif-condensed" size="22" weight="BOLD" color="#FF6A15">
-                        <Template>%s<Parameter expression="subText(&quot;SUNMONTUEWEDTHUFRISAT&quot;, ([DAY_OF_WEEK]-1)*3, [DAY_OF_WEEK]*3)" /></Template>
+                        <Template>%s<Parameter expression="[REFERENCE.sweep_turn] &gt; 0 &amp;&amp; [REFERENCE.sweep_turn] &lt; 1 ? subText(&quot;SUNMONTUEWEDTHUFRISAT&quot;, (([DAY_OF_WEEK]-1 + floor([REFERENCE.sweep_turn] * 7) + 7) % 7)*3, (([DAY_OF_WEEK]-1 + floor([REFERENCE.sweep_turn] * 7) + 7) % 7)*3+3) : subText(&quot;SUNMONTUEWEDTHUFRISAT&quot;, ([DAY_OF_WEEK]-1)*3, [DAY_OF_WEEK]*3)" /></Template>
                     </Font>
                 </Text>
             </PartText>
             <PartText name="drum_weekday_next" x="136" y="167" width="57" height="26" alpha="195" pivotX="0.5" pivotY="0.5" scaleX="0.94" scaleY="0.58">
                 <Text align="CENTER">
                     <Font family="sans-serif-condensed" size="22" weight="BOLD">
-                        <Template>%s<Parameter expression="subText(&quot;SUNMONTUEWEDTHUFRISAT&quot;, ([DAY_OF_WEEK]%7)*3, ([DAY_OF_WEEK]%7)*3+3)" /></Template>
+                        <Template>%s<Parameter expression="[REFERENCE.sweep_turn] &gt; 0 &amp;&amp; [REFERENCE.sweep_turn] &lt; 1 ? subText(&quot;SUNMONTUEWEDTHUFRISAT&quot;, (([DAY_OF_WEEK]-1 + floor([REFERENCE.sweep_turn] * 7) + 8) % 7)*3, (([DAY_OF_WEEK]-1 + floor([REFERENCE.sweep_turn] * 7) + 8) % 7)*3+3) : subText(&quot;SUNMONTUEWEDTHUFRISAT&quot;, ([DAY_OF_WEEK]%7)*3, ([DAY_OF_WEEK]%7)*3+3)" /></Template>
                     </Font>
                 </Text>
             </PartText>
             <PartText name="drum_month_prev" x="197" y="126" width="55" height="26" alpha="195" pivotX="0.5" pivotY="0.5" scaleX="0.94" scaleY="0.58">
                 <Text align="CENTER">
                     <Font family="sans-serif-condensed" size="22" weight="BOLD">
-                        <Template>%s<Parameter expression="subText(&quot;JANFEBMARAPRMAYJUNJULAUGSEPOCTNOVDEC&quot;, (([MONTH]+10)%12)*3, (([MONTH]+10)%12)*3+3)" /></Template>
+                        <Template>%s<Parameter expression="[REFERENCE.sweep_turn] &gt; 0 &amp;&amp; [REFERENCE.sweep_turn] &lt; 1 ? subText(&quot;JANFEBMARAPRMAYJUNJULAUGSEPOCTNOVDEC&quot;, (([MONTH]-1 + floor([REFERENCE.sweep_turn] * 12) + 11) % 12)*3, (([MONTH]-1 + floor([REFERENCE.sweep_turn] * 12) + 11) % 12)*3+3) : subText(&quot;JANFEBMARAPRMAYJUNJULAUGSEPOCTNOVDEC&quot;, (([MONTH]+10)%12)*3, (([MONTH]+10)%12)*3+3)" /></Template>
                     </Font>
                 </Text>
             </PartText>
             <PartText name="drum_month" x="197" y="149" width="55" height="27">
                 <Text align="CENTER">
                     <Font family="sans-serif-condensed" size="22" weight="BOLD">
-                        <Template>%s<Parameter expression="subText(&quot;JANFEBMARAPRMAYJUNJULAUGSEPOCTNOVDEC&quot;, ([MONTH]-1)*3, [MONTH]*3)" /></Template>
+                        <Template>%s<Parameter expression="[REFERENCE.sweep_turn] &gt; 0 &amp;&amp; [REFERENCE.sweep_turn] &lt; 1 ? subText(&quot;JANFEBMARAPRMAYJUNJULAUGSEPOCTNOVDEC&quot;, (([MONTH]-1 + floor([REFERENCE.sweep_turn] * 12) + 12) % 12)*3, (([MONTH]-1 + floor([REFERENCE.sweep_turn] * 12) + 12) % 12)*3+3) : subText(&quot;JANFEBMARAPRMAYJUNJULAUGSEPOCTNOVDEC&quot;, ([MONTH]-1)*3, [MONTH]*3)" /></Template>
                     </Font>
                 </Text>
             </PartText>
             <PartText name="drum_month_next" x="197" y="167" width="55" height="26" alpha="195" pivotX="0.5" pivotY="0.5" scaleX="0.94" scaleY="0.58">
                 <Text align="CENTER">
                     <Font family="sans-serif-condensed" size="22" weight="BOLD">
-                        <Template>%s<Parameter expression="subText(&quot;JANFEBMARAPRMAYJUNJULAUGSEPOCTNOVDEC&quot;, ([MONTH]%12)*3, ([MONTH]%12)*3+3)" /></Template>
+                        <Template>%s<Parameter expression="[REFERENCE.sweep_turn] &gt; 0 &amp;&amp; [REFERENCE.sweep_turn] &lt; 1 ? subText(&quot;JANFEBMARAPRMAYJUNJULAUGSEPOCTNOVDEC&quot;, (([MONTH]-1 + floor([REFERENCE.sweep_turn] * 12) + 13) % 12)*3, (([MONTH]-1 + floor([REFERENCE.sweep_turn] * 12) + 13) % 12)*3+3) : subText(&quot;JANFEBMARAPRMAYJUNJULAUGSEPOCTNOVDEC&quot;, ([MONTH]%12)*3, ([MONTH]%12)*3+3)" /></Template>
                     </Font>
                 </Text>
             </PartText>
             <PartText name="drum_date_prev" x="258" y="126" width="55" height="26" alpha="195" pivotX="0.5" pivotY="0.5" scaleX="0.94" scaleY="0.58">
                 <Text align="CENTER">
                     <Font family="sans-serif-condensed" size="22" weight="BOLD">
-                        <Template>%s<Parameter expression="numberFormat(&quot;00&quot;, [DAY] &gt; 1 ? [DAY]-1 : ([MONTH] == 3 ? (([YEAR]%4 == 0 &amp;&amp; ([YEAR]%100 != 0 || [YEAR]%400 == 0)) ? 29 : 28) : (([MONTH] == 5 || [MONTH] == 7 || [MONTH] == 10 || [MONTH] == 12) ? 30 : 31)))" /></Template>
+                        <Template>%s<Parameter expression="[REFERENCE.sweep_turn] &gt; 0 &amp;&amp; [REFERENCE.sweep_turn] &lt; 1 ? numberFormat(&quot;00&quot;, (([DAY]-1 + floor([REFERENCE.sweep_turn] * 31) + 30) % 31)+1) : numberFormat(&quot;00&quot;, [DAY] &gt; 1 ? [DAY]-1 : ([MONTH] == 3 ? (([YEAR]%4 == 0 &amp;&amp; ([YEAR]%100 != 0 || [YEAR]%400 == 0)) ? 29 : 28) : (([MONTH] == 5 || [MONTH] == 7 || [MONTH] == 10 || [MONTH] == 12) ? 30 : 31)))" /></Template>
                     </Font>
                 </Text>
             </PartText>
             <PartText name="drum_date" x="258" y="149" width="55" height="27">
                 <Text align="CENTER">
                     <Font family="sans-serif-condensed" size="22" weight="BOLD">
-                        <Template>%s<Parameter expression="[DAY_Z]" /></Template>
+                        <Template>%s<Parameter expression="[REFERENCE.sweep_turn] &gt; 0 &amp;&amp; [REFERENCE.sweep_turn] &lt; 1 ? numberFormat(&quot;00&quot;, (([DAY]-1 + floor([REFERENCE.sweep_turn] * 31) + 31) % 31)+1) : [DAY_Z]" /></Template>
                     </Font>
                 </Text>
             </PartText>
             <PartText name="drum_date_next" x="258" y="167" width="55" height="26" alpha="195" pivotX="0.5" pivotY="0.5" scaleX="0.94" scaleY="0.58">
                 <Text align="CENTER">
                     <Font family="sans-serif-condensed" size="22" weight="BOLD">
-                        <Template>%s<Parameter expression="numberFormat(&quot;00&quot;, [DAY] &lt; ([MONTH] == 2 ? (([YEAR]%4 == 0 &amp;&amp; ([YEAR]%100 != 0 || [YEAR]%400 == 0)) ? 29 : 28) : (([MONTH] == 4 || [MONTH] == 6 || [MONTH] == 9 || [MONTH] == 11) ? 30 : 31)) ? [DAY]+1 : 1)" /></Template>
+                        <Template>%s<Parameter expression="[REFERENCE.sweep_turn] &gt; 0 &amp;&amp; [REFERENCE.sweep_turn] &lt; 1 ? numberFormat(&quot;00&quot;, (([DAY]-1 + floor([REFERENCE.sweep_turn] * 31) + 32) % 31)+1) : numberFormat(&quot;00&quot;, [DAY] &lt; ([MONTH] == 2 ? (([YEAR]%4 == 0 &amp;&amp; ([YEAR]%100 != 0 || [YEAR]%400 == 0)) ? 29 : 28) : (([MONTH] == 4 || [MONTH] == 6 || [MONTH] == 9 || [MONTH] == 11) ? 30 : 31)) ? [DAY]+1 : 1)" /></Template>
                     </Font>
                 </Text>
             </PartText>
@@ -117,7 +150,7 @@
                 <Image resource="calendar_bezel" />
             </PartImage>
             <PartImage name="battery_slider" x="359" y="274" width="21" height="13">
-                <Transform target="y" value="274 - 99 * clamp([BATTERY_PERCENT], 0, 100) / 100" />
+                <Transform target="y" value="274 - 99 * ((clamp([BATTERY_PERCENT], 0, 100) / 100) * [REFERENCE.sweep_home] + [REFERENCE.sweep_turn] * (1 - [REFERENCE.sweep_settle]) + (clamp([BATTERY_PERCENT], 0, 100) / 100) * [REFERENCE.sweep_settle])" />
                 <Image resource="battery_slider" />
             </PartImage>
             <PartDraw x="0" y="0" width="450" height="450">
@@ -592,6 +625,17 @@
                 </PartText>
             </Complication>
         </ComplicationSlot>
+        <ComplicationSlot slotId="50" name="sweep_hub" x="0" y="0" width="450" height="450" supportedTypes="RANGED_VALUE EMPTY" displayName="sweep_slot" isCustomizable="FALSE">
+            <Variant mode="AMBIENT" target="alpha" value="0" duration="0" />
+            <BoundingOval x="205" y="205" width="40" height="40" />
+            <DefaultProviderPolicy primaryProvider="com.bobbfwed.emberphase.health/com.bobbfwed.emberphase.health.watch.SweepDataSource" primaryProviderType="RANGED_VALUE" defaultSystemProvider="EMPTY" defaultSystemProviderType="EMPTY" />
+            <Complication type="RANGED_VALUE">
+                <Group name="sweep_trigger_export" x="205" y="205" width="40" height="40">
+                    <Transform target="angle" value="[COMPLICATION.RANGED_VALUE_MAX] == 86400000 &amp;&amp; [COMPLICATION.RANGED_VALUE_MIN] == 0 ? [COMPLICATION.RANGED_VALUE_VALUE] : 0" />
+                    <Reference name="sweep_start" source="angle" defaultValue="0" />
+                </Group>
+            </Complication>
+        </ComplicationSlot>
         <Group name="steps_track_render" x="0" y="0" width="450" height="450">
             <Variant mode="AMBIENT" target="alpha" value="0" />
             <PartText name="steps_target_display" x="312" y="320" width="43" height="18">
@@ -600,18 +644,18 @@
                 </Font></Text>
             </PartText>
             <Condition>
-                <Expressions><Expression name="steps_track_visible">[REFERENCE.steps_goal_end] &lt; 214 || [REFERENCE.steps_range_end] &lt; 214</Expression></Expressions>
+                <Expressions><Expression name="steps_track_visible">([REFERENCE.steps_goal_end] &lt; 214 || [REFERENCE.steps_range_end] &lt; 214) || [REFERENCE.sweep_progress] &lt; 1</Expression></Expressions>
                 <Compare expression="steps_track_visible">
                     <PartDraw name="steps_progress_band" x="0" y="0" width="450" height="450">
                         <Arc centerX="225" centerY="225" width="300" height="300" startAngle="214" endAngle="214" direction="COUNTER_CLOCKWISE">
-                                <Transform target="endAngle" value="([REFERENCE.steps_goal_end] &lt; 214 ? [REFERENCE.steps_goal_end] : [REFERENCE.steps_range_end])" />
+                                <Transform target="endAngle" value="(214 - (214 - ([REFERENCE.steps_goal_end] &lt; 214 ? [REFERENCE.steps_goal_end] : [REFERENCE.steps_range_end])) * [REFERENCE.sweep_home] - 68 * [REFERENCE.sweep_turn] * (1 - [REFERENCE.sweep_settle]) - (214 - ([REFERENCE.steps_goal_end] &lt; 214 ? [REFERENCE.steps_goal_end] : [REFERENCE.steps_range_end])) * [REFERENCE.sweep_settle])" />
                                 <Stroke color="#FF7415" thickness="12" cap="BUTT">
                                     <RadialGradient centerX="225" centerY="225" radius="156" colors="#662400 #BF4005 #FF7415 #FFD79B #FF9C40 #DF5206 #702500" positions="0.923077 0.932308 0.947692 0.957692 0.967692 0.987692 1.000000" />
                                 </Stroke>
                             </Arc>
                     </PartDraw>
                     <Group name="steps_track_cut_edge" x="0" y="0" width="450" height="450" pivotX="0.5" pivotY="0.5">
-                            <Transform target="angle" value="([REFERENCE.steps_goal_end] &lt; 214 ? [REFERENCE.steps_goal_end] : [REFERENCE.steps_range_end]) - 180" />
+                            <Transform target="angle" value="(214 - (214 - ([REFERENCE.steps_goal_end] &lt; 214 ? [REFERENCE.steps_goal_end] : [REFERENCE.steps_range_end])) * [REFERENCE.sweep_home] - 68 * [REFERENCE.sweep_turn] * (1 - [REFERENCE.sweep_settle]) - (214 - ([REFERENCE.steps_goal_end] &lt; 214 ? [REFERENCE.steps_goal_end] : [REFERENCE.steps_range_end])) * [REFERENCE.sweep_settle]) - 180" />
                             <PartDraw x="0" y="0" width="450" height="450">
                                 <Line startX="224.3" startY="369.5" endX="224.3" endY="380.5">
                                     <Stroke color="#A0000000" thickness="1.2" cap="BUTT" />
@@ -632,18 +676,18 @@
                 </Font></Text>
             </PartText>
             <Condition>
-                <Expressions><Expression name="minutes_track_visible">[REFERENCE.minutes_goal_end] &lt; 214 || [REFERENCE.minutes_range_end] &lt; 214</Expression></Expressions>
+                <Expressions><Expression name="minutes_track_visible">([REFERENCE.minutes_goal_end] &lt; 214 || [REFERENCE.minutes_range_end] &lt; 214) || [REFERENCE.sweep_progress] &lt; 1</Expression></Expressions>
                 <Compare expression="minutes_track_visible">
                     <PartDraw name="minutes_progress_band" x="0" y="0" width="450" height="450">
                         <Arc centerX="225" centerY="225" width="336" height="336" startAngle="214" endAngle="214" direction="COUNTER_CLOCKWISE">
-                                <Transform target="endAngle" value="([REFERENCE.minutes_goal_end] &lt; 214 ? [REFERENCE.minutes_goal_end] : [REFERENCE.minutes_range_end])" />
+                                <Transform target="endAngle" value="(214 - (214 - ([REFERENCE.minutes_goal_end] &lt; 214 ? [REFERENCE.minutes_goal_end] : [REFERENCE.minutes_range_end])) * [REFERENCE.sweep_home] - 68 * [REFERENCE.sweep_turn] * (1 - [REFERENCE.sweep_settle]) - (214 - ([REFERENCE.minutes_goal_end] &lt; 214 ? [REFERENCE.minutes_goal_end] : [REFERENCE.minutes_range_end])) * [REFERENCE.sweep_settle])" />
                                 <Stroke color="#00D6E9" thickness="12" cap="BUTT">
                                     <RadialGradient centerX="225" centerY="225" radius="174" colors="#004955 #008F9E #00D6E9 #B2FAFF #38E9F4 #00A7BC #004E60" positions="0.931034 0.939310 0.953103 0.962069 0.971034 0.988966 1.000000" />
                                 </Stroke>
                             </Arc>
                     </PartDraw>
                     <Group name="minutes_track_cut_edge" x="0" y="0" width="450" height="450" pivotX="0.5" pivotY="0.5">
-                            <Transform target="angle" value="([REFERENCE.minutes_goal_end] &lt; 214 ? [REFERENCE.minutes_goal_end] : [REFERENCE.minutes_range_end]) - 180" />
+                            <Transform target="angle" value="(214 - (214 - ([REFERENCE.minutes_goal_end] &lt; 214 ? [REFERENCE.minutes_goal_end] : [REFERENCE.minutes_range_end])) * [REFERENCE.sweep_home] - 68 * [REFERENCE.sweep_turn] * (1 - [REFERENCE.sweep_settle]) - (214 - ([REFERENCE.minutes_goal_end] &lt; 214 ? [REFERENCE.minutes_goal_end] : [REFERENCE.minutes_range_end])) * [REFERENCE.sweep_settle]) - 180" />
                             <PartDraw x="0" y="0" width="450" height="450">
                                 <Line startX="224.3" startY="387.5" endX="224.3" endY="398.5">
                                     <Stroke color="#A0000000" thickness="1.2" cap="BUTT" />
@@ -664,18 +708,18 @@
                 </Font></Text>
             </PartText>
             <Condition>
-                <Expressions><Expression name="calories_track_visible">[REFERENCE.calories_goal_end] &lt; 214 || [REFERENCE.calories_range_end] &lt; 214</Expression></Expressions>
+                <Expressions><Expression name="calories_track_visible">([REFERENCE.calories_goal_end] &lt; 214 || [REFERENCE.calories_range_end] &lt; 214) || [REFERENCE.sweep_progress] &lt; 1</Expression></Expressions>
                 <Compare expression="calories_track_visible">
                     <PartDraw name="calories_progress_band" x="0" y="0" width="450" height="450">
                         <Arc centerX="225" centerY="225" width="372" height="372" startAngle="214" endAngle="214" direction="COUNTER_CLOCKWISE">
-                                <Transform target="endAngle" value="([REFERENCE.calories_goal_end] &lt; 214 ? [REFERENCE.calories_goal_end] : [REFERENCE.calories_range_end])" />
+                                <Transform target="endAngle" value="(214 - (214 - ([REFERENCE.calories_goal_end] &lt; 214 ? [REFERENCE.calories_goal_end] : [REFERENCE.calories_range_end])) * [REFERENCE.sweep_home] - 68 * [REFERENCE.sweep_turn] * (1 - [REFERENCE.sweep_settle]) - (214 - ([REFERENCE.calories_goal_end] &lt; 214 ? [REFERENCE.calories_goal_end] : [REFERENCE.calories_range_end])) * [REFERENCE.sweep_settle])" />
                                 <Stroke color="#79EF06" thickness="12" cap="BUTT">
                                     <RadialGradient centerX="225" centerY="225" radius="192" colors="#254D00 #4A9700 #79EF06 #E0FFAD #A0FF30 #65C900 #2B5B00" positions="0.937500 0.945000 0.957500 0.965625 0.973750 0.990000 1.000000" />
                                 </Stroke>
                             </Arc>
                     </PartDraw>
                     <Group name="calories_track_cut_edge" x="0" y="0" width="450" height="450" pivotX="0.5" pivotY="0.5">
-                            <Transform target="angle" value="([REFERENCE.calories_goal_end] &lt; 214 ? [REFERENCE.calories_goal_end] : [REFERENCE.calories_range_end]) - 180" />
+                            <Transform target="angle" value="(214 - (214 - ([REFERENCE.calories_goal_end] &lt; 214 ? [REFERENCE.calories_goal_end] : [REFERENCE.calories_range_end])) * [REFERENCE.sweep_home] - 68 * [REFERENCE.sweep_turn] * (1 - [REFERENCE.sweep_settle]) - (214 - ([REFERENCE.calories_goal_end] &lt; 214 ? [REFERENCE.calories_goal_end] : [REFERENCE.calories_range_end])) * [REFERENCE.sweep_settle]) - 180" />
                             <PartDraw x="0" y="0" width="450" height="450">
                                 <Line startX="224.3" startY="405.5" endX="224.3" endY="416.5">
                                     <Stroke color="#A0000000" thickness="1.2" cap="BUTT" />
@@ -738,18 +782,21 @@
                 <Image resource="ambient_center_cap" />
             </PartImage>
         </Group>
-        <!-- The native clock owns hand rotation and ambient minute cadence. -->
-        <AnalogClock x="0" y="0" width="450" height="450">
+        <!-- The native clock owns normal hand rotation and ambient minute cadence. -->
+        <Group name="normal_hands" x="0" y="0" width="450" height="450">
             <Variant mode="AMBIENT" target="alpha" value="0" />
+            <Transform target="alpha" value="[REFERENCE.sweep_progress] &lt; 1 ? 0 : 255" />
+        <AnalogClock x="0" y="0" width="450" height="450">
             <HourHand resource="hour_hand" x="214" y="93" width="22" height="150" pivotX="0.5" pivotY="0.88" />
             <MinuteHand resource="minute_hand" x="217" y="45" width="16" height="198" pivotX="0.5" pivotY="0.9090909" />
         </AnalogClock>
+        </Group>
         <Group name="optional_ticking_seconds" x="0" y="0" width="450" height="450">
             <Variant mode="AMBIENT" target="alpha" value="0" />
             <BooleanConfiguration id="mechanical_seconds">
                 <BooleanOption id="TRUE">
                     <Group name="seconds_visibility" x="0" y="0" width="450" height="450">
-                        <Transform target="alpha" value="[BATTERY_PERCENT] &gt; 15 ? 255 : 0" />
+                        <Transform target="alpha" value="[BATTERY_PERCENT] &gt; 15 &amp;&amp; [REFERENCE.sweep_progress] &gt;= 1 ? 255 : 0" />
                         <AnalogClock x="0" y="0" width="450" height="450">
                             <SecondHand resource="second_hand" x="222" y="23" width="6" height="230" pivotX="0.5" pivotY="0.8782609">
                                 <Tick duration="0.13" strength="0.5" />
@@ -758,6 +805,30 @@
                     </Group>
                 </BooleanOption>
             </BooleanConfiguration>
+        </Group>
+        <Group name="sweep_hands" x="0" y="0" width="450" height="450">
+            <Variant mode="AMBIENT" target="alpha" value="0" duration="0" />
+            <Condition>
+                <Expressions><Expression name="sweep_hands_visible">[REFERENCE.sweep_progress] &lt; 1 &amp;&amp; [BATTERY_PERCENT] &gt; 15</Expression></Expressions>
+                <Compare expression="sweep_hands_visible">
+                    <PartImage name="sweep_hour_hand" x="214" y="93" width="22" height="150" pivotX="0.5" pivotY="0.88">
+                        <Transform target="angle" value="([HOUR_0_11_MINUTE] * 30) * [REFERENCE.sweep_home] + 360 * [REFERENCE.sweep_turn] + ([HOUR_0_11_MINUTE] * 30) * [REFERENCE.sweep_settle]" />
+                        <Image resource="hour_hand" />
+                    </PartImage>
+                    <PartImage name="sweep_minute_hand" x="217" y="45" width="16" height="198" pivotX="0.5" pivotY="0.9090909">
+                        <Transform target="angle" value="([MINUTE_SECOND] * 6) * [REFERENCE.sweep_home] - 360 * [REFERENCE.sweep_turn] + (([MINUTE_SECOND] * 6) - 360) * [REFERENCE.sweep_settle]" />
+                        <Image resource="minute_hand" />
+                    </PartImage>
+                    <Group name="optional_sweep_seconds" x="0" y="0" width="450" height="450">
+                    <BooleanConfiguration id="mechanical_seconds"><BooleanOption id="TRUE">
+                    <PartImage name="sweep_second_hand" x="222" y="23" width="6" height="230" pivotX="0.5" pivotY="0.8782609">
+                        <Transform target="angle" value="([SECOND] * 6) * [REFERENCE.sweep_home] + 720 * [REFERENCE.sweep_turn] + ([SECOND] * 6) * [REFERENCE.sweep_settle]" />
+                        <Image resource="second_hand" />
+                    </PartImage>
+                    </BooleanOption></BooleanConfiguration>
+                    </Group>
+                </Compare>
+            </Condition>
         </Group>
         <PartImage x="211" y="211" width="28" height="28">
             <Variant mode="AMBIENT" target="alpha" value="0" />

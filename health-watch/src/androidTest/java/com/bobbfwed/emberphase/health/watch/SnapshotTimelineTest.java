@@ -15,7 +15,8 @@ public class SnapshotTimelineTest {
 
     private ComplicationData data() {
         return new GoalProgressComplicationData.Builder(51, 90,
-                new PlainComplicationText.Builder("Active minutes").build()).build();
+                new PlainComplicationText.Builder("Active minutes").build())
+                .setText(new PlainComplicationText.Builder("51").build()).build();
     }
 
     @Test public void midnightHasExplicitUnavailableFallbackWithoutAnotherSync() {

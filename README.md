@@ -16,6 +16,8 @@ to the watch display.
   overshoot on each tick.
 * An optional hidden balance rim glimpsed through two small inner windows,
   alternating left and right once per second.
+* A center-hub tap runs a three-second mechanical sweep, then settles onto the
+  live time, date and indicators. Requires the Emberphase Health watch companion.
 * A rotating twin-moon disc behind a recessed aperture.
 * Mechanical calendar drums showing **weekday, month, date**, with partially
   visible adjacent entries.
@@ -36,6 +38,10 @@ See the balance in motion: [full-face animation](docs/previews/balance-motion.gi
 and [enlarged detail](docs/previews/balance-detail.gif). These previews hold the
 clock hands still to isolate the mechanism's 220 ms movement and 780 ms rest.
 The seconds hand retains its separate 130 ms tick.
+
+Try the [interactive mechanical sweep preview](docs/previews/mechanical-sweep.html)
+by downloading it and opening it in a browser. It is a standalone file with
+sample weather/activity data. See [center-tap setup and behavior](docs/mechanical-sweep.md).
 
 See the [always-on](docs/previews/ambient.png),
 [low-battery](docs/previews/low-battery.png),
@@ -222,6 +228,7 @@ With Node.js installed, run the dependency-free expression and geometry checks:
 
 ```powershell
 node .\scripts\test-watchface.mjs
+node .\scripts\test-sweep.mjs
 powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\scripts\Test-BalanceWindows.ps1
 ```
 

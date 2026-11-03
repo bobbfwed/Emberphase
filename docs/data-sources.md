@@ -142,3 +142,9 @@ phone refresh, throttled to once per five minutes. Explicit Sync now bypasses
 that throttle. Cached totals expire after two hours or at local midnight. An
 explicit unavailable-data timeline entry replaces expired totals even without
 a subsequent push. See [overnight sync setup](health-companion.md).
+
+The center-hub sweep adds one fixed, watch-local complication with no periodic
+updates. A tap supplies a timestamp for three seconds; WFF renders the movement
+and the timeline then returns to idle. The millisecond source is confined to
+that temporary branch, gated at 15% battery. There are no new phone health
+queries or sensor subscriptions. See [mechanical sweep](mechanical-sweep.md).

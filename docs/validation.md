@@ -220,3 +220,29 @@ tests pass. The phone update is installed. The watch disconnected before its
 update/test installation, so execution of the new instrumentation tests and
 physical timeline-expiry validation remain pending reconnection. No watch or
 phone clock was changed to simulate midnight.
+
+The watch subsequently reconnected on 2026-11-03. All five activity timeline
+instrumentation tests passed after adding the required display text to a test
+fixture; production health payloads already had text. Watch companion 0.1.2
+includes the expiry fix, and today's live minute/calorie readings were observed.
+The temporary instrumentation APK was removed after the run. A full overnight
+test and renderer expiry under a deliberately disconnected phone remain pending.
+
+Face 0.5.0 adds a fixed center-hub sweep provider in watch companion 0.1.2.
+The watch receives one timestamp per tap and a three-second timeline; WFF
+references coordinate the hands, calendar, moon, balance and gauges. Five slot
+declarations retain the original four-slot order, preventing Samsung's retained
+selections from shifting. A physical tap reached the private receiver, and a
+mid-animation capture showed motion across the components. Always-on remained
+unchanged. The watch's temporary display timeout was restored to 15 seconds.
+
+Two new JVM tests cover tap-session expiry/repeat handling, float precision and
+UTC-day wrap. The WFF expression tests cover opposite rotations, initial/final
+live positions, all 7/12/31 drum values sampled at 30 fps, battery/track bounds,
+unavailable goals, and arbitrary live hand destinations. The existing calendar,
+moon, activity, selection geometry, balance raster and GIF checks pass. Schema,
+SDK-native build/signature, Gradle resource-only verification and lint pass.
+Decoded-resource estimates remain 4,444,248 active and 1,645,872 ambient bytes.
+The standalone browser preview is generated from production expressions and
+artwork and was rendered in headless Chrome. Physical transition timing and
+battery consumption have not been measured.

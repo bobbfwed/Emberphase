@@ -18,6 +18,7 @@ for (const match of face.matchAll(/\bdisplayName="([^"]+)"/g)) {
   assert.ok(!label.replace(/%%/g,'').includes('%'), `Unsafe percent format in static editor label ${match[1]}: ${label}`);
 }
 const compiled = new Map();
+const referenceDefaults=Object.fromEntries([...face.matchAll(/<Reference name="([^"]+)" source="([^"]+)" defaultValue="([^"]+)"/g)].map(m=>['REFERENCE.'+m[1],Number(m[3])]));
 const clamp = (n, lo, hi) => Math.min(hi, Math.max(lo, n));
 function numberFormat(format, n) {
   if (format === '00') return Math.round(n).toString().padStart(2, '0');
@@ -33,6 +34,7 @@ for (const match of unescapeXml(face).matchAll(/numberFormat\("([^"]*)"/g)) {
   assert.ok(['#,##0', '00'].includes(match[1]), `Untested number pattern: ${match[1]}`);
 }
 function evaluate(expression, data) {
+  data={...referenceDefaults,...data};
   if (!compiled.has(expression)) {
     // Evaluate only the arithmetic in this locally authored WFF document.
     const js = expression.replace(/\[([A-Za-z0-9_.]+)\]/g, (_, key) => `data[${JSON.stringify(key)}]`);
@@ -136,7 +138,6 @@ const ambientBattery=unescapeXml(ambient.match(/<Transform target="y" value="([^
 assert.equal(evaluate(ambientBattery,{BATTERY_PERCENT:0}),274);
 assert.equal(evaluate(ambientBattery,{BATTERY_PERCENT:100}),175);
 
-const referenceDefaults=Object.fromEntries([...face.matchAll(/<Reference name="([^"]+)" source="([^"]+)" defaultValue="([^"]+)"/g)].map(m=>['REFERENCE.'+m[1],Number(m[3])]));
 const referenceNames=[...face.matchAll(/<Reference name="([^"]+)"/g)].map(m=>m[1]);
 assert.equal(new Set(referenceNames).size,referenceNames.length,'Reference exports must have unique names');
 for(const match of face.matchAll(/\[REFERENCE\.([^\]]+)\]/g)) assert.ok(referenceNames.includes(match[1]),'Missing Reference export '+match[1]);
@@ -251,12 +252,16 @@ assert.match(balanceAnimation,/repeat="0"/);
 assert.match(balanceAnimation,/interpolation="CUBIC_BEZIER" controls="0.42 0 0.58 1"/);
 assert.ok(face.indexOf('name="balance_oscillator"')<face.indexOf('resource="dial_frame"'),'The dial must occlude the shared wheel');
 assert.doesNotMatch(ambient,/balance_|mechanical_balance|\[SECOND\]/);
-assert.doesNotMatch(face, /\[(?:UTC_TIMESTAMP|MILLISECOND|SECOND_MILLISECOND|ACCELEROMETER[^\]]*)\]|<Sweep\b|<Gyro\b/);
+const sweepControl=face.slice(face.indexOf('<Group name="sweep_control"'),face.indexOf('<!-- The twin-moon'));
+assert.match(sweepControl, /<Compare expression="sweep_requested">[\s\S]*\[UTC_TIMESTAMP\]/);
+assert.doesNotMatch(face.replace(sweepControl,''), /\[(?:UTC_TIMESTAMP|MILLISECOND|SECOND_MILLISECOND|ACCELEROMETER[^\]]*)\]|<Sweep\b|<Gyro\b/);
 assert.doesNotMatch(face, /\u00c2\u00b0|\u00e2\u20ac\u201d/);
 assert.match(manifest, /android:hasCode="false"/);
 assert.doesNotMatch(manifest, /<service\b|<activity\b|<uses-permission\b/);
 const slotIds = [...face.matchAll(/<ComplicationSlot slotId="(\d+)"/g)].map(m => m[1]);
-assert.equal(new Set(slotIds).size, 4);
+assert.equal(new Set(slotIds).size, 5);
+assert.deepEqual(slotIds,['10','20','30','40','50'],'Append new slots: Samsung maps saved selections by declaration order');
+assert.match(face, /name="sweep_hub"[^>]*isCustomizable="FALSE"/);
 const activityBounds=new Map();
 const attribute=(tag,name)=>Number(tag.match(new RegExp('\\b'+name+'="([^"]+)"'))[1]);
 for(const [id,name] of [[20,'steps'],[30,'minutes'],[40,'calories']]) {
@@ -288,7 +293,7 @@ for(const [id,name] of [[20,'steps'],[30,'minutes'],[40,'calories']]) {
     assert.ok(x-7>=0 && y-7>=0 && x+7<=450 && y+7<=450,'Track must fit the scene viewport');
   }
 }
-const slotBounds=new Map([[10,{x:52,y:194,width:76,height:94}],...activityBounds]);
+const slotBounds=new Map([[10,{x:52,y:194,width:76,height:94}],[50,{x:205,y:205,width:40,height:40}],...activityBounds]);
 for (const [id,provider] of [[30,'MinutesDataSource'],[40,'CaloriesDataSource']]) {
   const slot=face.match(new RegExp('<ComplicationSlot slotId="'+id+'"[\\s\\S]*?</ComplicationSlot>'))[0];
   assert.ok(slot.includes('primaryProvider="com.bobbfwed.emberphase.health/com.bobbfwed.emberphase.health.watch.'+provider+'" primaryProviderType="GOAL_PROGRESS"'));

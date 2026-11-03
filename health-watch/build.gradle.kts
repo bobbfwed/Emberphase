@@ -8,8 +8,8 @@ android {
         applicationId = "com.bobbfwed.emberphase.health"
         minSdk = 36
         targetSdk = 36
-        versionCode = 2002
-        versionName = "0.1.1"
+        versionCode = 2003
+        versionName = "0.1.2"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
     compileOptions {
@@ -22,4 +22,5 @@ dependencies {
     implementation("androidx.wear.watchface:watchface-complications-data-source:1.3.0")
     androidTestImplementation("androidx.test:runner:1.6.2")
     androidTestImplementation("junit:junit:4.13.2")
+    testImplementation("junit:junit:4.13.2")
 }

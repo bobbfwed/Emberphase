@@ -11,4 +11,5 @@
     <string name="seconds_hand">Mechanical seconds · off at 15 percent or less</string>
     <string name="balance_mechanism">Hidden balance · off at 15 percent or less</string>
     <string name="samsung_steps_target">Samsung Health steps target</string>
+    <string name="sweep_slot">Center hub · mechanical sweep</string>
 </resources>

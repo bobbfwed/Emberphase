@@ -1,7 +1,7 @@
 # Watch6 device acceptance
 
-Status: **0.4.9 installed on the SM-R950**, with the health companion installed
-on the watch and paired Galaxy S24 Ultra. On 2026-11-02, consented Samsung Health
+Status: **0.5.0 installed on the SM-R950**, with watch companion 0.1.2 and phone
+companion 0.1.1 on the paired Galaxy S24 Ultra. On 2026-11-02, consented Samsung Health
 SDK reads and Data Layer delivery succeeded. After the developer selected the
 two Emberphase providers, live active-minute/calorie totals, their numeric goals
 and both metal progress tracks rendered on the face. The runtime confirms
@@ -14,6 +14,14 @@ also showed the orange hands/calendar/battery and white hour markers, with
 activity tracks hidden. Initial sync and live rendering are verified; changed
 goals, a full scheduled refresh interval, midnight rollover, permission revocation
 and longer battery measurements still need physical tests.
+
+On 2026-11-03, the overnight stale-data fix was installed and all five activity
+timeline instrumentation tests passed on the watch. Today's MIN/CAL readings
+replaced yesterday's totals after restoring phone background sync. Another
+full overnight run remains pending. The center-hub sweep provider was bound
+automatically; a physical tap and mid-motion capture confirmed the sequence.
+The four existing provider selections retain their original slot order.
+See [sweep behavior and verification limits](mechanical-sweep.md).
 
 Version 0.4.8 adds the selected hidden balance rim. Physical screenshots show
 both alternating sides through the two small windows beside the spindle, with
