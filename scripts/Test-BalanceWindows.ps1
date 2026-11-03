@@ -12,8 +12,8 @@ try {
             $a=$left.GetPixel($x,$y); $b=$right.GetPixel($x,$y)
             if($a.ToArgb() -eq $b.ToArgb()) { continue }
             # Include the few subpixel edge samples from the downsampled mask.
-            $inLeft=$x -ge 151 -and $x -le 199 -and $y -ge 220 -and $y -le 250
-            $inRight=$x -ge 251 -and $x -le 299 -and $y -ge 220 -and $y -le 250
+            $inLeft=$x -ge 139 -and $x -le 211 -and $y -ge 212 -and $y -le 258
+            $inRight=$x -ge 239 -and $x -le 311 -and $y -ge 212 -and $y -le 258
             if(-not $inLeft -and -not $inRight) { throw "Moving wheel leaks through the dial at ($x,$y)" }
             $difference=([int]$a.R+$a.G+$a.B)-([int]$b.R+$b.G+$b.B)
             if($inLeft) { $leftLight+=$difference } else { $rightLight+=$difference }

@@ -126,7 +126,7 @@ or adjacent calendar entries. Samsung display offload was observed active.
 Actual battery life must be measured on the watch.
 
 The optional hidden balance uses `[SECOND] % 2` to alternate its angle between
--55 and +55 degrees. Native WFF animation interpolates each change for 180 ms
+-55 and +55 degrees. Native WFF animation interpolates each change for 220 ms
 at 30 fps, then holds the settled position for the rest of the second. One
 148-by-148 image moves behind the static dial's two apertures; no animated GIF
 is packaged in the APK. There is no millisecond source, continuous animation,

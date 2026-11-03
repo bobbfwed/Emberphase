@@ -183,7 +183,7 @@ $script:g.FillPath($transparent,$aperture); $transparent.Dispose(); $script:g.Co
 # the wheel, and the live hands render above both openings.
 foreach($window in @(@(175,22),@(275,-22))) {
     $opening=New-Object System.Drawing.Drawing2D.GraphicsPath
-    $opening.AddEllipse(($window[0]-22),226,44,18)
+    $opening.AddEllipse(($window[0]-33),221.5,66,27)
     $tilt=New-Object System.Drawing.Drawing2D.Matrix
     $tilt.RotateAt($window[1],[System.Drawing.PointF]::new($window[0],235))
     $opening.Transform($tilt); $tilt.Dispose()

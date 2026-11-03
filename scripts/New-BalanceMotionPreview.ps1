@@ -94,7 +94,7 @@ try {
             $delays.Add($delay)
             $bitmap=New-Object Drawing.Bitmap(450,450)
             $graphics=[Drawing.Graphics]::FromImage($bitmap)
-            $close=New-Object Drawing.Bitmap(640,192)
+            $close=New-Object Drawing.Bitmap(640,224)
             $zoom=[Drawing.Graphics]::FromImage($close)
             try {
                 $graphics.Clear([Drawing.Color]::Black)
@@ -104,7 +104,7 @@ try {
                 $graphics.DrawImage($wheel,(-$width/2),(-$height/2),$width,$height)
                 $graphics.Restore($state); $graphics.DrawImage($overlay,0,0,450,450)
                 $zoom.InterpolationMode='HighQualityBicubic'
-                $zoom.DrawImage($bitmap,[Drawing.Rectangle]::new(0,0,640,192),145,208,160,48,[Drawing.GraphicsUnit]::Pixel)
+                $zoom.DrawImage($bitmap,[Drawing.Rectangle]::new(0,0,640,224),125,198,200,70,[Drawing.GraphicsUnit]::Pixel)
                 Add-GifFrame $full $bitmap
                 Add-GifFrame $detail $close
             } finally { $zoom.Dispose(); $close.Dispose(); $graphics.Dispose(); $bitmap.Dispose() }

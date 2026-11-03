@@ -35,7 +35,7 @@
                                 <Group name="balance_perspective" x="151" y="151" width="148" height="148" pivotX="0.5" pivotY="0.5" scaleY="0.38">
                                     <PartImage name="balance_oscillator" x="0" y="0" width="148" height="148" pivotX="0.5" pivotY="0.5">
                                         <Transform target="angle" value="[SECOND] % 2 == 0 ? -55 : 55">
-                                            <Animation duration="0.18" interpolation="CUBIC_BEZIER" controls="0.42 0 0.58 1" angleDirection="NONE" repeat="0" fps="30" />
+                                            <Animation duration="0.22" interpolation="CUBIC_BEZIER" controls="0.42 0 0.58 1" angleDirection="NONE" repeat="0" fps="30" />
                                         </Transform>
                                         <Image resource="balance_wheel" />
                                     </PartImage>

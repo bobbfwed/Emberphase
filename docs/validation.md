@@ -190,3 +190,12 @@ ambient hiding and resumed rendering. A six-second physical recording is
 kept locally under ignored artifacts, along with device screenshots. Actual
 transition timing, the editor-off setting, low-battery device behavior and
 battery consumption have not been measured in this revision.
+
+Version 0.4.9 enlarges the balance apertures from 44 by 18 to 66 by 27 logical
+units, retaining their centers and angles. The transition is now 220 ms with
+780 ms rest. Both animated previews were regenerated; the close-up crop expands
+to include the larger windows. Raster checks find 974 changing pixels confined
+to the openings, and both GIFs pass the two-second cycle/hold checks. WFF schema,
+SDK-native build/signature/resource-only and memory checks, and expression tests
+pass. Version 0.4.9 was installed and its enlarged windows inspected on the
+SM-R950. No new artwork resource or ambient change was introduced.

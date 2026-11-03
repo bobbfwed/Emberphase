@@ -1,6 +1,6 @@
 # Watch6 device acceptance
 
-Status: **0.4.8 installed on the SM-R950**, with the health companion installed
+Status: **0.4.9 installed on the SM-R950**, with the health companion installed
 on the watch and paired Galaxy S24 Ultra. On 2026-11-02, consented Samsung Health
 SDK reads and Data Layer delivery succeeded. After the developer selected the
 two Emberphase providers, live active-minute/calorie totals, their numeric goals
@@ -23,6 +23,11 @@ mechanism disappears in always-on and returns on waking. The runtime accepts
 the new default-on editor setting. The low-battery cutoff and disabled setting
 have automated expression/structure checks; they still need physical testing.
 The 180 ms transition is configured in WFF, not measured from the recording.
+
+Version 0.4.9 enlarges both balance windows by 50% in width and height and
+lengthens the native transition to 220 ms. Installation/version and the larger
+openings were checked on the physical watch; weather and all activity displays
+remain visible. The previous sleep/wake test is from 0.4.8.
 
 Initial **0.4.2 installation** on
 2026-11-01: ADB activation succeeded and an awake screenshot confirmed the
