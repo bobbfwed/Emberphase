@@ -7,11 +7,21 @@ watch providers still supply steps; the bridge does not replace that source.
 
 ## Current status
 
+The companion is installed and working on a Galaxy S24 Ultra (Android 17,
+Samsung Health 7.1.0.053) paired with a Watch6 Classic SM-R950 (Wear OS 6).
+On 2026-11-02 the developer enabled Samsung's read-testing mode and accepted
+the Health permission screen. Initial sync read the two totals and goals through
+the SDK and delivered them to the watch through Data Layer. After selecting the
+two providers, a physical screenshot confirmed live MIN/CAL numbers, numeric
+targets and filled tracks. The runtime reports GOAL_PROGRESS with SDK-supplied
+targets for both providers. The developer also confirmed the display looks correct.
+
 The phone/watch apps compile and their lint checks pass. Unit tests cover expiry,
 midnight/DST, travel across date boundaries, unknown versus zero, over-goal values
-and invalid numbers. Physical phone permission, SDK reads, Data Layer delivery,
-and live MIN/CAL rendering still require end-to-end device verification. Do not
-interpret editor previews as live health readings.
+and invalid numbers. Android registered the background sync job; observing a
+complete scheduled interval, changed goals, permission revocation and midnight
+rollover on physical devices remains pending. Do not interpret editor previews
+as live health readings.
 
 ## Requirements and SDK access
 
@@ -99,10 +109,10 @@ stops sharing. It cannot retract information already displayed before the
 revocation reaches the bridge. Uninstalling only the phone app is not the Stop
 operation; stop sharing first or remove the watch app as well.
 
-## Device acceptance still needed
+## Remaining device acceptance
 
-Compare both values and goals against Samsung Health; verify the watch uses
-GOAL_PROGRESS, zero progress stays zero, over-goal values remain visible, and
-goal changes arrive on a subsequent sync. Check permission denial/revocation,
+Compare the SDK's merged totals with Samsung Health's app display; check that
+zero progress stays zero, over-goal values remain visible, and changed goals
+arrive on a subsequent sync. Check permission denial/revocation,
 Stop sharing, reconnect after offline use, midnight expiry/new-day totals, and
 normal/always-on transitions. Measure battery life with debugging disabled.

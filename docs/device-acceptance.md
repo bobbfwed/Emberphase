@@ -1,7 +1,22 @@
 # Watch6 device acceptance
 
-Status: **0.4.2 installed on the SM-R950** on
-2026-11-01. ADB activation succeeded and an awake screenshot confirmed the
+Status: **0.4.7 installed on the SM-R950**, with the health companion installed
+on the watch and paired Galaxy S24 Ultra. On 2026-11-02, consented Samsung Health
+SDK reads and Data Layer delivery succeeded. After the developer selected the
+two Emberphase providers, live active-minute/calorie totals, their numeric goals
+and both metal progress tracks rendered on the face. The runtime confirms
+GOAL_PROGRESS from MinutesDataSource and CaloriesDataSource. Initial SDK reads
+previously returned AuthorizationException until the developer completed
+Samsung's SDK read-testing setup and accepted the permission screen.
+
+The wider moon aperture was inspected on the physical watch. Always-on rendering
+also showed the orange hands/calendar/battery and white hour markers, with
+activity tracks hidden. Initial sync and live rendering are verified; changed
+goals, a full scheduled refresh interval, midnight rollover, permission revocation
+and longer battery measurements still need physical tests.
+
+Initial **0.4.2 installation** on
+2026-11-01: ADB activation succeeded and an awake screenshot confirmed the
 analog hands, moon disc, correct SUN / NOV / 01 drums, battery slider, live
 steps, and native current temperature / daily high / weather icon. Weather
 initially showed the unavailable state, then populated without changing the
@@ -40,10 +55,9 @@ the selector box through WFF references. Use the value fields in the editor;
 the earlier runner/track selection coordinates below describe older versions.
 
 The 0.4.6 companion defaults request Emberphase Health's active-minute and
-active-calorie GOAL_PROGRESS providers. The separate companion apps are built,
-but installation and consented end-to-end testing are pending: the phone USB
-connection and watch wireless-debugging connection dropped before installation.
-No live MIN/CAL values or goals have been verified yet. See
+active-calorie GOAL_PROGRESS providers. Existing instances retain their empty
+selections until the developer selects the two providers once. The compact
+selection boxes enabled independent MIN/CAL selection on the physical watch. See
 [companion setup](health-companion.md). The earlier provider-availability results
 below describe Samsung's installed providers, not the new companion services.
 
@@ -66,10 +80,11 @@ hour markers render on black; seconds and the normal mode's other displays are
 absent. Low-battery behavior and longer-term ambient transitions still need
 physical testing.
 
-See [installed provider findings](device-providers.md). Goal synchronization,
-active minutes/calories, comparison against the source apps, editor behavior,
-extended ambient transitions, and battery-life measurements remain pending. The successful
-activation does not by itself confirm the face appears in every picker view.
+See [installed provider findings](device-providers.md). Goal-change synchronization,
+comparison against the source apps, extended ambient transitions, and battery-life
+measurements remain pending. Live MIN/CAL rendering and independent provider
+selection are verified as described at the top of this file. Successful activation
+does not by itself confirm the face appears in every picker view.
 
 1. Confirm `SM-R950`, API 36, and the installed One UI/Samsung Health/Weather
    versions. Run `Inspect-WatchProviders.ps1` with the explicit watch serial.
@@ -109,9 +124,9 @@ activation does not by itself confirm the face appears in every picker view.
 
 | Metric | Provider / component | Returned type | Units | Value matches | Goal matches / follows changes |
 | --- | --- | --- | --- | --- | --- |
-| Steps | Samsung Health `StepsComplicationProviderService`, selected through system STEP_COUNT | RANGED_VALUE observed | Steps | Live text and gauge rendered; source-app comparison pending | Explicit goal absent; goal label remains unknown |
-| Active minutes | Pending | Pending | Pending | Pending | Pending |
-| Activity calories | Pending | Pending | Pending | Pending | Pending |
+| Steps | Samsung Health `StepsComplicationProviderService`, selected through system STEP_COUNT | RANGED_VALUE observed | Steps | Live text and gauge rendered | Range maximum matched the Steps app goal; goal-change test pending |
+| Active minutes | Emberphase Health `MinutesDataSource`, backed by consented phone SDK reads | GOAL_PROGRESS observed | Whole minutes | Live number and metal track rendered; source-app comparison pending | SDK LAST target rendered; goal-change test pending |
+| Activity calories | Emberphase Health `CaloriesDataSource`, backed by consented phone SDK reads | GOAL_PROGRESS observed | Active kcal | Live number and metal track rendered; source-app comparison pending | SDK LAST target rendered; goal-change test pending |
 | Current temp / high / condition | Native WFF weather | Current / daily high / condition observed | Fahrenheit on this watch | Rendered after initial unavailable state; source-app comparison pending | N/A |
 
 If there is no individual provider with the required numeric values and goals,

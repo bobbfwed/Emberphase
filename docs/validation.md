@@ -154,8 +154,11 @@ phone requests read access to activity summary and the two goal types. Samsung's
 LAST goal aggregate supplies actual goals, rather than guessed range limits.
 Five shared-model unit tests cover DST/midnight expiry, stale/future samples,
 travel date mismatches, unknown/zero/over-goal readings, and invalid values.
-Companion assembly and lint pass; live phone consent, SDK queries, transport,
-and end-to-end goal rendering remain pending device reconnection. See
+Companion assembly and lint pass. The subsequent physical test on 2026-11-02
+verified phone consent, SDK queries, Data Layer delivery, and live GOAL_PROGRESS
+totals/targets/tracks for both activity providers. Android registered the phone's
+background job. A full scheduled interval, goal changes, and permission-loss
+handling still need physical observation. See
 [companion setup and acceptance checks](health-companion.md).
 
 Version 0.4.7 widens the static moon window's upper arch around the wheel pivot,
@@ -163,5 +166,6 @@ giving the painted moon six units of radial clearance. Raster-mask checks cover
 both moons throughout rotation, full/new visibility and quarter visibility;
 the previous dial fails the upper-rim check. Four-phase previews were widened
 to show the entire opening. Date/phase expression tests, WFF schema validation,
-memory limits, resource-only APK verification and Android lint pass. The watch
-was not connected over ADB for installation or physical rendering verification.
+memory limits, resource-only APK verification and Android lint pass. Version
+0.4.7 was subsequently installed and its wider moon window inspected on the
+watch; the always-on view also retained its hands, calendar, battery and markers.
