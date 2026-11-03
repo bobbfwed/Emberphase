@@ -14,6 +14,8 @@ to the watch display.
 
 * Skeleton analog hands and an optional mechanical second hand with a brief
   overshoot on each tick.
+* An optional hidden balance rim glimpsed through two small inner windows,
+  alternating left and right once per second.
 * A rotating twin-moon disc behind a recessed aperture.
 * Mechanical calendar drums showing **weekday, month, date**, with partially
   visible adjacent entries.
@@ -26,9 +28,14 @@ to the watch display.
   gauge, plus white hour markers on black.
 
 The design prioritizes battery efficiency through static artwork, native WFF
-rendering, and provider-driven data updates. Seconds disappear in always-on mode
-and at 15% battery or below; you can also disable them in the editor. Battery-life
+rendering, and provider-driven data updates. Seconds and the balance disappear
+in always-on mode and at 15% battery or below; each has its own editor toggle. Battery-life
 measurements are still pending.
+
+See the balance in motion: [full-face animation](docs/previews/balance-motion.gif)
+and [enlarged detail](docs/previews/balance-detail.gif). These previews hold the
+clock hands still to isolate the mechanism's 180 ms movement and 820 ms rest.
+The seconds hand retains its separate 130 ms tick.
 
 See the [always-on](docs/previews/ambient.png),
 [low-battery](docs/previews/low-battery.png),
@@ -144,7 +151,8 @@ To install an APK you already built, use:
 ```
 
 Long-press the current watch face, choose **Add watch face**, and select
-**Emberphase**. Open its editor to configure the data sources and second hand.
+**Emberphase**. Open its editor to configure the data sources, second hand,
+and hidden balance.
 
 ## Customize the displays
 
@@ -214,10 +222,12 @@ With Node.js installed, run the dependency-free expression and geometry checks:
 
 ```powershell
 node .\scripts\test-watchface.mjs
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\scripts\Test-BalanceWindows.ps1
 ```
 
 The checks cover calendar rollover and leap years, activity ranges and goals,
-battery bounds, the seconds cutoff, artwork references, and selection geometry.
+battery bounds, the seconds and balance cutoffs, artwork references, selection
+geometry, balance-window masking, and animated-preview timing.
 The build additionally uses Google's WFF validator and memory checker, with
 10 MiB active and 4 MiB ambient memory limits. See
 [validation details](docs/validation.md) and the

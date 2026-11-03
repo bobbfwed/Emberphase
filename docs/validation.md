@@ -169,3 +169,24 @@ to show the entire opening. Date/phase expression tests, WFF schema validation,
 memory limits, resource-only APK verification and Android lint pass. Version
 0.4.7 was subsequently installed and its wider moon window inspected on the
 watch; the always-on view also retained its hands, calendar, battery and markers.
+
+Version 0.4.8 implements the approved hidden balance rim with one small wheel
+behind two fixed openings. Native angle animation alternates once per second,
+with a 180 ms eased transition at 30 fps and no repeats. The separate seconds
+tick remains 130 ms. Expression checks cover parity through second rollover,
+the editor toggle, ambient hiding, and the 15% battery cutoff. Raster checks
+find 793 changed pixels between the settled states, all confined to the two
+inner windows, and verify that the bright rim switches sides. Generated GIFs
+have 14 frames, two short transitions and two holds in a looping two-second
+cycle. They use sample data and static clock hands, not device recordings.
+
+WFF schema validation, SDK-native assembly/signature verification, Gradle
+resource-only verification and lint, moon aperture checks, and expression
+tests pass. Maximum decoded-resource estimates are 4,444,248 bytes active
+(4.24 MiB) and 1,645,872 bytes ambient (1.57 MiB). The active increase of
+87,616 bytes is exactly one 148-by-148 RGBA image; ambient is unchanged.
+The installed watch shows both rim positions, and sleep/wake captures confirm
+ambient hiding and resumed rendering. A six-second physical recording is
+kept locally under ignored artifacts, along with device screenshots. Actual
+transition timing, the editor-off setting, low-battery device behavior and
+battery consumption have not been measured in this revision.

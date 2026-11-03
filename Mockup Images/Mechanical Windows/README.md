@@ -14,7 +14,12 @@ seconds. The openings remain fixed and dark; the mechanism moves behind them.
 These are concept mockups for choosing the opening shape and exposed component.
 Generated images can vary the existing typography, proportions and placement
 slightly; those incidental differences are not proposed changes to the face.
-The example data is illustrative. Production artwork and WFF remain unchanged.
+The example data is illustrative. Concept **01 — Hidden balance rim** was
+selected and implemented in version 0.4.8. See the
+[full-face animation](../../docs/previews/balance-motion.gif) and
+[enlarged detail](../../docs/previews/balance-detail.gif) generated from the
+production artwork and motion settings. Clock hands are held still in these
+previews to make the new movement easier to see.
 
 ## Motion to review after choosing a concept
 
@@ -29,5 +34,5 @@ The example data is illustrative. Production artwork and WFF remain unchanged.
   Exact movement and implementation should follow the selected visual concept.
 
 Created with the built-in image generation tool. Full prompts are saved in
-[PROMPTS.md](PROMPTS.md). Choose 01, 02 or 03, or combine an opening from one
-concept with the mechanism detail from another.
+[PROMPTS.md](PROMPTS.md). The implemented assets are generated separately by
+the repository's PowerShell artwork scripts.

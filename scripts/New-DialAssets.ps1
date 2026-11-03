@@ -122,6 +122,27 @@ foreach($cy in @(35,145)) {
 }
 Save 'moon_disc'
 
+# One shared balance wheel, viewed obliquely through two small dial clearances.
+# Only its upper half carries a pale rim. Rocking the wheel reveals that rim
+# through alternating openings; the unlit half stays a dark mechanical texture.
+Canvas 148 148
+Ellipse '#050606' 4 4 140 140
+Ellipse '#101313' 10 10 128 128
+$p=Pen '#222624' 4; $script:g.DrawEllipse($p,9,9,130,130); $p.Dispose()
+for($tooth=0;$tooth -lt 72;$tooth++) {
+    $a=$tooth*5*[math]::PI/180
+    $color='#242822'; if($tooth -ge 36) { $color='#777461' }
+    Line $color 1.3 (74+66*[math]::Cos($a)) (74+66*[math]::Sin($a)) (74+70*[math]::Cos($a)) (74+70*[math]::Sin($a))
+}
+$rimColors=@('#31362f','#55594d','#777967','#a5a18a','#bbb39b','#898774','#5e6255','#373d34')
+for($i=0;$i -lt $rimColors.Count;$i++) {
+    $radius=61.8+$i*0.65
+    $p=Pen $rimColors[$i] 0.9
+    $script:g.DrawArc($p,([System.Drawing.RectangleF]::new((74-$radius),(74-$radius),($radius*2),($radius*2))),180,180)
+    $p.Dispose()
+}
+Save 'balance_wheel'
+
 # Bevelled black dial, minute track, drums, and recessed activity channels.
 Canvas 450 450
 Ellipse '#181818' 1 1 448 448
@@ -157,6 +178,22 @@ $aperture.AddBezier(204,108,192,88,159,88,(225-$archEdge),105); $aperture.CloseF
 $p=Pen '#494b48' 3; $script:g.DrawPath($p,$aperture); $p.Dispose()
 $script:g.CompositingMode='SourceCopy'; $transparent=New-Object System.Drawing.SolidBrush([System.Drawing.Color]::Transparent)
 $script:g.FillPath($transparent,$aperture); $transparent.Dispose(); $script:g.CompositingMode='SourceOver'; $aperture.Dispose()
+
+# Small angled inspection windows. The broad opaque dial hides the rest of
+# the wheel, and the live hands render above both openings.
+foreach($window in @(@(175,22),@(275,-22))) {
+    $opening=New-Object System.Drawing.Drawing2D.GraphicsPath
+    $opening.AddEllipse(($window[0]-22),226,44,18)
+    $tilt=New-Object System.Drawing.Drawing2D.Matrix
+    $tilt.RotateAt($window[1],[System.Drawing.PointF]::new($window[0],235))
+    $opening.Transform($tilt); $tilt.Dispose()
+    $p=Pen '#040505' 3; $script:g.DrawPath($p,$opening); $p.Dispose()
+    $p=Pen '#292d29' 0.9; $script:g.DrawPath($p,$opening); $p.Dispose()
+    $script:g.CompositingMode='SourceCopy'
+    $clear=New-Object System.Drawing.SolidBrush([System.Drawing.Color]::Transparent)
+    $script:g.FillPath($clear,$opening); $clear.Dispose()
+    $script:g.CompositingMode='SourceOver'; $opening.Dispose()
+}
 
 # The drum body sits lower, with a cylindrical light band behind live text.
 # A separate foreground bezel occludes the receding rows after text is drawn.

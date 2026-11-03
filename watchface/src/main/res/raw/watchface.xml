@@ -8,6 +8,7 @@
             <ListOption id="1" displayName="custom_complication" />
         </ListConfiguration>
         <BooleanConfiguration id="mechanical_seconds" displayName="seconds_hand" defaultValue="TRUE" />
+        <BooleanConfiguration id="mechanical_balance" displayName="balance_mechanism" defaultValue="TRUE" />
         <BooleanConfiguration id="samsung_steps_target" displayName="samsung_steps_target" defaultValue="TRUE" />
     </UserConfigurations>
     <Scene backgroundColor="#000000">
@@ -22,6 +23,28 @@
                 <Transform target="angle" value="(-90 + 180 * ((((365 * ([YEAR] - 2000) + floor(([YEAR] - 1) / 4) - floor(([YEAR] - 1) / 100) + floor(([YEAR] - 1) / 400) - 484 + [DAY_OF_YEAR] - 1 + 0.5 * [AMPM_STATE] + 0.25 - 5.7597222222) / 29.530588853) % 2 + 2) % 2)) + 7.5 * sin(0.03490658503988659 * (-90 + 180 * ((((365 * ([YEAR] - 2000) + floor(([YEAR] - 1) / 4) - floor(([YEAR] - 1) / 100) + floor(([YEAR] - 1) / 400) - 484 + [DAY_OF_YEAR] - 1 + 0.5 * [AMPM_STATE] + 0.25 - 5.7597222222) / 29.530588853) % 2 + 2) % 2)))" />
                 <Image resource="moon_disc" />
             </PartImage>
+            <!-- The shared wheel rocks behind two fixed dial openings. Native
+                 interpolation runs briefly on each SECOND change, then rests. -->
+            <Group name="optional_balance" x="0" y="0" width="450" height="450">
+                <Variant mode="AMBIENT" target="alpha" value="0" duration="0" />
+                <BooleanConfiguration id="mechanical_balance">
+                    <BooleanOption id="TRUE">
+                        <Condition>
+                            <Expressions><Expression name="balance_power_available">[BATTERY_PERCENT] &gt; 15</Expression></Expressions>
+                            <Compare expression="balance_power_available">
+                                <Group name="balance_perspective" x="151" y="151" width="148" height="148" pivotX="0.5" pivotY="0.5" scaleY="0.38">
+                                    <PartImage name="balance_oscillator" x="0" y="0" width="148" height="148" pivotX="0.5" pivotY="0.5">
+                                        <Transform target="angle" value="[SECOND] % 2 == 0 ? -55 : 55">
+                                            <Animation duration="0.18" interpolation="CUBIC_BEZIER" controls="0.42 0 0.58 1" angleDirection="NONE" repeat="0" fps="30" />
+                                        </Transform>
+                                        <Image resource="balance_wheel" />
+                                    </PartImage>
+                                </Group>
+                            </Compare>
+                        </Condition>
+                    </BooleanOption>
+                </BooleanConfiguration>
+            </Group>
             <PartImage x="0" y="0" width="450" height="450">
                 <Image resource="dial_frame" />
             </PartImage>

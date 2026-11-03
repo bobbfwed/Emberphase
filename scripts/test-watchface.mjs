@@ -227,6 +227,30 @@ assert.ok(Number(tick[1])>=0.1 && Number(tick[1])<=0.2, 'Allow a brief tick but 
 assert.ok(Number(tick[2])>=0.4 && Number(tick[2])<=0.6, 'Overshoot must be visible without a full-step bounce');
 assert.doesNotMatch(face, /\[CONFIGURATION\./, 'Use native list/boolean branches for editor options');
 assert.match(face, /<Group name="optional_ticking_seconds"[^>]*>\s*<Variant mode="AMBIENT" target="alpha" value="0"/);
+const balance=face.match(/<PartImage name="balance_oscillator"[\s\S]*?<\/PartImage>/)[0];
+const balanceAngle=unescapeXml(balance.match(/<Transform target="angle" value="([^"]+)"/)[1]);
+assert.deepEqual([...balanceAngle.matchAll(/\[([^\]]+)\]/g)].map(m=>m[1]),['SECOND']);
+for(let second=0;second<120;second++) {
+  const angle=evaluate(balanceAngle,{SECOND:second%60});
+  const next=evaluate(balanceAngle,{SECOND:(second+1)%60});
+  assert.ok(second%2===0 ? angle<0 : angle>0,'The balance must expose alternate sides on successive seconds');
+  assert.ok(Math.abs(angle)<=60 && angle===-next,'Rock symmetrically through minute rollover without a full revolution');
+}
+for(let battery=0;battery<=100;battery++) {
+  assert.equal(evaluate(expressions.get('balance_power_available'),{BATTERY_PERCENT:battery}),battery>15);
+}
+assert.match(face, /BooleanConfiguration id="mechanical_balance"[^>]*defaultValue="TRUE"/);
+assert.match(face, /<Group name="optional_balance"[^>]*>\s*<Variant mode="AMBIENT" target="alpha" value="0" duration="0"/);
+assert.match(face, /<BooleanConfiguration id="mechanical_balance">\s*<BooleanOption id="TRUE">\s*<Condition>[\s\S]*?<Compare expression="balance_power_available">\s*<Group name="balance_perspective"/);
+const balanceAnimation=balance.match(/<Animation\b[^>]+/)[0];
+const duration=Number(balanceAnimation.match(/duration="([^"]+)"/)[1]);
+const fps=Number(balanceAnimation.match(/fps="([^"]+)"/)[1]);
+assert.ok(duration>=0.1 && duration<=0.25 && fps>=15 && fps<=30,'Use a short bounded animation and rest for most of the second');
+assert.match(balanceAnimation,/angleDirection="NONE"/);
+assert.match(balanceAnimation,/repeat="0"/);
+assert.match(balanceAnimation,/interpolation="CUBIC_BEZIER" controls="0.42 0 0.58 1"/);
+assert.ok(face.indexOf('name="balance_oscillator"')<face.indexOf('resource="dial_frame"'),'The dial must occlude the shared wheel');
+assert.doesNotMatch(ambient,/balance_|mechanical_balance|\[SECOND\]/);
 assert.doesNotMatch(face, /\[(?:UTC_TIMESTAMP|MILLISECOND|SECOND_MILLISECOND|ACCELEROMETER[^\]]*)\]|<Sweep\b|<Gyro\b/);
 assert.doesNotMatch(face, /\u00c2\u00b0|\u00e2\u20ac\u201d/);
 assert.match(manifest, /android:hasCode="false"/);

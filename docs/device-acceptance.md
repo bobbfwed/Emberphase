@@ -1,6 +1,6 @@
 # Watch6 device acceptance
 
-Status: **0.4.7 installed on the SM-R950**, with the health companion installed
+Status: **0.4.8 installed on the SM-R950**, with the health companion installed
 on the watch and paired Galaxy S24 Ultra. On 2026-11-02, consented Samsung Health
 SDK reads and Data Layer delivery succeeded. After the developer selected the
 two Emberphase providers, live active-minute/calorie totals, their numeric goals
@@ -14,6 +14,15 @@ also showed the orange hands/calendar/battery and white hour markers, with
 activity tracks hidden. Initial sync and live rendering are verified; changed
 goals, a full scheduled refresh interval, midnight rollover, permission revocation
 and longer battery measurements still need physical tests.
+
+Version 0.4.8 adds the selected hidden balance rim. Physical screenshots show
+both alternating sides through the two small windows beside the spindle, with
+live weather and all three activity totals/targets retained. A six-second
+device recording was captured locally. Sleep/wake screenshots confirm the
+mechanism disappears in always-on and returns on waking. The runtime accepts
+the new default-on editor setting. The low-battery cutoff and disabled setting
+have automated expression/structure checks; they still need physical testing.
+The 180 ms transition is configured in WFF, not measured from the recording.
 
 Initial **0.4.2 installation** on
 2026-11-01: ADB activation succeeded and an awake screenshot confirmed the

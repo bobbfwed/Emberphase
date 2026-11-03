@@ -60,9 +60,9 @@ $moonExpression=$faceXml.SelectSingleNode('//PartImage[@name="moon_disc_rotation
 $moonExpression=$moonExpression.Replace('[YEAR]',[string]$moonFixture.Year).Replace('[DAY_OF_YEAR]',[string]$moonFixture.DayOfYear).Replace('[AMPM_STATE]','1').Replace('floor(', '[math]::Floor(').Replace('sin(', '[math]::Sin(')
 $moonAngle=& ([scriptblock]::Create($moonExpression))
 
-foreach($mode in @('normal','low-battery','ambient','ambient-low-battery','unavailable','seconds')) {
+foreach($mode in @('normal','low-battery','ambient','ambient-low-battery','unavailable','seconds','balance-right','balance-overlay')) {
     Canvas 450 450
-    $script:g.Clear([System.Drawing.Color]::Black)
+    if($mode -ne 'balance-overlay') { $script:g.Clear([System.Drawing.Color]::Black) }
     if($mode.StartsWith('ambient')) {
         Asset 'ambient_indices' 0 0 450 450
         Label 'SUN' 136 109 23 '#d94c20' 57; Label 'NOV' 197 109 23 '#d94c20' 55; Label '01' 258 109 23 '#d94c20' 55
@@ -75,6 +75,13 @@ foreach($mode in @('normal','low-battery','ambient','ambient-low-battery','unava
         Asset 'ambient_center_cap' 211 211 28 28
     } else {
         Asset 'moon_disc' 135 40 180 180 $moonAngle
+        if($mode -ne 'low-battery' -and $mode -ne 'balance-overlay') {
+            $state=$script:g.Save()
+            $script:g.TranslateTransform(225,225); $script:g.ScaleTransform(1,0.38); $script:g.TranslateTransform(-225,-225)
+            $angle=-55; if($mode -eq 'balance-right') { $angle=55 }
+            Asset 'balance_wheel' 151 151 148 148 $angle
+            $script:g.Restore($state)
+        }
         Asset 'dial_frame' 0 0 450 450
         DrumLabel 'SAT' 136 126 57 $true; DrumLabel 'SUN' 136 149 57 $false '#ff6a15'; DrumLabel 'MON' 136 167 57 $true
         DrumLabel 'OCT' 197 126 55 $true; DrumLabel 'NOV' 197 149 55 $false; DrumLabel 'DEC' 197 167 55 $true
@@ -121,4 +128,5 @@ for($i=0;$i -lt $phases.Count;$i++) {
     Label $phases[$i][0] ($i*200) 118 12 '#eeeeee' 200
 }
 Save 'moon-phases'
+& (Join-Path $PSScriptRoot 'New-BalanceMotionPreview.ps1')
 Write-Host "Illustrative artwork composites (not device screenshots): $assetRoot"

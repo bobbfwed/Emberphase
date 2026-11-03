@@ -125,6 +125,15 @@ with 12/3/6/9. The ambient scene has no seconds, weather, moon, activity tracks,
 or adjacent calendar entries. Samsung display offload was observed active.
 Actual battery life must be measured on the watch.
 
+The optional hidden balance uses `[SECOND] % 2` to alternate its angle between
+-55 and +55 degrees. Native WFF animation interpolates each change for 180 ms
+at 30 fps, then holds the settled position for the rest of the second. One
+148-by-148 image moves behind the static dial's two apertures; no animated GIF
+is packaged in the APK. There is no millisecond source, continuous animation,
+or additional service. The balance has an independent editor toggle, is hidden
+in ambient, and is omitted at 15% battery or below. Its movement uses WFF's
+[Transform Animation](https://developer.android.com/reference/wear-os/wff/common/transform/animation).
+
 The optional companion schedules phone-side work about every 30 minutes using
 WorkManager (Android may delay it). Watch providers have no periodic polling:
 Data Layer changes trigger updates. Opening/activating a provider can request a
