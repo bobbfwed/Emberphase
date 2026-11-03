@@ -84,6 +84,12 @@ assert.equal(evaluate(ambientBattery,{BATTERY_PERCENT:100}),175);
 
 for (const [name, id] of [['steps',20], ['minutes',30], ['calories',40]]) {
   const slot = face.match(new RegExp(`<ComplicationSlot slotId="${id}"[\\s\\S]*?<\\/ComplicationSlot>`))[0];
+  if (name==='steps') {
+    const policy=slot.match(/<DefaultProviderPolicy\b[^>]+/)[0];
+    assert.match(policy, /primaryProvider="com\.samsung\.android\.wear\.shealth\/com\.samsung\.android\.wear\.shealth\.complications\.steps\.StepsComplicationProviderService"/);
+    assert.match(policy, /primaryProviderType="GOAL_PROGRESS"/);
+    assert.match(policy, /defaultSystemProvider="STEP_COUNT" defaultSystemProviderType="RANGED_VALUE"/);
+  }
   const goal = slot.match(/<Complication type="GOAL_PROGRESS">([\s\S]*?)<\/Complication>/)[1];
   const ranged = slot.match(/<Complication type="RANGED_VALUE">([\s\S]*?)<\/Complication>/)[1];
   const goalArc = unescapeXml(goal.match(/<Transform target="endAngle" value="([^"]+)"/)[1]);

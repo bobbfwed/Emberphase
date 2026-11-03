@@ -47,7 +47,8 @@ sizes have not yet been verified. See the
 [device test results](docs/device-acceptance.md) for details and outstanding checks.
 
 Activity data depends on the complication providers installed on the watch.
-Steps use the system step-count provider by default. **Active minutes and
+Steps prefer Samsung Health's steps-and-goal provider when available, with the
+system step-count provider as a fallback. **Active minutes and
 activity calories start unset**, and the tested Samsung Health installation did
 not expose suitable individual providers for those two values. The face does
 not include a phone companion or health-data bridge. Missing data displays `—`.
@@ -171,6 +172,14 @@ to be your personal goal; the goal label remains `—`. A `SHORT_TEXT` provider
 shows text without filling the track. System steps may differ from phone-merged
 Samsung Health totals, and automatic Samsung Health goal synchronization has
 not been verified.
+
+If the steps target remains a dash after updating the face, reselect **Samsung
+Health → Steps** in the editor and save. Existing face instances can retain an
+older range-based selection even when the default now requests `GOAL_PROGRESS`.
+If the provider still supplies only a range, the target remains unavailable.
+Active minutes and calories require separate suitable providers; choosing the
+combined Samsung Health Daily Activity display cannot supply those two numeric
+values and goals independently.
 
 For the technical findings, see [data sources](docs/data-sources.md) and
 [Samsung provider availability](docs/device-providers.md).

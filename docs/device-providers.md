@@ -62,3 +62,28 @@ The helper reads APK fragments in 4 KiB blocks, validates the manifest's ZIP
 checksum, and uses a manifest-only ZIP for local `aapt2` inspection. It fails
 explicitly if the archive layout or manifest parser is unsupported. Node and
 Android SDK build-tools 36.0.0 are development-only requirements.
+
+## Live follow-up: 2026-11-02
+
+The active 0.4.2 face's runtime dump identifies Samsung Health Steps as its data
+source, returning `RANGED_VALUE`. Its range maximum is 6,000, matching the goal
+displayed by the watch's Samsung Health Steps screen. This is a comparison at
+one goal setting, not a verified goal-change synchronization test. Both the
+minutes and calories slots return `EmptyComplicationData`, rather than hidden
+numeric values. The installed service list still has no individual active-time
+or active-calorie provider; Samsung Health reports version 7.1.1.001.
+
+Version 0.4.3 explicitly prefers the declared Samsung Steps `GOAL_PROGRESS`
+interface, while retaining system `STEP_COUNT` / `RANGED_VALUE` as a fallback
+when that provider or type is unavailable. The runtime recognizes this policy,
+but the existing face instance retained its selected range-based payload after
+installation. A policy change alone is not evidence of goal-progress delivery.
+Reselecting Steps in the editor is the next verification step. The range maximum
+is not silently substituted as a personal goal for arbitrary selected providers.
+
+Active minutes, activity calories, and their goals remain unavailable without a
+suitable additional provider. An exact Samsung Health integration would require
+a separate consent-based phone bridge and watch complication provider; the
+resource-only face cannot read Samsung Health's private database or split a
+combined image into independent metrics. Live steps and native weather do render
+on this watch; the earlier declaration-only findings above are historical.

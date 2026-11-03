@@ -400,7 +400,7 @@
         <ComplicationSlot slotId="20" displayName="steps_slot" x="0" y="0" width="450" height="450" supportedTypes="GOAL_PROGRESS RANGED_VALUE SHORT_TEXT EMPTY" isCustomizable="TRUE">
             <Variant mode="AMBIENT" target="alpha" value="0" />
             <BoundingRoundBox x="132" y="257" width="230" height="126" cornerRadius="8" />
-            <DefaultProviderPolicy defaultSystemProvider="STEP_COUNT" defaultSystemProviderType="RANGED_VALUE" />
+            <DefaultProviderPolicy primaryProvider="com.samsung.android.wear.shealth/com.samsung.android.wear.shealth.complications.steps.StepsComplicationProviderService" primaryProviderType="GOAL_PROGRESS" defaultSystemProvider="STEP_COUNT" defaultSystemProviderType="RANGED_VALUE" />
             <Complication type="GOAL_PROGRESS">
                 <PartText x="169" y="259" width="112" height="39">
                     <Text align="CENTER" isAutoSize="TRUE">

@@ -105,3 +105,12 @@ Version 0.4.2 shortens the native seconds tick from 180 ms to 130 ms, retaining
 strength 0.5. The faster setting was built, schema/memory checked, and installed
 on the SM-R950. The earlier motion recording describes the 180 ms setting;
 the 130 ms setting has not been measured from a new recording.
+
+On 2026-11-02, 0.4.3 was built, validated, and installed to request Samsung
+Health Steps as `GOAL_PROGRESS`, falling back to system `STEP_COUNT` as
+`RANGED_VALUE`. The native runtime accepted the new default policy. Its retained
+selection still returned range data; actual goal-progress delivery is pending
+editor reselection. The other activity slots were confirmed empty, with no
+separate installed Samsung active-time/calorie provider. See the live follow-up
+in `device-providers.md`. No health permissions, background service, or extra
+complication subscriptions were added.

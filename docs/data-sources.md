@@ -2,9 +2,10 @@
 
 Documentation checked 2026-11-01 before implementing data displays. Target:
 Galaxy Watch6 Classic SM-R950, Wear OS 6 / API 36. The watch was subsequently
-connected and its installed provider declarations verified; see
-[device findings](device-providers.md). Actual payloads, goal synchronization,
-and native weather availability remain unverified.
+connected and its installed provider declarations verified. Live steps and native
+weather were subsequently observed on-device; explicit goal-progress delivery
+and goal synchronization remain unverified. See the dated follow-up in
+[device findings](device-providers.md).
 
 ## What Samsung Health exposes
 
@@ -39,8 +40,11 @@ goal must not be described as Samsung Health's phone-merged value without a
 device comparison. [WFF sources](https://developer.android.com/reference/wear-os/wff/common/attributes/source-type).
 
 Each activity inset accepts `GOAL_PROGRESS`, `RANGED_VALUE`, `SHORT_TEXT`, and
-`EMPTY` complications. The step inset defaults to the system `STEP_COUNT`
-provider's `RANGED_VALUE` type. The other two start empty, ready for the user to
+`EMPTY` complications. The step inset prefers the verified Samsung Health Steps
+provider's `GOAL_PROGRESS` type, with the system `STEP_COUNT` provider's
+`RANGED_VALUE` type as a fallback. Existing selected sources/types can persist
+through updates; changing the default does not force them to change. The other
+two start empty, ready for the user to
 select a suitable installed activity provider.
 
 * `GOAL_PROGRESS`: render the supplied numeric value and target; clamp only the
@@ -100,7 +104,7 @@ Sources: [WFF weather availability and staleness](https://developer.android.com/
 
 No executable application code, networking permission, location polling, heart
 rate sampling, alarms, or wake locks. Native clock hands and provider/system
-updates drive the face. Mechanical seconds default on, with a native 180 ms
+updates drive the face. Mechanical seconds default on, with a native 130 ms
 overshoot-and-return tick once per second. They can be disabled in the editor
 and disappear at 15% battery or less. Date drums and the mechanical
 disc use date/moon sources rather than millisecond expressions. The native moon
