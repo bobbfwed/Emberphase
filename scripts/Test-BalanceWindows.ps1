@@ -76,8 +76,8 @@ try {
     $rightOff=Get-MeanLuma $filledLeft 267 305 200 250
     $leftOff=Get-MeanLuma $filledRight 145 183 200 250
     $rightOn=Get-MeanLuma $filledRight 267 305 200 250
-    if($leftOn -lt 400 -or $rightOn -lt 400 -or $rightOff -gt 80 -or $leftOff -gt 80) {
-        throw "Openings must swap filled and empty each slice. Left $leftOn/$leftOff, right $rightOff/$rightOn."
+    if(($leftOn - $leftOff) -lt 120 -or ($rightOn - $rightOff) -lt 120) {
+        throw "Openings must swap the pale and dark rim each slice. Left $leftOn/$leftOff, right $rightOff/$rightOn."
     }
     $leftDy=(Get-BrightCentroid $advanced 145 183 200 250)-(Get-BrightCentroid $atRest 145 183 200 250)
     $rightDy=(Get-BrightCentroid $advanced 267 305 200 250)-(Get-BrightCentroid $atRest 267 305 200 250)

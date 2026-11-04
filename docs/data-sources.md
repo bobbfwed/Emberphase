@@ -127,11 +127,12 @@ ambient scene has no seconds, weather, moon, activity tracks,
 or adjacent calendar entries. Samsung display offload was observed active.
 Actual battery life must be measured on the watch.
 
-The optional hidden balance uses `-[SECOND] * 36`. The wheel is ten alternating
-pale and black slices of 36 degrees, wide enough to fill the 31-degree clear
-opening. The openings are 180 degrees apart and 180/36 is odd, so one is always
-filled while the other is empty. Each second turns one slice counterclockwise,
-swapping the openings, including across the minute. Native WFF animation spends
+The optional hidden balance uses `-[SECOND] * 36`. The toothed rim alternates
+its pale and dark treatments every 36 degrees, wide enough to fill the
+31-degree clear opening. The openings are 180 degrees apart and 180/36 is odd,
+so one shows the pale rim while the other shows the dark rim. Each second turns
+one slice counterclockwise, swapping the openings, including across the minute.
+Native WFF animation spends
 the whole 220 ms on that visible travel, at 30 fps, then holds for the rest of
 the second. One
 148-by-148 image moves behind the static dial's two apertures; no animated GIF

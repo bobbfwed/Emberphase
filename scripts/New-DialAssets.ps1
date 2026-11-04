@@ -122,20 +122,31 @@ foreach($cy in @(35,145)) {
 }
 Save 'moon_disc'
 
-# One shared balance wheel. Ten 36-degree slices alternate pale and black.
-# The clear openings are 31 degrees and sit 180 degrees apart. 180/36 is odd,
-# so one opening is always the opposite of the other, and a 36-degree turn
-# swaps them. Slice 0 is centered on the left opening.
+# One shared balance wheel, with the same toothed rim as before. The pale
+# treatment and the dark treatment alternate every 36 degrees, the slice that
+# fills a 31-degree opening. The openings are 180 degrees apart and 180/36 is
+# odd, so one is pale while the other is dark. Slice 0 is centered on the left.
 Canvas 148 148
 Ellipse '#050606' 4 4 140 140
-for($segment=0;$segment -lt 10;$segment++) {
-    $color='#0c0e0c'; if($segment % 2 -eq 0) { $color='#d5d0c2' }
-    $b=Brush $color
-    $script:g.FillPie($b,(74-76),(74-76),152,152,(162+$segment*36),36)
-    $b.Dispose()
+Ellipse '#101313' 10 10 128 128
+$p=Pen '#222624' 4; $script:g.DrawEllipse($p,9,9,130,130); $p.Dispose()
+for($tooth=0;$tooth -lt 72;$tooth++) {
+    $a=$tooth*5
+    $segment=[math]::Floor((($a - 162 + 360) % 360) / 36)
+    $color='#242822'; if($segment % 2 -eq 0) { $color='#777461' }
+    $rad=$a*[math]::PI/180
+    Line $color 1.6 (74+52*[math]::Cos($rad)) (74+52*[math]::Sin($rad)) (74+73*[math]::Cos($rad)) (74+73*[math]::Sin($rad))
 }
-Ellipse '#101313' 24 24 100 100
-Ellipse '#050606' 36 36 76 76
+$rimColors=@('#31362f','#55594d','#777967','#a5a18a','#bbb39b','#898774','#5e6255','#373d34')
+for($segment=0;$segment -lt 10;$segment+=2) {
+    $start=162+$segment*36
+    for($i=0;$i -lt $rimColors.Count;$i++) {
+        $radius=54+$i*2.3
+        $p=Pen $rimColors[$i] 1.6
+        $script:g.DrawArc($p,([System.Drawing.RectangleF]::new((74-$radius),(74-$radius),($radius*2),($radius*2))),$start,36)
+        $p.Dispose()
+    }
+}
 Save 'balance_wheel'
 
 # Bevelled black dial, minute track, drums, and recessed activity channels.
