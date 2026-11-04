@@ -266,6 +266,6 @@ so its rim follows those arcs. Raster checks find 1,851 changing pixels, all
 inside the two slots, and both settled states expose the bright rim on the
 correct side. The motion previews keep the 220 ms transition and the looping
 two-second cycle. Expression tests, WFF schema validation, the memory-footprint
-check, and the signed APK build pass. The watch answered on the network, but
-its advertised wireless-debugging port refused the connection, so 0.5.2 is not
-yet installed.
+check, and the signed APK build pass. A later install on the SM-R950
+succeeded; the watch reports version 0.5.2. The new arc openings have not yet
+been inspected on the device.
