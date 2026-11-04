@@ -29,7 +29,7 @@ final class PhoneRefresh {
 
     static synchronized void request(Context context, boolean userInitiated) {
         long now = android.os.SystemClock.elapsedRealtime();
-        if (!userInitiated && lastRequest > 0 && now - lastRequest < 300_000) return;
+        if (!userInitiated && lastRequest > 0 && now - lastRequest < ActivitySnapshot.BACKGROUND_REFRESH_GAP.toMillis()) return;
         lastRequest = now;
         Context app = context.getApplicationContext();
         Wearable.getNodeClient(app).getConnectedNodes().addOnSuccessListener(nodes -> {

@@ -15,13 +15,14 @@ public final class HealthActivity extends Activity {
     private final android.content.SharedPreferences.OnSharedPreferenceChangeListener changes = (prefs, key) -> runOnUiThread(this::refresh);
     @Override public void onCreate(Bundle state) {
         super.onCreate(state);
+        HealthSync.ensureSchedule(this);
         LinearLayout content = new LinearLayout(this);
         content.setOrientation(LinearLayout.VERTICAL);
         content.setPadding(32, 72, 32, 48);
         ScrollView scroll = new ScrollView(this); scroll.addView(content); setContentView(scroll);
         TextView title = new TextView(this); title.setText("Emberphase Health"); title.setTextSize(28); content.addView(title);
         TextView explanation = new TextView(this);
-        explanation.setText("Share today's active minutes, active calories and their daily goals from Samsung Health with your paired watch. Read access only. No raw records or health data are sent to an Emberphase server.\n\nAutomatic sync runs about every 30 minutes when Android permits. Phone and watch must stay paired. Data disappears after two hours without an update, or at midnight.\n");
+        explanation.setText("Share today's active minutes, active calories and their daily goals from Samsung Health with your paired watch. Read access only. No raw records or health data are sent to an Emberphase server.\n\nAutomatic sync runs about every hour when Android permits, and waits while the phone battery is low. Sync now still runs immediately. Phone and watch must stay paired. Data disappears after two hours without an update, or at midnight.\n");
         content.addView(explanation);
         status = new TextView(this); content.addView(status);
         button(content, "Connect Samsung Health", this::connect);

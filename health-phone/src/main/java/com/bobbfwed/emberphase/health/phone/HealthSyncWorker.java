@@ -13,6 +13,7 @@ public final class HealthSyncWorker extends Worker {
         if (!HealthSync.enabled(context)) {
             return HealthSync.clearPending(context) ? Result.success() : Result.retry();
         }
+        HealthSync.ensureSchedule(context);
         try {
             var snapshot = SamsungHealthReader.read(context);
             if (!isStopped()) HealthSync.publish(context, snapshot, getInputData().getBoolean("urgent", false));

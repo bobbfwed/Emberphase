@@ -13,6 +13,7 @@ import java.util.concurrent.TimeUnit;
 final class HealthSync {
     private static final String PERIODIC = "health-periodic";
     private static final String IMMEDIATE = "health-immediate";
+    private static final int SCHEDULE_VERSION = 2;
     private static long lastWatchRequest;
     private HealthSync() { }
     static SharedPreferences prefs(Context context) {
@@ -20,15 +21,32 @@ final class HealthSync {
     }
     static boolean enabled(Context context) { return prefs(context).getBoolean("enabled", false); }
     static void enable(Context context) {
-        synchronized (HealthSync.class) { prefs(context).edit().putBoolean("enabled", true).putBoolean("pending_clear", false).apply(); }
-        WorkManager.getInstance(context).enqueueUniquePeriodicWork(PERIODIC, ExistingPeriodicWorkPolicy.KEEP,
-                new PeriodicWorkRequest.Builder(HealthSyncWorker.class, 30, TimeUnit.MINUTES, 10, TimeUnit.MINUTES).build());
+        synchronized (HealthSync.class) {
+            prefs(context).edit().putBoolean("enabled", true).putBoolean("pending_clear", false)
+                    .putInt("schedule_version", SCHEDULE_VERSION).apply();
+        }
+        WorkManager.getInstance(context).enqueueUniquePeriodicWork(PERIODIC, ExistingPeriodicWorkPolicy.UPDATE, periodic());
         request(context, true);
+    }
+    /** Replace an older 30-minute schedule once, without restarting it on every run. */
+    static void ensureSchedule(Context context) {
+        if (!enabled(context)) return;
+        synchronized (HealthSync.class) {
+            SharedPreferences prefs = prefs(context);
+            if (prefs.getInt("schedule_version", 0) == SCHEDULE_VERSION) return;
+            prefs.edit().putInt("schedule_version", SCHEDULE_VERSION).apply();
+        }
+        WorkManager.getInstance(context).enqueueUniquePeriodicWork(PERIODIC, ExistingPeriodicWorkPolicy.UPDATE, periodic());
+    }
+    private static PeriodicWorkRequest periodic() {
+        Constraints constraints = new Constraints.Builder().setRequiresBatteryNotLow(true).build();
+        return new PeriodicWorkRequest.Builder(HealthSyncWorker.class, 60, TimeUnit.MINUTES, 15, TimeUnit.MINUTES)
+                .setConstraints(constraints).build();
     }
     static synchronized void request(Context context, boolean urgent) {
         if (!enabled(context)) return;
         long now = android.os.SystemClock.elapsedRealtime();
-        if (!urgent && lastWatchRequest > 0 && now - lastWatchRequest < 300_000) return;
+        if (!urgent && lastWatchRequest > 0 && now - lastWatchRequest < ActivitySnapshot.BACKGROUND_REFRESH_GAP.toMillis()) return;
         lastWatchRequest = now;
         WorkManager.getInstance(context).enqueueUniqueWork(IMMEDIATE, ExistingWorkPolicy.KEEP,
                 new OneTimeWorkRequest.Builder(HealthSyncWorker.class)

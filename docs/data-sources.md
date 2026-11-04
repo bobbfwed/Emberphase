@@ -130,19 +130,23 @@ Actual battery life must be measured on the watch.
 The optional hidden balance uses `-[SECOND] * 30`. Each second the wheel
 advances 30 degrees counterclockwise, down on the left and up on the right,
 including across the minute. Native WFF animation interpolates that step for
-220 ms at 30 fps, then holds for the rest of the second. One
+220 ms at 15 fps, then holds for the rest of the second. One
 148-by-148 image moves behind the static dial's two apertures; no animated GIF
 is packaged in the APK. There is no millisecond source, continuous animation,
 or additional service. The balance has an independent editor toggle, is hidden
 in ambient, and is omitted at 15% battery or below. Its movement uses WFF's
 [Transform Animation](https://developer.android.com/reference/wear-os/wff/common/transform/animation).
 
-The optional companion schedules phone-side work about every 30 minutes using
-WorkManager (Android may delay it). Watch providers receive Data Layer pushes
-and a 30-minute system refresh fallback that checks the local cache.
-Opening/activating a provider can request a
-phone refresh, throttled to once per five minutes. Explicit Sync now bypasses
-that throttle. Cached totals expire after two hours or at local midnight. An
+The optional companion schedules phone-side work about every 60 minutes, with a
+15-minute flex window, using WorkManager (Android may delay it further). That
+periodic read also waits while the phone battery is low. Watch providers receive
+Data Layer pushes and a 60-minute system refresh fallback that checks the local
+cache. Raising the watch does not ask the phone for a new reading while that
+cache is still fresh. A stale cache can request one at most every 15 minutes.
+Explicit Sync bypasses that gap and the low-battery wait. Sleep, theater, and
+power-saving modes are system states: the face adds no timer for them, and
+ambient already hides seconds, the balance, moon, weather, and activity.
+Cached totals expire after two hours or at local midnight. An
 explicit unavailable-data timeline entry replaces expired totals even without
 a subsequent push. See [overnight sync setup](health-companion.md).
 

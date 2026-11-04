@@ -16,7 +16,11 @@ public abstract class ActivityDataSource extends ComplicationDataSourceService {
     @Override public void onComplicationActivated(int id, ComplicationType type) {
         super.onComplicationActivated(id, type);
         PhoneRefresh.loadCache(this);
-        PhoneRefresh.request(this, false);
+        // A fresh cache needs no Samsung Health read. Wrist raises stay local.
+        ActivitySnapshot snapshot = SnapshotStore.read(this);
+        if (snapshot == null || !snapshot.isFresh(Instant.now(), ZoneId.systemDefault())) {
+            PhoneRefresh.request(this, false);
+        }
     }
 
     @Override public void onComplicationRequest(ComplicationRequest request, ComplicationRequestListener listener) {

@@ -93,14 +93,17 @@ not invent a goal when the SDK has no result. See Samsung's
 [activity summary](https://developer.samsung.com/health/data/api-reference/-shd/com.samsung.android.sdk.health.data.request/-data-type/-activity-summary-type/-companion/index.html)
 and [goal semantics](https://developer.samsung.com/health/data/api-reference/-shd/com.samsung.android.sdk.health.data.request/-data-type/-active-time-goal-type/-companion/-l-a-s-t.html).
 
-Automatic phone sync is scheduled every 30 minutes with a 10-minute flex window;
-Android may batch or delay work. It does not promise exact-time refresh. Initial
-and manual syncs request urgent Data Layer delivery. Watch activation/stale-data
-refresh requests are throttled to five minutes. Starting with companion 0.1.1,
-Wear OS also requests each watch provider about every 30 minutes as a recovery
-path when pushes stop. These requests read the local cache and ask the phone for
-a refresh only when it is stale. There is no foreground service, sensor sampling,
-exact alarm, or new watch-face timer.
+Automatic phone sync is scheduled every 60 minutes with a 15-minute flex window,
+and it waits while the phone battery is low. Android may batch or delay work
+further. It does not promise exact-time refresh. Initial and manual syncs still
+run immediately and request urgent Data Layer delivery. A fresh watch cache does
+not ask the phone for another Samsung Health read when the face wakes. Stale-cache
+requests are limited to one every 15 minutes. Wear OS requests each activity
+provider about every 60 minutes as a recovery path when pushes stop; those
+requests read the local cache. There is no foreground service, sensor sampling,
+exact alarm, or new watch-face timer. Sleep, theater, and watch power saving
+remain system display states. Ambient already omits seconds, the balance, moon,
+weather, and activity.
 
 Only dated totals and goals travel through Google's paired-device Data Layer.
 The watch caches them in private storage, excluded from backup and device

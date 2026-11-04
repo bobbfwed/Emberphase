@@ -33,7 +33,7 @@
             <meta-data android:name="android.support.wearable.complications.SUPPORTED_TYPES" android:value="GOAL_PROGRESS,SHORT_TEXT" />
             <meta-data android:name="androidx.wear.watchface.complications.datasource.SAFE_WATCH_FACE_SUPPORTED_TYPES" android:value="GOAL_PROGRESS,SHORT_TEXT" />
             <meta-data android:name="android.support.wearable.complications.SAFE_WATCH_FACES" android:value="com.bobbfwed.emberphase" />
-            <meta-data android:name="android.support.wearable.complications.UPDATE_PERIOD_SECONDS" android:value="1800" />
+            <meta-data android:name="android.support.wearable.complications.UPDATE_PERIOD_SECONDS" android:value="3600" />
         </service>
         <service android:name="com.bobbfwed.emberphase.health.watch.CaloriesDataSource"
             android:label="Emberphase · Active calories" android:icon="@drawable/ic_emberphase_health"
@@ -42,7 +42,7 @@
             <meta-data android:name="android.support.wearable.complications.SUPPORTED_TYPES" android:value="GOAL_PROGRESS,SHORT_TEXT" />
             <meta-data android:name="androidx.wear.watchface.complications.datasource.SAFE_WATCH_FACE_SUPPORTED_TYPES" android:value="GOAL_PROGRESS,SHORT_TEXT" />
             <meta-data android:name="android.support.wearable.complications.SAFE_WATCH_FACES" android:value="com.bobbfwed.emberphase" />
-            <meta-data android:name="android.support.wearable.complications.UPDATE_PERIOD_SECONDS" android:value="1800" />
+            <meta-data android:name="android.support.wearable.complications.UPDATE_PERIOD_SECONDS" android:value="3600" />
         </service>
     </application>
 </manifest>

@@ -8,8 +8,8 @@ android {
         applicationId = "com.bobbfwed.emberphase.health"
         minSdk = 29
         targetSdk = 36
-        versionCode = 1002
-        versionName = "0.1.1"
+        versionCode = 1003
+        versionName = "0.1.2"
     }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
