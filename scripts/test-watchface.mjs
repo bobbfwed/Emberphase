@@ -236,7 +236,7 @@ for(let second=0;second<120;second++) {
   const angle=evaluate(balanceAngle,{SECOND:second%60});
   const next=evaluate(balanceAngle,{SECOND:(second+1)%60});
   const counterclockwise=(wrap360(angle)-wrap360(next)+360)%360;
-  assert.equal(counterclockwise,30,'Each second advances one window, 30 degrees counterclockwise, including the minute rollover');
+  assert.equal(counterclockwise,36,'Each second advances one slice, 36 degrees counterclockwise, including the minute rollover');
 }
 for(let battery=0;battery<=100;battery++) {
   assert.equal(evaluate(expressions.get('balance_power_available'),{BATTERY_PERCENT:battery}),battery>15);

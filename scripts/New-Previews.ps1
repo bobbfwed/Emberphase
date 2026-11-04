@@ -78,8 +78,8 @@ foreach($mode in @('normal','low-battery','ambient','ambient-low-battery','unava
         if($mode -ne 'low-battery' -and $mode -ne 'balance-overlay') {
             $state=$script:g.Save()
             $script:g.TranslateTransform(225,225); $script:g.ScaleTransform(1,1); $script:g.TranslateTransform(-225,-225)
-            # -90 puts the pale rim in the left opening; -270 puts it in the right.
-            $angle=-90; if($mode -eq 'balance-right') { $angle=-270 }
+            # 0 fills the left opening; -36 fills the right opening.
+            $angle=0; if($mode -eq 'balance-right') { $angle=-36 }
             Asset 'balance_wheel' 151 151 148 148 $angle
             $script:g.Restore($state)
         }

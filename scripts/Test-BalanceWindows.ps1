@@ -27,10 +27,9 @@ try {
     Write-Host "PASS: $changed changing pixels confined to the two inner windows; both settled positions expose the correct rim."
 } finally { $right.Dispose(); $left.Dispose() }
 
-# A counterclockwise step moves the pale rim down in the left opening and up in the right.
-# Eight degrees keeps that light/dark boundary inside both windows. A larger step
-# carries the rim out of the right opening, so a brightness centroid then follows
-# the leftover edge instead of the travel.
+# A counterclockwise step moves the slice boundary down in the left opening and up
+# in the right. The boundary sits in both openings at -18 degrees. Eight more
+# degrees keeps it inside the openings.
 $wheel=[Drawing.Bitmap]::FromFile((Join-Path (Split-Path -Parent $PSScriptRoot) 'watchface\src\main\res\drawable-nodpi\balance_wheel.png'))
 $dial=[Drawing.Bitmap]::FromFile((Join-Path (Split-Path -Parent $PSScriptRoot) 'watchface\src\main\res\drawable-nodpi\dial_frame.png'))
 function Render-Wheel([double]$angle) {
@@ -56,15 +55,36 @@ function Get-BrightCentroid($bitmap,[int]$x0,[int]$x1,[int]$y0,[int]$y1) {
     if($count -lt 20) { throw "Too few bright rim pixels ($count) to judge direction" }
     return $sumY/$count
 }
-$atRest=Render-Wheel 0
-$advanced=Render-Wheel -8
+function Get-MeanLuma($bitmap,[int]$x0,[int]$x1,[int]$y0,[int]$y1) {
+    $sum=0.0; $count=0
+    for($y=$y0;$y -le $y1;$y++) {
+        for($x=$x0;$x -le $x1;$x++) {
+            if($dial.GetPixel($x,$y).A -gt 16) { continue }
+            $pixel=$bitmap.GetPixel($x,$y)
+            $sum+=$pixel.R+$pixel.G+$pixel.B; $count++
+        }
+    }
+    if($count -lt 20) { throw 'The opening has no clear pixels' }
+    return $sum/$count
+}
+$filledLeft=Render-Wheel 0
+$filledRight=Render-Wheel -36
+$atRest=Render-Wheel -18
+$advanced=Render-Wheel -26
 try {
+    $leftOn=Get-MeanLuma $filledLeft 145 183 200 250
+    $rightOff=Get-MeanLuma $filledLeft 267 305 200 250
+    $leftOff=Get-MeanLuma $filledRight 145 183 200 250
+    $rightOn=Get-MeanLuma $filledRight 267 305 200 250
+    if($leftOn -lt 400 -or $rightOn -lt 400 -or $rightOff -gt 80 -or $leftOff -gt 80) {
+        throw "Openings must swap filled and empty each slice. Left $leftOn/$leftOff, right $rightOff/$rightOn."
+    }
     $leftDy=(Get-BrightCentroid $advanced 145 183 200 250)-(Get-BrightCentroid $atRest 145 183 200 250)
     $rightDy=(Get-BrightCentroid $advanced 267 305 200 250)-(Get-BrightCentroid $atRest 267 305 200 250)
     if($leftDy -lt 4) { throw "Left opening shifted by $leftDy px; counterclockwise travel goes down on the left." }
     if($rightDy -gt -4) { throw "Right opening shifted by $rightDy px; counterclockwise travel goes up on the right." }
-    Write-Host ("PASS: 8-degree counterclockwise step moves the rim down on the left ({0:N1} px) and up on the right ({1:N1} px)." -f $leftDy,$rightDy)
-} finally { $atRest.Dispose(); $advanced.Dispose(); $wheel.Dispose(); $dial.Dispose() }
+    Write-Host ("PASS: slices swap the openings, and an 8-degree step moves the boundary down on the left ({0:N1} px) and up on the right ({1:N1} px)." -f $leftDy,$rightDy)
+} finally { $filledLeft.Dispose(); $filledRight.Dispose(); $atRest.Dispose(); $advanced.Dispose(); $wheel.Dispose(); $dial.Dispose() }
 foreach($file in @('balance-motion.gif','balance-detail.gif')) {
     $gif=[Drawing.Image]::FromFile((Join-Path $root $file))
     try {
