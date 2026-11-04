@@ -12,4 +12,6 @@
     <string name="balance_mechanism">Hidden balance · off at 15 percent or less</string>
     <string name="samsung_steps_target">Samsung Health steps target</string>
     <string name="sweep_slot">Center hub · mechanical sweep</string>
+    <string name="motion_detail">Overshoot and balance motion</string>
+    <string name="power_saving_slot">Power saving state</string>
 </resources>

@@ -114,7 +114,11 @@ The watch-face APK has no executable application code, networking permission, lo
 rate sampling, alarms, or wake locks. Native clock hands and provider/system
 updates drive the face. Mechanical seconds default on, with a native 130 ms
 overshoot-and-return tick once per second. They can be disabled in the editor
-and disappear at 15% battery or less. Date drums and the mechanical
+and disappear at 15% battery or less. The overshoot itself, and the balance
+step, also stop when Overshoot and balance motion is off, at 20% battery or
+below (the first low-battery lamp), or while Android power saving is on. The
+second hand and the still balance remain until the 15% cutoff. Power saving is
+a fixed watch-companion value with no periodic refresh. Date drums and the mechanical
 disc use date fields rather than millisecond expressions. The moon calculation
 uses UTC year, day-of-year, and AM/PM, so its time inputs change only twice daily.
 It estimates the phase from a known new moon and the mean synodic month, with no
@@ -138,7 +142,8 @@ the second. One
 148-by-148 image moves behind the static dial's two apertures; no animated GIF
 is packaged in the APK. There is no millisecond source, continuous animation,
 or additional service. The balance has an independent editor toggle, is hidden
-in ambient, and is omitted at 15% battery or below. Its movement uses WFF's
+in ambient, and is omitted at 15% battery or below. While the sweep runs it
+keeps that same step instead of a separate rocking motion. Its movement uses WFF's
 [Transform Animation](https://developer.android.com/reference/wear-os/wff/common/transform/animation).
 
 The optional companion schedules phone-side work about every 60 minutes, with a
@@ -148,7 +153,9 @@ Data Layer pushes and a 60-minute system refresh fallback that checks the local
 cache. Raising the watch does not ask the phone for a new reading while that
 cache is still fresh. A stale cache can request one at most every 15 minutes.
 Explicit Sync bypasses that gap and the low-battery wait. Sleep, theater, and
-power-saving modes are system states: the face adds no timer for them, and
+power-saving modes are system states. The watch companion reports Android
+power saving only when that mode changes. The face adds no timer for sleep or
+theater mode, and
 ambient already hides seconds, the balance, moon, weather, and activity.
 Cached totals expire after two hours or at local midnight. An
 explicit unavailable-data timeline entry replaces expired totals even without

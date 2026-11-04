@@ -272,8 +272,17 @@ assert.doesNotMatch(face, /\u00c2\u00b0|\u00e2\u20ac\u201d/);
 assert.match(manifest, /android:hasCode="false"/);
 assert.doesNotMatch(manifest, /<service\b|<activity\b|<uses-permission\b/);
 const slotIds = [...face.matchAll(/<ComplicationSlot slotId="(\d+)"/g)].map(m => m[1]);
-assert.equal(new Set(slotIds).size, 5);
-assert.deepEqual(slotIds,['10','20','30','40','50'],'Append new slots: Samsung maps saved selections by declaration order');
+assert.equal(new Set(slotIds).size, 6);
+assert.deepEqual(slotIds,['10','20','30','40','50','60'],'Append new slots: Samsung maps saved selections by declaration order');
+assert.match(face, /BooleanConfiguration id="motion_detail"[^>]*defaultValue="TRUE"/);
+assert.equal([...face.matchAll(/<Tick\b/g)].length, 1, 'Only the powered motion branch overshoots');
+assert.match(face, /<SecondHand\b[^>]*\/>/, 'Seconds remain available without the overshoot tick');
+const motion=expressions.get('motion_power_available');
+for (const [battery, saving, expected] of [[21,0,true],[20,0,false],[15,0,false],[100,1,false],[73,0,true]]) {
+  assert.equal(!!evaluate(motion,{BATTERY_PERCENT:battery,'REFERENCE.power_saving':saving}), expected, `motion at ${battery}% saving ${saving}`);
+}
+assert.equal(face.match(/<Group name="balance_sweep"[\s\S]*?<Transform target="angle" value="([^"]+)"/)[1], '0');
+assert.doesNotMatch(face.match(/<PartImage name="balance_rest"[\s\S]*?<\/PartImage>/)[0], /\[SECOND\]|<Animation\b/);
 assert.match(face, /name="sweep_hub"[^>]*isCustomizable="FALSE"/);
 const activityBounds=new Map();
 const attribute=(tag,name)=>Number(tag.match(new RegExp('\\b'+name+'="([^"]+)"'))[1]);

@@ -15,12 +15,13 @@ for(const name of ['hour','minute','second','moon','balance']) {
 for(const name of ['battery','steps','minutes','calories','weekday','month','date']) {
   assert.equal(first[name],idle[name]); assert.equal(end[name],idle[name]);
 }
-for(const t of [720,4500]) {
+for(const t of [1440,4500]) {
   const f=sweepFrame(model,t,fixture);
   assert.ok(Math.abs(wrap(f.hour))<1e-8 && Math.abs(wrap(f.minute))<1e-8,'Both hands meet at 12 around the full rotations');
 }
-let previous=sweepFrame(model,720,fixture);
-for(let t=721;t<=4500;t++) {
+assert.ok(Math.abs(wrap(sweepFrame(model,720,fixture).hour))>1,'The opening move to 12 is still traveling at 720 ms');
+let previous=sweepFrame(model,1440,fixture);
+for(let t=1441;t<=4500;t++) {
   const f=sweepFrame(model,t,fixture);
   assert.ok(f.hour>=previous.hour && f.minute<=previous.minute,'Hands rotate in opposite directions');
   previous=f;
@@ -28,6 +29,7 @@ for(let t=721;t<=4500;t++) {
 const seen={weekday:new Set(),month:new Set(),date:new Set()};
 for(let t=0;t<=6000;t+=1000/30) {
   const f=sweepFrame(model,t,fixture);
+  assert.ok(Math.abs(wrap(f.balance)-wrap(idle.balance))<1e-6,'The balance keeps its normal step during the sweep');
   for(const name of Object.keys(seen)) seen[name].add(f[name]);
   assert.ok(f.battery>=175 && f.battery<=274);
   for(const name of ['steps','minutes','calories']) assert.ok(f[name]>=146-1e-9 && f[name]<=214+1e-9);

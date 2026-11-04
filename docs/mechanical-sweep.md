@@ -7,8 +7,9 @@ only wake the screen; tap the hub again after the normal face appears.
 The sequence brings the hands to 12, turns the hour/minute hands through full
 rotations in opposite directions, then eases them onto the current time.
 The weekday/month/date drums traverse complete rings and return to the live
-calendar. The moon rotates, the balance rocks, and the battery/activity bands
-travel through their ranges before settling. The optional second hand joins
+calendar. The moon rotates, and the battery/activity bands
+travel through their ranges before settling. The balance keeps its normal
+one-slice step; the sweep does not add a separate wheel motion. The optional second hand joins
 the sweep only when enabled. Numeric health readings, goals and weather remain
 live; the sweep never writes or invents health data.
 
@@ -49,7 +50,7 @@ face checks before consuming the value.
 
 WFF references coordinate all the motion. The millisecond clock source exists
 only in the tap-controlled branch; ordinary hands remain native clocks. Motion
-is divided into 720 ms to reach 12, 3,780 ms for the rotations, and 1,500 ms for
+is divided into 1,440 ms to reach 12, 3,060 ms for the rotations, and 1,500 ms for
 settling. The return eases in and out so the hands are already at rest on the
 live time when the native hands take over. The artwork is reused, with no movie
 resources in the APK and no increase in the decoded-image memory estimate. Provider

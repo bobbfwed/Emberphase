@@ -16,6 +16,9 @@ to the watch display.
   overshoot on each tick.
 * An optional hidden balance rim glimpsed through two curved inner openings,
   swapping the two openings every second.
+* An editor setting turns off the seconds overshoot and the balance step.
+  Those two motions also stop in Android power saving and at 20% battery,
+  when the first low-battery lamp is on.
 * A center-hub tap runs a six-second mechanical sweep, then settles onto the
   live time, date and indicators. Requires the Emberphase Health watch companion.
 * A rotating twin-moon disc behind a recessed aperture.
@@ -31,7 +34,9 @@ to the watch display.
 
 The design prioritizes battery efficiency through static artwork, native WFF
 rendering, and provider-driven data updates. Seconds and the balance disappear
-in always-on mode and at 15% battery or below; each has its own editor toggle. Battery-life
+in always-on mode and at 15% battery or below; each has its own editor toggle.
+The overshoot and balance step have one more toggle and also rest at 20% or in
+power saving. Battery-life
 measurements are still pending.
 
 See the balance in motion: [full-face animation](docs/previews/balance-motion.gif)
