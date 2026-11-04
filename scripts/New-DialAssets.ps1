@@ -162,12 +162,13 @@ for($index=0;$index -lt 60;$index++) {
     $angle=$index*6*[math]::PI/180
     $hour=($index%5 -eq 0); $outer=213; $inner=202; $thickness=2.8; $color='#ff5d0a'
     if($hour) { $inner=197; $thickness=6; $color='#eeeeea' }
-    if($index -eq 0) { continue }
+    # The 12 and 6 sit on those hour ticks, so those marks are omitted.
+    if($index -eq 0 -or $index -eq 30) { continue }
     Line $color $thickness (225+$inner*[math]::Sin($angle)) (225-$inner*[math]::Cos($angle)) (225+$outer*[math]::Sin($angle)) (225-$outer*[math]::Cos($angle))
 }
-foreach($hour in @(1,2,3,4,8,9,10,11,12)) {
+foreach($hour in @(1,2,3,4,6,8,9,10,11,12)) {
     $a=$hour*30*[math]::PI/180; $radius=174; $size=26
-    if($hour -eq 12) { $radius=201; $size=29 }
+    if($hour -eq 12 -or $hour -eq 6) { $radius=201; $size=29 }
     $x=225+$radius*[math]::Sin($a); $y=225-$radius*[math]::Cos($a)
     Label ([string]$hour) ($x-25) ($y-$size*0.65) $size '#f4f4f0' 50
 }
@@ -331,17 +332,17 @@ $p=RoundPath 1 1 19 11 2; $script:g.FillPath($b,$p); $b.Dispose(); $p.Dispose()
 Save 'battery_slider'
 
 Canvas 450 450
-# The 12 numeral sits on the 12 o'clock tick, so that mark is omitted.
-foreach($i in @(5,10,15,20,25,30,35,40,45,50,55)) {
+# The 12 and 6 numerals sit on those hour ticks, so those marks are omitted.
+foreach($i in @(5,10,15,20,25,35,40,45,50,55)) {
     $a=$i*6*[math]::PI/180
     $p=Pen '#deded8' 6; $p.StartCap='Flat'; $p.EndCap='Flat'
     $script:g.DrawLine($p,[float](225+197*[math]::Sin($a)),[float](225-197*[math]::Cos($a)),[float](225+213*[math]::Sin($a)),[float](225-213*[math]::Cos($a))); $p.Dispose()
 }
-# Match the interactive dial: same hours, radii, and sizes. Hours 5, 6, and 7
+# Match the interactive dial: same hours, radii, and sizes. Hours 5 and 7
 # stay unmarked so the lower face matches the active layout.
-foreach($hour in @(1,2,3,4,8,9,10,11,12)) {
+foreach($hour in @(1,2,3,4,6,8,9,10,11,12)) {
     $a=$hour*30*[math]::PI/180; $radius=174; $size=26
-    if($hour -eq 12) { $radius=201; $size=29 }
+    if($hour -eq 12 -or $hour -eq 6) { $radius=201; $size=29 }
     $x=225+$radius*[math]::Sin($a); $y=225-$radius*[math]::Cos($a)
     Label ([string]$hour) ($x-25) ($y-$size*0.65) $size '#deded8' 50
 }
