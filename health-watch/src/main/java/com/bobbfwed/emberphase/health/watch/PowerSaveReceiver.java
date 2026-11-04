@@ -8,8 +8,10 @@ import androidx.wear.watchface.complications.datasource.ComplicationDataSourceUp
 
 /** Asks the face to reread power saving. The provider does not poll. */
 public final class PowerSaveReceiver extends BroadcastReceiver {
-    @Override public void onReceive(Context context, Intent intent) {
+    static void request(Context context) {
         ComplicationDataSourceUpdateRequester.create(context,
                 new ComponentName(context, PowerSaveDataSource.class)).requestUpdateAll();
     }
+
+    @Override public void onReceive(Context context, Intent intent) { request(context); }
 }

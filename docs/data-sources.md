@@ -118,7 +118,10 @@ and disappear at 15% battery or less. The overshoot itself, and the balance
 step, also stop when Overshoot and balance motion is off, at 20% battery or
 below (the first low-battery lamp), or while Android power saving is on. The
 second hand and the still balance remain until the 15% cutoff. Power saving is
-a fixed watch-companion value with no periodic refresh. Date drums and the mechanical
+a fixed watch-companion value with no periodic refresh. The companion reads
+Android power-save mode and the watch's low-power settings, and publishes a
+change when one of those changes. The slot sits on the dial so the runtime
+keeps it active. Date drums and the mechanical
 disc use date fields rather than millisecond expressions. The moon calculation
 uses UTC year, day-of-year, and AM/PM, so its time inputs change only twice daily.
 It estimates the phase from a known new moon and the mean synodic month, with no

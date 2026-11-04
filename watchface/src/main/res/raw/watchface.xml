@@ -663,9 +663,10 @@
         </ComplicationSlot>
         <!-- Fixed local provider. 1 while Android power saving is on, otherwise 0.
              No periodic refresh. A missing provider leaves the reference at 0. -->
-        <ComplicationSlot slotId="60" name="power_saving_state" x="0" y="0" width="1" height="1" supportedTypes="RANGED_VALUE EMPTY" displayName="power_saving_slot" isCustomizable="FALSE">
+        <!-- On the dial, inside the circle. A corner slot is clipped and never activates. -->
+        <ComplicationSlot slotId="60" name="power_saving_state" x="400" y="220" width="8" height="8" supportedTypes="RANGED_VALUE EMPTY" displayName="power_saving_slot" isCustomizable="FALSE">
             <Variant mode="AMBIENT" target="alpha" value="0" duration="0" />
-            <BoundingBox x="0" y="0" width="1" height="1" />
+            <BoundingBox x="0" y="0" width="8" height="8" />
             <DefaultProviderPolicy primaryProvider="com.bobbfwed.emberphase.health/com.bobbfwed.emberphase.health.watch.PowerSaveDataSource" primaryProviderType="RANGED_VALUE" defaultSystemProvider="EMPTY" defaultSystemProviderType="EMPTY" />
             <Complication type="RANGED_VALUE">
                 <Group name="power_saving_export" x="0" y="0" width="1" height="1">
