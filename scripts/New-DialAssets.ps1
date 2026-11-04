@@ -168,7 +168,9 @@ for($index=0;$index -lt 60;$index++) {
 }
 foreach($hour in @(1,2,3,4,6,8,9,10,11,12)) {
     $a=$hour*30*[math]::PI/180; $radius=174; $size=26
-    if($hour -eq 12 -or $hour -eq 6) { $radius=201; $size=29 }
+    if($hour -eq 12) { $radius=201; $size=29 }
+    # The calorie channel ends near radius 196, so the 6 sits further out than the 12.
+    if($hour -eq 6) { $radius=210; $size=29 }
     $x=225+$radius*[math]::Sin($a); $y=225-$radius*[math]::Cos($a)
     Label ([string]$hour) ($x-25) ($y-$size*0.65) $size '#f4f4f0' 50
 }
@@ -342,7 +344,8 @@ foreach($i in @(5,10,15,20,25,35,40,45,50,55)) {
 # stay unmarked so the lower face matches the active layout.
 foreach($hour in @(1,2,3,4,6,8,9,10,11,12)) {
     $a=$hour*30*[math]::PI/180; $radius=174; $size=26
-    if($hour -eq 12 -or $hour -eq 6) { $radius=201; $size=29 }
+    if($hour -eq 12) { $radius=201; $size=29 }
+    if($hour -eq 6) { $radius=210; $size=29 }
     $x=225+$radius*[math]::Sin($a); $y=225-$radius*[math]::Cos($a)
     Label ([string]$hour) ($x-25) ($y-$size*0.65) $size '#deded8' 50
 }
