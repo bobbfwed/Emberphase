@@ -14,7 +14,7 @@ to the watch display.
 
 * Skeleton analog hands and an optional mechanical second hand with a brief
   overshoot on each tick.
-* An optional hidden balance rim glimpsed through two small inner windows,
+* An optional hidden balance rim glimpsed through two curved inner openings,
   alternating left and right once per second.
 * A center-hub tap runs a six-second mechanical sweep, then settles onto the
   live time, date and indicators. Requires the Emberphase Health watch companion.

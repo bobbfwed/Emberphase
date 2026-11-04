@@ -77,7 +77,7 @@ foreach($mode in @('normal','low-battery','ambient','ambient-low-battery','unava
         Asset 'moon_disc' 135 40 180 180 $moonAngle
         if($mode -ne 'low-battery' -and $mode -ne 'balance-overlay') {
             $state=$script:g.Save()
-            $script:g.TranslateTransform(225,225); $script:g.ScaleTransform(1,0.38); $script:g.TranslateTransform(-225,-225)
+            $script:g.TranslateTransform(225,225); $script:g.ScaleTransform(1,1); $script:g.TranslateTransform(-225,-225)
             $angle=-55; if($mode -eq 'balance-right') { $angle=55 }
             Asset 'balance_wheel' 151 151 148 148 $angle
             $script:g.Restore($state)

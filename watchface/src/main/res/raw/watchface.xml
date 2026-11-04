@@ -53,7 +53,7 @@
                 <Image resource="moon_disc" />
             </PartImage>
             </Group>
-            <!-- The shared wheel rocks behind two fixed dial openings. Native
+            <!-- The shared wheel rocks behind two fixed arc openings. Native
                  interpolation runs briefly on each SECOND change, then rests. -->
             <Group name="optional_balance" x="0" y="0" width="450" height="450">
                 <Variant mode="AMBIENT" target="alpha" value="0" duration="0" />
@@ -62,7 +62,7 @@
                         <Condition>
                             <Expressions><Expression name="balance_power_available">[BATTERY_PERCENT] &gt; 15</Expression></Expressions>
                             <Compare expression="balance_power_available">
-                                <Group name="balance_perspective" x="151" y="151" width="148" height="148" pivotX="0.5" pivotY="0.5" scaleY="0.38">
+                                <Group name="balance_perspective" x="151" y="151" width="148" height="148" pivotX="0.5" pivotY="0.5" scaleY="1">
                                     <Group name="balance_sweep" x="0" y="0" width="148" height="148" pivotX="0.5" pivotY="0.5">
                                         <Transform target="angle" value="35 * sin([REFERENCE.sweep_progress] * 25.1327412287) * sin([REFERENCE.sweep_progress] * 3.14159265359)" />
                                     <PartImage name="balance_oscillator" x="0" y="0" width="148" height="148" pivotX="0.5" pivotY="0.5">

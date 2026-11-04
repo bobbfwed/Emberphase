@@ -29,7 +29,7 @@ function draw(now){
  'REFERENCE.steps_goal_end':214-68*6482/8000,'REFERENCE.minutes_goal_end':214-68*42/60,'REFERENCE.calories_goal_end':214-68*380/500};
  const elapsed=now-start,active=elapsed>=0&&elapsed<model.durationMs,f=sweepFrame(model,Math.min(model.durationMs,elapsed),fixture,!active);
  ctx.fillStyle='black';ctx.fillRect(0,0,450,450);
- asset('moon_disc',135,40,180,180,f.moon);ctx.save();ctx.translate(225,225);ctx.scale(1,.38);asset('balance_wheel',-74,-74,148,148,f.balance);ctx.restore();asset('dial_frame',0,0,450,450);
+ asset('moon_disc',135,40,180,180,f.moon);ctx.save();ctx.translate(225,225);asset('balance_wheel',-74,-74,148,148,f.balance);ctx.restore();asset('dial_frame',0,0,450,450);
  for(const [kind,x,w] of [['weekday',136,57],['month',197,55],['date',258,55]]){label(f[kind+'_prev'],x,124,w,22,'#c3c3c3',.58);label(f[kind],x,147,w,22,kind==='weekday'?'#ff6a15':'#f6f6f0');label(f[kind+'_next'],x,165,w,22,'#c3c3c3',.58);}
  asset('calendar_bezel',125,125,200,68);asset('battery_slider',359,f.battery,21,13);asset('wx_14',63,194,47,47);
  label('56°',52,236,75,29);label('H 61°F',52,267,75,14);label('6,482',169,257,112,34);label('42',178,307,53,23);label('380',262,307,57,23);

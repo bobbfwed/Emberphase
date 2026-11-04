@@ -258,3 +258,14 @@ validation, the memory-footprint check, and the signed face APK build pass, as
 do the watch-companion unit tests, lint, and debug build. The browser preview
 was regenerated from the production expressions. A physical check of the slower
 settle is still pending.
+
+Face 0.5.2 replaces the tilted oval balance openings with larger arc slots
+centered on the dial. A lighter chamfer and a darker inner wall show the plate
+thickness around each clear slot. The wheel is no longer squashed vertically,
+so its rim follows those arcs. Raster checks find 1,851 changing pixels, all
+inside the two slots, and both settled states expose the bright rim on the
+correct side. The motion previews keep the 220 ms transition and the looping
+two-second cycle. Expression tests, WFF schema validation, the memory-footprint
+check, and the signed APK build pass. The watch answered on the network, but
+its advertised wireless-debugging port refused the connection, so 0.5.2 is not
+yet installed.
