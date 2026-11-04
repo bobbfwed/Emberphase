@@ -26,8 +26,8 @@ to the watch display.
   customizable complication in the same inset.
 * Three concentric activity tracks for steps, active minutes, and activity
   calories, with metallic fills, sharp edges, and exposed rack teeth.
-* A simplified always-on display with orange hands, calendar, and battery
-  gauge, plus white hour markers on black.
+* A simplified always-on display with orange hands, the same date placement,
+  and a battery gauge, plus the active face's hour numerals on black.
 
 The design prioritizes battery efficiency through static artwork, native WFF
 rendering, and provider-driven data updates. Seconds and the balance disappear

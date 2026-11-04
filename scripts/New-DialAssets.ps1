@@ -331,8 +331,14 @@ foreach($i in @(0,5,10,15,20,25,30,35,40,45,50,55)) {
     $p=Pen '#deded8' 6; $p.StartCap='Flat'; $p.EndCap='Flat'
     $script:g.DrawLine($p,[float](225+197*[math]::Sin($a)),[float](225-197*[math]::Cos($a)),[float](225+213*[math]::Sin($a)),[float](225-213*[math]::Cos($a))); $p.Dispose()
 }
-Label '12' 200 34 27 '#deded8' 50; Label '3' 387 207 27 '#deded8' 24
-Label '6' 213 381 27 '#deded8' 24; Label '9' 39 207 27 '#deded8' 24
+# Match the interactive dial: same hours, radii, and sizes. Hours 5, 6, and 7
+# stay unmarked so the lower face matches the active layout.
+foreach($hour in @(1,2,3,4,8,9,10,11,12)) {
+    $a=$hour*30*[math]::PI/180; $radius=174; $size=26
+    if($hour -eq 12) { $radius=201; $size=29 }
+    $x=225+$radius*[math]::Sin($a); $y=225-$radius*[math]::Cos($a)
+    Label ([string]$hour) ($x-25) ($y-$size*0.65) $size '#deded8' 50
+}
 $outline=RoundPath 353 161 33 129 6; $p=Pen '#c5461c' 1; $script:g.DrawPath($p,$outline); $p.Dispose(); $outline.Dispose()
 for($i=0;$i -le 10;$i++) { $y=175+$i*10; Line '#b54220' 0.8 366 $y 373 $y }
 Label 'F' 335 169 14 '#d74d20' 16; Label 'BAT' 316 216 13 '#d74d20' 36; Label 'E' 335 273 14 '#d74d20' 16

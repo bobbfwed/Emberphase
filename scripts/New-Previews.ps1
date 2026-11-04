@@ -65,7 +65,7 @@ foreach($mode in @('normal','low-battery','ambient','ambient-low-battery','unava
     if($mode -ne 'balance-overlay') { $script:g.Clear([System.Drawing.Color]::Black) }
     if($mode.StartsWith('ambient')) {
         Asset 'ambient_indices' 0 0 450 450
-        Label 'SUN' 136 109 23 '#d94c20' 57; Label 'NOV' 197 109 23 '#d94c20' 55; Label '01' 258 109 23 '#d94c20' 55
+        Label 'SUN' 136 134 26 '#d94c20' 57; Label 'NOV' 197 134 26 '#d94c20' 55; Label '01' 258 134 26 '#d94c20' 55
         $battery=73; if($mode -eq 'ambient-low-battery') { $battery=5 }
         Asset 'ambient_battery_slider' 359 (274-99*$battery/100) 21 13
         if($battery -le 20) { RoundFill '#d8b32a' 358 274 5 13 2 }

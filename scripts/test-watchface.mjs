@@ -253,6 +253,17 @@ assert.match(balanceAnimation,/repeat="0"/);
 assert.match(balanceAnimation,/interpolation="CUBIC_BEZIER" controls="0.42 0 0.58 1"/);
 assert.ok(face.indexOf('name="balance_oscillator"')<face.indexOf('resource="dial_frame"'),'The dial must occlude the shared wheel');
 assert.doesNotMatch(ambient,/balance_|mechanical_balance|\[SECOND\]/);
+for(const [ambientName,liveName] of [['ambient_weekday','drum_weekday'],['ambient_month','drum_month'],['ambient_date','drum_date']]) {
+  const ambientBox=face.match(new RegExp(`<PartText name="${ambientName}"([^>]*)>`))[1];
+  const liveBox=face.match(new RegExp(`<PartText name="${liveName}"([^>]*)>`))[1];
+  for(const attr of ['x','y','width','height']) {
+    assert.equal(ambientBox.match(new RegExp(`${attr}="([^"]+)"`))[1], liveBox.match(new RegExp(`${attr}="([^"]+)"`))[1], `${ambientName} ${attr} matches the live date row`);
+  }
+  assert.equal(
+    face.match(new RegExp(`name="${ambientName}"[\\s\\S]*?size="([^"]+)"`))[1],
+    face.match(new RegExp(`name="${liveName}"[\\s\\S]*?size="([^"]+)"`))[1],
+    `${ambientName} uses the live date size`);
+}
 const sweepControl=face.slice(face.indexOf('<Group name="sweep_control"'),face.indexOf('<!-- The twin-moon'));
 assert.match(sweepControl, /<Compare expression="sweep_requested">[\s\S]*\[UTC_TIMESTAMP\]/);
 assert.doesNotMatch(face.replace(sweepControl,''), /\[(?:UTC_TIMESTAMP|MILLISECOND|SECOND_MILLISECOND|ACCELEROMETER[^\]]*)\]|<Sweep\b|<Gyro\b/);

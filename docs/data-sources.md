@@ -120,8 +120,10 @@ uses UTC year, day-of-year, and AM/PM, so its time inputs change only twice dail
 It estimates the phase from a known new moon and the mean synodic month, with no
 moon API or native moon-phase source. See [moon calculation](moon-phase.md) for
 accuracy limits. Ambient mode displays orange hour/minute hands, the selected weekday,
-month, and date, a battery slider with threshold lamps, and white hour markers
-with 12/3/6/9. The ambient scene has no seconds, weather, moon, activity tracks,
+month, and date, a battery slider with threshold lamps, and the same hour
+numerals as the active face (1, 2, 3, 4, 8, 9, 10, 11, and 12) at the same
+positions and sizes. The always-on date uses that face's live-row box. The
+ambient scene has no seconds, weather, moon, activity tracks,
 or adjacent calendar entries. Samsung display offload was observed active.
 Actual battery life must be measured on the watch.
 

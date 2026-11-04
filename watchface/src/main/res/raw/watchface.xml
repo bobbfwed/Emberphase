@@ -739,23 +739,23 @@
             <PartImage x="0" y="0" width="450" height="450">
                 <Image resource="ambient_indices" />
             </PartImage>
-            <PartText name="ambient_weekday" x="136" y="111" width="57" height="30">
+            <PartText name="ambient_weekday" x="136" y="136" width="57" height="34">
                 <Text align="CENTER">
-                    <Font family="sans-serif-condensed" size="23" weight="BOLD" color="#D94C20">
+                    <Font family="sans-serif-condensed" size="26" weight="BOLD" color="#D94C20">
                         <Template>%s<Parameter expression="subText(&quot;SUNMONTUEWEDTHUFRISAT&quot;, ([DAY_OF_WEEK]-1)*3, [DAY_OF_WEEK]*3)" /></Template>
                     </Font>
                 </Text>
             </PartText>
-            <PartText name="ambient_month" x="197" y="111" width="55" height="30">
+            <PartText name="ambient_month" x="197" y="136" width="55" height="34">
                 <Text align="CENTER">
-                    <Font family="sans-serif-condensed" size="23" weight="BOLD" color="#D94C20">
+                    <Font family="sans-serif-condensed" size="26" weight="BOLD" color="#D94C20">
                         <Template>%s<Parameter expression="subText(&quot;JANFEBMARAPRMAYJUNJULAUGSEPOCTNOVDEC&quot;, ([MONTH]-1)*3, [MONTH]*3)" /></Template>
                     </Font>
                 </Text>
             </PartText>
-            <PartText name="ambient_date" x="258" y="111" width="55" height="30">
+            <PartText name="ambient_date" x="258" y="136" width="55" height="34">
                 <Text align="CENTER">
-                    <Font family="sans-serif-condensed" size="23" weight="BOLD" color="#D94C20">
+                    <Font family="sans-serif-condensed" size="26" weight="BOLD" color="#D94C20">
                         <Template>%s<Parameter expression="[DAY_Z]" /></Template>
                     </Font>
                 </Text>
