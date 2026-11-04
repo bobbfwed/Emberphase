@@ -133,7 +133,7 @@ its pale and dark treatments every 36 degrees, wide enough to fill the
 so one shows the pale rim while the other shows the dark rim. Each second turns
 one slice counterclockwise, swapping the openings, including across the minute.
 Native WFF animation spends
-the whole 220 ms on that visible travel, at 30 fps, then holds for the rest of
+the whole 200 ms on that visible travel, at 15 fps, then holds for the rest of
 the second. One
 148-by-148 image moves behind the static dial's two apertures; no animated GIF
 is packaged in the APK. There is no millisecond source, continuous animation,

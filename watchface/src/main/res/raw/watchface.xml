@@ -69,7 +69,7 @@
                                         <Transform target="angle" value="35 * sin([REFERENCE.sweep_progress] * 25.1327412287) * sin([REFERENCE.sweep_progress] * 3.14159265359)" />
                                     <PartImage name="balance_oscillator" x="0" y="0" width="148" height="148" pivotX="0.5" pivotY="0.5">
                                         <Transform target="angle" value="-[SECOND] * 36">
-                                            <Animation duration="0.22" interpolation="CUBIC_BEZIER" controls="0.42 0 0.58 1" angleDirection="COUNTER_CLOCKWISE" repeat="0" fps="30" />
+                                            <Animation duration="0.2" interpolation="CUBIC_BEZIER" controls="0.42 0 0.58 1" angleDirection="COUNTER_CLOCKWISE" repeat="0" fps="15" />
                                         </Transform>
                                         <Image resource="balance_wheel" />
                                     </PartImage>

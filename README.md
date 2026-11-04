@@ -36,7 +36,7 @@ measurements are still pending.
 
 See the balance in motion: [full-face animation](docs/previews/balance-motion.gif)
 and [enlarged detail](docs/previews/balance-detail.gif). These previews hold the
-clock hands still to isolate the mechanism's 220 ms movement and 780 ms rest.
+clock hands still to isolate the mechanism's 200 ms movement and 800 ms rest.
 The seconds hand retains its separate 130 ms tick.
 
 Try the [interactive mechanical sweep preview](docs/previews/mechanical-sweep.html)

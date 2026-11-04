@@ -41,7 +41,7 @@ Check-Exit 'Resource compilation'
 $manifest.manifest.SetAttribute('package','com.bobbfwed.emberphase')
 $manifestPath = Join-Path $buildRoot 'AndroidManifest.xml'
 $manifest.Save($manifestPath)
-& $aapt2 link -o (Join-Path $buildRoot 'unsigned.apk') --manifest $manifestPath -I (Join-Path $sdkRoot 'platforms\android-36\android.jar') --min-sdk-version 36 --target-sdk-version 36 --version-code 27 --version-name '0.5.10' --auto-add-overlay -R (Join-Path $buildRoot 'resources.zip')
+& $aapt2 link -o (Join-Path $buildRoot 'unsigned.apk') --manifest $manifestPath -I (Join-Path $sdkRoot 'platforms\android-36\android.jar') --min-sdk-version 36 --target-sdk-version 36 --version-code 28 --version-name '0.5.11' --auto-add-overlay -R (Join-Path $buildRoot 'resources.zip')
 Check-Exit 'APK linking'
 & (Join-Path $buildTools 'zipalign.exe') -f -p 4 (Join-Path $buildRoot 'unsigned.apk') (Join-Path $buildRoot 'aligned.apk')
 Check-Exit 'APK alignment'

@@ -247,7 +247,8 @@ assert.match(face, /<BooleanConfiguration id="mechanical_balance">\s*<BooleanOpt
 const balanceAnimation=balance.match(/<Animation\b[^>]+/)[0];
 const duration=Number(balanceAnimation.match(/duration="([^"]+)"/)[1]);
 const fps=Number(balanceAnimation.match(/fps="([^"]+)"/)[1]);
-assert.ok(duration>=0.1 && duration<=0.25 && fps>=15 && fps<=30,'Use a short bounded animation and rest for most of the second');
+assert.equal(duration,0.2,'The visible balance step lasts 200 ms');
+assert.equal(fps,15,'The balance step is sampled at 15 fps');
 assert.match(balanceAnimation,/angleDirection="COUNTER_CLOCKWISE"/);
 assert.match(balanceAnimation,/repeat="0"/);
 assert.match(balanceAnimation,/interpolation="CUBIC_BEZIER" controls="0.42 0 0.58 1"/);
