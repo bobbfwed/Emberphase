@@ -26,6 +26,45 @@ try {
     }
     Write-Host "PASS: $changed changing pixels confined to the two inner windows; both settled positions expose the correct rim."
 } finally { $right.Dispose(); $left.Dispose() }
+
+# A counterclockwise step moves the pale rim down in the left opening and up in the right.
+# Eight degrees keeps that light/dark boundary inside both windows. A larger step
+# carries the rim out of the right opening, so a brightness centroid then follows
+# the leftover edge instead of the travel.
+$wheel=[Drawing.Bitmap]::FromFile((Join-Path (Split-Path -Parent $PSScriptRoot) 'watchface\src\main\res\drawable-nodpi\balance_wheel.png'))
+$dial=[Drawing.Bitmap]::FromFile((Join-Path (Split-Path -Parent $PSScriptRoot) 'watchface\src\main\res\drawable-nodpi\dial_frame.png'))
+function Render-Wheel([double]$angle) {
+    $bitmap=New-Object Drawing.Bitmap 450,450
+    $graphics=[Drawing.Graphics]::FromImage($bitmap)
+    $graphics.Clear([Drawing.Color]::Black)
+    $graphics.InterpolationMode='HighQualityBicubic'
+    $graphics.TranslateTransform(225,225); $graphics.RotateTransform($angle)
+    $graphics.DrawImage($wheel,-74,-74,148,148); $graphics.ResetTransform()
+    $graphics.DrawImage($dial,0,0,450,450); $graphics.Dispose()
+    return $bitmap
+}
+function Get-BrightCentroid($bitmap,[int]$x0,[int]$x1,[int]$y0,[int]$y1) {
+    $sumY=0.0; $count=0
+    for($y=$y0;$y -le $y1;$y++) {
+        for($x=$x0;$x -le $x1;$x++) {
+            if($dial.GetPixel($x,$y).A -gt 16) { continue }
+            $pixel=$bitmap.GetPixel($x,$y)
+            if(($pixel.R+$pixel.G+$pixel.B) -lt 180) { continue }
+            $sumY+=$y; $count++
+        }
+    }
+    if($count -lt 20) { throw "Too few bright rim pixels ($count) to judge direction" }
+    return $sumY/$count
+}
+$atRest=Render-Wheel 0
+$advanced=Render-Wheel -8
+try {
+    $leftDy=(Get-BrightCentroid $advanced 145 183 200 250)-(Get-BrightCentroid $atRest 145 183 200 250)
+    $rightDy=(Get-BrightCentroid $advanced 267 305 200 250)-(Get-BrightCentroid $atRest 267 305 200 250)
+    if($leftDy -lt 4) { throw "Left opening shifted by $leftDy px; counterclockwise travel goes down on the left." }
+    if($rightDy -gt -4) { throw "Right opening shifted by $rightDy px; counterclockwise travel goes up on the right." }
+    Write-Host ("PASS: 8-degree counterclockwise step moves the rim down on the left ({0:N1} px) and up on the right ({1:N1} px)." -f $leftDy,$rightDy)
+} finally { $atRest.Dispose(); $advanced.Dispose(); $wheel.Dispose(); $dial.Dispose() }
 foreach($file in @('balance-motion.gif','balance-detail.gif')) {
     $gif=[Drawing.Image]::FromFile((Join-Path $root $file))
     try {

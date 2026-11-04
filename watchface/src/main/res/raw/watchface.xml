@@ -53,8 +53,10 @@
                 <Image resource="moon_disc" />
             </PartImage>
             </Group>
-            <!-- The shared wheel rocks behind two fixed arc openings. Native
-                 interpolation runs briefly on each SECOND change, then rests. -->
+            <!-- The shared wheel advances counterclockwise behind two fixed arc
+                 openings. Native interpolation runs briefly on each SECOND
+                 change, then rests. Positive angles are clockwise, so the step
+                 is negative: down on the left, up on the right. -->
             <Group name="optional_balance" x="0" y="0" width="450" height="450">
                 <Variant mode="AMBIENT" target="alpha" value="0" duration="0" />
                 <BooleanConfiguration id="mechanical_balance">
@@ -66,8 +68,8 @@
                                     <Group name="balance_sweep" x="0" y="0" width="148" height="148" pivotX="0.5" pivotY="0.5">
                                         <Transform target="angle" value="35 * sin([REFERENCE.sweep_progress] * 25.1327412287) * sin([REFERENCE.sweep_progress] * 3.14159265359)" />
                                     <PartImage name="balance_oscillator" x="0" y="0" width="148" height="148" pivotX="0.5" pivotY="0.5">
-                                        <Transform target="angle" value="[SECOND] % 2 == 0 ? -55 : 55">
-                                            <Animation duration="0.22" interpolation="CUBIC_BEZIER" controls="0.42 0 0.58 1" angleDirection="NONE" repeat="0" fps="30" />
+                                        <Transform target="angle" value="-[SECOND] * 30">
+                                            <Animation duration="0.22" interpolation="CUBIC_BEZIER" controls="0.42 0 0.58 1" angleDirection="COUNTER_CLOCKWISE" repeat="0" fps="30" />
                                         </Transform>
                                         <Image resource="balance_wheel" />
                                     </PartImage>

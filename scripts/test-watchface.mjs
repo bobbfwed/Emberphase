@@ -231,11 +231,12 @@ assert.match(face, /<Group name="optional_ticking_seconds"[^>]*>\s*<Variant mode
 const balance=face.match(/<PartImage name="balance_oscillator"[\s\S]*?<\/PartImage>/)[0];
 const balanceAngle=unescapeXml(balance.match(/<Transform target="angle" value="([^"]+)"/)[1]);
 assert.deepEqual([...balanceAngle.matchAll(/\[([^\]]+)\]/g)].map(m=>m[1]),['SECOND']);
+const wrap360=angle=>((angle%360)+360)%360;
 for(let second=0;second<120;second++) {
   const angle=evaluate(balanceAngle,{SECOND:second%60});
   const next=evaluate(balanceAngle,{SECOND:(second+1)%60});
-  assert.ok(second%2===0 ? angle<0 : angle>0,'The balance must expose alternate sides on successive seconds');
-  assert.ok(Math.abs(angle)<=60 && angle===-next,'Rock symmetrically through minute rollover without a full revolution');
+  const counterclockwise=(wrap360(angle)-wrap360(next)+360)%360;
+  assert.equal(counterclockwise,30,'Each second advances 30 degrees counterclockwise, including the minute rollover');
 }
 for(let battery=0;battery<=100;battery++) {
   assert.equal(evaluate(expressions.get('balance_power_available'),{BATTERY_PERCENT:battery}),battery>15);
@@ -247,7 +248,7 @@ const balanceAnimation=balance.match(/<Animation\b[^>]+/)[0];
 const duration=Number(balanceAnimation.match(/duration="([^"]+)"/)[1]);
 const fps=Number(balanceAnimation.match(/fps="([^"]+)"/)[1]);
 assert.ok(duration>=0.1 && duration<=0.25 && fps>=15 && fps<=30,'Use a short bounded animation and rest for most of the second');
-assert.match(balanceAnimation,/angleDirection="NONE"/);
+assert.match(balanceAnimation,/angleDirection="COUNTER_CLOCKWISE"/);
 assert.match(balanceAnimation,/repeat="0"/);
 assert.match(balanceAnimation,/interpolation="CUBIC_BEZIER" controls="0.42 0 0.58 1"/);
 assert.ok(face.indexOf('name="balance_oscillator"')<face.indexOf('resource="dial_frame"'),'The dial must occlude the shared wheel');
