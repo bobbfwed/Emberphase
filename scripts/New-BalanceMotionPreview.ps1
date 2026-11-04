@@ -17,12 +17,14 @@ if($animation.interpolation -ne 'CUBIC_BEZIER' -or $animation.repeat -ne '0') { 
 $scaleY=[double]::Parse($perspective.scaleY,[cultureinfo]::InvariantCulture)
 $width=[int]$part.width; $height=[int]$part.height
 $cx=[double]$perspective.x+$width/2; $cy=[double]$perspective.y+$height/2
-$stepMatch=[regex]::Match($part.Transform.value,'^-\s*\[SECOND\]\s*\*\s*(\d+(?:\.\d+)?)$')
+$stepMatch=[regex]::Match($part.Transform.value,'^-\s*\[SECOND\]\s*\*\s*(\d+(?:\.\d+)?)(?:\s*-\s*(\d+(?:\.\d+)?))?$')
 if(-not $stepMatch.Success -or $animation.angleDirection -ne 'COUNTER_CLOCKWISE') {
     throw 'Update the preview renderer for the changed angle expression.'
 }
 $step=[double]$stepMatch.Groups[1].Value
-# Two successive counterclockwise steps. Positive GDI rotation is clockwise.
+$offset=0.0; if($stepMatch.Groups[2].Success) { $offset=[double]$stepMatch.Groups[2].Value }
+# Two successive counterclockwise steps from the left-opening rest.
+# Positive GDI rotation is clockwise.
 
 function Bezier([double]$t,[double]$p1,[double]$p2) {
     return 3*(1-$t)*(1-$t)*$t*$p1+3*(1-$t)*$t*$t*$p2+$t*$t*$t
@@ -87,7 +89,7 @@ try {
     $times+=$duration
     $frameNumber=0
     $delays=New-Object 'Collections.Generic.List[int]'
-    foreach($direction in @(@(0,(-$step)),@((-$step),(-2*$step)))) {
+    foreach($direction in @(@((-$offset),(-$offset-$step)),@((-$offset-$step),(-$offset-2*$step)))) {
         for($i=0;$i -lt $times.Count;$i++) {
             $progress=Eased ($times[$i]/$duration)
             $angle=$direction[0]+($direction[1]-$direction[0])*$progress

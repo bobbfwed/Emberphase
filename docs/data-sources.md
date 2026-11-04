@@ -127,9 +127,10 @@ ambient scene has no seconds, weather, moon, activity tracks,
 or adjacent calendar entries. Samsung display offload was observed active.
 Actual battery life must be measured on the watch.
 
-The optional hidden balance uses `-[SECOND] * 30`. Each second the wheel
-advances 30 degrees counterclockwise, down on the left and up on the right,
-including across the minute. Native WFF animation interpolates that step for
+The optional hidden balance uses `-[SECOND] * 180 - 90`. Each second the wheel
+advances 180 degrees counterclockwise, so the pale rim rests in the left
+opening, then the right, including across the minute. During the turn the left
+side moves down and the right side moves up. Native WFF animation interpolates that step for
 220 ms at 15 fps, then holds for the rest of the second. One
 148-by-148 image moves behind the static dial's two apertures; no animated GIF
 is packaged in the APK. There is no millisecond source, continuous animation,
