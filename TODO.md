@@ -13,3 +13,7 @@ Requested on 2026-11-02. These are pending design changes for the next session.
 - [ ] Align the always-on hour numerals with the standard face, matching their
   positions and font sizes. Place the date display in exactly the same new
   location in both modes, using the revised layout from the first item.
+- [ ] Examine the face and both companions for battery use, including power
+  saving, sleep, and theater modes. Prefer fewer provider updates and longer
+  refresh intervals wherever the reading can stay correct. When performance
+  and battery life conflict, choose battery life.
