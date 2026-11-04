@@ -331,7 +331,8 @@ $p=RoundPath 1 1 19 11 2; $script:g.FillPath($b,$p); $b.Dispose(); $p.Dispose()
 Save 'battery_slider'
 
 Canvas 450 450
-foreach($i in @(0,5,10,15,20,25,30,35,40,45,50,55)) {
+# The 12 numeral sits on the 12 o'clock tick, so that mark is omitted.
+foreach($i in @(5,10,15,20,25,30,35,40,45,50,55)) {
     $a=$i*6*[math]::PI/180
     $p=Pen '#deded8' 6; $p.StartCap='Flat'; $p.EndCap='Flat'
     $script:g.DrawLine($p,[float](225+197*[math]::Sin($a)),[float](225-197*[math]::Cos($a)),[float](225+213*[math]::Sin($a)),[float](225-213*[math]::Cos($a))); $p.Dispose()
