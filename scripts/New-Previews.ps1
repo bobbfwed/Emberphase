@@ -40,7 +40,7 @@ function FillGauge([float]$radius,[float]$ratio,[string[]]$colors) {
     $p=Pen $colors[3] 1; $p.StartCap='Flat'; $p.EndCap='Flat'
     $script:g.DrawLine($p,(RingPoint ($radius-5.5) $angle),(RingPoint ($radius+5.5) $angle)); $p.Dispose()
 }
-function DrumLabel([string]$text,[float]$x,[float]$y,[float]$width,[bool]$receding,[string]$color='#f6f6f0') {
+function DrumLabel([string]$text,[float]$x,[float]$y,[float]$width,[bool]$receding,[string]$color='#f6f6f0',[float]$size=22) {
     $state=$script:g.Save()
     if($receding) {
         $script:g.TranslateTransform(($x+$width/2),($y+13))
@@ -48,7 +48,7 @@ function DrumLabel([string]$text,[float]$x,[float]$y,[float]$width,[bool]$recedi
         $script:g.TranslateTransform((-$x-$width/2),(-$y-13))
         $color='#c3c3c3'
     }
-    Label $text $x ($y-2) 22 $color $width
+    Label $text $x ($y-2) $size $color $width
     $script:g.Restore($state)
 }
 
@@ -74,7 +74,7 @@ foreach($mode in @('normal','low-battery','ambient','ambient-low-battery','unava
         Asset 'ambient_minute_hand' 217 45 16 198 60 0.5 0.9090909
         Asset 'ambient_center_cap' 211 211 28 28
     } else {
-        Asset 'moon_disc' 135 40 180 180 $moonAngle
+        Asset 'moon_disc' 135 43 180 180 $moonAngle
         if($mode -ne 'low-battery' -and $mode -ne 'balance-overlay') {
             $state=$script:g.Save()
             $script:g.TranslateTransform(225,225); $script:g.ScaleTransform(1,1); $script:g.TranslateTransform(-225,-225)
@@ -84,10 +84,10 @@ foreach($mode in @('normal','low-battery','ambient','ambient-low-battery','unava
             $script:g.Restore($state)
         }
         Asset 'dial_frame' 0 0 450 450
-        DrumLabel 'SAT' 136 126 57 $true; DrumLabel 'SUN' 136 149 57 $false '#ff6a15'; DrumLabel 'MON' 136 167 57 $true
-        DrumLabel 'OCT' 197 126 55 $true; DrumLabel 'NOV' 197 149 55 $false; DrumLabel 'DEC' 197 167 55 $true
-        DrumLabel '31' 258 126 55 $true; DrumLabel '01' 258 149 55 $false; DrumLabel '02' 258 167 55 $true
-        Asset 'calendar_bezel' 125 125 200 68
+        DrumLabel 'SAT' 136 114 57 $true; DrumLabel 'SUN' 136 136 57 $false '#ff6a15' 26; DrumLabel 'MON' 136 166 57 $true
+        DrumLabel 'OCT' 197 114 55 $true; DrumLabel 'NOV' 197 136 55 $false '#f6f6f0' 26; DrumLabel 'DEC' 197 166 55 $true
+        DrumLabel '31' 258 114 55 $true; DrumLabel '01' 258 136 55 $false '#f6f6f0' 26; DrumLabel '02' 258 166 55 $true
+        Asset 'calendar_bezel' 125 114 200 79
         $battery=73; if($mode -eq 'low-battery') { $battery=5 }
         Asset 'battery_slider' 359 (274-99*$battery/100) 21 13
         if($battery -le 20) { RoundFill '#ffd535' 358 274 5 13 2 }
@@ -123,7 +123,7 @@ for($i=0;$i -lt $phases.Count;$i++) {
     $script:g.SetClip([System.Drawing.RectangleF]::new(($i*200),0,200,110))
     $script:g.TranslateTransform(($i*200-125),-30)
     $linearAngle=-90+180*$phases[$i][1]
-    Asset 'moon_disc' 135 40 180 180 ($linearAngle+7.5*[math]::Sin($linearAngle*[math]::PI/90))
+    Asset 'moon_disc' 135 43 180 180 ($linearAngle+7.5*[math]::Sin($linearAngle*[math]::PI/90))
     Asset 'dial_frame' 0 0 450 450
     $script:g.Restore($state)
     Label $phases[$i][0] ($i*200) 118 12 '#eeeeee' 200

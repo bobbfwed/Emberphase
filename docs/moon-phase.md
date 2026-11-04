@@ -15,9 +15,12 @@ from the left; waning exits to the right.
 Version 0.4.7 widens the upper arch and centers its curvature on the wheel's
 pivot. Its 87-unit radius clears the 55-unit orbit plus the moon's 26-unit
 radius by six units. The scalloped lower edge still reveals the phase, while
-the upper arch no longer clips the moon's outer rim near quarter phases. The
-window's top stays at essentially the same height, clear of the hour markers
-and calendar. This is a static artwork change with no additional updates.
+the upper arch no longer clips the moon's outer rim near quarter phases.
+
+The pivot now sits three units lower, at (225, 133), and the lower scallop
+extends until it nearly meets the date window. The date window grows upward
+by the same gap. The 11 and 12 stay fully clear of the arch. The moon disc,
+orbit, and date formula are unchanged.
 
 ## Calculation
 
@@ -77,5 +80,5 @@ date, rather than assuming a full moon.
 `scripts/Test-MoonAperture.ps1` checks the generated dial's actual alpha mask:
 117,836 interior moon-rim pixels clear the upper arch across both painted moons,
 new/full positions have 0%/100% visibility, and calibrated quarter positions
-have about 49.8% visibility each. This catches the earlier narrow-arch clipping
+have about 51.8% visibility each. This catches the earlier narrow-arch clipping
 independently of the formula tests.

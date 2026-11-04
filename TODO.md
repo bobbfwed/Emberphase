@@ -2,7 +2,7 @@
 
 Requested on 2026-11-02. These are pending design changes for the next session.
 
-- [ ] Enlarge the moon-phase area and the date display to remove the empty space
+- [x] Enlarge the moon-phase area and the date display to remove the empty space
   between them. Lower the moon-phase area a few pixels if needed to keep the
   11 hour numeral fully visible.
 - [x] Enlarge the hidden balance animation and replace the oval openings with

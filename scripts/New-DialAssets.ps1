@@ -167,15 +167,16 @@ foreach($hour in @(1,2,3,4,8,9,10,11,12)) {
     Label ([string]$hour) ($x-25) ($y-$size*0.65) $size '#f4f4f0' 50
 }
 $aperture=New-Object System.Drawing.Drawing2D.GraphicsPath
-# Center the outer arch on the wheel pivot (225,130). Its 87-unit radius
+# Center the outer arch on the wheel pivot (225,133). Its 87-unit radius
 # clears the moon's 55-unit orbit plus 26-unit radius by 6 units throughout
-# the cycle. The former arch was centered higher and shaved off the moon rim.
+# the cycle. The pivot sits three units lower than 0.4.7 so the enlarged
+# lower edge can meet the date without covering the 11.
 $archStart=180+[math]::Asin(25/87)*180/[math]::PI
 $archEdge=[math]::Sqrt(87*87-25*25)
-$aperture.AddArc(138,43,174,174,$archStart,(540-2*$archStart))
-$aperture.AddBezier((225+$archEdge),105,291,88,258,88,246,108)
-$aperture.AddBezier(246,108,231,103,219,103,204,108)
-$aperture.AddBezier(204,108,192,88,159,88,(225-$archEdge),105); $aperture.CloseFigure()
+$aperture.AddArc(138,46,174,174,$archStart,(540-2*$archStart))
+$aperture.AddBezier((225+$archEdge),108,291,91,258,91,246,114)
+$aperture.AddBezier(246,114,231,108,219,108,204,114)
+$aperture.AddBezier(204,114,192,91,159,91,(225-$archEdge),108); $aperture.CloseFigure()
 $p=Pen '#494b48' 3; $script:g.DrawPath($p,$aperture); $p.Dispose()
 $script:g.CompositingMode='SourceCopy'; $transparent=New-Object System.Drawing.SolidBrush([System.Drawing.Color]::Transparent)
 $script:g.FillPath($transparent,$aperture); $transparent.Dispose(); $script:g.CompositingMode='SourceOver'; $aperture.Dispose()
@@ -206,11 +207,12 @@ foreach($center in @(180,0)) {
     $hole.Dispose(); $wall.Dispose(); $lip.Dispose()
 }
 
-# The drum body sits lower, with a cylindrical light band behind live text.
-# A separate foreground bezel occludes the receding rows after text is drawn.
-RoundFill '#030404' 128 128 194 62 8
+# The drum body sits against the moon aperture. A cylindrical light band
+# sits behind the live text. A separate foreground bezel occludes the
+# receding rows after text is drawn.
+RoundFill '#030404' 128 117 194 73 8
 foreach($drumX in @(135,195,255)) {
-    $rect=[System.Drawing.RectangleF]::new($drumX,134,60,50)
+    $rect=[System.Drawing.RectangleF]::new($drumX,122,60,62)
     $b=New-Object System.Drawing.Drawing2D.LinearGradientBrush($rect,(C '#030404'),(C '#030404'),90)
     $blend=New-Object System.Drawing.Drawing2D.ColorBlend(5)
     $blend.Colors=@((C '#030404'),(C '#181c1e'),(C '#111416'),(C '#1c2022'),(C '#020303'))
@@ -241,28 +243,28 @@ Save 'dial_frame'
 
 # Foreground calendar rim: transparent aperture, opaque lips, and shadows over
 # the compressed neighboring labels. Cropped to avoid a full-face extra layer.
-Canvas 200 68
-$script:g.TranslateTransform(-125,-125)
-RoundFill '#020303' 126 127 198 66 9
-RoundFill '#5b615f' 128 128 194 62 8
-RoundFill '#151819' 129 130 192 59 7
-RoundFill '#343a3c' 132 133 186 53 5
-$opening=RoundPath 135 135 180 48 3
+Canvas 200 79
+$script:g.TranslateTransform(-125,-114)
+RoundFill '#020303' 126 116 198 77 9
+RoundFill '#5b615f' 128 117 194 73 8
+RoundFill '#151819' 129 119 192 70 7
+RoundFill '#343a3c' 132 122 186 64 5
+$opening=RoundPath 135 124 180 59 3
 $script:g.CompositingMode='SourceCopy'; $clear=New-Object System.Drawing.SolidBrush([System.Drawing.Color]::Transparent)
 $script:g.FillPath($clear,$opening); $clear.Dispose(); $script:g.CompositingMode='SourceOver'
 $clipState=$script:g.Save(); $script:g.SetClip($opening)
-foreach($strip in @(@(135,145,175,0),@(175,183,0,200))) {
+foreach($strip in @(@(124,134,175,0),@(175,183,0,200))) {
     $rect=[System.Drawing.RectangleF]::new(135,$strip[0],180,($strip[1]-$strip[0]))
     $b=New-Object System.Drawing.Drawing2D.LinearGradientBrush($rect,([System.Drawing.Color]::FromArgb($strip[2],0,0,0)),([System.Drawing.Color]::FromArgb($strip[3],0,0,0)),90)
     $script:g.FillRectangle($b,$rect); $b.Dispose()
 }
 foreach($divider in @(194,254)) {
-    Line '#010202' 4 $divider 135 $divider 183
-    Line '#616665' 0.8 ($divider-1.5) 137 ($divider-1.5) 181
-    Line '#262b2d' 1 ($divider+1) 135 ($divider+1) 183
+    Line '#010202' 4 $divider 124 $divider 183
+    Line '#616665' 0.8 ($divider-1.5) 126 ($divider-1.5) 181
+    Line '#262b2d' 1 ($divider+1) 124 ($divider+1) 183
 }
 $script:g.Restore($clipState); $opening.Dispose()
-Line '#080b0c' 1.2 138 135 312 135
+Line '#080b0c' 1.2 138 124 312 124
 Line '#686e6a' 0.7 138 184 312 184
 Save 'calendar_bezel'
 
