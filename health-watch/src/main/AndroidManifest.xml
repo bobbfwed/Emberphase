@@ -5,9 +5,6 @@
         android:theme="@android:style/Theme.Material.NoActionBar">
         <meta-data android:name="com.google.android.wearable.standalone" android:value="false" />
         <receiver android:name="com.bobbfwed.emberphase.health.watch.SweepReceiver" android:exported="false" />
-        <receiver android:name="com.bobbfwed.emberphase.health.watch.PowerSaveReceiver" android:exported="true">
-            <intent-filter><action android:name="android.os.action.POWER_SAVE_MODE_CHANGED" /></intent-filter>
-        </receiver>
         <service android:name="com.bobbfwed.emberphase.health.watch.PowerSaveDataSource"
             android:label="Emberphase · Power saving" android:icon="@drawable/ic_emberphase_health"
             android:exported="true" android:permission="com.google.android.wearable.permission.BIND_COMPLICATION_PROVIDER">

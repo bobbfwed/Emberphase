@@ -13,10 +13,13 @@ public final class PowerSaveDataSource extends ComplicationDataSourceService {
     }
 
     @Override public void onComplicationRequest(ComplicationRequest request, ComplicationRequestListener listener) {
+        float value = PowerSaveSignals.current(this);
         try {
-            listener.onComplicationData(data(PowerSaveSignals.current(this)));
+            listener.onComplicationData(data(value));
+            getSharedPreferences(PowerSaveReceiver.PREFS, MODE_PRIVATE).edit()
+                    .putFloat(PowerSaveReceiver.DELIVERED, value).apply();
         } catch (android.os.RemoteException disconnected) {
-            // The next request reads power saving again. Nothing is scheduled.
+            // Leave the stored value unchanged so the next signal asks again.
         }
     }
 
