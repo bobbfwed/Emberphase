@@ -36,11 +36,11 @@ public class SnapshotTimelineTest {
         assertTrue(timeline.getDefaultComplicationData() instanceof NoDataComplicationData);
     }
 
-    @Test public void daytimeDisconnectExpiresAfterTwoHours() {
+    @Test public void daytimeDisconnectExpiresAfterThreeHours() {
         Instant noon = Instant.parse("2026-11-03T20:00:00Z");
         var daytime = ActivitySnapshot.create(noon, zone, snapshot.minutes, snapshot.calories);
         var timeline = SnapshotTimeline.create(daytime, data(), noon, zone);
-        assertEquals(noon.plusSeconds(7200), timeline.getTimelineEntries().iterator().next().getValidity().getStart());
+        assertEquals(noon.plusSeconds(10800), timeline.getTimelineEntries().iterator().next().getValidity().getStart());
     }
 
     @Test public void changedDisplayDateRejectsSnapshot() {

@@ -20,7 +20,8 @@ public class ActivitySnapshotTest {
     @Test public void staleOrFutureSnapshotsAreUnavailable() {
         Instant now = Instant.parse("2026-11-02T18:00:00Z");
         ActivitySnapshot snapshot = ActivitySnapshot.create(now, ZoneOffset.UTC, minutes, calories);
-        assertFalse(snapshot.isFresh(now.plusSeconds(7200), ZoneOffset.UTC));
+        assertTrue(snapshot.isFresh(now.plusSeconds(7200), ZoneOffset.UTC));
+        assertFalse(snapshot.isFresh(now.plusSeconds(10800), ZoneOffset.UTC));
         assertFalse(snapshot.isFresh(now.minusSeconds(301), ZoneOffset.UTC));
     }
 

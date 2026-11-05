@@ -60,13 +60,25 @@ final class HealthSync {
         data.getDataMap().putAll(SnapshotCodec.encode(snapshot));
         PutDataRequest request = data.asPutDataRequest();
         if (urgent) request.setUrgent();
+        SharedPreferences prefs = prefs(context);
+        String fingerprint = HealthPublish.fingerprint(snapshot);
+        long now = System.currentTimeMillis();
+        if (!HealthPublish.shouldWrite(urgent, prefs.contains(HealthPublish.FINGERPRINT) && prefs.contains(HealthPublish.EXPIRES),
+                prefs.getString(HealthPublish.FINGERPRINT, null), prefs.getLong(HealthPublish.EXPIRES, 0), fingerprint, now)) {
+            prefs.edit().putLong(HealthPublish.LAST_CHECK, now).apply();
+            return;
+        }
         Tasks.await(Wearable.getDataClient(context).putDataItem(request), 20, TimeUnit.SECONDS);
-        prefs(context).edit().putLong("last_sync", snapshot.capturedAt.toEpochMilli())
+        prefs.edit().putLong("last_sync", snapshot.capturedAt.toEpochMilli())
+                .putLong(HealthPublish.LAST_CHECK, now)
+                .putString(HealthPublish.FINGERPRINT, fingerprint)
+                .putLong(HealthPublish.EXPIRES, snapshot.expiresAt.toEpochMilli())
                 .putString("status", "Synced with paired watch. Samsung Health may take time to sync watch activity to the phone.").apply();
     }
     static synchronized void stop(Context context, String reason) {
         prefs(context).edit().putBoolean("enabled", false).putBoolean("pending_clear", true)
-                .remove("last_sync").putString("status", reason).apply();
+                .remove("last_sync").remove(HealthPublish.FINGERPRINT).remove(HealthPublish.EXPIRES)
+                .remove(HealthPublish.LAST_CHECK).putString("status", reason).apply();
         WorkManager.getInstance(context).cancelUniqueWork(PERIODIC);
         WorkManager.getInstance(context).cancelUniqueWork(IMMEDIATE);
         if (!clearPending(context)) {

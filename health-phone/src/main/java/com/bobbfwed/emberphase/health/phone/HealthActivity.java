@@ -22,7 +22,7 @@ public final class HealthActivity extends Activity {
         ScrollView scroll = new ScrollView(this); scroll.addView(content); setContentView(scroll);
         TextView title = new TextView(this); title.setText("Emberphase Health"); title.setTextSize(28); content.addView(title);
         TextView explanation = new TextView(this);
-        explanation.setText("Share today's active minutes, active calories and their daily goals from Samsung Health with your paired watch. Read access only. No raw records or health data are sent to an Emberphase server.\n\nAutomatic sync runs about every hour when Android permits, and waits while the phone battery is low. Sync now still runs immediately. Phone and watch must stay paired. Data disappears after two hours without an update, or at midnight.\n");
+        explanation.setText("Share today's active minutes, active calories and their daily goals from Samsung Health with your paired watch. Read access only. No raw records or health data are sent to an Emberphase server.\n\nAutomatic sync runs about every hour when Android permits, and waits while the phone battery is low. Sync now still runs immediately. Phone and watch must stay paired. Data disappears after three hours without an update, or at midnight.\n");
         content.addView(explanation);
         status = new TextView(this); content.addView(status);
         button(content, "Connect Samsung Health", this::connect);
@@ -49,9 +49,11 @@ public final class HealthActivity extends Activity {
     @Override public void onStop() { HealthSync.prefs(this).unregisterOnSharedPreferenceChangeListener(changes); super.onStop(); }
     private void refresh() {
         long synced = HealthSync.prefs(this).getLong("last_sync", 0);
+        long checked = HealthSync.prefs(this).getLong(HealthPublish.LAST_CHECK, 0);
         status.setText((HealthSync.enabled(this) ? "Sharing enabled.\n" : "Sharing stopped.\n")
                 + HealthSync.prefs(this).getString("status", "Connect to grant Samsung Health read permission.")
-                + (synced == 0 ? "" : "\nLast sync: " + DateFormat.getDateTimeInstance().format(new Date(synced))));
+                + (synced == 0 ? "" : "\nLast sync: " + DateFormat.getDateTimeInstance().format(new Date(synced)))
+                + (checked == 0 ? "" : "\nLast check: " + DateFormat.getDateTimeInstance().format(new Date(checked))));
     }
     private void connect() {
         try {

@@ -95,7 +95,9 @@ and [goal semantics](https://developer.samsung.com/health/data/api-reference/-sh
 
 Automatic phone sync is scheduled every 60 minutes with a 15-minute flex window,
 and it waits while the phone battery is low. Android may batch or delay work
-further. It does not promise exact-time refresh. Initial and manual syncs still
+further. It does not promise exact-time refresh. An hourly run skips the watch
+write when the displayed day, minutes, calories, and goals are unchanged and the
+last push still has more than 75 minutes of life. Initial and manual syncs still
 run immediately and request urgent Data Layer delivery. A fresh watch cache does
 not ask the phone for another Samsung Health read when the face wakes. Stale-cache
 requests are limited to one every 15 minutes. Wear OS requests each activity
@@ -109,7 +111,7 @@ Only dated totals and goals travel through Google's paired-device Data Layer.
 The watch caches them in private storage, excluded from backup and device
 transfer. No raw health records are stored or logged, and there is no Emberphase
 backend. Unknown values remain unavailable. Snapshots expire at the earlier of
-two hours and the source's local midnight; a different display date also rejects
+three hours and the source's local midnight; a different display date also rejects
 them. A new day must receive new totals. The watch provider exposes the expiry
 to Wear OS through the complication's validity range. Version 0.1.0 left expired
 values visible on the tested Samsung renderer despite that range. Version 0.1.1

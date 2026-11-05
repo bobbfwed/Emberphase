@@ -161,7 +161,7 @@ power-saving modes are system states. The watch companion reports Android
 power saving only when that mode changes. The face adds no timer for sleep or
 theater mode, and
 ambient already hides seconds, the balance, moon, weather, and activity.
-Cached totals expire after two hours or at local midnight. An
+Cached totals expire after three hours or at local midnight. An
 explicit unavailable-data timeline entry replaces expired totals even without
 a subsequent push. See [overnight sync setup](health-companion.md).
 

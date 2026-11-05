@@ -34,4 +34,5 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-parcelize-runtime:2.1.20")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.10.2")
     implementation("com.google.code.gson:gson:2.13.2")
+    testImplementation("junit:junit:4.13.2")
 }

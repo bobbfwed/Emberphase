@@ -11,7 +11,7 @@ public final class ActivitySnapshot {
     public static final int SCHEMA = 1;
     public static final String DATA_PATH = "/emberphase/activity/v1";
     public static final String REFRESH_PATH = "/emberphase/activity/refresh";
-    public static final Duration MAX_AGE = Duration.ofHours(2);
+    public static final Duration MAX_AGE = Duration.ofHours(3);
     /** Minimum gap between automatic Samsung Health reads. Manual sync is not limited. */
     public static final Duration BACKGROUND_REFRESH_GAP = Duration.ofMinutes(15);
 
