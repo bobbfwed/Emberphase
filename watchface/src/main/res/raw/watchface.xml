@@ -178,15 +178,15 @@
                 <Transform target="y" value="274 - 99 * ((clamp([BATTERY_PERCENT], 0, 100) / 100) * [REFERENCE.sweep_home] + [REFERENCE.sweep_turn] * (1 - [REFERENCE.sweep_settle]) + (clamp([BATTERY_PERCENT], 0, 100) / 100) * [REFERENCE.sweep_settle])" />
                 <Image resource="battery_slider" />
             </PartImage>
-            <PartDraw x="0" y="0" width="450" height="450">
+            <PartDraw x="358" y="274" width="5" height="13">
                 <Transform target="alpha" value="[BATTERY_PERCENT] &lt;= 20 ? 255 : 0" />
-                <RoundRectangle x="358" y="274" width="5" height="13" cornerRadiusX="2" cornerRadiusY="2">
+                <RoundRectangle x="0" y="0" width="5" height="13" cornerRadiusX="2" cornerRadiusY="2">
                     <Fill color="#FFD535" />
                 </RoundRectangle>
             </PartDraw>
-            <PartDraw x="0" y="0" width="450" height="450">
+            <PartDraw x="377" y="274" width="5" height="13">
                 <Transform target="alpha" value="[BATTERY_PERCENT] &lt;= 10 ? 255 : 0" />
-                <RoundRectangle x="377" y="274" width="5" height="13" cornerRadiusX="2" cornerRadiusY="2">
+                <RoundRectangle x="0" y="0" width="5" height="13" cornerRadiusX="2" cornerRadiusY="2">
                     <Fill color="#FF352A" />
                 </RoundRectangle>
             </PartDraw>
@@ -801,15 +801,15 @@
                 <Transform target="y" value="274 - 99 * clamp([BATTERY_PERCENT], 0, 100) / 100" />
                 <Image resource="ambient_battery_slider" />
             </PartImage>
-            <PartDraw x="0" y="0" width="450" height="450">
+            <PartDraw x="358" y="274" width="5" height="13">
                 <Transform target="alpha" value="[BATTERY_PERCENT] &lt;= 20 ? 255 : 0" />
-                <RoundRectangle x="358" y="274" width="5" height="13" cornerRadiusX="2" cornerRadiusY="2">
+                <RoundRectangle x="0" y="0" width="5" height="13" cornerRadiusX="2" cornerRadiusY="2">
                     <Fill color="#D8B32A" />
                 </RoundRectangle>
             </PartDraw>
-            <PartDraw x="0" y="0" width="450" height="450">
+            <PartDraw x="377" y="274" width="5" height="13">
                 <Transform target="alpha" value="[BATTERY_PERCENT] &lt;= 10 ? 255 : 0" />
-                <RoundRectangle x="377" y="274" width="5" height="13" cornerRadiusX="2" cornerRadiusY="2">
+                <RoundRectangle x="0" y="0" width="5" height="13" cornerRadiusX="2" cornerRadiusY="2">
                     <Fill color="#DC3020" />
                 </RoundRectangle>
             </PartDraw>
