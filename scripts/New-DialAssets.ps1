@@ -161,7 +161,7 @@ $script:g.FillPath($faceBrush,$facePath); $faceBrush.Dispose(); $facePath.Dispos
 for($index=0;$index -lt 60;$index++) {
     $angle=$index*6*[math]::PI/180
     $hour=($index%5 -eq 0); $outer=213; $inner=202; $thickness=2.8; $color='#ff5d0a'
-    if($hour) { $inner=197; $thickness=6; $color='#eeeeea' }
+    if($hour) { $inner=197; $thickness=6; $color='#b7b7b4' }
     # The 12 and 6 sit on those hour ticks, so those marks are omitted.
     if($index -eq 0 -or $index -eq 30) { continue }
     Line $color $thickness (225+$inner*[math]::Sin($angle)) (225-$inner*[math]::Cos($angle)) (225+$outer*[math]::Sin($angle)) (225-$outer*[math]::Cos($angle))
@@ -172,7 +172,7 @@ foreach($hour in @(1,2,3,4,6,8,9,10,11,12)) {
     # The calorie channel ends near radius 196, so the 6 sits further out than the 12.
     if($hour -eq 6) { $radius=210; $size=29 }
     $x=225+$radius*[math]::Sin($a); $y=225-$radius*[math]::Cos($a)
-    Label ([string]$hour) ($x-25) ($y-$size*0.65) $size '#f4f4f0' 50
+    Label ([string]$hour) ($x-25) ($y-$size*0.65) $size '#b7b7b4' 50
 }
 $aperture=New-Object System.Drawing.Drawing2D.GraphicsPath
 # Center the outer arch on the wheel pivot (225,133). Its 87-unit radius
