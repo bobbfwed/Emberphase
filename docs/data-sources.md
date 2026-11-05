@@ -129,7 +129,8 @@ moon API or native moon-phase source. See [moon calculation](moon-phase.md) for
 accuracy limits. Ambient mode displays orange hour/minute hands, the selected weekday,
 month, and date, a battery slider with threshold lamps, and the same hour
 numerals as the active face (1, 2, 3, 4, 6, 8, 9, 10, 11, and 12) at the same
-positions and sizes. The always-on date uses that face's live-row box. The
+positions and sizes. Those numerals and the hour ticks use the date orange
+`#d94c20`. The always-on date uses that face's live-row box. The
 ambient scene has no seconds, weather, moon, activity tracks,
 or adjacent calendar entries. Samsung display offload was observed active.
 Actual battery life must be measured on the watch.

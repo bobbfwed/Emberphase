@@ -337,7 +337,7 @@ Canvas 450 450
 # The 12 and 6 numerals sit on those hour ticks, so those marks are omitted.
 foreach($i in @(5,10,15,20,25,35,40,45,50,55)) {
     $a=$i*6*[math]::PI/180
-    $p=Pen '#deded8' 6; $p.StartCap='Flat'; $p.EndCap='Flat'
+    $p=Pen '#d94c20' 6; $p.StartCap='Flat'; $p.EndCap='Flat'
     $script:g.DrawLine($p,[float](225+197*[math]::Sin($a)),[float](225-197*[math]::Cos($a)),[float](225+213*[math]::Sin($a)),[float](225-213*[math]::Cos($a))); $p.Dispose()
 }
 # Match the interactive dial: same hours, radii, and sizes. Hours 5 and 7
@@ -347,7 +347,7 @@ foreach($hour in @(1,2,3,4,6,8,9,10,11,12)) {
     if($hour -eq 12) { $radius=201; $size=29 }
     if($hour -eq 6) { $radius=210; $size=29 }
     $x=225+$radius*[math]::Sin($a); $y=225-$radius*[math]::Cos($a)
-    Label ([string]$hour) ($x-25) ($y-$size*0.65) $size '#deded8' 50
+    Label ([string]$hour) ($x-25) ($y-$size*0.65) $size '#d94c20' 50
 }
 $outline=RoundPath 353 161 33 129 6; $p=Pen '#c5461c' 1; $script:g.DrawPath($p,$outline); $p.Dispose(); $outline.Dispose()
 for($i=0;$i -le 10;$i++) { $y=175+$i*10; Line '#b54220' 0.8 366 $y 373 $y }

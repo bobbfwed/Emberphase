@@ -137,7 +137,7 @@ does not by itself confirm the face appears in every picker view.
 9. Check the default mechanical seconds and editor toggle, then test at 15% and below: seconds must disappear,
    with no flashing effects. Yellow lamp activates at 20%, red at 10%.
 10. Check always-on: orange hands, weekday/month/date, battery and low-battery
-    lamps; white hour markers and 12/3/6/9; black background. No weather,
+    lamps; orange hour markers and 12/3/6/9; black background. No weather,
     activity tracks, moon, neighboring drum labels, or seconds. Check
     ambient transitions, burn-in shifting, lock/unlock, wake, and relaunch.
 11. Measure a representative full-day battery run against a stock face with

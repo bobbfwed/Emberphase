@@ -21,7 +21,7 @@ pending. Ambient rendering and Samsung display offload were observed on-device.
 | Maximum ambient decoded-resource estimate | 1,645,872 bytes (1.57 MiB) |
 | Physical watch install / activation / awake rendering | Passed with 0.4.1; activity symbols/targets follow the tracks and weather clears the 8 |
 | Mechanical tick motion | Native 130 ms Tick, strength 0.5; the earlier 180 ms setting had about 1.4–1.5 degrees of overshoot and return observed |
-| Ambient rendering | Orange hands, selected calendar and battery; white hour markers on black; captured while Dozing with display offload active |
+| Ambient rendering | Orange hands, selected calendar and battery. The Dozing capture showed white hour markers on black, with display offload active. Current assets draw those markers in the date orange |
 | Samsung steps payload | Live RANGED_VALUE observed from Samsung Health steps service; explicit goal not established |
 | Native weather availability | Unavailable state followed by current temperature, daily high, and condition icon |
 | Other activity payloads / source-app comparisons / extended ambient transitions / battery life | Pending |
@@ -84,8 +84,8 @@ millisecond expression was introduced; battery impact still needs measurement.
 
 The always-on scene follows `Always On Original Mockup.png`, with dedicated
 orange skeleton hand assets, a black-centered orange hub, selected calendar
-fields, and an orange battery gauge with threshold lamps. White hour markers
-and 12/3/6/9 sit on black. Both calendars use weekday/month/date order and share
+fields, and an orange battery gauge with threshold lamps. Hour markers
+and 12/3/6/9 use the date orange on black. Both calendars use weekday/month/date order and share
 the same date expressions. Seconds, neighboring drum entries, moon, weather,
 and activity graphics are absent in ambient. The physical watch reported
 Dozing and active display offload when its ambient screenshot was captured.
