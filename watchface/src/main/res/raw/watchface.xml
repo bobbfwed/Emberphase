@@ -835,7 +835,10 @@
             <BooleanConfiguration id="mechanical_seconds">
                 <BooleanOption id="TRUE">
                     <Group name="seconds_visibility" x="0" y="0" width="450" height="450">
-                        <Transform target="alpha" value="[BATTERY_PERCENT] &gt; 15 &amp;&amp; [REFERENCE.sweep_progress] &gt;= 1 ? 255 : 0" />
+                        <Condition>
+                            <Expressions><Expression name="seconds_power_available">[BATTERY_PERCENT] &gt; 15 &amp;&amp; [REFERENCE.sweep_progress] &gt;= 1</Expression></Expressions>
+                            <Compare expression="seconds_power_available">
+                        <Group name="seconds_motion" x="0" y="0" width="450" height="450">
                         <BooleanConfiguration id="motion_detail">
                             <BooleanOption id="TRUE">
                                 <Condition>
@@ -860,6 +863,9 @@
                                 </AnalogClock>
                             </BooleanOption>
                         </BooleanConfiguration>
+                        </Group>
+                            </Compare>
+                        </Condition>
                     </Group>
                 </BooleanOption>
             </BooleanConfiguration>

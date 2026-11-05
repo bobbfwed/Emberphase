@@ -216,9 +216,11 @@ assert.equal(evaluate(sliderExpression,{BATTERY_PERCENT:100}),175);
 assert.equal(evaluate(sliderExpression,{BATTERY_PERCENT:-10}),274);
 assert.equal(evaluate(sliderExpression,{BATTERY_PERCENT:150}),175);
 const seconds = face.match(/<Group name="seconds_visibility"[\s\S]*?<\/Group>/)[0];
-const secondsExpression = unescapeXml(seconds.match(/<Transform target="alpha" value="([^"]+)"/)[1]);
-assert.equal(evaluate(secondsExpression,{BATTERY_PERCENT:15}),0);
-assert.equal(evaluate(secondsExpression,{BATTERY_PERCENT:73}),255);
+assert.doesNotMatch(seconds, /<Transform target="alpha"/, 'Remove the seconds hand at low battery instead of hiding it');
+const secondsVisible = expressions.get('seconds_power_available');
+for (const [battery, progress, expected] of [[15,1,false],[16,1,true],[73,1,true],[73,0.5,false]]) {
+  assert.equal(!!evaluate(secondsVisible, {BATTERY_PERCENT: battery, 'REFERENCE.sweep_progress': progress}), expected);
+}
 assert.match(face, /BooleanConfiguration id="mechanical_seconds"[^>]*defaultValue="TRUE"/);
 assert.match(face, /ListConfiguration id="left_inset"[^>]*defaultValue="0"/);
 assert.match(face, /<BooleanConfiguration id="mechanical_seconds">\s*<BooleanOption id="TRUE">\s*<Group name="seconds_visibility"/);
