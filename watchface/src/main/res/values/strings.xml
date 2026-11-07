@@ -2,4 +2,7 @@
 <resources>
     <string name="watch_face_name">Emberphase</string>
     <string name="reader_time">Time</string>
+    <string name="reader_day">Day position</string>
+    <string name="reader_weather">Weather</string>
+    <string name="reader_battery">Battery</string>
 </resources>

@@ -12,6 +12,248 @@
                     </Font>
                 </Text>
             </PartText>
+            <Group x="0" y="0" width="450" height="450" name="battery">
+                <ScreenReader stringId="reader_battery" />
+                <PartDraw x="226" y="278" width="48" height="3" name="battery_track">
+                    <Rectangle x="0" y="0" width="48" height="3">
+                        <Fill color="#ff3a3834" />
+                    </Rectangle>
+                </PartDraw>
+                <Condition>
+                    <Expressions>
+                        <Expression name="battery_charging"><![CDATA[[BATTERY_CHARGING_STATUS]]]></Expression>
+                        <Expression name="battery_low"><![CDATA[![BATTERY_CHARGING_STATUS] && [BATTERY_PERCENT] <= 15]]></Expression>
+                    </Expressions>
+                    <Compare expression="battery_charging">
+                        <Group x="0" y="0" width="450" height="450" name="battery_charging">
+                            <PartText x="180" y="272" width="42" height="16">
+                                <Text align="END" maxLines="1">
+                                    <Font family="SYNC_TO_DEVICE" size="12" weight="NORMAL" slant="NORMAL" color="#fff4f1ea">
+                                        <Template>%s<Parameter expression="numberFormat(&quot;#&quot;, [BATTERY_PERCENT])" /></Template>
+                                    </Font>
+                                </Text>
+                            </PartText>
+                            <PartDraw x="226" y="278" width="48" height="3">
+                                <Rectangle x="0" y="0" width="48" height="3">
+                                    <Fill color="#fff4f1ea" />
+                                    <Transform target="width" value="[BATTERY_PERCENT] / 100 * 48" />
+                                </Rectangle>
+                            </PartDraw>
+                        </Group>
+                    </Compare>
+                    <Compare expression="battery_low">
+                        <Group x="0" y="0" width="450" height="450" name="battery_low">
+                            <PartText x="180" y="272" width="42" height="16">
+                                <Text align="END" maxLines="1">
+                                    <Font family="SYNC_TO_DEVICE" size="12" weight="NORMAL" slant="NORMAL" color="#ffe24b16">
+                                        <Template>%s<Parameter expression="numberFormat(&quot;#&quot;, [BATTERY_PERCENT])" /></Template>
+                                    </Font>
+                                </Text>
+                            </PartText>
+                            <PartDraw x="226" y="278" width="48" height="3">
+                                <Rectangle x="0" y="0" width="48" height="3">
+                                    <Fill color="#ffe24b16" />
+                                    <Transform target="width" value="[BATTERY_PERCENT] / 100 * 48" />
+                                </Rectangle>
+                            </PartDraw>
+                        </Group>
+                    </Compare>
+                    <Default>
+                        <Group x="0" y="0" width="450" height="450" name="battery_rest">
+                            <PartText x="180" y="272" width="42" height="16">
+                                <Text align="END" maxLines="1">
+                                    <Font family="SYNC_TO_DEVICE" size="12" weight="NORMAL" slant="NORMAL" color="#ffc4c0b8">
+                                        <Template>%s<Parameter expression="numberFormat(&quot;#&quot;, [BATTERY_PERCENT])" /></Template>
+                                    </Font>
+                                </Text>
+                            </PartText>
+                            <PartDraw x="226" y="278" width="48" height="3">
+                                <Rectangle x="0" y="0" width="48" height="3">
+                                    <Fill color="#ff8a8680" />
+                                    <Transform target="width" value="[BATTERY_PERCENT] / 100 * 48" />
+                                </Rectangle>
+                            </PartDraw>
+                        </Group>
+                    </Default>
+                </Condition>
+            </Group>
+            <PartDraw x="104" y="187" width="242" height="3" name="day_staff">
+                <Line startX="1" startY="1" endX="241" endY="1">
+                    <Stroke color="#ff3a3834" thickness="1" cap="BUTT" />
+                </Line>
+            </PartDraw>
+            <PartDraw x="104" y="181" width="242" height="14" name="day_ticks">
+                <Line startX="1" startY="1" endX="1" endY="13">
+                    <Stroke color="#ffc4c0b8" thickness="1" cap="BUTT" />
+                </Line>
+                <Line startX="61" startY="1" endX="61" endY="13">
+                    <Stroke color="#ffc4c0b8" thickness="1" cap="BUTT" />
+                </Line>
+                <Line startX="181" startY="1" endX="181" endY="13">
+                    <Stroke color="#ffc4c0b8" thickness="1" cap="BUTT" />
+                </Line>
+                <Line startX="241" startY="1" endX="241" endY="13">
+                    <Stroke color="#ffc4c0b8" thickness="1" cap="BUTT" />
+                </Line>
+            </PartDraw>
+            <Group x="0" y="0" width="450" height="450" name="staff_labels">
+                <PartText x="92" y="232" width="26" height="14">
+                    <Text align="CENTER" maxLines="1">
+                        <Font family="SYNC_TO_DEVICE" size="11" weight="NORMAL" slant="NORMAL" color="#ffc4c0b8">00</Font>
+                    </Text>
+                </PartText>
+                <PartText x="152" y="232" width="26" height="14">
+                    <Text align="CENTER" maxLines="1">
+                        <Font family="SYNC_TO_DEVICE" size="11" weight="NORMAL" slant="NORMAL" color="#ffc4c0b8">06</Font>
+                    </Text>
+                </PartText>
+                <PartText x="212" y="232" width="26" height="14">
+                    <Text align="CENTER" maxLines="1">
+                        <Font family="SYNC_TO_DEVICE" size="11" weight="NORMAL" slant="NORMAL" color="#ffc4c0b8">12</Font>
+                    </Text>
+                </PartText>
+                <PartText x="272" y="232" width="26" height="14">
+                    <Text align="CENTER" maxLines="1">
+                        <Font family="SYNC_TO_DEVICE" size="11" weight="NORMAL" slant="NORMAL" color="#ffc4c0b8">18</Font>
+                    </Text>
+                </PartText>
+                <PartText x="332" y="232" width="26" height="14">
+                    <Text align="CENTER" maxLines="1">
+                        <Font family="SYNC_TO_DEVICE" size="11" weight="NORMAL" slant="NORMAL" color="#ffc4c0b8">24</Font>
+                    </Text>
+                </PartText>
+            </Group>
+            <PartDraw x="224" y="155" width="3" height="66" name="temperature_staff">
+                <Line startX="1" startY="1" endX="1" endY="65">
+                    <Stroke color="#ff3a3834" thickness="1" cap="BUTT" />
+                </Line>
+            </PartDraw>
+            <Group x="0" y="0" width="450" height="450" name="weather">
+                <ScreenReader stringId="reader_weather" />
+                <Condition>
+                    <Expressions>
+                        <Expression name="weather_on"><![CDATA[[WEATHER.IS_AVAILABLE]]]></Expression>
+                    </Expressions>
+                    <Compare expression="weather_on">
+                        <Group x="0" y="0" width="450" height="450" name="weather_on">
+                            <Condition>
+                                <Expressions>
+                                    <Expression name="unit_c"><![CDATA[[WEATHER.TEMPERATURE_UNIT] == 1]]></Expression>
+                                    <Expression name="unit_f"><![CDATA[[WEATHER.TEMPERATURE_UNIT] == 2]]></Expression>
+                                </Expressions>
+                                <Compare expression="unit_c">
+                                    <PartText x="230" y="248" width="70" height="22">
+                                        <Text align="START" maxLines="1">
+                                            <Font family="SYNC_TO_DEVICE" size="16" weight="NORMAL" slant="NORMAL" color="#fff4f1ea">
+                                                <Template>%s C<Parameter expression="[WEATHER.TEMPERATURE]" /></Template>
+                                            </Font>
+                                        </Text>
+                                    </PartText>
+                                </Compare>
+                                <Compare expression="unit_f">
+                                    <PartText x="230" y="248" width="70" height="22">
+                                        <Text align="START" maxLines="1">
+                                            <Font family="SYNC_TO_DEVICE" size="16" weight="NORMAL" slant="NORMAL" color="#fff4f1ea">
+                                                <Template>%s F<Parameter expression="[WEATHER.TEMPERATURE]" /></Template>
+                                            </Font>
+                                        </Text>
+                                    </PartText>
+                                </Compare>
+                                <Default>
+                                    <PartText x="230" y="248" width="70" height="22">
+                                        <Text align="START" maxLines="1">
+                                            <Font family="SYNC_TO_DEVICE" size="16" weight="NORMAL" slant="NORMAL" color="#fff4f1ea">
+                                                <Template>%s<Parameter expression="[WEATHER.TEMPERATURE]" /></Template>
+                                            </Font>
+                                        </Text>
+                                    </PartText>
+                                </Default>
+                            </Condition>
+                            <PartText x="80" y="250" width="140" height="18" name="condition_name">
+                                <Text align="END" ellipsis="TRUE" maxLines="1">
+                                    <Font family="SYNC_TO_DEVICE" size="13" weight="NORMAL" slant="NORMAL" color="#ff8a8680">
+                                        <Template>%s<Parameter expression="[WEATHER.CONDITION_NAME]" /></Template>
+                                    </Font>
+                                </Text>
+                            </PartText>
+                            <PartText x="244" y="152" width="36" height="14" name="high_label">
+                                <Text align="START" maxLines="1">
+                                    <Font family="SYNC_TO_DEVICE" size="11" weight="NORMAL" slant="NORMAL" color="#ffc4c0b8">
+                                        <Template>%s<Parameter expression="[WEATHER.DAY_TEMPERATURE_HIGH]" /></Template>
+                                    </Font>
+                                </Text>
+                            </PartText>
+                            <PartText x="244" y="214" width="36" height="14" name="low_label">
+                                <Text align="START" maxLines="1">
+                                    <Font family="SYNC_TO_DEVICE" size="11" weight="NORMAL" slant="NORMAL" color="#ffc4c0b8">
+                                        <Template>%s<Parameter expression="[WEATHER.DAY_TEMPERATURE_LOW]" /></Template>
+                                    </Font>
+                                </Text>
+                            </PartText>
+                            <Condition>
+                                <Expressions>
+                                    <Expression name="weather_stale"><![CDATA[[WEATHER.IS_ERROR]]]></Expression>
+                                </Expressions>
+                                <Compare expression="weather_stale">
+                                    <PartDraw x="303" y="253" width="8" height="8" name="stale_dot">
+                                        <Ellipse x="1" y="1" width="6" height="6">
+                                            <Fill color="#ff8a8680" />
+                                        </Ellipse>
+                                    </PartDraw>
+                                </Compare>
+                            </Condition>
+                        </Group>
+                    </Compare>
+                    <Default>
+                        <Group x="0" y="0" width="450" height="450" name="weather_off">
+                            <PartText x="230" y="248" width="70" height="22">
+                                <Text align="START" maxLines="1">
+                                    <Font family="SYNC_TO_DEVICE" size="16" weight="NORMAL" slant="NORMAL" color="#fff4f1ea">--</Font>
+                                </Text>
+                            </PartText>
+                            <PartDraw x="207" y="255" width="8" height="8" name="weather_unknown">
+                                <Ellipse x="1" y="1" width="6" height="6">
+                                    <Stroke color="#ff8a8680" thickness="1" />
+                                </Ellipse>
+                            </PartDraw>
+                        </Group>
+                    </Default>
+                </Condition>
+                <Condition>
+                    <Expressions>
+                        <Expression name="heat_fresh"><![CDATA[[WEATHER.IS_AVAILABLE] && [WEATHER.DAY_TEMPERATURE_HIGH] > [WEATHER.DAY_TEMPERATURE_LOW] && ![WEATHER.IS_ERROR]]]></Expression>
+                        <Expression name="heat_stale"><![CDATA[[WEATHER.IS_AVAILABLE] && [WEATHER.DAY_TEMPERATURE_HIGH] > [WEATHER.DAY_TEMPERATURE_LOW] && [WEATHER.IS_ERROR]]]></Expression>
+                    </Expressions>
+                    <Compare expression="heat_fresh">
+                        <PartDraw x="212" y="154" width="26" height="68" name="tooth_fresh">
+                            <Line startX="2" startY="66" endX="24" endY="66">
+                                <Stroke color="#ffe24b16" thickness="3" cap="ROUND" />
+                                <Transform target="startY" value="66 - clamp(([WEATHER.TEMPERATURE] - [WEATHER.DAY_TEMPERATURE_LOW]) / ([WEATHER.DAY_TEMPERATURE_HIGH] - [WEATHER.DAY_TEMPERATURE_LOW]), 0, 1) * 64" />
+                                <Transform target="endY" value="66 - clamp(([WEATHER.TEMPERATURE] - [WEATHER.DAY_TEMPERATURE_LOW]) / ([WEATHER.DAY_TEMPERATURE_HIGH] - [WEATHER.DAY_TEMPERATURE_LOW]), 0, 1) * 64" />
+                            </Line>
+                        </PartDraw>
+                    </Compare>
+                    <Compare expression="heat_stale">
+                        <PartDraw x="212" y="154" width="26" height="68" name="tooth_stale">
+                            <Line startX="2" startY="66" endX="24" endY="66">
+                                <Stroke color="#ff8a8680" thickness="3" cap="ROUND" />
+                                <Transform target="startY" value="66 - clamp(([WEATHER.TEMPERATURE] - [WEATHER.DAY_TEMPERATURE_LOW]) / ([WEATHER.DAY_TEMPERATURE_HIGH] - [WEATHER.DAY_TEMPERATURE_LOW]), 0, 1) * 64" />
+                                <Transform target="endY" value="66 - clamp(([WEATHER.TEMPERATURE] - [WEATHER.DAY_TEMPERATURE_LOW]) / ([WEATHER.DAY_TEMPERATURE_HIGH] - [WEATHER.DAY_TEMPERATURE_LOW]), 0, 1) * 64" />
+                            </Line>
+                        </PartDraw>
+                    </Compare>
+                </Condition>
+            </Group>
+            <Group x="0" y="0" width="450" height="450" name="day_cinder">
+                <ScreenReader stringId="reader_day" />
+                <PartDraw x="103" y="168" width="244" height="40" name="cinder_static">
+                    <Line startX="2" startY="2" endX="2" endY="38">
+                        <Stroke color="#ffe24b16" thickness="3" cap="ROUND" />
+                        <Transform target="startX" value="2 + (([HOUR_0_23] * 60 + [MINUTE]) / 1440) * 240" />
+                        <Transform target="endX" value="2 + (([HOUR_0_23] * 60 + [MINUTE]) / 1440) * 240" />
+                    </Line>
+                </PartDraw>
+            </Group>
             <Group x="0" y="0" width="450" height="450" name="time">
                 <ScreenReader stringId="reader_time" />
                 <Condition>
