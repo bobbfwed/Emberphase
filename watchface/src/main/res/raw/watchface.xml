@@ -2,6 +2,9 @@
 <WatchFace width="450" height="450" clipShape="CIRCLE">
     <Metadata key="CLOCK_TYPE" value="DIGITAL" />
     <Metadata key="PREVIEW_TIME" value="22:10:00" />
+        <UserConfigurations>
+        <BooleanConfiguration id="steps_range_as_goal" displayName="steps_range_label" screenReaderText="steps_range_reader" defaultValue="TRUE" />
+    </UserConfigurations>
     <Scene backgroundColor="#ff000000">
         <Group x="0" y="0" width="450" height="450" name="interactive">
             <Variant mode="AMBIENT" target="alpha" value="0" duration="0.0" />
@@ -370,5 +373,764 @@
                 </Condition>
             </Group>
         </Group>
-    </Scene>
+        <ComplicationSlot slotId="10" displayName="slot_steps_name" x="94" y="300" width="58" height="56" isCustomizable="TRUE" supportedTypes="GOAL_PROGRESS RANGED_VALUE SHORT_TEXT LONG_TEXT MONOCHROMATIC_IMAGE SMALL_IMAGE EMPTY">
+        <BoundingBox x="0" y="0" width="58" height="56" outlinePadding="1" />
+        <DefaultProviderPolicy primaryProvider="com.samsung.android.wear.shealth/com.samsung.android.wear.shealth.complications.steps.StepsComplicationProviderService" primaryProviderType="GOAL_PROGRESS" secondaryProvider="com.samsung.android.wear.shealth/com.samsung.android.wear.shealth.complications.steps.StepsComplicationProviderService" secondaryProviderType="RANGED_VALUE" defaultSystemProvider="EMPTY" defaultSystemProviderType="EMPTY" />
+    <ScreenReader stringId="reader_steps" />
+        <Variant mode="AMBIENT" target="alpha" value="0" duration="0.0" />
+        <Complication type="GOAL_PROGRESS">
+            <Condition>
+                <Expressions>
+                    <Expression name="has_text"><![CDATA[[COMPLICATION.TEXT] != null]]></Expression>
+                </Expressions>
+                <Compare expression="has_text">
+                <PartText x="1" y="0" width="56" height="24">
+                    <Text align="CENTER" maxLines="1" ellipsis="TRUE" isAutoSize="TRUE">
+                        <Font family="SYNC_TO_DEVICE" size="18" weight="NORMAL" slant="NORMAL" color="#fff4f1ea">
+                            <Template>%s<Parameter expression="[COMPLICATION.TEXT]" /></Template>
+                        </Font>
+                    </Text>
+                </PartText>
+                </Compare>
+                <Default>
+                <PartText x="1" y="0" width="56" height="24">
+                    <Text align="CENTER" maxLines="1" ellipsis="TRUE" isAutoSize="TRUE">
+                        <Font family="SYNC_TO_DEVICE" size="18" weight="NORMAL" slant="NORMAL" color="#fff4f1ea">
+                            <Template>%s<Parameter expression="numberFormat(&quot;#&quot;, [COMPLICATION.GOAL_PROGRESS_VALUE])" /></Template>
+                        </Font>
+                    </Text>
+                </PartText>
+                </Default>
+            </Condition>
+            <Condition>
+                <Expressions>
+                    <Expression name="goal_target"><![CDATA[[COMPLICATION.GOAL_PROGRESS_TARGET_VALUE] > 0]]></Expression>
+                </Expressions>
+                <Compare expression="goal_target">
+                    <Group x="0" y="0" width="58" height="56" name="goal_target">
+                <PartText x="1" y="24" width="56" height="14">
+                    <Text align="CENTER" maxLines="1">
+                        <Font family="SYNC_TO_DEVICE" size="11" weight="NORMAL" slant="NORMAL" color="#ffc4c0b8">
+                            <Template>%s<Parameter expression="numberFormat(&quot;#&quot;, [COMPLICATION.GOAL_PROGRESS_TARGET_VALUE])" /></Template>
+                        </Font>
+                    </Text>
+                </PartText>
+                <PartDraw x="8" y="44" width="42" height="3">
+                    <Rectangle x="0" y="0" width="42" height="3">
+                        <Fill color="#ff3a3834" />
+                    </Rectangle>
+                </PartDraw>
+                <PartDraw x="8" y="44" width="42" height="3">
+                    <Rectangle x="0" y="0" width="42" height="3">
+                        <Fill color="#ffe24b16" />
+                        <Transform target="width" value="clamp([COMPLICATION.GOAL_PROGRESS_VALUE] / [COMPLICATION.GOAL_PROGRESS_TARGET_VALUE], 0, 1) * 42" />
+                    </Rectangle>
+                </PartDraw>
+                    </Group>
+                </Compare>
+            </Condition>
+        </Complication>
+        <Complication type="RANGED_VALUE">
+            <Condition>
+                <Expressions>
+                    <Expression name="has_text"><![CDATA[[COMPLICATION.TEXT] != null]]></Expression>
+                </Expressions>
+                <Compare expression="has_text">
+                <PartText x="1" y="0" width="56" height="24">
+                    <Text align="CENTER" maxLines="1" ellipsis="TRUE" isAutoSize="TRUE">
+                        <Font family="SYNC_TO_DEVICE" size="18" weight="NORMAL" slant="NORMAL" color="#fff4f1ea">
+                            <Template>%s<Parameter expression="[COMPLICATION.TEXT]" /></Template>
+                        </Font>
+                    </Text>
+                </PartText>
+                </Compare>
+                <Default>
+                <PartText x="1" y="0" width="56" height="24">
+                    <Text align="CENTER" maxLines="1" ellipsis="TRUE" isAutoSize="TRUE">
+                        <Font family="SYNC_TO_DEVICE" size="18" weight="NORMAL" slant="NORMAL" color="#fff4f1ea">
+                            <Template>%s<Parameter expression="numberFormat(&quot;#&quot;, [COMPLICATION.RANGED_VALUE_VALUE])" /></Template>
+                        </Font>
+                    </Text>
+                </PartText>
+                </Default>
+            </Condition>
+            <Condition>
+                <Expressions>
+                    <Expression name="steps_goal"><![CDATA[[CONFIGURATION.steps_range_as_goal] == "TRUE" && [COMPLICATION.RANGED_VALUE_MIN] == 0 && [COMPLICATION.RANGED_VALUE_MAX] > 0]]></Expression>
+                    <Expression name="range_span"><![CDATA[([CONFIGURATION.steps_range_as_goal] != "TRUE" || [COMPLICATION.RANGED_VALUE_MIN] != 0) && [COMPLICATION.RANGED_VALUE_MAX] > [COMPLICATION.RANGED_VALUE_MIN]]]></Expression>
+                </Expressions>
+                <Compare expression="steps_goal">
+                    <Group x="0" y="0" width="58" height="56" name="steps_goal">
+                <PartText x="1" y="24" width="56" height="14">
+                    <Text align="CENTER" maxLines="1">
+                        <Font family="SYNC_TO_DEVICE" size="11" weight="NORMAL" slant="NORMAL" color="#ffc4c0b8">
+                            <Template>%s<Parameter expression="numberFormat(&quot;#&quot;, [COMPLICATION.RANGED_VALUE_MAX])" /></Template>
+                        </Font>
+                    </Text>
+                </PartText>
+                <PartDraw x="8" y="44" width="42" height="3">
+                    <Rectangle x="0" y="0" width="42" height="3">
+                        <Fill color="#ff3a3834" />
+                    </Rectangle>
+                </PartDraw>
+                <PartDraw x="8" y="44" width="42" height="3">
+                    <Rectangle x="0" y="0" width="42" height="3">
+                        <Fill color="#ffe24b16" />
+                        <Transform target="width" value="clamp([COMPLICATION.RANGED_VALUE_VALUE] / [COMPLICATION.RANGED_VALUE_MAX], 0, 1) * 42" />
+                    </Rectangle>
+                </PartDraw>
+                    </Group>
+                </Compare>
+                <Compare expression="range_span">
+                    <Group x="0" y="0" width="58" height="56" name="range_bar">
+                <PartDraw x="8" y="44" width="42" height="3">
+                    <Rectangle x="0" y="0" width="42" height="3">
+                        <Fill color="#ff3a3834" />
+                    </Rectangle>
+                </PartDraw>
+                <PartDraw x="8" y="44" width="42" height="3">
+                    <Rectangle x="0" y="0" width="42" height="3">
+                        <Fill color="#ffe24b16" />
+                        <Transform target="width" value="clamp(([COMPLICATION.RANGED_VALUE_VALUE] - [COMPLICATION.RANGED_VALUE_MIN]) / ([COMPLICATION.RANGED_VALUE_MAX] - [COMPLICATION.RANGED_VALUE_MIN]), 0, 1) * 42" />
+                    </Rectangle>
+                </PartDraw>
+                    </Group>
+                </Compare>
+            </Condition>
+        </Complication>
+        <Complication type="SHORT_TEXT">
+            <Condition>
+                <Expressions>
+                    <Expression name="has_title"><![CDATA[[COMPLICATION.TITLE] != null]]></Expression>
+                </Expressions>
+                <Compare expression="has_title">
+                <PartText x="1" y="2" width="56" height="12">
+                    <Text align="CENTER" maxLines="1">
+                        <Font family="SYNC_TO_DEVICE" size="10" weight="NORMAL" slant="NORMAL" color="#ffc4c0b8">
+                            <Template>%s<Parameter expression="[COMPLICATION.TITLE]" /></Template>
+                        </Font>
+                    </Text>
+                </PartText>
+                </Compare>
+            </Condition>
+                <PartText x="1" y="16" width="56" height="36">
+                    <Text align="CENTER" maxLines="2" ellipsis="TRUE" isAutoSize="TRUE">
+                        <Font family="SYNC_TO_DEVICE" size="15" weight="NORMAL" slant="NORMAL" color="#fff4f1ea">
+                            <Template>%s<Parameter expression="[COMPLICATION.TEXT]" /></Template>
+                        </Font>
+                    </Text>
+                </PartText>
+        </Complication>
+        <Complication type="LONG_TEXT">
+            <Condition>
+                <Expressions>
+                    <Expression name="has_title"><![CDATA[[COMPLICATION.TITLE] != null]]></Expression>
+                </Expressions>
+                <Compare expression="has_title">
+                <PartText x="1" y="2" width="56" height="12">
+                    <Text align="CENTER" maxLines="1">
+                        <Font family="SYNC_TO_DEVICE" size="10" weight="NORMAL" slant="NORMAL" color="#ffc4c0b8">
+                            <Template>%s<Parameter expression="[COMPLICATION.TITLE]" /></Template>
+                        </Font>
+                    </Text>
+                </PartText>
+                </Compare>
+            </Condition>
+                <PartText x="1" y="14" width="56" height="40">
+                    <Text align="CENTER" maxLines="3" ellipsis="TRUE">
+                        <Font family="SYNC_TO_DEVICE" size="12" weight="NORMAL" slant="NORMAL" color="#fff4f1ea">
+                            <Template>%s<Parameter expression="[COMPLICATION.TEXT]" /></Template>
+                        </Font>
+                    </Text>
+                </PartText>
+        </Complication>
+        <Complication type="MONOCHROMATIC_IMAGE">
+            <PartImage x="15" y="12" width="28" height="28" tintColor="#fff4f1ea">
+                <Image resource="[COMPLICATION.MONOCHROMATIC_IMAGE]" />
+            </PartImage>
+        </Complication>
+        <Complication type="SMALL_IMAGE">
+            <Condition>
+                <Expressions>
+                    <Expression name="small_photo"><![CDATA[[COMPLICATION.IMAGE_STYLE] == 1]]></Expression>
+                </Expressions>
+                <Compare expression="small_photo">
+                    <PartImage x="5" y="4" width="48" height="48">
+                        <Image resource="[COMPLICATION.SMALL_IMAGE]" />
+                    </PartImage>
+                </Compare>
+                <Default>
+                    <PartImage x="15" y="12" width="28" height="28">
+                        <Image resource="[COMPLICATION.SMALL_IMAGE]" />
+                    </PartImage>
+                </Default>
+            </Condition>
+        </Complication>
+        <Complication type="EMPTY">
+            <Group x="0" y="0" width="58" height="56" name="slot_empty">
+                <ScreenReader stringId="reader_empty" />
+                <PartDraw x="15" y="27" width="28" height="4">
+                    <Line startX="1" startY="1" endX="27" endY="1">
+                        <Stroke color="#ff3a3834" thickness="2" cap="BUTT" />
+                    </Line>
+                </PartDraw>
+            </Group>
+        </Complication>
+    </ComplicationSlot>
+    <ComplicationSlot slotId="20" displayName="slot_minutes_name" x="162" y="300" width="58" height="56" isCustomizable="TRUE" supportedTypes="GOAL_PROGRESS RANGED_VALUE SHORT_TEXT LONG_TEXT MONOCHROMATIC_IMAGE SMALL_IMAGE EMPTY">
+        <BoundingBox x="0" y="0" width="58" height="56" outlinePadding="1" />
+        <DefaultProviderPolicy primaryProvider="com.bobbfwed.emberphase.health/com.bobbfwed.emberphase.health.watch.MinutesDataSource" primaryProviderType="GOAL_PROGRESS" secondaryProvider="com.bobbfwed.emberphase.health/com.bobbfwed.emberphase.health.watch.MinutesDataSource" secondaryProviderType="SHORT_TEXT" defaultSystemProvider="EMPTY" defaultSystemProviderType="EMPTY" />
+        <Variant mode="AMBIENT" target="alpha" value="0" duration="0.0" />
+        <Complication type="GOAL_PROGRESS">
+            <Condition>
+                <Expressions>
+                    <Expression name="has_text"><![CDATA[[COMPLICATION.TEXT] != null]]></Expression>
+                </Expressions>
+                <Compare expression="has_text">
+                <PartText x="1" y="0" width="56" height="24">
+                    <Text align="CENTER" maxLines="1" ellipsis="TRUE" isAutoSize="TRUE">
+                        <Font family="SYNC_TO_DEVICE" size="18" weight="NORMAL" slant="NORMAL" color="#fff4f1ea">
+                            <Template>%s<Parameter expression="[COMPLICATION.TEXT]" /></Template>
+                        </Font>
+                    </Text>
+                </PartText>
+                </Compare>
+                <Default>
+                <PartText x="1" y="0" width="56" height="24">
+                    <Text align="CENTER" maxLines="1" ellipsis="TRUE" isAutoSize="TRUE">
+                        <Font family="SYNC_TO_DEVICE" size="18" weight="NORMAL" slant="NORMAL" color="#fff4f1ea">
+                            <Template>%s<Parameter expression="numberFormat(&quot;#&quot;, [COMPLICATION.GOAL_PROGRESS_VALUE])" /></Template>
+                        </Font>
+                    </Text>
+                </PartText>
+                </Default>
+            </Condition>
+            <Condition>
+                <Expressions>
+                    <Expression name="goal_target"><![CDATA[[COMPLICATION.GOAL_PROGRESS_TARGET_VALUE] > 0]]></Expression>
+                </Expressions>
+                <Compare expression="goal_target">
+                    <Group x="0" y="0" width="58" height="56" name="goal_target">
+                <PartText x="1" y="24" width="56" height="14">
+                    <Text align="CENTER" maxLines="1">
+                        <Font family="SYNC_TO_DEVICE" size="11" weight="NORMAL" slant="NORMAL" color="#ffc4c0b8">
+                            <Template>%s<Parameter expression="numberFormat(&quot;#&quot;, [COMPLICATION.GOAL_PROGRESS_TARGET_VALUE])" /></Template>
+                        </Font>
+                    </Text>
+                </PartText>
+                <PartDraw x="8" y="44" width="42" height="3">
+                    <Rectangle x="0" y="0" width="42" height="3">
+                        <Fill color="#ff3a3834" />
+                    </Rectangle>
+                </PartDraw>
+                <PartDraw x="8" y="44" width="42" height="3">
+                    <Rectangle x="0" y="0" width="42" height="3">
+                        <Fill color="#ffe24b16" />
+                        <Transform target="width" value="clamp([COMPLICATION.GOAL_PROGRESS_VALUE] / [COMPLICATION.GOAL_PROGRESS_TARGET_VALUE], 0, 1) * 42" />
+                    </Rectangle>
+                </PartDraw>
+                    </Group>
+                </Compare>
+            </Condition>
+        </Complication>
+        <Complication type="RANGED_VALUE">
+            <Condition>
+                <Expressions>
+                    <Expression name="has_text"><![CDATA[[COMPLICATION.TEXT] != null]]></Expression>
+                </Expressions>
+                <Compare expression="has_text">
+                <PartText x="1" y="0" width="56" height="24">
+                    <Text align="CENTER" maxLines="1" ellipsis="TRUE" isAutoSize="TRUE">
+                        <Font family="SYNC_TO_DEVICE" size="18" weight="NORMAL" slant="NORMAL" color="#fff4f1ea">
+                            <Template>%s<Parameter expression="[COMPLICATION.TEXT]" /></Template>
+                        </Font>
+                    </Text>
+                </PartText>
+                </Compare>
+                <Default>
+                <PartText x="1" y="0" width="56" height="24">
+                    <Text align="CENTER" maxLines="1" ellipsis="TRUE" isAutoSize="TRUE">
+                        <Font family="SYNC_TO_DEVICE" size="18" weight="NORMAL" slant="NORMAL" color="#fff4f1ea">
+                            <Template>%s<Parameter expression="numberFormat(&quot;#&quot;, [COMPLICATION.RANGED_VALUE_VALUE])" /></Template>
+                        </Font>
+                    </Text>
+                </PartText>
+                </Default>
+            </Condition>
+            <Condition>
+                <Expressions>
+                    <Expression name="range_span"><![CDATA[[COMPLICATION.RANGED_VALUE_MAX] > [COMPLICATION.RANGED_VALUE_MIN]]]></Expression>
+                </Expressions>
+                <Compare expression="range_span">
+                    <Group x="0" y="0" width="58" height="56" name="range_bar">
+                <PartDraw x="8" y="44" width="42" height="3">
+                    <Rectangle x="0" y="0" width="42" height="3">
+                        <Fill color="#ff3a3834" />
+                    </Rectangle>
+                </PartDraw>
+                <PartDraw x="8" y="44" width="42" height="3">
+                    <Rectangle x="0" y="0" width="42" height="3">
+                        <Fill color="#ffe24b16" />
+                        <Transform target="width" value="clamp(([COMPLICATION.RANGED_VALUE_VALUE] - [COMPLICATION.RANGED_VALUE_MIN]) / ([COMPLICATION.RANGED_VALUE_MAX] - [COMPLICATION.RANGED_VALUE_MIN]), 0, 1) * 42" />
+                    </Rectangle>
+                </PartDraw>
+                    </Group>
+                </Compare>
+            </Condition>
+        </Complication>
+        <Complication type="SHORT_TEXT">
+            <Condition>
+                <Expressions>
+                    <Expression name="has_title"><![CDATA[[COMPLICATION.TITLE] != null]]></Expression>
+                </Expressions>
+                <Compare expression="has_title">
+                <PartText x="1" y="2" width="56" height="12">
+                    <Text align="CENTER" maxLines="1">
+                        <Font family="SYNC_TO_DEVICE" size="10" weight="NORMAL" slant="NORMAL" color="#ffc4c0b8">
+                            <Template>%s<Parameter expression="[COMPLICATION.TITLE]" /></Template>
+                        </Font>
+                    </Text>
+                </PartText>
+                </Compare>
+            </Condition>
+                <PartText x="1" y="16" width="56" height="36">
+                    <Text align="CENTER" maxLines="2" ellipsis="TRUE" isAutoSize="TRUE">
+                        <Font family="SYNC_TO_DEVICE" size="15" weight="NORMAL" slant="NORMAL" color="#fff4f1ea">
+                            <Template>%s<Parameter expression="[COMPLICATION.TEXT]" /></Template>
+                        </Font>
+                    </Text>
+                </PartText>
+        </Complication>
+        <Complication type="LONG_TEXT">
+            <Condition>
+                <Expressions>
+                    <Expression name="has_title"><![CDATA[[COMPLICATION.TITLE] != null]]></Expression>
+                </Expressions>
+                <Compare expression="has_title">
+                <PartText x="1" y="2" width="56" height="12">
+                    <Text align="CENTER" maxLines="1">
+                        <Font family="SYNC_TO_DEVICE" size="10" weight="NORMAL" slant="NORMAL" color="#ffc4c0b8">
+                            <Template>%s<Parameter expression="[COMPLICATION.TITLE]" /></Template>
+                        </Font>
+                    </Text>
+                </PartText>
+                </Compare>
+            </Condition>
+                <PartText x="1" y="14" width="56" height="40">
+                    <Text align="CENTER" maxLines="3" ellipsis="TRUE">
+                        <Font family="SYNC_TO_DEVICE" size="12" weight="NORMAL" slant="NORMAL" color="#fff4f1ea">
+                            <Template>%s<Parameter expression="[COMPLICATION.TEXT]" /></Template>
+                        </Font>
+                    </Text>
+                </PartText>
+        </Complication>
+        <Complication type="MONOCHROMATIC_IMAGE">
+            <PartImage x="15" y="12" width="28" height="28" tintColor="#fff4f1ea">
+                <Image resource="[COMPLICATION.MONOCHROMATIC_IMAGE]" />
+            </PartImage>
+        </Complication>
+        <Complication type="SMALL_IMAGE">
+            <Condition>
+                <Expressions>
+                    <Expression name="small_photo"><![CDATA[[COMPLICATION.IMAGE_STYLE] == 1]]></Expression>
+                </Expressions>
+                <Compare expression="small_photo">
+                    <PartImage x="5" y="4" width="48" height="48">
+                        <Image resource="[COMPLICATION.SMALL_IMAGE]" />
+                    </PartImage>
+                </Compare>
+                <Default>
+                    <PartImage x="15" y="12" width="28" height="28">
+                        <Image resource="[COMPLICATION.SMALL_IMAGE]" />
+                    </PartImage>
+                </Default>
+            </Condition>
+        </Complication>
+        <Complication type="EMPTY">
+            <Group x="0" y="0" width="58" height="56" name="slot_empty">
+                <ScreenReader stringId="reader_empty" />
+                <PartDraw x="15" y="27" width="28" height="4">
+                    <Line startX="1" startY="1" endX="27" endY="1">
+                        <Stroke color="#ff3a3834" thickness="2" cap="BUTT" />
+                    </Line>
+                </PartDraw>
+            </Group>
+        </Complication>
+    </ComplicationSlot>
+    <ComplicationSlot slotId="30" displayName="slot_calories_name" x="230" y="300" width="58" height="56" isCustomizable="TRUE" supportedTypes="GOAL_PROGRESS RANGED_VALUE SHORT_TEXT LONG_TEXT MONOCHROMATIC_IMAGE SMALL_IMAGE EMPTY">
+        <BoundingBox x="0" y="0" width="58" height="56" outlinePadding="1" />
+        <DefaultProviderPolicy primaryProvider="com.bobbfwed.emberphase.health/com.bobbfwed.emberphase.health.watch.CaloriesDataSource" primaryProviderType="GOAL_PROGRESS" secondaryProvider="com.bobbfwed.emberphase.health/com.bobbfwed.emberphase.health.watch.CaloriesDataSource" secondaryProviderType="SHORT_TEXT" defaultSystemProvider="EMPTY" defaultSystemProviderType="EMPTY" />
+        <Variant mode="AMBIENT" target="alpha" value="0" duration="0.0" />
+        <Complication type="GOAL_PROGRESS">
+            <Condition>
+                <Expressions>
+                    <Expression name="has_text"><![CDATA[[COMPLICATION.TEXT] != null]]></Expression>
+                </Expressions>
+                <Compare expression="has_text">
+                <PartText x="1" y="0" width="56" height="24">
+                    <Text align="CENTER" maxLines="1" ellipsis="TRUE" isAutoSize="TRUE">
+                        <Font family="SYNC_TO_DEVICE" size="18" weight="NORMAL" slant="NORMAL" color="#fff4f1ea">
+                            <Template>%s<Parameter expression="[COMPLICATION.TEXT]" /></Template>
+                        </Font>
+                    </Text>
+                </PartText>
+                </Compare>
+                <Default>
+                <PartText x="1" y="0" width="56" height="24">
+                    <Text align="CENTER" maxLines="1" ellipsis="TRUE" isAutoSize="TRUE">
+                        <Font family="SYNC_TO_DEVICE" size="18" weight="NORMAL" slant="NORMAL" color="#fff4f1ea">
+                            <Template>%s<Parameter expression="numberFormat(&quot;#&quot;, [COMPLICATION.GOAL_PROGRESS_VALUE])" /></Template>
+                        </Font>
+                    </Text>
+                </PartText>
+                </Default>
+            </Condition>
+            <Condition>
+                <Expressions>
+                    <Expression name="goal_target"><![CDATA[[COMPLICATION.GOAL_PROGRESS_TARGET_VALUE] > 0]]></Expression>
+                </Expressions>
+                <Compare expression="goal_target">
+                    <Group x="0" y="0" width="58" height="56" name="goal_target">
+                <PartText x="1" y="24" width="56" height="14">
+                    <Text align="CENTER" maxLines="1">
+                        <Font family="SYNC_TO_DEVICE" size="11" weight="NORMAL" slant="NORMAL" color="#ffc4c0b8">
+                            <Template>%s<Parameter expression="numberFormat(&quot;#&quot;, [COMPLICATION.GOAL_PROGRESS_TARGET_VALUE])" /></Template>
+                        </Font>
+                    </Text>
+                </PartText>
+                <PartDraw x="8" y="44" width="42" height="3">
+                    <Rectangle x="0" y="0" width="42" height="3">
+                        <Fill color="#ff3a3834" />
+                    </Rectangle>
+                </PartDraw>
+                <PartDraw x="8" y="44" width="42" height="3">
+                    <Rectangle x="0" y="0" width="42" height="3">
+                        <Fill color="#ffe24b16" />
+                        <Transform target="width" value="clamp([COMPLICATION.GOAL_PROGRESS_VALUE] / [COMPLICATION.GOAL_PROGRESS_TARGET_VALUE], 0, 1) * 42" />
+                    </Rectangle>
+                </PartDraw>
+                    </Group>
+                </Compare>
+            </Condition>
+        </Complication>
+        <Complication type="RANGED_VALUE">
+            <Condition>
+                <Expressions>
+                    <Expression name="has_text"><![CDATA[[COMPLICATION.TEXT] != null]]></Expression>
+                </Expressions>
+                <Compare expression="has_text">
+                <PartText x="1" y="0" width="56" height="24">
+                    <Text align="CENTER" maxLines="1" ellipsis="TRUE" isAutoSize="TRUE">
+                        <Font family="SYNC_TO_DEVICE" size="18" weight="NORMAL" slant="NORMAL" color="#fff4f1ea">
+                            <Template>%s<Parameter expression="[COMPLICATION.TEXT]" /></Template>
+                        </Font>
+                    </Text>
+                </PartText>
+                </Compare>
+                <Default>
+                <PartText x="1" y="0" width="56" height="24">
+                    <Text align="CENTER" maxLines="1" ellipsis="TRUE" isAutoSize="TRUE">
+                        <Font family="SYNC_TO_DEVICE" size="18" weight="NORMAL" slant="NORMAL" color="#fff4f1ea">
+                            <Template>%s<Parameter expression="numberFormat(&quot;#&quot;, [COMPLICATION.RANGED_VALUE_VALUE])" /></Template>
+                        </Font>
+                    </Text>
+                </PartText>
+                </Default>
+            </Condition>
+            <Condition>
+                <Expressions>
+                    <Expression name="range_span"><![CDATA[[COMPLICATION.RANGED_VALUE_MAX] > [COMPLICATION.RANGED_VALUE_MIN]]]></Expression>
+                </Expressions>
+                <Compare expression="range_span">
+                    <Group x="0" y="0" width="58" height="56" name="range_bar">
+                <PartDraw x="8" y="44" width="42" height="3">
+                    <Rectangle x="0" y="0" width="42" height="3">
+                        <Fill color="#ff3a3834" />
+                    </Rectangle>
+                </PartDraw>
+                <PartDraw x="8" y="44" width="42" height="3">
+                    <Rectangle x="0" y="0" width="42" height="3">
+                        <Fill color="#ffe24b16" />
+                        <Transform target="width" value="clamp(([COMPLICATION.RANGED_VALUE_VALUE] - [COMPLICATION.RANGED_VALUE_MIN]) / ([COMPLICATION.RANGED_VALUE_MAX] - [COMPLICATION.RANGED_VALUE_MIN]), 0, 1) * 42" />
+                    </Rectangle>
+                </PartDraw>
+                    </Group>
+                </Compare>
+            </Condition>
+        </Complication>
+        <Complication type="SHORT_TEXT">
+            <Condition>
+                <Expressions>
+                    <Expression name="has_title"><![CDATA[[COMPLICATION.TITLE] != null]]></Expression>
+                </Expressions>
+                <Compare expression="has_title">
+                <PartText x="1" y="2" width="56" height="12">
+                    <Text align="CENTER" maxLines="1">
+                        <Font family="SYNC_TO_DEVICE" size="10" weight="NORMAL" slant="NORMAL" color="#ffc4c0b8">
+                            <Template>%s<Parameter expression="[COMPLICATION.TITLE]" /></Template>
+                        </Font>
+                    </Text>
+                </PartText>
+                </Compare>
+            </Condition>
+                <PartText x="1" y="16" width="56" height="36">
+                    <Text align="CENTER" maxLines="2" ellipsis="TRUE" isAutoSize="TRUE">
+                        <Font family="SYNC_TO_DEVICE" size="15" weight="NORMAL" slant="NORMAL" color="#fff4f1ea">
+                            <Template>%s<Parameter expression="[COMPLICATION.TEXT]" /></Template>
+                        </Font>
+                    </Text>
+                </PartText>
+        </Complication>
+        <Complication type="LONG_TEXT">
+            <Condition>
+                <Expressions>
+                    <Expression name="has_title"><![CDATA[[COMPLICATION.TITLE] != null]]></Expression>
+                </Expressions>
+                <Compare expression="has_title">
+                <PartText x="1" y="2" width="56" height="12">
+                    <Text align="CENTER" maxLines="1">
+                        <Font family="SYNC_TO_DEVICE" size="10" weight="NORMAL" slant="NORMAL" color="#ffc4c0b8">
+                            <Template>%s<Parameter expression="[COMPLICATION.TITLE]" /></Template>
+                        </Font>
+                    </Text>
+                </PartText>
+                </Compare>
+            </Condition>
+                <PartText x="1" y="14" width="56" height="40">
+                    <Text align="CENTER" maxLines="3" ellipsis="TRUE">
+                        <Font family="SYNC_TO_DEVICE" size="12" weight="NORMAL" slant="NORMAL" color="#fff4f1ea">
+                            <Template>%s<Parameter expression="[COMPLICATION.TEXT]" /></Template>
+                        </Font>
+                    </Text>
+                </PartText>
+        </Complication>
+        <Complication type="MONOCHROMATIC_IMAGE">
+            <PartImage x="15" y="12" width="28" height="28" tintColor="#fff4f1ea">
+                <Image resource="[COMPLICATION.MONOCHROMATIC_IMAGE]" />
+            </PartImage>
+        </Complication>
+        <Complication type="SMALL_IMAGE">
+            <Condition>
+                <Expressions>
+                    <Expression name="small_photo"><![CDATA[[COMPLICATION.IMAGE_STYLE] == 1]]></Expression>
+                </Expressions>
+                <Compare expression="small_photo">
+                    <PartImage x="5" y="4" width="48" height="48">
+                        <Image resource="[COMPLICATION.SMALL_IMAGE]" />
+                    </PartImage>
+                </Compare>
+                <Default>
+                    <PartImage x="15" y="12" width="28" height="28">
+                        <Image resource="[COMPLICATION.SMALL_IMAGE]" />
+                    </PartImage>
+                </Default>
+            </Condition>
+        </Complication>
+        <Complication type="EMPTY">
+            <Group x="0" y="0" width="58" height="56" name="slot_empty">
+                <ScreenReader stringId="reader_empty" />
+                <PartDraw x="15" y="27" width="28" height="4">
+                    <Line startX="1" startY="1" endX="27" endY="1">
+                        <Stroke color="#ff3a3834" thickness="2" cap="BUTT" />
+                    </Line>
+                </PartDraw>
+            </Group>
+        </Complication>
+    </ComplicationSlot>
+    <ComplicationSlot slotId="40" displayName="slot_open_name" x="298" y="300" width="58" height="56" isCustomizable="TRUE" supportedTypes="GOAL_PROGRESS RANGED_VALUE SHORT_TEXT LONG_TEXT MONOCHROMATIC_IMAGE SMALL_IMAGE EMPTY">
+        <BoundingBox x="0" y="0" width="58" height="56" outlinePadding="1" />
+        <DefaultProviderPolicy defaultSystemProvider="EMPTY" defaultSystemProviderType="EMPTY" />
+        <Variant mode="AMBIENT" target="alpha" value="0" duration="0.0" />
+        <Complication type="GOAL_PROGRESS">
+            <Condition>
+                <Expressions>
+                    <Expression name="has_text"><![CDATA[[COMPLICATION.TEXT] != null]]></Expression>
+                </Expressions>
+                <Compare expression="has_text">
+                <PartText x="1" y="0" width="56" height="24">
+                    <Text align="CENTER" maxLines="1" ellipsis="TRUE" isAutoSize="TRUE">
+                        <Font family="SYNC_TO_DEVICE" size="18" weight="NORMAL" slant="NORMAL" color="#fff4f1ea">
+                            <Template>%s<Parameter expression="[COMPLICATION.TEXT]" /></Template>
+                        </Font>
+                    </Text>
+                </PartText>
+                </Compare>
+                <Default>
+                <PartText x="1" y="0" width="56" height="24">
+                    <Text align="CENTER" maxLines="1" ellipsis="TRUE" isAutoSize="TRUE">
+                        <Font family="SYNC_TO_DEVICE" size="18" weight="NORMAL" slant="NORMAL" color="#fff4f1ea">
+                            <Template>%s<Parameter expression="numberFormat(&quot;#&quot;, [COMPLICATION.GOAL_PROGRESS_VALUE])" /></Template>
+                        </Font>
+                    </Text>
+                </PartText>
+                </Default>
+            </Condition>
+            <Condition>
+                <Expressions>
+                    <Expression name="goal_target"><![CDATA[[COMPLICATION.GOAL_PROGRESS_TARGET_VALUE] > 0]]></Expression>
+                </Expressions>
+                <Compare expression="goal_target">
+                    <Group x="0" y="0" width="58" height="56" name="goal_target">
+                <PartText x="1" y="24" width="56" height="14">
+                    <Text align="CENTER" maxLines="1">
+                        <Font family="SYNC_TO_DEVICE" size="11" weight="NORMAL" slant="NORMAL" color="#ffc4c0b8">
+                            <Template>%s<Parameter expression="numberFormat(&quot;#&quot;, [COMPLICATION.GOAL_PROGRESS_TARGET_VALUE])" /></Template>
+                        </Font>
+                    </Text>
+                </PartText>
+                <PartDraw x="8" y="44" width="42" height="3">
+                    <Rectangle x="0" y="0" width="42" height="3">
+                        <Fill color="#ff3a3834" />
+                    </Rectangle>
+                </PartDraw>
+                <PartDraw x="8" y="44" width="42" height="3">
+                    <Rectangle x="0" y="0" width="42" height="3">
+                        <Fill color="#ffe24b16" />
+                        <Transform target="width" value="clamp([COMPLICATION.GOAL_PROGRESS_VALUE] / [COMPLICATION.GOAL_PROGRESS_TARGET_VALUE], 0, 1) * 42" />
+                    </Rectangle>
+                </PartDraw>
+                    </Group>
+                </Compare>
+            </Condition>
+        </Complication>
+        <Complication type="RANGED_VALUE">
+            <Condition>
+                <Expressions>
+                    <Expression name="has_text"><![CDATA[[COMPLICATION.TEXT] != null]]></Expression>
+                </Expressions>
+                <Compare expression="has_text">
+                <PartText x="1" y="0" width="56" height="24">
+                    <Text align="CENTER" maxLines="1" ellipsis="TRUE" isAutoSize="TRUE">
+                        <Font family="SYNC_TO_DEVICE" size="18" weight="NORMAL" slant="NORMAL" color="#fff4f1ea">
+                            <Template>%s<Parameter expression="[COMPLICATION.TEXT]" /></Template>
+                        </Font>
+                    </Text>
+                </PartText>
+                </Compare>
+                <Default>
+                <PartText x="1" y="0" width="56" height="24">
+                    <Text align="CENTER" maxLines="1" ellipsis="TRUE" isAutoSize="TRUE">
+                        <Font family="SYNC_TO_DEVICE" size="18" weight="NORMAL" slant="NORMAL" color="#fff4f1ea">
+                            <Template>%s<Parameter expression="numberFormat(&quot;#&quot;, [COMPLICATION.RANGED_VALUE_VALUE])" /></Template>
+                        </Font>
+                    </Text>
+                </PartText>
+                </Default>
+            </Condition>
+            <Condition>
+                <Expressions>
+                    <Expression name="range_span"><![CDATA[[COMPLICATION.RANGED_VALUE_MAX] > [COMPLICATION.RANGED_VALUE_MIN]]]></Expression>
+                </Expressions>
+                <Compare expression="range_span">
+                    <Group x="0" y="0" width="58" height="56" name="range_bar">
+                <PartDraw x="8" y="44" width="42" height="3">
+                    <Rectangle x="0" y="0" width="42" height="3">
+                        <Fill color="#ff3a3834" />
+                    </Rectangle>
+                </PartDraw>
+                <PartDraw x="8" y="44" width="42" height="3">
+                    <Rectangle x="0" y="0" width="42" height="3">
+                        <Fill color="#ffe24b16" />
+                        <Transform target="width" value="clamp(([COMPLICATION.RANGED_VALUE_VALUE] - [COMPLICATION.RANGED_VALUE_MIN]) / ([COMPLICATION.RANGED_VALUE_MAX] - [COMPLICATION.RANGED_VALUE_MIN]), 0, 1) * 42" />
+                    </Rectangle>
+                </PartDraw>
+                    </Group>
+                </Compare>
+            </Condition>
+        </Complication>
+        <Complication type="SHORT_TEXT">
+            <Condition>
+                <Expressions>
+                    <Expression name="has_title"><![CDATA[[COMPLICATION.TITLE] != null]]></Expression>
+                </Expressions>
+                <Compare expression="has_title">
+                <PartText x="1" y="2" width="56" height="12">
+                    <Text align="CENTER" maxLines="1">
+                        <Font family="SYNC_TO_DEVICE" size="10" weight="NORMAL" slant="NORMAL" color="#ffc4c0b8">
+                            <Template>%s<Parameter expression="[COMPLICATION.TITLE]" /></Template>
+                        </Font>
+                    </Text>
+                </PartText>
+                </Compare>
+            </Condition>
+                <PartText x="1" y="16" width="56" height="36">
+                    <Text align="CENTER" maxLines="2" ellipsis="TRUE" isAutoSize="TRUE">
+                        <Font family="SYNC_TO_DEVICE" size="15" weight="NORMAL" slant="NORMAL" color="#fff4f1ea">
+                            <Template>%s<Parameter expression="[COMPLICATION.TEXT]" /></Template>
+                        </Font>
+                    </Text>
+                </PartText>
+        </Complication>
+        <Complication type="LONG_TEXT">
+            <Condition>
+                <Expressions>
+                    <Expression name="has_title"><![CDATA[[COMPLICATION.TITLE] != null]]></Expression>
+                </Expressions>
+                <Compare expression="has_title">
+                <PartText x="1" y="2" width="56" height="12">
+                    <Text align="CENTER" maxLines="1">
+                        <Font family="SYNC_TO_DEVICE" size="10" weight="NORMAL" slant="NORMAL" color="#ffc4c0b8">
+                            <Template>%s<Parameter expression="[COMPLICATION.TITLE]" /></Template>
+                        </Font>
+                    </Text>
+                </PartText>
+                </Compare>
+            </Condition>
+                <PartText x="1" y="14" width="56" height="40">
+                    <Text align="CENTER" maxLines="3" ellipsis="TRUE">
+                        <Font family="SYNC_TO_DEVICE" size="12" weight="NORMAL" slant="NORMAL" color="#fff4f1ea">
+                            <Template>%s<Parameter expression="[COMPLICATION.TEXT]" /></Template>
+                        </Font>
+                    </Text>
+                </PartText>
+        </Complication>
+        <Complication type="MONOCHROMATIC_IMAGE">
+            <PartImage x="15" y="12" width="28" height="28" tintColor="#fff4f1ea">
+                <Image resource="[COMPLICATION.MONOCHROMATIC_IMAGE]" />
+            </PartImage>
+        </Complication>
+        <Complication type="SMALL_IMAGE">
+            <Condition>
+                <Expressions>
+                    <Expression name="small_photo"><![CDATA[[COMPLICATION.IMAGE_STYLE] == 1]]></Expression>
+                </Expressions>
+                <Compare expression="small_photo">
+                    <PartImage x="5" y="4" width="48" height="48">
+                        <Image resource="[COMPLICATION.SMALL_IMAGE]" />
+                    </PartImage>
+                </Compare>
+                <Default>
+                    <PartImage x="15" y="12" width="28" height="28">
+                        <Image resource="[COMPLICATION.SMALL_IMAGE]" />
+                    </PartImage>
+                </Default>
+            </Condition>
+        </Complication>
+        <Complication type="EMPTY">
+            <Group x="0" y="0" width="58" height="56" name="slot_empty">
+                <ScreenReader stringId="reader_empty" />
+                <PartDraw x="15" y="27" width="28" height="4">
+                    <Line startX="1" startY="1" endX="27" endY="1">
+                        <Stroke color="#ff3a3834" thickness="2" cap="BUTT" />
+                    </Line>
+                </PartDraw>
+            </Group>
+        </Complication>
+    </ComplicationSlot>
+    <ComplicationSlot slotId="50" displayName="slot_power_name" x="221" y="288" width="8" height="8" isCustomizable="FALSE" supportedTypes="RANGED_VALUE EMPTY">
+        <BoundingBox x="0" y="0" width="8" height="8" outlinePadding="1" />
+        <DefaultProviderPolicy primaryProvider="com.bobbfwed.emberphase.health/com.bobbfwed.emberphase.health.watch.PowerSaveDataSource" primaryProviderType="RANGED_VALUE" defaultSystemProvider="EMPTY" defaultSystemProviderType="EMPTY" />
+        <Variant mode="AMBIENT" target="alpha" value="0" duration="0.0" />
+        <Complication type="RANGED_VALUE">
+            <PartDraw x="0" y="0" width="8" height="8" name="power_save_value" alpha="255">
+                <Rectangle x="0" y="0" width="8" height="8">
+                    <Fill color="#ff000000" />
+                </Rectangle>
+                <Transform target="x" value="[COMPLICATION.RANGED_VALUE_VALUE]" />
+                <Reference name="power_saving" source="x" defaultValue="0" />
+            </PartDraw>
+        </Complication>
+        <Complication type="EMPTY" />
+    </ComplicationSlot>
+</Scene>
 </WatchFace>

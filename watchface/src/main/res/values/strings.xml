@@ -5,4 +5,13 @@
     <string name="reader_day">Day position</string>
     <string name="reader_weather">Weather</string>
     <string name="reader_battery">Battery</string>
+    <string name="slot_steps_name">Steps</string>
+    <string name="slot_minutes_name">Active minutes</string>
+    <string name="slot_calories_name">Active calories</string>
+    <string name="slot_open_name">Open</string>
+    <string name="slot_power_name">Power saving</string>
+    <string name="steps_range_label">Steps range as goal</string>
+    <string name="steps_range_reader">On the steps slot, a range maximum is shown as the goal. Turn this off for any other ranged provider.</string>
+    <string name="reader_steps">Steps. While Steps range as goal is on, a range maximum on this slot is shown as the goal.</string>
+    <string name="reader_empty">Empty</string>
 </resources>
