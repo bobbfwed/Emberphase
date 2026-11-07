@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="watch_face_name">Emberphase</string>
+    <string name="reader_time">Time</string>
 </resources>

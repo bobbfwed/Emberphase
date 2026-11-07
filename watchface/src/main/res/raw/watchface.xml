@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="utf-8"?>
+<WatchFace width="450" height="450" clipShape="CIRCLE">
+    <Metadata key="CLOCK_TYPE" value="DIGITAL" />
+    <Metadata key="PREVIEW_TIME" value="22:10:00" />
+    <Scene backgroundColor="#ff000000">
+        <Group x="0" y="0" width="450" height="450" name="interactive">
+            <Variant mode="AMBIENT" target="alpha" value="0" duration="0.0" />
+            <PartText x="145" y="46" width="160" height="18" name="date">
+                <Text align="CENTER" maxLines="1">
+                    <Font family="SYNC_TO_DEVICE" size="13" weight="NORMAL" slant="NORMAL" color="#ffc4c0b8">
+                        <Template>%s %s %s<Parameter expression="[DAY_OF_WEEK_S]" /><Parameter expression="[MONTH_S]" /><Parameter expression="[DAY]" /></Template>
+                    </Font>
+                </Text>
+            </PartText>
+            <Group x="0" y="0" width="450" height="450" name="time">
+                <ScreenReader stringId="reader_time" />
+                <Condition>
+                    <Expressions>
+                        <Expression name="mode_24"><![CDATA[[IS_24_HOUR_MODE]]]></Expression>
+                    </Expressions>
+                    <Compare expression="mode_24">
+                        <Group x="0" y="0" width="450" height="450" name="time_24">
+                            <PartText x="108" y="68" width="92" height="64">
+                                <Text align="CENTER" maxLines="1">
+                                    <Font family="SYNC_TO_DEVICE" size="52" weight="MEDIUM" slant="NORMAL" letterSpacing="0.02" color="#fff4f1ea">
+                                        <Template>%s<Parameter expression="[HOUR_0_23_Z]" /></Template>
+                                    </Font>
+                                </Text>
+                            </PartText>
+                            <PartText x="250" y="68" width="92" height="64">
+                                <Text align="CENTER" maxLines="1">
+                                    <Font family="SYNC_TO_DEVICE" size="52" weight="MEDIUM" slant="NORMAL" letterSpacing="0.02" color="#fff4f1ea">
+                                        <Template>%s<Parameter expression="[MINUTE_Z]" /></Template>
+                                    </Font>
+                                </Text>
+                            </PartText>
+                            <PartDraw x="223" y="82" width="4" height="38" name="notch_24">
+                                <Line startX="2" startY="2" endX="2" endY="36">
+                                    <Stroke color="#ffe24b16" thickness="2" cap="ROUND" />
+                                </Line>
+                            </PartDraw>
+                        </Group>
+                    </Compare>
+                    <Default>
+                        <Group x="0" y="0" width="450" height="450" name="time_12">
+                            <PartText x="108" y="68" width="92" height="64">
+                                <Text align="CENTER" maxLines="1">
+                                    <Font family="SYNC_TO_DEVICE" size="52" weight="MEDIUM" slant="NORMAL" letterSpacing="0.02" color="#fff4f1ea">
+                                        <Template>%s<Parameter expression="[HOUR_1_12_Z]" /></Template>
+                                    </Font>
+                                </Text>
+                            </PartText>
+                            <PartText x="250" y="68" width="92" height="64">
+                                <Text align="CENTER" maxLines="1">
+                                    <Font family="SYNC_TO_DEVICE" size="52" weight="MEDIUM" slant="NORMAL" letterSpacing="0.02" color="#fff4f1ea">
+                                        <Template>%s<Parameter expression="[MINUTE_Z]" /></Template>
+                                    </Font>
+                                </Text>
+                            </PartText>
+                            <PartDraw x="223" y="82" width="4" height="38" name="notch_12">
+                                <Line startX="2" startY="2" endX="2" endY="36">
+                                    <Stroke color="#ffe24b16" thickness="2" cap="ROUND" />
+                                </Line>
+                            </PartDraw>
+                            <PartText x="196" y="136" width="58" height="16">
+                                <Text align="CENTER" maxLines="1">
+                                    <Font family="SYNC_TO_DEVICE" size="12" weight="NORMAL" slant="NORMAL" color="#ffc4c0b8">
+                                        <Template>%s<Parameter expression="[AMPM_STRING]" /></Template>
+                                    </Font>
+                                </Text>
+                            </PartText>
+                        </Group>
+                    </Default>
+                </Condition>
+            </Group>
+        </Group>
+        <Group x="0" y="0" width="450" height="450" name="ambient" alpha="0">
+            <Variant mode="AMBIENT" target="alpha" value="255" duration="0.0" />
+            <Group x="0" y="0" width="450" height="450" name="ambient_time">
+                <ScreenReader stringId="reader_time" />
+                <!-- The minute and notch match in both hour modes. A second
+                     size-52 copy is counted in the ambient memory budget. -->
+                <PartText x="250" y="68" width="92" height="64">
+                    <Text align="CENTER" maxLines="1">
+                        <Font family="SYNC_TO_DEVICE" size="52" weight="NORMAL" slant="NORMAL" letterSpacing="0.02" color="#ffc4c0b8">
+                            <Template>%s<Parameter expression="[MINUTE_Z]" /></Template>
+                        </Font>
+                    </Text>
+                </PartText>
+                <PartDraw x="223" y="82" width="4" height="38" name="ambient_notch">
+                    <Line startX="2" startY="2" endX="2" endY="36">
+                        <Stroke color="#ffe24b16" thickness="2" cap="ROUND" />
+                    </Line>
+                </PartDraw>
+                <Condition>
+                    <Expressions>
+                        <Expression name="mode_24"><![CDATA[[IS_24_HOUR_MODE]]]></Expression>
+                    </Expressions>
+                    <Compare expression="mode_24">
+                        <Group x="0" y="0" width="450" height="450" name="ambient_time_24">
+                            <PartText x="108" y="68" width="92" height="64">
+                                <Text align="CENTER" maxLines="1">
+                                    <Font family="SYNC_TO_DEVICE" size="52" weight="NORMAL" slant="NORMAL" letterSpacing="0.02" color="#ffc4c0b8">
+                                        <Template>%s<Parameter expression="[HOUR_0_23_Z]" /></Template>
+                                    </Font>
+                                </Text>
+                            </PartText>
+                        </Group>
+                    </Compare>
+                    <Default>
+                        <Group x="0" y="0" width="450" height="450" name="ambient_time_12">
+                            <PartText x="108" y="68" width="92" height="64">
+                                <Text align="CENTER" maxLines="1">
+                                    <Font family="SYNC_TO_DEVICE" size="52" weight="NORMAL" slant="NORMAL" letterSpacing="0.02" color="#ffc4c0b8">
+                                        <Template>%s<Parameter expression="[HOUR_1_12_Z]" /></Template>
+                                    </Font>
+                                </Text>
+                            </PartText>
+                            <PartText x="196" y="136" width="58" height="16">
+                                <Text align="CENTER" maxLines="1">
+                                    <Font family="SYNC_TO_DEVICE" size="12" weight="NORMAL" slant="NORMAL" color="#ff8a8680">
+                                        <Template>%s<Parameter expression="[AMPM_STRING]" /></Template>
+                                    </Font>
+                                </Text>
+                            </PartText>
+                        </Group>
+                    </Default>
+                </Condition>
+            </Group>
+        </Group>
+    </Scene>
+</WatchFace>

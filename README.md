@@ -6,9 +6,9 @@ activity totals.
 
 The face is hand-written Watch Face Format 4. Its APK contains no executable
 code. Wear OS scales a circular 450-unit layout to the round display. The
-previous scene and artwork were removed so the next face can be designed
-without that picture as a reference. There is no `watchface.xml` until that
-design is built. Build instructions below apply again once the scene exists.
+current scene is the Cinder Latch time treatment: split hour and minute
+numerals, a notch between them, and the date. The day staff, weather, battery,
+and complication slots are later steps.
 
 ## What still exists
 
@@ -54,16 +54,14 @@ The build script also checks saved user environment variables and standard
 per-user Android Studio installation paths. An internet connection is needed
 for validation-tool downloads on the first build.
 
-Once `watchface/src/main/res/raw/watchface.xml` exists again:
-
 ```powershell
 powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\scripts\Build-WatchFace.ps1
 ```
 
 This validates the WFF schema, compiles the resources, debug-signs the APK,
 checks memory limits, and verifies that the APK contains no DEX code. The
-output is **`artifacts/emberphase-debug.apk`**. Until the new scene is added,
-the script stops with an explicit missing-file error.
+output is **`artifacts/emberphase-debug.apk`**. The script stops if
+`watchface.xml` is missing.
 
 Alternatively, open the repository in Android Studio or use the Gradle wrapper:
 
@@ -142,7 +140,7 @@ See [data sources](docs/data-sources.md) and
 
 ## Validate
 
-The scene file, once it exists, is
+The scene file is
 `watchface/src/main/res/raw/watchface.xml`. Editor labels live in
 `watchface/src/main/res/values/strings.xml`. Picker metadata lives in
 `watchface/src/main/res/xml/watch_face_info.xml`.
