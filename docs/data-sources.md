@@ -47,29 +47,24 @@ through updates; changing the default does not force them to change. The other
 two prefer the optional Emberphase Health companion's individual `GOAL_PROGRESS`
 providers, falling back to empty when unavailable. See [companion setup](health-companion.md).
 
-* `GOAL_PROGRESS`: render the supplied numeric value and target; clamp only the
-  drawing to 0–100%, allowing the numeric total to exceed the target. Invalid or
-  zero targets have no fill and display no target.
-* `RANGED_VALUE`: render supplied text (or its numeric value when text is empty)
-  and normalize the gauge using its minimum and maximum. The goal label remains
-  `—`, except for the explicit Samsung Health Steps compatibility option. That
-  option displays a positive range maximum when its minimum is zero; the watch's
-  range maximum was compared with its Samsung Health Steps goal. Disable it for
-  another steps provider whose range limit is not a personal goal. Minutes and
-  calorie targets never use this exception.
-* `SHORT_TEXT`: display the provider's text. Do not parse it for numbers or infer
-  a goal. The gauge remains unfilled and the goal remains `—`.
-* Empty/unavailable: `—`, unfilled track, no fabricated zero or mockup sample.
+* `GOAL_PROGRESS`: show the supplied numeric value and target. Clamp only the
+  drawn fraction to 0–100%. The numeric total may exceed the target. Invalid or
+  zero targets have no fraction and display no target.
+* `RANGED_VALUE`: show the supplied text, or its numeric value when text is
+  empty, and normalize any fraction with the payload minimum and maximum. Do
+  not treat an arbitrary range maximum as a personal goal. The one observed
+  exception is Samsung Health Steps on this watch: a ranged payload with
+  minimum zero had a maximum equal to the Samsung Health step goal. Any new
+  scene that offers that compatibility must keep it optional and off for other
+  providers. Minutes and calorie targets never use it.
+* `SHORT_TEXT`: show the provider's text. Do not parse it or infer a goal.
+* Empty or unavailable: an explicit empty mark. Do not invent a zero.
 
 [WFF complication fields](https://developer.android.com/reference/wear-os/wff/complication/complication).
-Each activity slot subscribes to one provider and renders its numeric total in
-a compact box. WFF 4 `Reference` exports share the calculated progress angle and
-numeric target with separate scene elements that draw the track and target.
-The selection boxes around the three activity values do not overlap, and they
-do not have to contain the tracks. Missing or text-only data uses reference
-defaults (214 degrees for an empty track and zero for an unavailable target).
-The empty export groups use their transformable angle attribute as a numeric
-carrier and draw no artwork. This avoids extra complication subscriptions.
+Each user slot subscribes to one provider. Tap targets must not overlap. A
+`Reference` can carry a computed fraction to a separate drawing element, so the
+tap box does not have to contain the drawing. Missing or text-only data must
+not look like a measured zero.
 [Bounding areas and clipping](https://developer.android.com/reference/wear-os/wff/complication/bounding).
 See also [WFF references](https://developer.android.com/reference/wear-os/wff/common/reference/reference).
 There is no sharing between different providers, private Samsung API, guessed component name, background
@@ -102,71 +97,39 @@ Samsung Weather's service component. It renders provider text/title/icon for
 `SHORT_TEXT`, `LONG_TEXT`, and `RANGED_VALUE`, plus image types. Those generic
 fields do not promise a separately addressable daily high or condition enum;
 the face does not split or reinterpret a provider's formatted string. Native
-weather mode supplies the mockup's three weather fields together.
+weather can supply current temperature, daily high, and condition together.
 
 Sources: [WFF weather availability and staleness](https://developer.android.com/training/wearables/wff/weather),
 [weather source fields](https://developer.android.com/reference/wear-os/wff/common/attributes/source-type),
 [default provider policy](https://developer.android.com/reference/wear-os/wff/complication/default-provider-policy).
 
-## Battery policy
+## Power and refresh policy
 
-The watch-face APK has no executable application code, networking permission, location polling, heart
-rate sampling, alarms, or wake locks. Native clock hands and provider/system
-updates drive the face. Mechanical seconds default on, with a native 130 ms
-overshoot-and-return tick once per second. They can be disabled in the editor
-and disappear at 15% battery or less. The overshoot itself, and the balance
-step, also stop when Overshoot and balance motion is off, at 20% battery or
-below (the first low-battery lamp), or while Android power saving is on. The
-second hand and the still balance remain until the 15% cutoff. Power saving is
-a fixed watch-companion value with no periodic refresh. The companion reads
-Android power-save mode and the watch's low-power settings, and publishes a
-change when one of those changes. The slot sits on the dial so the runtime
-keeps it active. Date drums and the mechanical
-disc use date fields rather than millisecond expressions. The moon calculation
-uses UTC year, day-of-year, and AM/PM, so its time inputs change only twice daily.
-It estimates the phase from a known new moon and the mean synodic month, with no
-moon API or native moon-phase source. See [moon calculation](moon-phase.md) for
-accuracy limits. Ambient mode displays orange hour/minute hands, the selected weekday,
-month, and date, a battery slider with threshold lamps, and the same hour
-numerals as the active face (1, 2, 3, 4, 6, 8, 9, 10, 11, and 12) at the same
-positions and sizes. Those numerals and the hour ticks use the date orange
-`#d94c20`. The always-on date uses that face's live-row box. The
-ambient scene has no seconds, weather, moon, activity tracks,
-or adjacent calendar entries. Samsung display offload was observed active.
-Actual battery life must be measured on the watch.
+The watch-face APK has no executable code, networking permission, location
+polling, heart-rate sampling, alarms, or wake locks. Clock fields and
+provider updates drive the face. There is no ordinary millisecond source and
+no continuous animation. When a motion costs battery, drop the motion.
 
-The optional hidden balance uses `-[SECOND] * 36`. The toothed rim alternates
-its pale and dark treatments every 36 degrees, wide enough to fill the
-31-degree clear opening. The openings are 180 degrees apart and 180/36 is odd,
-so one shows the pale rim while the other shows the dark rim. Each second turns
-one slice counterclockwise, swapping the openings, including across the minute.
-Native WFF animation spends
-the whole 200 ms on that visible travel, at 15 fps, then holds for the rest of
-the second. One
-148-by-148 image moves behind the static dial's two apertures; no animated GIF
-is packaged in the APK. There is no millisecond source, continuous animation,
-or additional service. The balance has an independent editor toggle, is hidden
-in ambient, and is omitted at 15% battery or below. While the sweep runs it
-keeps that same step instead of a separate rocking motion. Its movement uses WFF's
-[Transform Animation](https://developer.android.com/reference/wear-os/wff/common/transform/animation).
+Power saving is a fixed watch-companion value with no periodic refresh. The
+companion reads Android power-save mode and the watch low-power settings, and
+publishes when one of those changes. Its complication slot must sit inside the
+round face. A clipped corner slot never activates, so the face keeps reading 0.
+The face adds no timer for sleep or theater mode. Samsung display offload has
+been observed. Ambient must be a separate, sparse scene. Actual battery life
+has to be measured on the watch.
 
-The optional companion schedules phone-side work about every 60 minutes, with a
-15-minute flex window, using WorkManager (Android may delay it further). That
-periodic read also waits while the phone battery is low. Watch providers receive
-Data Layer pushes and a 60-minute system refresh fallback that checks the local
-cache. Raising the watch does not ask the phone for a new reading while that
-cache is still fresh. A stale cache can request one at most every 15 minutes.
-Explicit Sync bypasses that gap and the low-battery wait. Sleep, theater, and
-power-saving modes are system states. The watch companion reports Android
-power saving only when that mode changes. The face adds no timer for sleep or
-theater mode, and
-ambient already hides seconds, the balance, moon, weather, and activity.
-Cached totals expire after three hours or at local midnight. An
-explicit unavailable-data timeline entry replaces expired totals even without
-a subsequent push. See [overnight sync setup](health-companion.md).
+The phone companion schedules work about every 60 minutes, with a 15-minute
+flex window, and waits while the phone battery is low. Android may delay it
+further. Watch providers receive Data Layer pushes and a 60-minute system
+refresh that reads the local cache. Raising the watch does not ask the phone
+for a new reading while that cache is fresh. A stale cache can request one at
+most every 15 minutes. Explicit Sync bypasses that gap and the low-battery
+wait. Cached totals expire after three hours or at local midnight. An explicit
+unavailable timeline entry replaces expired totals even without a later push.
+See [overnight sync setup](health-companion.md).
 
-The center-hub sweep adds one fixed, watch-local complication with no periodic
-updates. A tap supplies a timestamp for six seconds; WFF renders the movement
-and the timeline then returns to idle. The millisecond source is confined to
-that temporary branch, gated at 15% battery. There are no new phone health
-queries or sensor subscriptions. See [mechanical sweep](mechanical-sweep.md).
+`SweepDataSource` is a fixed, watch-local complication with no periodic
+updates. A tap can publish a short-lived timestamp. It does not define an
+animation, and a new scene does not have to use it. It adds no phone health
+query and no sensor subscription. Layout and rendering rules for the new face
+are in [platform constraints](platform-constraints.md).

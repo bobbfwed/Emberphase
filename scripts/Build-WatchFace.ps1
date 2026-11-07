@@ -18,6 +18,10 @@ New-Item -ItemType Directory -Path $buildRoot,$artifactRoot -Force | Out-Null
 function Check-Exit([string]$operation) {
     if ($LASTEXITCODE -ne 0) { throw "$operation failed with exit code $LASTEXITCODE." }
 }
+$faceXml = Join-Path $sourceRoot 'res\raw\watchface.xml'
+if (-not (Test-Path -LiteralPath $faceXml)) {
+    throw 'watchface.xml is absent. The previous scene was removed for a redesign; add the new scene before building.'
+}
 & (Join-Path $PSScriptRoot 'Get-WffTools.ps1')
 $validatorLog = Join-Path $buildRoot 'validation.log'
 # Version 1.7 can exit zero on schema failures: check its report as well.
@@ -31,7 +35,6 @@ $validation = Get-Content -LiteralPath $validatorLog -Raw
 Write-Host $validation
 if ($validation -match 'FAILED|SEVERE|NOT valid' -or $validation -notmatch 'SUCCESS|is valid') { throw "WFF validation failed; see $validatorLog" }
 
-& (Join-Path $PSScriptRoot 'New-Previews.ps1')
 $aapt2 = Join-Path $buildTools 'aapt2.exe'
 & $aapt2 compile --dir (Join-Path $sourceRoot 'res') -o (Join-Path $buildRoot 'resources.zip')
 Check-Exit 'Resource compilation'

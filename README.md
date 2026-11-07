@@ -1,92 +1,40 @@
 # Emberphase
 
-Emberphase is an open-source mechanical-style analog watch face for **Wear OS 6
-(Android API 36) and later**. Build it for your watch, customize the design, or
-fork it to create your own version.
+Emberphase is an open-source watch face for **Wear OS 6 (Android API 36) and
+later**, plus optional phone and watch companions that supply Samsung Health
+activity totals.
 
-The face is hand-written in native Watch Face Format 4. Its resource-only APK
-contains no executable app code. Wear OS scales the circular 450-unit layout
-to the watch display.
+The face is hand-written Watch Face Format 4. Its APK contains no executable
+code. Wear OS scales a circular 450-unit layout to the round display. The
+previous scene and artwork were removed so the next face can be designed
+without that picture as a reference. There is no `watchface.xml` until that
+design is built. Build instructions below apply again once the scene exists.
 
-![Illustrative Emberphase preview](docs/previews/normal.png)
+## What still exists
 
-## Features
+* Package `com.bobbfwed.emberphase` for the face, and
+  `com.bobbfwed.emberphase.health` for both companions.
+* Phone and watch companions that publish active minutes, active calories,
+  their daily goals, a power-saving flag, and an optional tap timestamp.
+* The data contracts in [docs/platform-constraints.md](docs/platform-constraints.md),
+  [docs/data-sources.md](docs/data-sources.md), and
+  [docs/device-providers.md](docs/device-providers.md).
 
-* Skeleton analog hands and an optional mechanical second hand with a brief
-  overshoot on each tick.
-* An optional hidden balance rim glimpsed through two curved inner openings,
-  swapping the two openings every second.
-* An editor setting turns off the seconds overshoot and the balance step.
-  Those two motions also stop in Android power saving and at 20% battery,
-  when the first low-battery lamp is on.
-* A center-hub tap runs a six-second mechanical sweep, then settles onto the
-  live time, date and indicators. Requires the Emberphase Health watch companion.
-* A rotating twin-moon disc behind a recessed aperture.
-* Mechanical calendar drums showing **weekday, month, date**, with partially
-  visible adjacent entries.
-* A battery slider with steady low-battery indicators.
-* Weather showing current temperature, daily high, and conditions, or a
-  customizable complication in the same inset.
-* Three concentric activity tracks for steps, active minutes, and activity
-  calories, with metallic fills, sharp edges, and exposed rack teeth.
-* A simplified always-on display with orange hands, the same date placement,
-  and a battery gauge, plus the active face's hour numerals on black.
+The tested hardware is a **Samsung Galaxy Watch6 Classic SM-R950 running Wear
+OS 6**, paired with a Galaxy S24 Ultra. Live steps and native weather were
+observed on that watch through complication and WFF weather sources. See
+[companion setup](docs/health-companion.md).
 
-The design prioritizes battery efficiency through static artwork, native WFF
-rendering, and provider-driven data updates. Seconds and the balance disappear
-in always-on mode and at 15% battery or below; each has its own editor toggle.
-The overshoot and balance step have one more toggle and also rest at 20% or in
-power saving. Battery-life
-measurements are still pending.
-
-See the balance in motion: [full-face animation](docs/previews/balance-motion.gif)
-and [enlarged detail](docs/previews/balance-detail.gif). These previews hold the
-clock hands still to isolate the mechanism's 200 ms movement and 800 ms rest.
-The seconds hand retains its separate 130 ms tick.
-
-Try the [interactive mechanical sweep preview](docs/previews/mechanical-sweep.html)
-by downloading it and opening it in a browser. It is a standalone file with
-sample weather/activity data. See [center-tap setup and behavior](docs/mechanical-sweep.md).
-
-See the [always-on](docs/previews/ambient.png),
-[low-battery](docs/previews/low-battery.png),
-[always-on low-battery](docs/previews/ambient-low-battery.png), and
-[unavailable-data](docs/previews/unavailable.png) previews. These are illustrative
-artwork composites with sample data, not device screenshots. The design references
-are the [original mockup](Mockup%20Images/Original%20Mockup.png) and
-[always-on mockup](Mockup%20Images/Always%20On%20Original%20Mockup.png).
-
-## Compatibility and current limitations
-
-The project requires Wear OS 6 / API 36 or later. It has been tested on a
-**Samsung Galaxy Watch6 Classic SM-R950 running Wear OS 6**, including active
-and always-on rendering, live steps, and native weather. Other watches and
-sizes have not yet been verified. See the
-[device test results](docs/device-acceptance.md) for details and outstanding checks.
-
-Activity data depends on the complication providers installed on the watch.
-Steps prefer Samsung Health's steps-and-goal provider when available, with the
-system step-count provider as a fallback. Active minutes and activity calories
-use the optional **Emberphase Health** phone/watch companion, because the tested
-Samsung Health watch app does not expose individual numeric providers for them.
-The companion reads Samsung Health's totals and daily goals with permission.
-Without the companion and consent, these displays remain `—`.
-See [companion setup and current testing status](docs/health-companion.md).
-
-The moon disc uses an offline date-based approximation of the lunar cycle,
-advancing twice a day at midnight and noon UTC. Its mechanical aperture gives
-a stylized view of the phase. See [the calculation and accuracy limits](docs/moon-phase.md).
+When battery life and motion conflict, choose battery life.
 
 ## Build from source
 
-The supplied build and artwork-generation scripts use **Windows PowerShell**.
-Install Git and Android Studio, then use Android Studio's SDK Manager to install:
+The build scripts use **Windows PowerShell**. Install Git and Android Studio,
+then use Android Studio's SDK Manager to install:
 
 * Android SDK Platform 36.
 * Android SDK Build-Tools 36.0.0.
 * Android SDK Platform-Tools, including ADB.
-
-Clone the repository, or clone your fork if you plan to publish your changes:
 
 ```powershell
 git clone https://github.com/bobbfwed/Emberphase.git
@@ -106,15 +54,16 @@ The build script also checks saved user environment variables and standard
 per-user Android Studio installation paths. An internet connection is needed
 for validation-tool downloads on the first build.
 
-Run the SDK-native build:
+Once `watchface/src/main/res/raw/watchface.xml` exists again:
 
 ```powershell
 powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\scripts\Build-WatchFace.ps1
 ```
 
-This validates the WFF schema, regenerates artwork and previews, compiles the
-resources, debug-signs the APK, checks memory limits, and verifies that the APK
-contains no DEX code. The output is **`artifacts/emberphase-debug.apk`**.
+This validates the WFF schema, compiles the resources, debug-signs the APK,
+checks memory limits, and verifies that the APK contains no DEX code. The
+output is **`artifacts/emberphase-debug.apk`**. Until the new scene is added,
+the script stops with an explicit missing-file error.
 
 Alternatively, open the repository in Android Studio or use the Gradle wrapper:
 
@@ -122,9 +71,9 @@ Alternatively, open the repository in Android Studio or use the Gradle wrapper:
 .\gradlew.bat :watchface:verifyResourceOnlyDebug :watchface:lintDebug
 ```
 
-The Gradle build uses the committed artwork. Its APK is
-`watchface/build/outputs/apk/debug/watchface-debug.apk`. Gradle 9.3.1 and Android
-Gradle Plugin 9.1.1 are pinned in the project.
+The Gradle APK is
+`watchface/build/outputs/apk/debug/watchface-debug.apk`. Gradle 9.3.1 and
+Android Gradle Plugin 9.1.1 are pinned in the project.
 
 Both build paths use Android's standard local debug keystore. Configure release
 signing before distributing a release build. Build output, local SDK settings,
@@ -162,88 +111,45 @@ To install an APK you already built, use:
 ```
 
 Long-press the current watch face, choose **Add watch face**, and select
-**Emberphase**. Open its editor to configure the data sources, second hand,
-and hidden balance.
+**Emberphase**.
 
-## Customize the displays
+## Data sources
 
-Use **Left inset → Weather** for current temperature, today's high, and conditions
-in the watch's temperature unit. Weather availability depends on the system
-weather source; missing values show dashes, and `!` indicates available weather
-with an error or stale-data state.
+Activity data depends on the complication providers installed on the watch.
+Steps prefer Samsung Health's steps provider when available. On the tested
+watch, native WFF step fields returned zero while that provider returned live
+steps. Active minutes and activity calories use the optional **Emberphase
+Health** phone and watch companion, because the tested Samsung Health watch
+app does not expose separate numeric providers for them. Without the companion
+and consent, those readings stay unavailable. See
+[companion setup](docs/health-companion.md).
 
-Choose **Left inset → Custom complication** to use an installed complication
-provider instead, then select its source in the left inset.
+A `GOAL_PROGRESS` payload supplies a value and a target. A `RANGED_VALUE`
+payload supplies its own minimum and maximum; do not treat an arbitrary range
+maximum as a personal goal. Samsung Health Steps on the tested watch was the
+observed exception, and only when that compatibility is explicitly enabled.
+`SHORT_TEXT` is text only. Empty data stays empty. The face does not calculate
+activity totals.
 
-For activity providers, select these areas in the watch-face editor:
+Existing face instances can retain a previous provider selection after an
+update. For minutes and calories, install and connect the companion, then
+select **Emberphase · Active minutes** and **Emberphase · Active calories**.
+The combined Samsung Health Daily Activity display cannot supply these numeric
+fields independently.
 
-| Display | Selection point |
-| --- | --- |
-| Steps | Large steps number |
-| Active minutes | Number or dash above MIN |
-| Activity calories | Number or dash above CAL |
-| Custom left inset | Left weather area, after choosing Custom complication |
-
-The activity values have separate, non-overlapping selection boxes. Tap the
-number or dash for the metric you want to configure. Choose a provider that supplies the corresponding metric;
-the face displays the provider's data and does not calculate activity totals.
-
-Explicit goals are shown when a provider supplies `GOAL_PROGRESS` data.
-For Samsung Health Steps, the enabled **Samsung Health steps target** editor
-option also displays the range maximum as the target: this was compared with
-the goal in Samsung Health on the tested watch. Disable this option if you
-select a different steps provider whose range limit is not your personal goal.
-Other `RANGED_VALUE` providers can fill a track, but their goal labels remain
-`—`. A `SHORT_TEXT` provider
-shows text without filling the track. System steps may differ from phone-merged
-Samsung Health totals, and automatic Samsung Health goal synchronization has
-not been verified.
-
-Existing face instances can retain a range-based steps selection even when the
-default requests `GOAL_PROGRESS`; the Samsung compatibility option handles that
-case without reselection. For active minutes and calories, install and connect
-the companion, then select **Emberphase · Active minutes** for MIN and
-**Emberphase · Active calories** for CAL. New face instances prefer these
-providers when installed; existing selections may need changing once. The combined
-Samsung Health Daily Activity display cannot supply these numeric fields independently.
-
-For the technical findings, see [data sources](docs/data-sources.md) and
+See [data sources](docs/data-sources.md) and
 [Samsung provider availability](docs/device-providers.md).
 
-## Modify and validate
+## Validate
 
-The main files to edit are:
+The scene file, once it exists, is
+`watchface/src/main/res/raw/watchface.xml`. Editor labels live in
+`watchface/src/main/res/values/strings.xml`. Picker metadata lives in
+`watchface/src/main/res/xml/watch_face_info.xml`.
 
-| File | Purpose |
-| --- | --- |
-| `watchface/src/main/res/raw/watchface.xml` | Layout, expressions, hands, configuration, and complications |
-| `scripts/New-DialAssets.ps1` | Reproducible static artwork |
-| `scripts/New-Previews.ps1` | Illustrative previews and picker image |
-| `watchface/src/main/res/values/strings.xml` | Watch-face and editor labels |
-| `watchface/src/main/res/xml/watch_face_info.xml` | Picker and editor metadata |
-
-After changing the artwork scripts, run the SDK-native build to regenerate the
-assets. To regenerate just the artwork and previews:
-
-```powershell
-powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\scripts\New-Previews.ps1
-```
-
-With Node.js installed, run the dependency-free expression and geometry checks:
-
-```powershell
-node .\scripts\test-watchface.mjs
-node .\scripts\test-sweep.mjs
-powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\scripts\Test-BalanceWindows.ps1
-```
-
-The checks cover calendar rollover and leap years, activity ranges and goals,
-battery bounds, the seconds and balance cutoffs, artwork references, selection
-geometry, balance-window masking, and animated-preview timing.
-The build additionally uses Google's WFF validator and memory checker, with
-10 MiB active and 4 MiB ambient memory limits. See
-[validation details](docs/validation.md) and the
-[device test checklist](docs/device-acceptance.md) when testing a change.
+The SDK build uses Google's WFF validator and memory checker, with 10 MiB
+active and 4 MiB ambient limits. Expression strings in XML use `&quot;`.
+Editor labels must not contain `%`, because Samsung formats them anyway.
 
 To inspect complication provider declarations on a connected watch:
 

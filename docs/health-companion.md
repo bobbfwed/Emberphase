@@ -13,7 +13,7 @@ On 2026-11-02 the developer enabled Samsung's read-testing mode and accepted
 the Health permission screen. Initial sync read the two totals and goals through
 the SDK and delivered them to the watch through Data Layer. After selecting the
 two providers, a physical screenshot confirmed live MIN/CAL numbers, numeric
-targets and filled tracks. The runtime reports GOAL_PROGRESS with SDK-supplied
+targets. The runtime reports GOAL_PROGRESS with SDK-supplied
 targets for both providers. The developer also confirmed the display looks correct.
 
 The phone/watch apps compile and their lint checks pass. Unit tests cover expiry,
@@ -78,10 +78,10 @@ key and register the phone app's package and release SHA-256 with Samsung.
    Optimized setting blocked the scheduled worker overnight. This setting applies
    to the phone companion; it does not change watch-face animation or watch power
    settings. Android can still delay work, and disconnected devices cannot sync.
-4. Edit the face's Complications. Tap the number/dash above **MIN**, select
-   **Emberphase · Active minutes**; do the same for **CAL** with
-   **Emberphase · Active calories**. Save the face. Existing selections persist
-   across face updates, so changing default providers does not replace them.
+4. Edit the face and assign **Emberphase · Active minutes** and
+   **Emberphase · Active calories** to the slots the current scene provides
+   for those readings. Save the face. Existing selections persist across face
+   updates, so changing default providers does not replace them.
 
 ## Data, cadence, and stopping
 
@@ -104,8 +104,7 @@ requests are limited to one every 15 minutes. Wear OS requests each activity
 provider about every 60 minutes as a recovery path when pushes stop; those
 requests read the local cache. There is no foreground service, sensor sampling,
 exact alarm, or new watch-face timer. Sleep, theater, and watch power saving
-remain system display states. Ambient already omits seconds, the balance, moon,
-weather, and activity.
+remain system display states. The face adds no timer for them.
 
 Only dated totals and goals travel through Google's paired-device Data Layer.
 The watch caches them in private storage, excluded from backup and device
@@ -117,7 +116,7 @@ to Wear OS through the complication's validity range. Version 0.1.0 left expired
 values visible on the tested Samsung renderer despite that range. Version 0.1.1
 also sends an explicit `NO_DATA` timeline entry beginning at expiry (or an
 earlier watch-local midnight), so the renderer has a scheduled replacement even
-without another phone push. Expired totals become dashes and empty tracks;
+without another phone push. Expired totals become unavailable;
 they are not represented as a measured zero. See Android's
 [complication timeline API](https://developer.android.com/reference/androidx/wear/watchface/complications/datasource/ComplicationDataTimeline).
 

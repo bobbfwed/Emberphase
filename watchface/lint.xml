@@ -2,7 +2,7 @@
 <lint>
     <!-- Android's code-reference scanner cannot follow WFF's unprefixed names
          or its renderer-discovered entry points. The WFF validator and the
-         resource contract checks in scripts/test-watchface.mjs cover these. -->
+         The WFF validator covers the scene once it exists again. -->
     <issue id="UnusedResources">
         <ignore path="src/main/res/raw/watchface.xml" />
         <ignore path="src/main/res/xml/watch_face_info.xml" />
