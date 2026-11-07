@@ -4,6 +4,7 @@
     <Metadata key="PREVIEW_TIME" value="22:10:00" />
         <UserConfigurations>
         <BooleanConfiguration id="steps_range_as_goal" displayName="steps_range_label" screenReaderText="steps_range_reader" defaultValue="TRUE" />
+        <BooleanConfiguration id="latch_motion" displayName="latch_motion_label" screenReaderText="latch_motion_reader" defaultValue="FALSE" />
     </UserConfigurations>
     <Scene backgroundColor="#ff000000">
         <Group x="0" y="0" width="450" height="450" name="interactive">
@@ -228,34 +229,94 @@
                         <Expression name="heat_stale"><![CDATA[[WEATHER.IS_AVAILABLE] && [WEATHER.DAY_TEMPERATURE_HIGH] > [WEATHER.DAY_TEMPERATURE_LOW] && [WEATHER.IS_ERROR]]]></Expression>
                     </Expressions>
                     <Compare expression="heat_fresh">
-                        <PartDraw x="212" y="154" width="26" height="68" name="tooth_fresh">
-                            <Line startX="2" startY="66" endX="24" endY="66">
-                                <Stroke color="#ffe24b16" thickness="3" cap="ROUND" />
-                                <Transform target="startY" value="66 - clamp(([WEATHER.TEMPERATURE] - [WEATHER.DAY_TEMPERATURE_LOW]) / ([WEATHER.DAY_TEMPERATURE_HIGH] - [WEATHER.DAY_TEMPERATURE_LOW]), 0, 1) * 64" />
-                                <Transform target="endY" value="66 - clamp(([WEATHER.TEMPERATURE] - [WEATHER.DAY_TEMPERATURE_LOW]) / ([WEATHER.DAY_TEMPERATURE_HIGH] - [WEATHER.DAY_TEMPERATURE_LOW]), 0, 1) * 64" />
-                            </Line>
-                        </PartDraw>
+                        <Condition>
+                            <Expressions>
+                                <Expression name="tooth_moves"><![CDATA[[CONFIGURATION.latch_motion] == "TRUE" && [BATTERY_PERCENT] > 20 && [REFERENCE.power_saving] == 0 && ![BATTERY_IS_LOW]]]></Expression>
+                            </Expressions>
+                            <Compare expression="tooth_moves">
+                                <PartDraw x="212" y="154" width="26" height="68" name="tooth_fresh_moves">
+                                    <Line startX="2" startY="66" endX="24" endY="66">
+                                        <Stroke color="#ffe24b16" thickness="3" cap="ROUND" />
+                                        <Transform target="startY" value="66 - clamp(([WEATHER.TEMPERATURE] - [WEATHER.DAY_TEMPERATURE_LOW]) / ([WEATHER.DAY_TEMPERATURE_HIGH] - [WEATHER.DAY_TEMPERATURE_LOW]), 0, 1) * 64">
+                                            <Animation duration="0.2" fps="15" interpolation="EASE_OUT" repeat="0" />
+                                        </Transform>
+                                        <Transform target="endY" value="66 - clamp(([WEATHER.TEMPERATURE] - [WEATHER.DAY_TEMPERATURE_LOW]) / ([WEATHER.DAY_TEMPERATURE_HIGH] - [WEATHER.DAY_TEMPERATURE_LOW]), 0, 1) * 64">
+                                            <Animation duration="0.2" fps="15" interpolation="EASE_OUT" repeat="0" />
+                                        </Transform>
+                                    </Line>
+                                </PartDraw>
+                            </Compare>
+                            <Default>
+                                <PartDraw x="212" y="154" width="26" height="68" name="tooth_fresh">
+                                    <Line startX="2" startY="66" endX="24" endY="66">
+                                        <Stroke color="#ffe24b16" thickness="3" cap="ROUND" />
+                                        <Transform target="startY" value="66 - clamp(([WEATHER.TEMPERATURE] - [WEATHER.DAY_TEMPERATURE_LOW]) / ([WEATHER.DAY_TEMPERATURE_HIGH] - [WEATHER.DAY_TEMPERATURE_LOW]), 0, 1) * 64" />
+                                        <Transform target="endY" value="66 - clamp(([WEATHER.TEMPERATURE] - [WEATHER.DAY_TEMPERATURE_LOW]) / ([WEATHER.DAY_TEMPERATURE_HIGH] - [WEATHER.DAY_TEMPERATURE_LOW]), 0, 1) * 64" />
+                                    </Line>
+                                </PartDraw>
+                            </Default>
+                        </Condition>
                     </Compare>
                     <Compare expression="heat_stale">
-                        <PartDraw x="212" y="154" width="26" height="68" name="tooth_stale">
-                            <Line startX="2" startY="66" endX="24" endY="66">
-                                <Stroke color="#ff8a8680" thickness="3" cap="ROUND" />
-                                <Transform target="startY" value="66 - clamp(([WEATHER.TEMPERATURE] - [WEATHER.DAY_TEMPERATURE_LOW]) / ([WEATHER.DAY_TEMPERATURE_HIGH] - [WEATHER.DAY_TEMPERATURE_LOW]), 0, 1) * 64" />
-                                <Transform target="endY" value="66 - clamp(([WEATHER.TEMPERATURE] - [WEATHER.DAY_TEMPERATURE_LOW]) / ([WEATHER.DAY_TEMPERATURE_HIGH] - [WEATHER.DAY_TEMPERATURE_LOW]), 0, 1) * 64" />
-                            </Line>
-                        </PartDraw>
+                        <Condition>
+                            <Expressions>
+                                <Expression name="tooth_moves"><![CDATA[[CONFIGURATION.latch_motion] == "TRUE" && [BATTERY_PERCENT] > 20 && [REFERENCE.power_saving] == 0 && ![BATTERY_IS_LOW]]]></Expression>
+                            </Expressions>
+                            <Compare expression="tooth_moves">
+                                <PartDraw x="212" y="154" width="26" height="68" name="tooth_stale_moves">
+                                    <Line startX="2" startY="66" endX="24" endY="66">
+                                        <Stroke color="#ff8a8680" thickness="3" cap="ROUND" />
+                                        <Transform target="startY" value="66 - clamp(([WEATHER.TEMPERATURE] - [WEATHER.DAY_TEMPERATURE_LOW]) / ([WEATHER.DAY_TEMPERATURE_HIGH] - [WEATHER.DAY_TEMPERATURE_LOW]), 0, 1) * 64">
+                                            <Animation duration="0.2" fps="15" interpolation="EASE_OUT" repeat="0" />
+                                        </Transform>
+                                        <Transform target="endY" value="66 - clamp(([WEATHER.TEMPERATURE] - [WEATHER.DAY_TEMPERATURE_LOW]) / ([WEATHER.DAY_TEMPERATURE_HIGH] - [WEATHER.DAY_TEMPERATURE_LOW]), 0, 1) * 64">
+                                            <Animation duration="0.2" fps="15" interpolation="EASE_OUT" repeat="0" />
+                                        </Transform>
+                                    </Line>
+                                </PartDraw>
+                            </Compare>
+                            <Default>
+                                <PartDraw x="212" y="154" width="26" height="68" name="tooth_stale">
+                                    <Line startX="2" startY="66" endX="24" endY="66">
+                                        <Stroke color="#ff8a8680" thickness="3" cap="ROUND" />
+                                        <Transform target="startY" value="66 - clamp(([WEATHER.TEMPERATURE] - [WEATHER.DAY_TEMPERATURE_LOW]) / ([WEATHER.DAY_TEMPERATURE_HIGH] - [WEATHER.DAY_TEMPERATURE_LOW]), 0, 1) * 64" />
+                                        <Transform target="endY" value="66 - clamp(([WEATHER.TEMPERATURE] - [WEATHER.DAY_TEMPERATURE_LOW]) / ([WEATHER.DAY_TEMPERATURE_HIGH] - [WEATHER.DAY_TEMPERATURE_LOW]), 0, 1) * 64" />
+                                    </Line>
+                                </PartDraw>
+                            </Default>
+                        </Condition>
                     </Compare>
                 </Condition>
             </Group>
             <Group x="0" y="0" width="450" height="450" name="day_cinder">
                 <ScreenReader stringId="reader_day" />
-                <PartDraw x="103" y="168" width="244" height="40" name="cinder_static">
-                    <Line startX="2" startY="2" endX="2" endY="38">
-                        <Stroke color="#ffe24b16" thickness="3" cap="ROUND" />
-                        <Transform target="startX" value="2 + (([HOUR_0_23] * 60 + [MINUTE]) / 1440) * 240" />
-                        <Transform target="endX" value="2 + (([HOUR_0_23] * 60 + [MINUTE]) / 1440) * 240" />
-                    </Line>
-                </PartDraw>
+                <Condition>
+                    <Expressions>
+                        <Expression name="cinder_moves"><![CDATA[[CONFIGURATION.latch_motion] == "TRUE" && [BATTERY_PERCENT] > 20 && [REFERENCE.power_saving] == 0 && ![BATTERY_IS_LOW]]]></Expression>
+                    </Expressions>
+                    <Compare expression="cinder_moves">
+                        <PartDraw x="103" y="168" width="244" height="40" name="cinder_moves">
+                            <Line startX="2" startY="2" endX="2" endY="38">
+                                <Stroke color="#ffe24b16" thickness="3" cap="ROUND" />
+                                <Transform target="startX" value="2 + (([HOUR_0_23] * 60 + [MINUTE]) / 1440) * 240">
+                                    <Animation duration="0.2" fps="15" interpolation="EASE_OUT" repeat="0" />
+                                </Transform>
+                                <Transform target="endX" value="2 + (([HOUR_0_23] * 60 + [MINUTE]) / 1440) * 240">
+                                    <Animation duration="0.2" fps="15" interpolation="EASE_OUT" repeat="0" />
+                                </Transform>
+                            </Line>
+                        </PartDraw>
+                    </Compare>
+                    <Default>
+                        <PartDraw x="103" y="168" width="244" height="40" name="cinder_static">
+                            <Line startX="2" startY="2" endX="2" endY="38">
+                                <Stroke color="#ffe24b16" thickness="3" cap="ROUND" />
+                                <Transform target="startX" value="2 + (([HOUR_0_23] * 60 + [MINUTE]) / 1440) * 240" />
+                                <Transform target="endX" value="2 + (([HOUR_0_23] * 60 + [MINUTE]) / 1440) * 240" />
+                            </Line>
+                        </PartDraw>
+                    </Default>
+                </Condition>
             </Group>
             <Group x="0" y="0" width="450" height="450" name="time">
                 <ScreenReader stringId="reader_time" />
@@ -372,6 +433,33 @@
                     </Default>
                 </Condition>
             </Group>
+            <PartDraw x="104" y="187" width="242" height="3" name="ambient_day_staff">
+                <Line startX="1" startY="1" endX="241" endY="1">
+                    <Stroke color="#ff3a3834" thickness="1" cap="BUTT" />
+                </Line>
+            </PartDraw>
+            <PartDraw x="104" y="183" width="242" height="10" name="ambient_day_ticks">
+                <Line startX="1" startY="1" endX="1" endY="9">
+                    <Stroke color="#ff3a3834" thickness="1" cap="BUTT" />
+                </Line>
+                <Line startX="61" startY="1" endX="61" endY="9">
+                    <Stroke color="#ff3a3834" thickness="1" cap="BUTT" />
+                </Line>
+                <Line startX="181" startY="1" endX="181" endY="9">
+                    <Stroke color="#ff3a3834" thickness="1" cap="BUTT" />
+                </Line>
+                <Line startX="241" startY="1" endX="241" endY="9">
+                    <Stroke color="#ff3a3834" thickness="1" cap="BUTT" />
+                </Line>
+            </PartDraw>
+            <PartDraw x="104" y="175" width="242" height="26" name="ambient_cinder">
+                <ScreenReader stringId="reader_day" />
+                <Line startX="1" startY="1" endX="1" endY="25">
+                    <Stroke color="#ffc4c0b8" thickness="1" cap="BUTT" />
+                    <Transform target="startX" value="1 + (([HOUR_0_23] * 60 + [MINUTE]) / 1440) * 240" />
+                    <Transform target="endX" value="1 + (([HOUR_0_23] * 60 + [MINUTE]) / 1440) * 240" />
+                </Line>
+            </PartDraw>
         </Group>
         <ComplicationSlot slotId="10" displayName="slot_steps_name" x="94" y="300" width="58" height="56" isCustomizable="TRUE" supportedTypes="GOAL_PROGRESS RANGED_VALUE SHORT_TEXT LONG_TEXT MONOCHROMATIC_IMAGE SMALL_IMAGE EMPTY">
         <BoundingBox x="0" y="0" width="58" height="56" outlinePadding="1" />
