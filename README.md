@@ -6,9 +6,11 @@ activity totals.
 
 The face is hand-written Watch Face Format 4. Its APK contains no executable
 code. Wear OS scales a circular 450-unit layout to the round display. The
-current scene is the Cinder Latch time treatment: split hour and minute
-numerals, a notch between them, and the date. The day staff, weather, battery,
-and complication slots are later steps.
+current scene is the Cinder Latch. Time is split hour and minute numerals
+with a notch between them. A horizontal staff marks the local day, and one
+vertical mark walks that staff from midnight to midnight. Weather, battery,
+and four complication slots sit around that instrument. Always-on mode keeps
+the numerals, the notch, the day staff, and the day mark.
 
 ## What still exists
 
