@@ -25,7 +25,7 @@ export function conditional(name,expression,yes,no=null) {
 }
 export function text(name,x,y,width,height,size,template,parameters=[],options={}) {
   const {color=colors.ivory,family=size>=100?'rajdhani_light':'sans-serif',weight='NORMAL',align='CENTER',...other}=options;
-  return element('PartText',{name,x,y,width,height},element('Text',{align,ellipsis:'TRUE',maxLines:1,isAutoSize:'TRUE'},
+  return element('PartText',{name,x,y,width,height},element('Text',{align,ellipsis:'TRUE',maxLines:1,isAutoSize:size>=100?'FALSE':'TRUE'},
     element('Font',{family,size,weight,color,...other},parameters.length?element('Template',{},template,...parameters.map(expression=>element('Parameter',{expression}))):template)));
 }
 export const escapeXml=value=>String(value).replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;');

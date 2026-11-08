@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
-import {dayProgress,docks,evaluate,fold,watchFace} from './lib/parallax-scene.mjs';
+import {dayProgress,docks,evaluate,fold,watchFace,scene} from './lib/parallax-scene.mjs';
 import {progressExpressions,complicationDock} from './lib/parallax-docks.mjs';
 import {svg} from './lib/parallax-preview.mjs';
 import {use24,foldVisible} from './lib/parallax-settings.mjs';
@@ -27,6 +27,7 @@ for(let i=0;i<docks.length;i++) {
   for(let j=i+1;j<docks.length;j++)assert.ok(Math.hypot(docks[i].x-docks[j].x,docks[i].y-docks[j].y)>104);
 }
 assert.doesNotMatch(watchFace(),/\[(?:SECOND|MILLISECOND|UTC_TIMESTAMP)\]/);
+walk(scene(),node=>{if(node.tag==='Text'&&node.children.some(c=>c.tag==='Font'&&c.attrs.size>=100))assert.equal(node.attrs.isAutoSize,'FALSE','Clock numerals have a fixed, measured size.');});
 const goal=progressExpressions.GOAL_PROGRESS,range=progressExpressions.RANGED_VALUE;
 const g=(value,target)=>({'COMPLICATION.GOAL_PROGRESS_VALUE':value,'COMPLICATION.GOAL_PROGRESS_TARGET_VALUE':target});
 for(const [value,target,valid,fill] of [[0,100,true,0],[150,100,true,1],[50,100,true,0.5],[50,0,false],[50,-1,false],[NaN,100,false],[1,Infinity,false],[-1,100,false]]) {
@@ -43,6 +44,7 @@ for(const dock of docks) {
   const slot=complicationDock(dock);
   assert.deepEqual(slot.children.filter(c=>c.tag==='Complication').map(c=>c.attrs.type).sort(),['EMPTY','GOAL_PROGRESS','MONOCHROMATIC_IMAGE','RANGED_VALUE','SHORT_TEXT']);
   assert.equal(slot.attrs.isCustomizable,'TRUE');
+  assert.equal(slot.attrs.tintColor,undefined,'Parent tint must not override progress and label colors; provider icons have their own tint.');
   assert.ok(slot.children.some(c=>c.tag==='BoundingOval'));
 }
 const alternate=svg({docks:{101:{type:'SHORT_TEXT',TEXT:'18°',TITLE:'WEATHER'},102:{type:'SHORT_TEXT',TEXT:'14:30',TITLE:'NEXT'},103:{type:'SHORT_TEXT',TEXT:'68',TITLE:'BPM'}}});

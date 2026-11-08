@@ -9,7 +9,7 @@ No physical watch is available. No watch connection or installation will be atte
 | 2. Complication docks | Complete | WFF schema, numeric/empty/type/title-switch tests, and visual check passed. Watch companion build, unit tests, and lint passed. |
 | 3. Ambient, power, editor | Complete | Schema and time/visibility tests passed. Browser ambient coverage: 3.085% sample, 3.525% outline stress, 4.590% thin-solid stress. Hardware results pending. |
 | 4. Build and previews | Complete | Native/Gradle APKs, schema, signature, resource-only, memory limits, lint, model/browser/resource checks, and 12 state previews passed. See implementation-validation.md. |
-| 5. Device readiness | Pending | Physical-device acceptance remains pending watch availability. |
+| 5. Device readiness | Offline preparation complete; physical acceptance pending | Checksummed APK handoff, signing/source/picker checks, stale-APK rejection, and complete install/acceptance runbook prepared. No ADB or installation executed. |
 
 Stage 2 adds MIN/KCAL titles to the watch companion's existing GOAL_PROGRESS
 payloads (watch companion 0.1.9). Its consent, health reads, sync, expiry, and tap
@@ -28,3 +28,9 @@ Stage 4 widened both time boxes to 156 units after measuring every valid digit
 pair in the bundled font. Numerals now keep a constant font size across the day.
 The final preview coverage is 2.937% sample, 3.452% outline stress, and 4.556%
 thin-solid stress. The portable gallery is `docs/previews/index.html`.
+
+The five implementation commits correspond to stages 1–5. Final preflight also
+removed the parent complication tint so progress and label colors remain under
+their own styling; provider icons retain their explicit monochrome tint.
+The title bridge and both candidate package identities/signatures are preserved.
+Physical-device acceptance is the remaining work after the watch is available.

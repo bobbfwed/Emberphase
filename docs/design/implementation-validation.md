@@ -46,3 +46,14 @@ saving is not guessed from battery level: only the explicit battery cutoff is
 implemented until the companion signal can be verified on the watch.
 
 The superseded design-only checks remain in [the design-round record](validation.md).
+
+## Device-readiness preflight
+
+The preparation script verifies source XML/font/license and decoded picker pixels
+against the built face, validates both APK package/version/signatures, and emits
+SHA-256 checksums with a pending-acceptance manifest. A negative check confirmed
+that changing the scene after a build causes stale-APK rejection. The final
+native audit removed slot-wide tinting; only provider icon images are tinted so
+per-element progress colors remain intact. Automatic resizing is disabled for
+the measured clock numerals; arbitrary provider text retains it. Rebuilt candidates are checked again
+before handoff. No ADB operation is part of this script or the completed checks.

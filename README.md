@@ -1,35 +1,96 @@
-# Emberphase / PARALLAX design proposal
+# PARALLAX
 
-This Wear OS project is being redesigned from a clean visual starting point.
-**Implementation is authorized and proceeds through five checked stages.**
-The former watch-face layout, artwork, mockups, previews, visual generators, and
-layout-specific checks have been removed. The new native face is under development.
-See [stage progress](docs/design/progress.md). No watch installation has been attempted.
+A futuristic digital face for **Wear OS 6 / API 36 and later**, built from scratch
+on the Emberphase project and its optional health companions. Native Watch Face
+Format 4; the face APK contains resources and no executable DEX code.
 
-![PARALLAX design concept: active, ambient, and alternate complications](docs/design/parallax-concept.png)
+**Implementation and local validation are complete. Physical-watch installation
+and acceptance are pending watch availability.** See [stage progress](docs/design/progress.md).
+
+![PARALLAX implementation preview with sample data](docs/previews/active.png)
+
+Open the [interactive review gallery](docs/previews/index.html) locally in a
+browser to change the clock time, data, accent, battery state, and active/ambient
+mode. Preview values are samples; browser rendering approximates Wear OS.
+See [always on](docs/previews/ambient.png), [alternate data](docs/previews/alternate.png),
+[low battery](docs/previews/low-battery.png), and [360 px](docs/previews/small.png).
+
+## Behavior
+
+* Offset geometric time numerals, a local date, and an interrupted battery rail.
+* The **Day Fold** is native line geometry that changes once per minute. Its
+  crease follows local wall-clock progress through a nominal 24-hour day,
+  including skipped/repeated daylight-saving hours. It uses no sensor or network.
+* Three independent user-selectable docks support short text, numeric ranges,
+  goal progress, monochrome icons, and empty data. Provider text, titles, and tap
+  actions stay with the selected provider. Missing readings show a dash.
+* Defaults prefer installed Samsung steps and the existing companion's active
+  minutes/kcal. Without those providers, use another installed source or leave
+  docks empty. The face works independently of the companions.
+* Editor controls: cyan/white/violet accent, Day Fold, signature, device/12/24-hour
+  format, and outline/thin-solid always-on numerals.
+* Ambient keeps time/date/battery and omits the fold, docks, rail, and signature.
+  At 20% battery or less, the active fold rests and a battery warning appears.
+  System power-saving companion integration awaits on-watch verification.
+
+The existing phone/watch data bridge is retained. Watch companion **0.1.9** adds
+MIN/KCAL titles to goal-progress data; older versions still supply values/goals
+with a generic GOAL label. Phone companion **0.1.3** is unchanged. Read
+[companion setup](docs/health-companion.md) and [data contracts](docs/data-sources.md)
+for consent, pairing, expiry, and Samsung SDK requirements.
+
+## Build and validate locally
+
+Use Windows PowerShell, Node.js (tested with 24), Android Studio's JBR, Android
+SDK Platform 36 / Build-Tools 36.0.0, and Chrome or Edge for previews. Set paths
+for your installation, for example:
+
+```powershell
+$env:JAVA_HOME = "$env:LOCALAPPDATA\Programs\Android Studio\jbr"
+$env:ANDROID_HOME = "$env:LOCALAPPDATA\Android\Sdk"
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\scripts\Build-WatchFace.ps1
+.\gradlew.bat :health-watch:assembleDebug :health-watch:testDebugUnitTest :health-watch:lintDebug :health-common:testDebugUnitTest
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\scripts\Prepare-DeviceCandidate.ps1
+```
+
+The native build generates the face, runs checks, validates WFF, renders previews,
+compiles/aligns/signs the APK, verifies its signature and contents, and checks
+memory limits. Output: `artifacts/parallax-debug.apk`. Use `-SkipPreviews` to use
+the committed picker image when no browser is available. Pinned validation tools
+download on first use. No installation happens without an explicit install flag.
+
+Alternatively, regenerate the native resources and use the Gradle build:
+
+```powershell
+node .\scripts\Generate-Parallax.mjs
+.\gradlew.bat :watchface:verifyResourceOnlyDebug :watchface:lintDebug
+```
+
+Its APK is `watchface/build/outputs/apk/debug/watchface-debug.apk`. Both build paths
+share the standard local Android debug key. Configure release signing before
+public distribution. The phone/watch companions must retain matching application
+IDs and signing certificates for paired-device Data Layer.
+
+See [validation results and commands](docs/design/implementation-validation.md)
+and [the pending device acceptance runbook](docs/design/device-acceptance.md).
+The local candidate handoff contains both APKs and a checksummed `candidate.json`
+under `artifacts/device-ready/`. It has not been loaded onto a watch.
+
+## Source and design
+
+The source scene is under `scripts/lib/parallax-scene.mjs`, with primitive,
+complication, and editor modules beside it. `Generate-Parallax.mjs` writes
+`watchface/src/main/res/raw/watchface.xml`; edit the source model and regenerate.
+The preview renderer uses that same model. Meaningful geometry/data checks and
+actual browser interaction tests are in `scripts/test-parallax.mjs` and
+`scripts/Test-ParallaxPreview.mjs`.
 
 Review the [design specification](docs/design/README.md),
-[implementation plan](docs/design/implementation-plan.md), and
-[cleanup record](docs/design/cleanup.md). PARALLAX is a proposed display name;
-existing application IDs and companion identities remain in place.
+[five-stage plan](docs/design/implementation-plan.md), and
+[visual cleanup record](docs/design/cleanup.md). Existing application IDs remain
+`com.bobbfwed.emberphase` and `com.bobbfwed.emberphase.health` for compatibility.
 
-## Preserved foundation
-
-* Android/Gradle project and resource-only Watch Face Format 4 module scaffolding,
-  targeting Wear OS 6 / API 36 and later.
-* `health-common`, `health-phone`, and `health-watch`: the existing Samsung Health
-  bridge, cache, complication providers, and their tests.
-* [Companion setup and limitations](docs/health-companion.md),
-  [data contracts](docs/data-sources.md), and
-  [recorded provider findings](docs/device-providers.md).
-* Android SDK setup, provider inspection, WFF validation tools, and build/signing
-  infrastructure. `scripts/Build-WatchFace.ps1` stops with a design-stage message
-  until a replacement `watchface.xml` exists.
-
-The companion can be developed independently. Its Samsung Health SDK import and
-matching phone/watch application IDs and signing certificates are still required;
-see the companion guide. New-face compatibility and appearance have not been
-tested on a watch.
-
-The project retains its [MIT license](LICENSE). The proprietary Samsung Health
+Project code retains the [MIT license](LICENSE). The bundled, unmodified Rajdhani
+Light font has its own [SIL Open Font License](third-party/rajdhani/OFL.txt), also
+included in the face APK and portable gallery. The proprietary Samsung Health
 SDK is not included or relicensed.

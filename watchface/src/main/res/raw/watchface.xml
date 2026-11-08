@@ -332,7 +332,7 @@
         </Expressions>
         <Compare expression="hour_active">
           <PartText name="hour_active_24" x="98" y="67" width="156" height="126">
-            <Text align="CENTER" ellipsis="TRUE" maxLines="1" isAutoSize="TRUE">
+            <Text align="CENTER" ellipsis="TRUE" maxLines="1" isAutoSize="FALSE">
               <Font family="rajdhani_light" size="146" weight="NORMAL" color="#EDF2EA">
                 <Template>
                   %02d
@@ -344,7 +344,7 @@
         </Compare>
         <Default>
           <PartText name="hour_active_12" x="98" y="67" width="156" height="126">
-            <Text align="CENTER" ellipsis="TRUE" maxLines="1" isAutoSize="TRUE">
+            <Text align="CENTER" ellipsis="TRUE" maxLines="1" isAutoSize="FALSE">
               <Font family="rajdhani_light" size="146" weight="NORMAL" color="#EDF2EA">
                 <Template>
                   %d
@@ -356,7 +356,7 @@
         </Default>
       </Condition>
       <PartText name="minute_active" x="246" y="181" width="156" height="126">
-        <Text align="CENTER" ellipsis="TRUE" maxLines="1" isAutoSize="TRUE">
+        <Text align="CENTER" ellipsis="TRUE" maxLines="1" isAutoSize="FALSE">
           <Font family="rajdhani_light" size="146" weight="NORMAL" color="#EDF2EA">
             <Template>
               %s
@@ -384,7 +384,7 @@
               </Expressions>
               <Compare expression="hour_ambient">
                 <PartText name="hour_ambient_24" x="98" y="67" width="156" height="126">
-                  <Text align="CENTER" ellipsis="TRUE" maxLines="1" isAutoSize="TRUE">
+                  <Text align="CENTER" ellipsis="TRUE" maxLines="1" isAutoSize="FALSE">
                     <Font family="rajdhani_light" size="146" weight="NORMAL" color="#000000">
                       <Outline color="#EDF2EA" width="1">
                         <Template>
@@ -398,7 +398,7 @@
               </Compare>
               <Default>
                 <PartText name="hour_ambient_12" x="98" y="67" width="156" height="126">
-                  <Text align="CENTER" ellipsis="TRUE" maxLines="1" isAutoSize="TRUE">
+                  <Text align="CENTER" ellipsis="TRUE" maxLines="1" isAutoSize="FALSE">
                     <Font family="rajdhani_light" size="146" weight="NORMAL" color="#000000">
                       <Outline color="#EDF2EA" width="1">
                         <Template>
@@ -412,7 +412,7 @@
               </Default>
             </Condition>
             <PartText name="minute_ambient" x="246" y="181" width="156" height="126">
-              <Text align="CENTER" ellipsis="TRUE" maxLines="1" isAutoSize="TRUE">
+              <Text align="CENTER" ellipsis="TRUE" maxLines="1" isAutoSize="FALSE">
                 <Font family="rajdhani_light" size="146" weight="NORMAL" color="#000000">
                   <Outline color="#EDF2EA" width="1">
                     <Template>
@@ -435,7 +435,7 @@
               </Expressions>
               <Compare expression="hour_ambient_solid">
                 <PartText name="hour_ambient_solid_24" x="98" y="67" width="156" height="126">
-                  <Text align="CENTER" ellipsis="TRUE" maxLines="1" isAutoSize="TRUE">
+                  <Text align="CENTER" ellipsis="TRUE" maxLines="1" isAutoSize="FALSE">
                     <Font family="rajdhani_light" size="146" weight="NORMAL" color="#EDF2EA">
                       <Template>
                         %02d
@@ -447,7 +447,7 @@
               </Compare>
               <Default>
                 <PartText name="hour_ambient_solid_12" x="98" y="67" width="156" height="126">
-                  <Text align="CENTER" ellipsis="TRUE" maxLines="1" isAutoSize="TRUE">
+                  <Text align="CENTER" ellipsis="TRUE" maxLines="1" isAutoSize="FALSE">
                     <Font family="rajdhani_light" size="146" weight="NORMAL" color="#EDF2EA">
                       <Template>
                         %d
@@ -459,7 +459,7 @@
               </Default>
             </Condition>
             <PartText name="minute_ambient_solid" x="246" y="181" width="156" height="126">
-              <Text align="CENTER" ellipsis="TRUE" maxLines="1" isAutoSize="TRUE">
+              <Text align="CENTER" ellipsis="TRUE" maxLines="1" isAutoSize="FALSE">
                 <Font family="rajdhani_light" size="146" weight="NORMAL" color="#EDF2EA">
                   <Template>
                     %s
@@ -692,7 +692,7 @@
         </Line>
       </PartDraw>
     </Group>
-    <ComplicationSlot name="dock_a" slotId="101" displayName="dock_a" x="67" y="290" width="104" height="104" isCustomizable="TRUE" supportedTypes="SHORT_TEXT RANGED_VALUE GOAL_PROGRESS MONOCHROMATIC_IMAGE EMPTY" tintColor="#EDF2EA">
+    <ComplicationSlot name="dock_a" slotId="101" displayName="dock_a" x="67" y="290" width="104" height="104" isCustomizable="TRUE" supportedTypes="SHORT_TEXT RANGED_VALUE GOAL_PROGRESS MONOCHROMATIC_IMAGE EMPTY">
       <Variant mode="AMBIENT" target="alpha" value="0" />
       <BoundingOval x="0" y="0" width="104" height="104" />
       <DefaultProviderPolicy primaryProvider="com.samsung.android.wear.shealth/com.samsung.android.wear.shealth.complications.steps.StepsComplicationProviderService" primaryProviderType="GOAL_PROGRESS" defaultSystemProvider="STEP_COUNT" defaultSystemProviderType="RANGED_VALUE" />
@@ -935,7 +935,7 @@
         </PartText>
       </Complication>
     </ComplicationSlot>
-    <ComplicationSlot name="dock_b" slotId="102" displayName="dock_b" x="173" y="307" width="104" height="104" isCustomizable="TRUE" supportedTypes="SHORT_TEXT RANGED_VALUE GOAL_PROGRESS MONOCHROMATIC_IMAGE EMPTY" tintColor="#EDF2EA">
+    <ComplicationSlot name="dock_b" slotId="102" displayName="dock_b" x="173" y="307" width="104" height="104" isCustomizable="TRUE" supportedTypes="SHORT_TEXT RANGED_VALUE GOAL_PROGRESS MONOCHROMATIC_IMAGE EMPTY">
       <Variant mode="AMBIENT" target="alpha" value="0" />
       <BoundingOval x="0" y="0" width="104" height="104" />
       <DefaultProviderPolicy primaryProvider="com.bobbfwed.emberphase.health/com.bobbfwed.emberphase.health.watch.MinutesDataSource" primaryProviderType="GOAL_PROGRESS" defaultSystemProvider="EMPTY" defaultSystemProviderType="EMPTY" />
@@ -1178,7 +1178,7 @@
         </PartText>
       </Complication>
     </ComplicationSlot>
-    <ComplicationSlot name="dock_c" slotId="103" displayName="dock_c" x="279" y="290" width="104" height="104" isCustomizable="TRUE" supportedTypes="SHORT_TEXT RANGED_VALUE GOAL_PROGRESS MONOCHROMATIC_IMAGE EMPTY" tintColor="#EDF2EA">
+    <ComplicationSlot name="dock_c" slotId="103" displayName="dock_c" x="279" y="290" width="104" height="104" isCustomizable="TRUE" supportedTypes="SHORT_TEXT RANGED_VALUE GOAL_PROGRESS MONOCHROMATIC_IMAGE EMPTY">
       <Variant mode="AMBIENT" target="alpha" value="0" />
       <BoundingOval x="0" y="0" width="104" height="104" />
       <DefaultProviderPolicy primaryProvider="com.bobbfwed.emberphase.health/com.bobbfwed.emberphase.health.watch.CaloriesDataSource" primaryProviderType="GOAL_PROGRESS" defaultSystemProvider="EMPTY" defaultSystemProviderType="EMPTY" />

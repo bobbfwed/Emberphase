@@ -28,7 +28,7 @@ export function complicationDock({id,name,x,y}) {
       conditional(`positive_${id}_${type}`,`${progress.fraction} > 0`,line(`progress_${id}_${type}`,[15,78],[dynamic(`15 + 68 * (${progress.fraction})`,15),78],colors.lime,2.5)))):null;
     return element('Complication',{type},value,label,bar);
   });
-  return element('ComplicationSlot',{name,slotId:id,displayName:name,x:x-52,y:y-52,width:104,height:104,isCustomizable:'TRUE',supportedTypes:'SHORT_TEXT RANGED_VALUE GOAL_PROGRESS MONOCHROMATIC_IMAGE EMPTY',tintColor:colors.ivory},
+  return element('ComplicationSlot',{name,slotId:id,displayName:name,x:x-52,y:y-52,width:104,height:104,isCustomizable:'TRUE',supportedTypes:'SHORT_TEXT RANGED_VALUE GOAL_PROGRESS MONOCHROMATIC_IMAGE EMPTY'},
     activeOnly(),element('BoundingOval',{x:0,y:0,width:104,height:104}),element('DefaultProviderPolicy',policy),...renderings,
     element('Complication',{type:'MONOCHROMATIC_IMAGE'},element('PartImage',{name:`icon_${id}`,x:34,y:31,width:36,height:36,tintColor:colors.ivory},element('Image',{resource:'[COMPLICATION.MONOCHROMATIC_IMAGE]'}))),
     element('Complication',{type:'EMPTY'},text(`empty_${id}`,10,31,84,28,24,'—',[],{color:colors.secondary})));
