@@ -17,7 +17,8 @@ See [always on](docs/previews/ambient.png), [alternate data](docs/previews/alter
 
 ## Behavior
 
-* Offset geometric time numerals, a local date, and an interrupted battery rail.
+* Offset geometric time numerals with the Day Fold graphics layered above them,
+  a local date, and an interrupted battery rail.
 * The **Day Fold** is native line geometry that changes once per minute. Its
   crease follows local wall-clock progress through a nominal 24-hour day,
   including skipped/repeated daylight-saving hours. It uses no sensor or network.

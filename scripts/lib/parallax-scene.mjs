@@ -1,4 +1,4 @@
-import {colors,docks,dayProgress,dynamic,element,group,activeOnly,line,rectangle,text,escapeXml,transform,conditional} from './parallax-primitives.mjs';
+import {colors,docks,dayProgress,dynamic,element,group,activeOnly,line,text,escapeXml,transform,conditional} from './parallax-primitives.mjs';
 export * from './parallax-primitives.mjs';
 import {complicationDock} from './parallax-docks.mjs';
 import {settings,timeDisplay,applyAccent,foldVisible} from './parallax-settings.mjs';
@@ -32,11 +32,9 @@ export function scene() {
     battery.push(arc(colors.structure),conditional(`battery_fill_${i}`,`[BATTERY_PERCENT] >= ${(i+1)*12.5} && [BATTERY_PERCENT] <= 100`,arc('[CONFIGURATION.accent.0]')));
   }
   return element('Scene',{backgroundColor:colors.black},
-    applyAccent(fold()),
-    rectangle('hour_clearance',98,73,156,114,colors.black),
-    rectangle('minute_clearance',246,188,156,109,colors.black),
     text('date',108,37,234,26,17,'%s %s %s',['[DAY_OF_WEEK_S]','[DAY_Z]','[MONTH_S]']),
     ...timeDisplay(),
+    applyAccent(fold()),
     group('battery_rail',activeOnly(),...battery),
     conditional('battery_available','[BATTERY_PERCENT] >= 0 && [BATTERY_PERCENT] <= 100',text('battery',24,187,60,25,19,'%d%%',['[BATTERY_PERCENT]']),text('battery_unknown',24,187,60,25,19,'—')),
     conditional('battery_warning','[BATTERY_PERCENT] >= 0 && [BATTERY_PERCENT] <= 20',text('battery_warning_mark',30,214,36,20,15,'!')),

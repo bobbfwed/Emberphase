@@ -18,7 +18,8 @@ ambiguous. The [generation prompt](image-prompt.txt) is included for provenance.
 ## Composition
 
 The hour sits high and left; the minute sits low and right. Both use the same
-large ivory type size and remain uninterrupted by the fold. A compact date sits
+large ivory type size, with the continuous fold graphics drawn over the numerals.
+The time has no black clearance masks. A compact date sits
 above them. An interrupted battery rail occupies the inner left edge. Three
 open-corner, slanted data docks occupy the lower third. A small day percentage
 explains the geometry; PARALLAX appears quietly at the base.
@@ -79,7 +80,7 @@ metrics and physical tap sizes verified on the target watch.
 | Date | `(112,37)` to `(338,65)`, centered |
 | Hour | Final text box `(98,67)` to `(254,193)`, 146-unit Rajdhani Light; actual glyphs sit inside the box |
 | Minute | Final text box `(246,181)` to `(402,307)`, same type size |
-| Fold field | Approx. `(44,90)` to `(398,287)`; black exclusion areas around both time boxes |
+| Fold field | Approx. `(44,90)` to `(398,287)`; drawn above the time, with no numeral exclusion masks |
 | Battery | Slim curved rail near left edge, approx. `(15,88)` to `(66,291)`; value near `(33,188)` |
 | Day caption | Centered at `(225,304)`, approx. 15-unit type |
 | Dock A / C | Visual centers `(119,342)` and `(331,342)` |
@@ -89,7 +90,7 @@ metrics and physical tap sizes verified on the target watch.
 | Signature | Centered at `(225,414)`, quiet small lettering; optional |
 
 The data docks follow a shallow arc to use the round screen efficiently. Fold
-lines must never cross the time glyphs or complication text. Selection bounds
+lines intentionally overlay the time glyphs and stay clear of complication text. Selection bounds
 contain the useful dock content and remain inside the circular display. Check
 actual dp size and editor selection on hardware; widen targets or use two docks
 on a small display if three cannot remain readable and selectable. Small-screen

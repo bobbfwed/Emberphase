@@ -50,7 +50,7 @@ try {
     } finally { $sourcePicker.Dispose(); $packedPicker.Dispose(); $pickerStream.Dispose() }
 } finally { $archive.Dispose() }
 $items = @(
-    @{Source=$facePath; File='parallax-1.0.0-debug.apk'; Package='com.bobbfwed.emberphase'; VersionCode='39'; VersionName='1.0.0'},
+    @{Source=$facePath; File='parallax-1.0.1-debug.apk'; Package='com.bobbfwed.emberphase'; VersionCode='40'; VersionName='1.0.1'},
     @{Source=$watchPath; File='emberphase-health-watch-0.1.9-debug.apk'; Package='com.bobbfwed.emberphase.health'; VersionCode='2010'; VersionName='0.1.9'}
 )
 $manifestItems = foreach ($item in $items) {

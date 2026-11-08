@@ -17,7 +17,7 @@ matching candidate signer fingerprints, then copies:
 
 | File under `artifacts/device-ready/` | Purpose |
 | --- | --- |
-| `parallax-1.0.0-debug.apk` | Face: `com.bobbfwed.emberphase`, version code 39 (above the connected watch's existing code 38) |
+| `parallax-1.0.1-debug.apk` | Face: `com.bobbfwed.emberphase`, version code 40; fold-over-numerals layering update |
 | `emberphase-health-watch-0.1.9-debug.apk` | Optional watch companion: `com.bobbfwed.emberphase.health`, code 2010; adds MIN/KCAL titles |
 | `candidate.json` | Source revision, face-source hash, package/version, size, SHA-256, certificate fingerprint, and pending physical status |
 | `device-acceptance.md` | This runbook |
@@ -48,7 +48,7 @@ Commands to use only after the watch is available (replace all placeholders):
 ```powershell
 & "$env:ANDROID_HOME\platform-tools\adb.exe" pair WATCH_IP:PAIRING_PORT
 & "$env:ANDROID_HOME\platform-tools\adb.exe" connect WATCH_IP:DEBUG_PORT
-& "$env:ANDROID_HOME\platform-tools\adb.exe" -s WATCH_IP:DEBUG_PORT install -r .\artifacts\device-ready\parallax-1.0.0-debug.apk
+& "$env:ANDROID_HOME\platform-tools\adb.exe" -s WATCH_IP:DEBUG_PORT install -r .\artifacts\device-ready\parallax-1.0.1-debug.apk
 & "$env:ANDROID_HOME\platform-tools\adb.exe" -s WATCH_IP:DEBUG_PORT install -r .\artifacts\device-ready\emberphase-health-watch-0.1.9-debug.apk
 ```
 
@@ -109,3 +109,12 @@ The runtime fixes are installed and captured; the subsequently regenerated picke
 preview was packaged and validated locally but that refreshed package was not
 reapplied after the connection closed. Reinstall the current candidate when
 connected if the picker preview needs refreshing.
+
+## Layering update 1.0.1 / code 40
+
+The fold is now drawn after the time numerals and AM/PM label. The two black
+time-clearance rectangles are removed, so the line graphics remain continuous
+over the numbering in both the native face and generated previews. Ambient and
+low-battery visibility rules are unchanged. Schema, memory, signing,
+resource-only packaging, existing scene checks, browser checks, and the 10:08
+preview passed. Installation is pending the watch's wireless ADB reconnection.

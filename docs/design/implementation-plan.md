@@ -18,7 +18,8 @@ the two ruled surfaces as economical geometric groups around a moving crease;
 avoid shader, mesh, or frame-by-frame animation dependencies.
 
 The first technical gate is whether native transforms can maintain the fold's
-silhouette and text exclusion areas at every minute. If they cannot, test a small
+silhouette at every minute, with the fold above the time numerals and clear of
+complication text. If they cannot, test a small
 set of discrete line-art fold poses, with a minute-updated position marker, and
 measure decoded memory before choosing that fallback. Report any visible
 difference from the approved concept. Do not commit a large animated image set
@@ -76,7 +77,7 @@ Use Google's pinned validation tools already supported in `scripts/Get-WffTools.
 
 Add meaningful checks for day-fold endpoints and monotonic travel through a
 normal clock day, civil-time DST/time-zone behavior, disjoint dock hit regions,
-text exclusion, typed progress, no-data behavior, and ambient visibility. Keep
+complication text clearance, typed progress, no-data behavior, and ambient visibility. Keep
 the current companion tests. Recreate active/ambient, empty-data, alternate-data,
 low-battery, and 12-hour previews; label synthetic readings as samples.
 
