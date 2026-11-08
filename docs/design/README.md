@@ -1,6 +1,6 @@
 # PARALLAX
 
-**Design proposal, 2026-11-07. Implementation awaits user approval.**
+**Design approved for implementation, 2026-11-07. See [stage progress](progress.md).**
 
 A folded view of the day: huge staggered numerals separated by a fine cyan
 architectural fold, with three independently configurable data docks beneath.
@@ -152,8 +152,7 @@ behavior still require device checks; no battery-life claim is made.
 
 ## Review and next step
 
-The scope submitted for approval is this visual direction, the day-fold feature,
+The approved scope is this visual direction, the day-fold feature,
 three replaceable docks, the ambient treatment, and the retained companion
-architecture. After approval, follow the [implementation plan](implementation-plan.md).
-No new WFF face, production artwork, APK, device installation, or publishing work
-is part of this completed design round.
+architecture. Work follows the [implementation plan](implementation-plan.md).
+Physical-watch installation and acceptance await watch availability.

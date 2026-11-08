@@ -1,10 +1,10 @@
 # Emberphase / PARALLAX design proposal
 
 This Wear OS project is being redesigned from a clean visual starting point.
-**The current deliverable is a design and implementation plan awaiting approval.**
+**Implementation is authorized and proceeds through five checked stages.**
 The former watch-face layout, artwork, mockups, previews, visual generators, and
-layout-specific checks have been removed. There is intentionally no buildable
-watch face at this stage. No replacement face has been implemented or installed.
+layout-specific checks have been removed. The new native face is under development.
+See [stage progress](docs/design/progress.md). No watch installation has been attempted.
 
 ![PARALLAX design concept: active, ambient, and alternate complications](docs/design/parallax-concept.png)
 

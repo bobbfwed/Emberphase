@@ -1,7 +1,7 @@
 # PARALLAX implementation plan
 
-Status: proposal only, pending user permission to build. The concept board and
-[design specification](README.md) are the review artifacts.
+Status: authorized 2026-11-07. Follow [stage progress](progress.md) for checked
+implementation commits. Physical-watch acceptance awaits watch availability.
 
 ## 1. Prove the layout and fold in WFF
 
