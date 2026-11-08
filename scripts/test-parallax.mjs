@@ -64,5 +64,15 @@ for(const [hour,expected] of [[0,'12'],[12,'12'],[23,'11']]) {
   const view=svg({HOUR_0_23:hour,'CONFIGURATION.time_format':'12'});
   assert.match(view,new RegExp(`data-name="hour_active_12"[^>]*>${expected}<`));
 }
+const localProgress=(instant,zone)=>{
+  const parts=Object.fromEntries(new Intl.DateTimeFormat('en-GB',{timeZone:zone,hourCycle:'h23',hour:'2-digit',minute:'2-digit'}).formatToParts(new Date(instant)).map(p=>[p.type,p.value]));
+  return evaluate(dayProgress,{HOUR_0_23:Number(parts.hour),MINUTE:Number(parts.minute)});
+};
+assert.equal(localProgress('2026-03-08T09:59:00Z','America/Los_Angeles'),119/1440);
+assert.equal(localProgress('2026-03-08T10:00:00Z','America/Los_Angeles'),180/1440);
+assert.equal(localProgress('2026-11-01T08:59:00Z','America/Los_Angeles'),119/1440);
+assert.equal(localProgress('2026-11-01T09:00:00Z','America/Los_Angeles'),60/1440);
+assert.equal(localProgress('2026-11-07T02:30:00Z','Asia/Tokyo'),690/1440);
+assert.equal(localProgress('2026-11-07T02:30:00Z','America/Los_Angeles'),1110/1440);
 assert.equal(fs.readFileSync(new URL('../watchface/src/main/res/raw/watchface.xml',import.meta.url),'utf8'),watchFace(),'Generated scene is stale');
-console.log('PASS: all 1440 fold positions, civil-day endpoints, dock geometry, minute cadence, and generated WFF consistency.');
+console.log('PASS: all 1440 fold positions, civil-day/DST/travel behavior, dock geometry/types, typed progress, state/time controls, escaping, minute cadence, and generated WFF consistency.');

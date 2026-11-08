@@ -1,10 +1,14 @@
 [CmdletBinding()]
-param([switch]$Install, [string]$Serial)
+param([switch]$Install, [string]$Serial, [switch]$SkipPreviews)
 $ErrorActionPreference = 'Stop'
 $projectRoot = Split-Path -Parent $PSScriptRoot
+& node (Join-Path $PSScriptRoot 'Generate-Parallax.mjs')
+if ($LASTEXITCODE -ne 0) { throw 'PARALLAX generation failed.' }
+& node (Join-Path $PSScriptRoot 'test-parallax.mjs')
+if ($LASTEXITCODE -ne 0) { throw 'PARALLAX checks failed.' }
 $faceDefinition = Join-Path $projectRoot 'watchface\src\main\res\raw\watchface.xml'
 if (-not (Test-Path -LiteralPath $faceDefinition)) {
-    throw 'Watch-face implementation is paused for design approval. Review docs/design/README.md. The previous visual resources have been removed; there is no face to build or install yet.'
+    throw 'Generated watchface.xml is missing.'
 }
 $sdkRoot = $env:ANDROID_HOME
 if (-not $sdkRoot) { $sdkRoot = [Environment]::GetEnvironmentVariable('ANDROID_HOME','User') }
@@ -35,6 +39,10 @@ $validation = Get-Content -LiteralPath $validatorLog -Raw
 Write-Host $validation
 if ($validation -match 'FAILED|SEVERE|NOT valid' -or $validation -notmatch 'SUCCESS|is valid') { throw "WFF validation failed; see $validatorLog" }
 
+if (-not $SkipPreviews) {
+    & (Join-Path $PSScriptRoot 'New-ParallaxPreviews.ps1')
+}
+& (Join-Path $PSScriptRoot 'Test-ParallaxResources.ps1')
 $aapt2 = Join-Path $buildTools 'aapt2.exe'
 & $aapt2 compile --dir (Join-Path $sourceRoot 'res') -o (Join-Path $buildRoot 'resources.zip')
 Check-Exit 'Resource compilation'
@@ -44,7 +52,11 @@ Check-Exit 'Resource compilation'
 $manifest.manifest.SetAttribute('package','com.bobbfwed.emberphase')
 $manifestPath = Join-Path $buildRoot 'AndroidManifest.xml'
 $manifest.Save($manifestPath)
-& $aapt2 link -o (Join-Path $buildRoot 'unsigned.apk') --manifest $manifestPath -I (Join-Path $sdkRoot 'platforms\android-36\android.jar') --min-sdk-version 36 --target-sdk-version 36 --version-code 33 --version-name '0.5.16' --auto-add-overlay -R (Join-Path $buildRoot 'resources.zip')
+$gradleDefinition = Get-Content -LiteralPath (Join-Path $projectRoot 'watchface\build.gradle.kts') -Raw
+$faceVersionCode = [regex]::Match($gradleDefinition, 'versionCode\s*=\s*(\d+)').Groups[1].Value
+$faceVersionName = [regex]::Match($gradleDefinition, 'versionName\s*=\s*"([^"]+)"').Groups[1].Value
+if (-not $faceVersionCode -or -not $faceVersionName) { throw 'Cannot read watch-face version from Gradle.' }
+& $aapt2 link -o (Join-Path $buildRoot 'unsigned.apk') --manifest $manifestPath -I (Join-Path $sdkRoot 'platforms\android-36\android.jar') --min-sdk-version 36 --target-sdk-version 36 --version-code $faceVersionCode --version-name $faceVersionName --auto-add-overlay -A (Join-Path $sourceRoot 'assets') -R (Join-Path $buildRoot 'resources.zip')
 Check-Exit 'APK linking'
 & (Join-Path $buildTools 'zipalign.exe') -f -p 4 (Join-Path $buildRoot 'unsigned.apk') (Join-Path $buildRoot 'aligned.apk')
 Check-Exit 'APK alignment'
@@ -59,7 +71,7 @@ if (-not (Test-Path -LiteralPath $keyPath)) {
     & (Join-Path $javaRoot 'bin\keytool.exe') -genkeypair -keystore $keyPath -storepass android -keypass android -alias androiddebugkey -dname 'CN=Android Debug,O=Android,C=US' -keyalg RSA -keysize 2048 -validity 10000
     Check-Exit 'Debug signing key creation'
 }
-$apkPath = Join-Path $artifactRoot 'emberphase-debug.apk'
+$apkPath = Join-Path $artifactRoot 'parallax-debug.apk'
 $signerJar = Join-Path $buildTools 'lib\apksigner.jar'
 & $java -jar $signerJar sign --ks $keyPath --ks-key-alias androiddebugkey --ks-pass pass:android --key-pass pass:android --out $apkPath (Join-Path $buildRoot 'aligned.apk')
 Check-Exit 'APK signing'
@@ -72,6 +84,8 @@ Add-Type -AssemblyName System.IO.Compression.FileSystem
 $archive = [System.IO.Compression.ZipFile]::OpenRead($apkPath)
 try {
     if (@($archive.Entries | Where-Object { $_.FullName -match '\.dex$' }).Count) { throw 'A resource-only WFF APK must not contain DEX code.' }
+    if (-not $archive.GetEntry('res/raw/watchface.xml')) { throw 'APK watchface.xml is missing.' }
+    if (-not $archive.GetEntry('assets/rajdhani-OFL.txt')) { throw 'Bundled font license is missing.' }
 } finally { $archive.Dispose() }
 Write-Host "Built, validated, and debug-signed: $apkPath"
 if ($Install) {

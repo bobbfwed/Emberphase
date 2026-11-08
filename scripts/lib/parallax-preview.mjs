@@ -64,3 +64,20 @@ export function svg(overrides={},mode='ACTIVE') {
   const sources={...sampleSources,...overrides};
   return `<svg xmlns="http://www.w3.org/2000/svg" width="450" height="450" viewBox="0 0 450 450"><style>@font-face{font-family:Rajdhani;src:url(data:font/ttf;base64,${font})}text{font-kerning:none;font-variant-numeric:tabular-nums}</style><defs><clipPath id="screen"><circle cx="225" cy="225" r="225"/></clipPath></defs><rect width="450" height="450" fill="${colors.black}"/><g clip-path="url(#screen)">${render(scene(),sources,mode)}</g></svg>`;
 }
+export function browserBundle() {
+  return `const colors=${JSON.stringify(colors)};const sampleSources=${JSON.stringify(sampleSources)};const font=${JSON.stringify(font)};const scene=()=>(${JSON.stringify(scene())});const escapeXml=${escapeXml.toString()};const evaluate=${evaluate.toString()};const val=${val.toString()};${[color,style,format,render,svg].map(f=>f.toString()).join('\n')}`;
+}
+export const fitTextScript=`
+async function fitText(root=document){
+  await document.fonts.ready;
+  for(const text of root.querySelectorAll('text[data-max-width]')){
+    const maximum=Number(text.dataset.maxWidth);const original=text.textContent;
+    let size=Number(text.getAttribute('font-size'));
+    while(text.getComputedTextLength()>maximum && size>12){size=Math.max(12,size-0.5);text.setAttribute('font-size',size)}
+    const letters=Array.from(original);
+    while(text.getComputedTextLength()>maximum && letters.length){letters.pop();text.textContent=letters.join('')+'…'}
+    if(text.getComputedTextLength()>maximum+0.5)throw Error('Text exceeds its bounds: '+text.dataset.name);
+    text.setAttribute('aria-label',original);
+  }
+}
+`;

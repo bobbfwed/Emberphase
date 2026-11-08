@@ -20,16 +20,16 @@ function outlined(node) {
 }
 function hour(name,outline) {
   const make=(id,format,param)=>{
-    const value=text(id,98,67,145,126,146,format,[param]);
+    const value=text(id,98,67,156,126,146,format,[param]);
     return outline?outlined(value):value;
   };
   return conditional(name,use24,make(name+'_24','%02d','[HOUR_0_23]'),make(name+'_12','%d','([HOUR_0_23] + 11) % 12 + 1'));
 }
 export function timeDisplay() {
-  const active=group('time_active',activeOnly(),hour('hour_active',false),text('minute_active',246,181,140,126,146,'%s',['[MINUTE_Z]']));
+  const active=group('time_active',activeOnly(),hour('hour_active',false),text('minute_active',246,181,156,126,146,'%s',['[MINUTE_Z]']));
   const ambient=group('time_ambient',element('Variant',{mode:'AMBIENT',target:'alpha',value:255}),
-    conditional('ambient_outline',"[CONFIGURATION.ambient_style] == 'outline'",group('outlined_time',hour('hour_ambient',true),outlined(text('minute_ambient',246,181,140,126,146,'%s',['[MINUTE_Z]']))),
-      group('solid_time',hour('hour_ambient_solid',false),text('minute_ambient_solid',246,181,140,126,146,'%s',['[MINUTE_Z]']))));
+    conditional('ambient_outline',"[CONFIGURATION.ambient_style] == 'outline'",group('outlined_time',hour('hour_ambient',true),outlined(text('minute_ambient',246,181,156,126,146,'%s',['[MINUTE_Z]']))),
+      group('solid_time',hour('hour_ambient_solid',false),text('minute_ambient_solid',246,181,156,126,146,'%s',['[MINUTE_Z]']))));
   ambient.attrs.alpha=0;
   return [active,ambient,conditional('ampm_visible',`!(${use24})`,group('ampm_label',
     element('PartDraw',{x:278,y:163,width:74,height:20},element('Rectangle',{x:0,y:0,width:74,height:20},element('Fill',{color:colors.black}))),

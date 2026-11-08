@@ -301,12 +301,12 @@
       </Compare>
     </Condition>
     <PartDraw name="hour_clearance" x="0" y="0" width="450" height="450">
-      <Rectangle x="98" y="73" width="145" height="114">
+      <Rectangle x="98" y="73" width="156" height="114">
         <Fill color="#000000" />
       </Rectangle>
     </PartDraw>
     <PartDraw name="minute_clearance" x="0" y="0" width="450" height="450">
-      <Rectangle x="246" y="188" width="140" height="109">
+      <Rectangle x="246" y="188" width="156" height="109">
         <Fill color="#000000" />
       </Rectangle>
     </PartDraw>
@@ -331,7 +331,7 @@
           </Expression>
         </Expressions>
         <Compare expression="hour_active">
-          <PartText name="hour_active_24" x="98" y="67" width="145" height="126">
+          <PartText name="hour_active_24" x="98" y="67" width="156" height="126">
             <Text align="CENTER" ellipsis="TRUE" maxLines="1" isAutoSize="TRUE">
               <Font family="rajdhani_light" size="146" weight="NORMAL" color="#EDF2EA">
                 <Template>
@@ -343,7 +343,7 @@
           </PartText>
         </Compare>
         <Default>
-          <PartText name="hour_active_12" x="98" y="67" width="145" height="126">
+          <PartText name="hour_active_12" x="98" y="67" width="156" height="126">
             <Text align="CENTER" ellipsis="TRUE" maxLines="1" isAutoSize="TRUE">
               <Font family="rajdhani_light" size="146" weight="NORMAL" color="#EDF2EA">
                 <Template>
@@ -355,7 +355,7 @@
           </PartText>
         </Default>
       </Condition>
-      <PartText name="minute_active" x="246" y="181" width="140" height="126">
+      <PartText name="minute_active" x="246" y="181" width="156" height="126">
         <Text align="CENTER" ellipsis="TRUE" maxLines="1" isAutoSize="TRUE">
           <Font family="rajdhani_light" size="146" weight="NORMAL" color="#EDF2EA">
             <Template>
@@ -383,7 +383,7 @@
                 </Expression>
               </Expressions>
               <Compare expression="hour_ambient">
-                <PartText name="hour_ambient_24" x="98" y="67" width="145" height="126">
+                <PartText name="hour_ambient_24" x="98" y="67" width="156" height="126">
                   <Text align="CENTER" ellipsis="TRUE" maxLines="1" isAutoSize="TRUE">
                     <Font family="rajdhani_light" size="146" weight="NORMAL" color="#000000">
                       <Outline color="#EDF2EA" width="1">
@@ -397,7 +397,7 @@
                 </PartText>
               </Compare>
               <Default>
-                <PartText name="hour_ambient_12" x="98" y="67" width="145" height="126">
+                <PartText name="hour_ambient_12" x="98" y="67" width="156" height="126">
                   <Text align="CENTER" ellipsis="TRUE" maxLines="1" isAutoSize="TRUE">
                     <Font family="rajdhani_light" size="146" weight="NORMAL" color="#000000">
                       <Outline color="#EDF2EA" width="1">
@@ -411,7 +411,7 @@
                 </PartText>
               </Default>
             </Condition>
-            <PartText name="minute_ambient" x="246" y="181" width="140" height="126">
+            <PartText name="minute_ambient" x="246" y="181" width="156" height="126">
               <Text align="CENTER" ellipsis="TRUE" maxLines="1" isAutoSize="TRUE">
                 <Font family="rajdhani_light" size="146" weight="NORMAL" color="#000000">
                   <Outline color="#EDF2EA" width="1">
@@ -434,7 +434,7 @@
                 </Expression>
               </Expressions>
               <Compare expression="hour_ambient_solid">
-                <PartText name="hour_ambient_solid_24" x="98" y="67" width="145" height="126">
+                <PartText name="hour_ambient_solid_24" x="98" y="67" width="156" height="126">
                   <Text align="CENTER" ellipsis="TRUE" maxLines="1" isAutoSize="TRUE">
                     <Font family="rajdhani_light" size="146" weight="NORMAL" color="#EDF2EA">
                       <Template>
@@ -446,7 +446,7 @@
                 </PartText>
               </Compare>
               <Default>
-                <PartText name="hour_ambient_solid_12" x="98" y="67" width="145" height="126">
+                <PartText name="hour_ambient_solid_12" x="98" y="67" width="156" height="126">
                   <Text align="CENTER" ellipsis="TRUE" maxLines="1" isAutoSize="TRUE">
                     <Font family="rajdhani_light" size="146" weight="NORMAL" color="#EDF2EA">
                       <Template>
@@ -458,7 +458,7 @@
                 </PartText>
               </Default>
             </Condition>
-            <PartText name="minute_ambient_solid" x="246" y="181" width="140" height="126">
+            <PartText name="minute_ambient_solid" x="246" y="181" width="156" height="126">
               <Text align="CENTER" ellipsis="TRUE" maxLines="1" isAutoSize="TRUE">
                 <Font family="rajdhani_light" size="146" weight="NORMAL" color="#EDF2EA">
                   <Template>

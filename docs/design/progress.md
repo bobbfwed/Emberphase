@@ -8,7 +8,7 @@ No physical watch is available. No watch connection or installation will be atte
 | 1. Layout and native fold | Complete | WFF 4 schema passed; all 1,440 minute positions checked; local rendering inspected. Native lines only, no animation image set. |
 | 2. Complication docks | Complete | WFF schema, numeric/empty/type/title-switch tests, and visual check passed. Watch companion build, unit tests, and lint passed. |
 | 3. Ambient, power, editor | Complete | Schema and time/visibility tests passed. Browser ambient coverage: 3.085% sample, 3.525% outline stress, 4.590% thin-solid stress. Hardware results pending. |
-| 4. Build and previews | Pending | |
+| 4. Build and previews | Complete | Native/Gradle APKs, schema, signature, resource-only, memory limits, lint, model/browser/resource checks, and 12 state previews passed. See implementation-validation.md. |
 | 5. Device readiness | Pending | Physical-device acceptance remains pending watch availability. |
 
 Stage 2 adds MIN/KCAL titles to the watch companion's existing GOAL_PROGRESS
@@ -23,3 +23,8 @@ and sparse ambient rendering. An internal power-saving companion subscription is
 deliberately not enabled without runtime delivery verification on the watch.
 The face introduces no continuous motion, timers, or services. An always-on
 outline/solid option is available for final hardware legibility checks.
+
+Stage 4 widened both time boxes to 156 units after measuring every valid digit
+pair in the bundled font. Numerals now keep a constant font size across the day.
+The final preview coverage is 2.937% sample, 3.452% outline stress, and 4.556%
+thin-solid stress. The portable gallery is `docs/previews/index.html`.

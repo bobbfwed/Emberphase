@@ -34,8 +34,8 @@ export function scene() {
   }
   return element('Scene',{backgroundColor:colors.black},
     applyAccent(fold()),
-    rectangle('hour_clearance',98,73,145,114,colors.black),
-    rectangle('minute_clearance',246,188,140,109,colors.black),
+    rectangle('hour_clearance',98,73,156,114,colors.black),
+    rectangle('minute_clearance',246,188,156,109,colors.black),
     text('date',108,37,234,26,17,'%s %s %s',['[DAY_OF_WEEK_S]','[DAY_Z]','[MONTH_S]']),
     ...timeDisplay(),
     group('battery_rail',activeOnly(),...battery),

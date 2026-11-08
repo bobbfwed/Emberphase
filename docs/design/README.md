@@ -77,8 +77,8 @@ metrics and physical tap sizes verified on the target watch.
 | Element | Proposed bounds / placement |
 | --- | --- |
 | Date | `(112,37)` to `(338,65)`, centered |
-| Hour | `(102,77)` to `(244,178)`, approx. 106-unit type |
-| Minute | `(242,181)` to `(387,284)`, same type size |
+| Hour | Final text box `(98,67)` to `(254,193)`, 146-unit Rajdhani Light; actual glyphs sit inside the box |
+| Minute | Final text box `(246,181)` to `(402,307)`, same type size |
 | Fold field | Approx. `(44,90)` to `(398,287)`; black exclusion areas around both time boxes |
 | Battery | Slim curved rail near left edge, approx. `(15,88)` to `(66,291)`; value near `(33,188)` |
 | Day caption | Centered at `(225,304)`, approx. 15-unit type |
