@@ -4,8 +4,8 @@ A futuristic digital face for **Wear OS 6 / API 36 and later**, built from scrat
 on the Emberphase project and its optional health companions. Native Watch Face
 Format 4; the face APK contains resources and no executable DEX code.
 
-**Implementation and local validation are complete. Physical-watch installation
-and acceptance are pending watch availability.** See [stage progress](docs/design/progress.md).
+**Installed and active on the Watch6 Classic. Local validation and active/ambient
+smoke checks passed; extended device acceptance remains open.** See [stage progress](docs/design/progress.md).
 
 ![PARALLAX implementation preview with sample data](docs/previews/active.png)
 
@@ -74,7 +74,9 @@ IDs and signing certificates for paired-device Data Layer.
 See [validation results and commands](docs/design/implementation-validation.md)
 and [the pending device acceptance runbook](docs/design/device-acceptance.md).
 The local candidate handoff contains both APKs and a checksummed `candidate.json`
-under `artifacts/device-ready/`. It has not been loaded onto a watch.
+under `artifacts/device-ready/`. Face version code 39 and companion 0.1.9 have
+been loaded onto the watch. Display offload remains an open issue; longer battery
+testing and the rest of the physical acceptance matrix are still required.
 
 ## Source and design
 

@@ -10,7 +10,7 @@ android {
         applicationId = "com.bobbfwed.emberphase"
         minSdk = 36
         targetSdk = 36
-        versionCode = 34
+        versionCode = 39
         versionName = "1.0.0"
     }
     buildTypes {

@@ -1,6 +1,6 @@
 import {element,dynamic,colors,conditional,text,group,activeOnly} from './parallax-primitives.mjs';
 export const use24="[CONFIGURATION.time_format] == '24' || ([CONFIGURATION.time_format] == 'system' && [IS_24_HOUR_MODE])";
-export const foldVisible='[CONFIGURATION.fold] && [BATTERY_PERCENT] > 20 && [BATTERY_PERCENT] <= 100';
+export const foldVisible="[CONFIGURATION.fold] == 'TRUE' && [BATTERY_PERCENT] > 20 && [BATTERY_PERCENT] <= 100";
 export function settings() {
   return element('UserConfigurations',{},
     element('ColorConfiguration',{id:'accent',displayName:'accent',defaultValue:'cyan'},
@@ -40,7 +40,7 @@ export function applyAccent(foldNode) {
     if(part.tag!=='PartDraw')continue;
     const stroke=part.children[0].children.find(c=>c.tag==='Stroke');
     if(stroke.attrs.color.length===9)part.attrs.alpha=parseInt(stroke.attrs.color.slice(1,3),16);
-    stroke.attrs.color=dynamic('[CONFIGURATION.accent.0]',colors.cyan);
+    stroke.attrs.color='[CONFIGURATION.accent.0]';
   }
   return conditional('show_fold',foldVisible,foldNode);
 }

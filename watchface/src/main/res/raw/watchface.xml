@@ -23,278 +23,226 @@
   <Scene backgroundColor="#000000">
     <Condition>
       <Expressions>
-        <Expression name="show_fold">
-          [CONFIGURATION.fold] &amp;&amp; [BATTERY_PERCENT] &gt; 20 &amp;&amp; [BATTERY_PERCENT] &lt;= 100
-        </Expression>
+        <Expression name="show_fold">[CONFIGURATION.fold] == &quot;TRUE&quot; &amp;&amp; [BATTERY_PERCENT] &gt; 20 &amp;&amp; [BATTERY_PERCENT] &lt;= 100</Expression>
       </Expressions>
       <Compare expression="show_fold">
         <Group name="day_fold" x="0" y="0" width="450" height="450">
           <Variant mode="AMBIENT" target="alpha" value="0" />
           <PartDraw name="fold_past_0" x="0" y="0" width="450" height="450" alpha="85">
             <Line startX="0" startY="0" endX="0" endY="0">
-              <Stroke color="#77F4E6" thickness="0.8" cap="ROUND">
-                <Transform target="color" value="[CONFIGURATION.accent.0]" />
-              </Stroke>
+              <Stroke color="[CONFIGURATION.accent.0]" thickness="0.8" cap="ROUND" />
               <Transform target="startX" value="(52) * 1 + (99) * 0" />
               <Transform target="startY" value="(283) * 1 + (206) * 0" />
-              <Transform target="endX" value="(174 + 92 * (([HOUR_0_23] * 60 + [MINUTE]) / 1440)) * 1 + (188 + 92 * (([HOUR_0_23] * 60 + [MINUTE]) / 1440)) * 0" />
-              <Transform target="endY" value="(245 - 66 * (([HOUR_0_23] * 60 + [MINUTE]) / 1440)) * 1 + (207 - 66 * (([HOUR_0_23] * 60 + [MINUTE]) / 1440)) * 0" />
+              <Transform target="endX" value="(174 + 92 * (([HOUR_0_23] * 60 + [MINUTE]) / 1440.0)) * 1 + (188 + 92 * (([HOUR_0_23] * 60 + [MINUTE]) / 1440.0)) * 0" />
+              <Transform target="endY" value="(245 - 66 * (([HOUR_0_23] * 60 + [MINUTE]) / 1440.0)) * 1 + (207 - 66 * (([HOUR_0_23] * 60 + [MINUTE]) / 1440.0)) * 0" />
             </Line>
           </PartDraw>
           <PartDraw name="fold_future_0" x="0" y="0" width="450" height="450" alpha="153">
             <Line startX="0" startY="0" endX="0" endY="0">
-              <Stroke color="#77F4E6" thickness="0.8" cap="ROUND">
-                <Transform target="color" value="[CONFIGURATION.accent.0]" />
-              </Stroke>
-              <Transform target="startX" value="(174 + 92 * (([HOUR_0_23] * 60 + [MINUTE]) / 1440)) * 1 + (188 + 92 * (([HOUR_0_23] * 60 + [MINUTE]) / 1440)) * 0" />
-              <Transform target="startY" value="(245 - 66 * (([HOUR_0_23] * 60 + [MINUTE]) / 1440)) * 1 + (207 - 66 * (([HOUR_0_23] * 60 + [MINUTE]) / 1440)) * 0" />
+              <Stroke color="[CONFIGURATION.accent.0]" thickness="0.8" cap="ROUND" />
+              <Transform target="startX" value="(174 + 92 * (([HOUR_0_23] * 60 + [MINUTE]) / 1440.0)) * 1 + (188 + 92 * (([HOUR_0_23] * 60 + [MINUTE]) / 1440.0)) * 0" />
+              <Transform target="startY" value="(245 - 66 * (([HOUR_0_23] * 60 + [MINUTE]) / 1440.0)) * 1 + (207 - 66 * (([HOUR_0_23] * 60 + [MINUTE]) / 1440.0)) * 0" />
               <Transform target="endX" value="(359) * 1 + (377) * 0" />
               <Transform target="endY" value="(171) * 1 + (92) * 0" />
             </Line>
           </PartDraw>
           <PartDraw name="fold_past_1" x="0" y="0" width="450" height="450" alpha="53">
             <Line startX="0" startY="0" endX="0" endY="0">
-              <Stroke color="#77F4E6" thickness="0.8" cap="ROUND">
-                <Transform target="color" value="[CONFIGURATION.accent.0]" />
-              </Stroke>
+              <Stroke color="[CONFIGURATION.accent.0]" thickness="0.8" cap="ROUND" />
               <Transform target="startX" value="(52) * 0.9 + (99) * 0.1" />
               <Transform target="startY" value="(283) * 0.9 + (206) * 0.1" />
-              <Transform target="endX" value="(174 + 92 * (([HOUR_0_23] * 60 + [MINUTE]) / 1440)) * 0.9 + (188 + 92 * (([HOUR_0_23] * 60 + [MINUTE]) / 1440)) * 0.1" />
-              <Transform target="endY" value="(245 - 66 * (([HOUR_0_23] * 60 + [MINUTE]) / 1440)) * 0.9 + (207 - 66 * (([HOUR_0_23] * 60 + [MINUTE]) / 1440)) * 0.1" />
+              <Transform target="endX" value="(174 + 92 * (([HOUR_0_23] * 60 + [MINUTE]) / 1440.0)) * 0.9 + (188 + 92 * (([HOUR_0_23] * 60 + [MINUTE]) / 1440.0)) * 0.1" />
+              <Transform target="endY" value="(245 - 66 * (([HOUR_0_23] * 60 + [MINUTE]) / 1440.0)) * 0.9 + (207 - 66 * (([HOUR_0_23] * 60 + [MINUTE]) / 1440.0)) * 0.1" />
             </Line>
           </PartDraw>
           <PartDraw name="fold_future_1" x="0" y="0" width="450" height="450" alpha="85">
             <Line startX="0" startY="0" endX="0" endY="0">
-              <Stroke color="#77F4E6" thickness="0.8" cap="ROUND">
-                <Transform target="color" value="[CONFIGURATION.accent.0]" />
-              </Stroke>
-              <Transform target="startX" value="(174 + 92 * (([HOUR_0_23] * 60 + [MINUTE]) / 1440)) * 0.9 + (188 + 92 * (([HOUR_0_23] * 60 + [MINUTE]) / 1440)) * 0.1" />
-              <Transform target="startY" value="(245 - 66 * (([HOUR_0_23] * 60 + [MINUTE]) / 1440)) * 0.9 + (207 - 66 * (([HOUR_0_23] * 60 + [MINUTE]) / 1440)) * 0.1" />
+              <Stroke color="[CONFIGURATION.accent.0]" thickness="0.8" cap="ROUND" />
+              <Transform target="startX" value="(174 + 92 * (([HOUR_0_23] * 60 + [MINUTE]) / 1440.0)) * 0.9 + (188 + 92 * (([HOUR_0_23] * 60 + [MINUTE]) / 1440.0)) * 0.1" />
+              <Transform target="startY" value="(245 - 66 * (([HOUR_0_23] * 60 + [MINUTE]) / 1440.0)) * 0.9 + (207 - 66 * (([HOUR_0_23] * 60 + [MINUTE]) / 1440.0)) * 0.1" />
               <Transform target="endX" value="(359) * 0.9 + (377) * 0.1" />
               <Transform target="endY" value="(171) * 0.9 + (92) * 0.1" />
             </Line>
           </PartDraw>
           <PartDraw name="fold_past_2" x="0" y="0" width="450" height="450" alpha="53">
             <Line startX="0" startY="0" endX="0" endY="0">
-              <Stroke color="#77F4E6" thickness="0.8" cap="ROUND">
-                <Transform target="color" value="[CONFIGURATION.accent.0]" />
-              </Stroke>
+              <Stroke color="[CONFIGURATION.accent.0]" thickness="0.8" cap="ROUND" />
               <Transform target="startX" value="(52) * 0.8 + (99) * 0.2" />
               <Transform target="startY" value="(283) * 0.8 + (206) * 0.2" />
-              <Transform target="endX" value="(174 + 92 * (([HOUR_0_23] * 60 + [MINUTE]) / 1440)) * 0.8 + (188 + 92 * (([HOUR_0_23] * 60 + [MINUTE]) / 1440)) * 0.2" />
-              <Transform target="endY" value="(245 - 66 * (([HOUR_0_23] * 60 + [MINUTE]) / 1440)) * 0.8 + (207 - 66 * (([HOUR_0_23] * 60 + [MINUTE]) / 1440)) * 0.2" />
+              <Transform target="endX" value="(174 + 92 * (([HOUR_0_23] * 60 + [MINUTE]) / 1440.0)) * 0.8 + (188 + 92 * (([HOUR_0_23] * 60 + [MINUTE]) / 1440.0)) * 0.2" />
+              <Transform target="endY" value="(245 - 66 * (([HOUR_0_23] * 60 + [MINUTE]) / 1440.0)) * 0.8 + (207 - 66 * (([HOUR_0_23] * 60 + [MINUTE]) / 1440.0)) * 0.2" />
             </Line>
           </PartDraw>
           <PartDraw name="fold_future_2" x="0" y="0" width="450" height="450" alpha="85">
             <Line startX="0" startY="0" endX="0" endY="0">
-              <Stroke color="#77F4E6" thickness="0.8" cap="ROUND">
-                <Transform target="color" value="[CONFIGURATION.accent.0]" />
-              </Stroke>
-              <Transform target="startX" value="(174 + 92 * (([HOUR_0_23] * 60 + [MINUTE]) / 1440)) * 0.8 + (188 + 92 * (([HOUR_0_23] * 60 + [MINUTE]) / 1440)) * 0.2" />
-              <Transform target="startY" value="(245 - 66 * (([HOUR_0_23] * 60 + [MINUTE]) / 1440)) * 0.8 + (207 - 66 * (([HOUR_0_23] * 60 + [MINUTE]) / 1440)) * 0.2" />
+              <Stroke color="[CONFIGURATION.accent.0]" thickness="0.8" cap="ROUND" />
+              <Transform target="startX" value="(174 + 92 * (([HOUR_0_23] * 60 + [MINUTE]) / 1440.0)) * 0.8 + (188 + 92 * (([HOUR_0_23] * 60 + [MINUTE]) / 1440.0)) * 0.2" />
+              <Transform target="startY" value="(245 - 66 * (([HOUR_0_23] * 60 + [MINUTE]) / 1440.0)) * 0.8 + (207 - 66 * (([HOUR_0_23] * 60 + [MINUTE]) / 1440.0)) * 0.2" />
               <Transform target="endX" value="(359) * 0.8 + (377) * 0.2" />
               <Transform target="endY" value="(171) * 0.8 + (92) * 0.2" />
             </Line>
           </PartDraw>
           <PartDraw name="fold_past_3" x="0" y="0" width="450" height="450" alpha="53">
             <Line startX="0" startY="0" endX="0" endY="0">
-              <Stroke color="#77F4E6" thickness="0.8" cap="ROUND">
-                <Transform target="color" value="[CONFIGURATION.accent.0]" />
-              </Stroke>
+              <Stroke color="[CONFIGURATION.accent.0]" thickness="0.8" cap="ROUND" />
               <Transform target="startX" value="(52) * 0.7 + (99) * 0.3" />
               <Transform target="startY" value="(283) * 0.7 + (206) * 0.3" />
-              <Transform target="endX" value="(174 + 92 * (([HOUR_0_23] * 60 + [MINUTE]) / 1440)) * 0.7 + (188 + 92 * (([HOUR_0_23] * 60 + [MINUTE]) / 1440)) * 0.3" />
-              <Transform target="endY" value="(245 - 66 * (([HOUR_0_23] * 60 + [MINUTE]) / 1440)) * 0.7 + (207 - 66 * (([HOUR_0_23] * 60 + [MINUTE]) / 1440)) * 0.3" />
+              <Transform target="endX" value="(174 + 92 * (([HOUR_0_23] * 60 + [MINUTE]) / 1440.0)) * 0.7 + (188 + 92 * (([HOUR_0_23] * 60 + [MINUTE]) / 1440.0)) * 0.3" />
+              <Transform target="endY" value="(245 - 66 * (([HOUR_0_23] * 60 + [MINUTE]) / 1440.0)) * 0.7 + (207 - 66 * (([HOUR_0_23] * 60 + [MINUTE]) / 1440.0)) * 0.3" />
             </Line>
           </PartDraw>
           <PartDraw name="fold_future_3" x="0" y="0" width="450" height="450" alpha="85">
             <Line startX="0" startY="0" endX="0" endY="0">
-              <Stroke color="#77F4E6" thickness="0.8" cap="ROUND">
-                <Transform target="color" value="[CONFIGURATION.accent.0]" />
-              </Stroke>
-              <Transform target="startX" value="(174 + 92 * (([HOUR_0_23] * 60 + [MINUTE]) / 1440)) * 0.7 + (188 + 92 * (([HOUR_0_23] * 60 + [MINUTE]) / 1440)) * 0.3" />
-              <Transform target="startY" value="(245 - 66 * (([HOUR_0_23] * 60 + [MINUTE]) / 1440)) * 0.7 + (207 - 66 * (([HOUR_0_23] * 60 + [MINUTE]) / 1440)) * 0.3" />
+              <Stroke color="[CONFIGURATION.accent.0]" thickness="0.8" cap="ROUND" />
+              <Transform target="startX" value="(174 + 92 * (([HOUR_0_23] * 60 + [MINUTE]) / 1440.0)) * 0.7 + (188 + 92 * (([HOUR_0_23] * 60 + [MINUTE]) / 1440.0)) * 0.3" />
+              <Transform target="startY" value="(245 - 66 * (([HOUR_0_23] * 60 + [MINUTE]) / 1440.0)) * 0.7 + (207 - 66 * (([HOUR_0_23] * 60 + [MINUTE]) / 1440.0)) * 0.3" />
               <Transform target="endX" value="(359) * 0.7 + (377) * 0.3" />
               <Transform target="endY" value="(171) * 0.7 + (92) * 0.3" />
             </Line>
           </PartDraw>
           <PartDraw name="fold_past_4" x="0" y="0" width="450" height="450" alpha="53">
             <Line startX="0" startY="0" endX="0" endY="0">
-              <Stroke color="#77F4E6" thickness="0.8" cap="ROUND">
-                <Transform target="color" value="[CONFIGURATION.accent.0]" />
-              </Stroke>
+              <Stroke color="[CONFIGURATION.accent.0]" thickness="0.8" cap="ROUND" />
               <Transform target="startX" value="(52) * 0.6 + (99) * 0.4" />
               <Transform target="startY" value="(283) * 0.6 + (206) * 0.4" />
-              <Transform target="endX" value="(174 + 92 * (([HOUR_0_23] * 60 + [MINUTE]) / 1440)) * 0.6 + (188 + 92 * (([HOUR_0_23] * 60 + [MINUTE]) / 1440)) * 0.4" />
-              <Transform target="endY" value="(245 - 66 * (([HOUR_0_23] * 60 + [MINUTE]) / 1440)) * 0.6 + (207 - 66 * (([HOUR_0_23] * 60 + [MINUTE]) / 1440)) * 0.4" />
+              <Transform target="endX" value="(174 + 92 * (([HOUR_0_23] * 60 + [MINUTE]) / 1440.0)) * 0.6 + (188 + 92 * (([HOUR_0_23] * 60 + [MINUTE]) / 1440.0)) * 0.4" />
+              <Transform target="endY" value="(245 - 66 * (([HOUR_0_23] * 60 + [MINUTE]) / 1440.0)) * 0.6 + (207 - 66 * (([HOUR_0_23] * 60 + [MINUTE]) / 1440.0)) * 0.4" />
             </Line>
           </PartDraw>
           <PartDraw name="fold_future_4" x="0" y="0" width="450" height="450" alpha="85">
             <Line startX="0" startY="0" endX="0" endY="0">
-              <Stroke color="#77F4E6" thickness="0.8" cap="ROUND">
-                <Transform target="color" value="[CONFIGURATION.accent.0]" />
-              </Stroke>
-              <Transform target="startX" value="(174 + 92 * (([HOUR_0_23] * 60 + [MINUTE]) / 1440)) * 0.6 + (188 + 92 * (([HOUR_0_23] * 60 + [MINUTE]) / 1440)) * 0.4" />
-              <Transform target="startY" value="(245 - 66 * (([HOUR_0_23] * 60 + [MINUTE]) / 1440)) * 0.6 + (207 - 66 * (([HOUR_0_23] * 60 + [MINUTE]) / 1440)) * 0.4" />
+              <Stroke color="[CONFIGURATION.accent.0]" thickness="0.8" cap="ROUND" />
+              <Transform target="startX" value="(174 + 92 * (([HOUR_0_23] * 60 + [MINUTE]) / 1440.0)) * 0.6 + (188 + 92 * (([HOUR_0_23] * 60 + [MINUTE]) / 1440.0)) * 0.4" />
+              <Transform target="startY" value="(245 - 66 * (([HOUR_0_23] * 60 + [MINUTE]) / 1440.0)) * 0.6 + (207 - 66 * (([HOUR_0_23] * 60 + [MINUTE]) / 1440.0)) * 0.4" />
               <Transform target="endX" value="(359) * 0.6 + (377) * 0.4" />
               <Transform target="endY" value="(171) * 0.6 + (92) * 0.4" />
             </Line>
           </PartDraw>
           <PartDraw name="fold_past_5" x="0" y="0" width="450" height="450" alpha="53">
             <Line startX="0" startY="0" endX="0" endY="0">
-              <Stroke color="#77F4E6" thickness="0.8" cap="ROUND">
-                <Transform target="color" value="[CONFIGURATION.accent.0]" />
-              </Stroke>
+              <Stroke color="[CONFIGURATION.accent.0]" thickness="0.8" cap="ROUND" />
               <Transform target="startX" value="(52) * 0.5 + (99) * 0.5" />
               <Transform target="startY" value="(283) * 0.5 + (206) * 0.5" />
-              <Transform target="endX" value="(174 + 92 * (([HOUR_0_23] * 60 + [MINUTE]) / 1440)) * 0.5 + (188 + 92 * (([HOUR_0_23] * 60 + [MINUTE]) / 1440)) * 0.5" />
-              <Transform target="endY" value="(245 - 66 * (([HOUR_0_23] * 60 + [MINUTE]) / 1440)) * 0.5 + (207 - 66 * (([HOUR_0_23] * 60 + [MINUTE]) / 1440)) * 0.5" />
+              <Transform target="endX" value="(174 + 92 * (([HOUR_0_23] * 60 + [MINUTE]) / 1440.0)) * 0.5 + (188 + 92 * (([HOUR_0_23] * 60 + [MINUTE]) / 1440.0)) * 0.5" />
+              <Transform target="endY" value="(245 - 66 * (([HOUR_0_23] * 60 + [MINUTE]) / 1440.0)) * 0.5 + (207 - 66 * (([HOUR_0_23] * 60 + [MINUTE]) / 1440.0)) * 0.5" />
             </Line>
           </PartDraw>
           <PartDraw name="fold_future_5" x="0" y="0" width="450" height="450" alpha="85">
             <Line startX="0" startY="0" endX="0" endY="0">
-              <Stroke color="#77F4E6" thickness="0.8" cap="ROUND">
-                <Transform target="color" value="[CONFIGURATION.accent.0]" />
-              </Stroke>
-              <Transform target="startX" value="(174 + 92 * (([HOUR_0_23] * 60 + [MINUTE]) / 1440)) * 0.5 + (188 + 92 * (([HOUR_0_23] * 60 + [MINUTE]) / 1440)) * 0.5" />
-              <Transform target="startY" value="(245 - 66 * (([HOUR_0_23] * 60 + [MINUTE]) / 1440)) * 0.5 + (207 - 66 * (([HOUR_0_23] * 60 + [MINUTE]) / 1440)) * 0.5" />
+              <Stroke color="[CONFIGURATION.accent.0]" thickness="0.8" cap="ROUND" />
+              <Transform target="startX" value="(174 + 92 * (([HOUR_0_23] * 60 + [MINUTE]) / 1440.0)) * 0.5 + (188 + 92 * (([HOUR_0_23] * 60 + [MINUTE]) / 1440.0)) * 0.5" />
+              <Transform target="startY" value="(245 - 66 * (([HOUR_0_23] * 60 + [MINUTE]) / 1440.0)) * 0.5 + (207 - 66 * (([HOUR_0_23] * 60 + [MINUTE]) / 1440.0)) * 0.5" />
               <Transform target="endX" value="(359) * 0.5 + (377) * 0.5" />
               <Transform target="endY" value="(171) * 0.5 + (92) * 0.5" />
             </Line>
           </PartDraw>
           <PartDraw name="fold_past_6" x="0" y="0" width="450" height="450" alpha="53">
             <Line startX="0" startY="0" endX="0" endY="0">
-              <Stroke color="#77F4E6" thickness="0.8" cap="ROUND">
-                <Transform target="color" value="[CONFIGURATION.accent.0]" />
-              </Stroke>
+              <Stroke color="[CONFIGURATION.accent.0]" thickness="0.8" cap="ROUND" />
               <Transform target="startX" value="(52) * 0.4 + (99) * 0.6" />
               <Transform target="startY" value="(283) * 0.4 + (206) * 0.6" />
-              <Transform target="endX" value="(174 + 92 * (([HOUR_0_23] * 60 + [MINUTE]) / 1440)) * 0.4 + (188 + 92 * (([HOUR_0_23] * 60 + [MINUTE]) / 1440)) * 0.6" />
-              <Transform target="endY" value="(245 - 66 * (([HOUR_0_23] * 60 + [MINUTE]) / 1440)) * 0.4 + (207 - 66 * (([HOUR_0_23] * 60 + [MINUTE]) / 1440)) * 0.6" />
+              <Transform target="endX" value="(174 + 92 * (([HOUR_0_23] * 60 + [MINUTE]) / 1440.0)) * 0.4 + (188 + 92 * (([HOUR_0_23] * 60 + [MINUTE]) / 1440.0)) * 0.6" />
+              <Transform target="endY" value="(245 - 66 * (([HOUR_0_23] * 60 + [MINUTE]) / 1440.0)) * 0.4 + (207 - 66 * (([HOUR_0_23] * 60 + [MINUTE]) / 1440.0)) * 0.6" />
             </Line>
           </PartDraw>
           <PartDraw name="fold_future_6" x="0" y="0" width="450" height="450" alpha="85">
             <Line startX="0" startY="0" endX="0" endY="0">
-              <Stroke color="#77F4E6" thickness="0.8" cap="ROUND">
-                <Transform target="color" value="[CONFIGURATION.accent.0]" />
-              </Stroke>
-              <Transform target="startX" value="(174 + 92 * (([HOUR_0_23] * 60 + [MINUTE]) / 1440)) * 0.4 + (188 + 92 * (([HOUR_0_23] * 60 + [MINUTE]) / 1440)) * 0.6" />
-              <Transform target="startY" value="(245 - 66 * (([HOUR_0_23] * 60 + [MINUTE]) / 1440)) * 0.4 + (207 - 66 * (([HOUR_0_23] * 60 + [MINUTE]) / 1440)) * 0.6" />
+              <Stroke color="[CONFIGURATION.accent.0]" thickness="0.8" cap="ROUND" />
+              <Transform target="startX" value="(174 + 92 * (([HOUR_0_23] * 60 + [MINUTE]) / 1440.0)) * 0.4 + (188 + 92 * (([HOUR_0_23] * 60 + [MINUTE]) / 1440.0)) * 0.6" />
+              <Transform target="startY" value="(245 - 66 * (([HOUR_0_23] * 60 + [MINUTE]) / 1440.0)) * 0.4 + (207 - 66 * (([HOUR_0_23] * 60 + [MINUTE]) / 1440.0)) * 0.6" />
               <Transform target="endX" value="(359) * 0.4 + (377) * 0.6" />
               <Transform target="endY" value="(171) * 0.4 + (92) * 0.6" />
             </Line>
           </PartDraw>
           <PartDraw name="fold_past_7" x="0" y="0" width="450" height="450" alpha="53">
             <Line startX="0" startY="0" endX="0" endY="0">
-              <Stroke color="#77F4E6" thickness="0.8" cap="ROUND">
-                <Transform target="color" value="[CONFIGURATION.accent.0]" />
-              </Stroke>
+              <Stroke color="[CONFIGURATION.accent.0]" thickness="0.8" cap="ROUND" />
               <Transform target="startX" value="(52) * 0.30000000000000004 + (99) * 0.7" />
               <Transform target="startY" value="(283) * 0.30000000000000004 + (206) * 0.7" />
-              <Transform target="endX" value="(174 + 92 * (([HOUR_0_23] * 60 + [MINUTE]) / 1440)) * 0.30000000000000004 + (188 + 92 * (([HOUR_0_23] * 60 + [MINUTE]) / 1440)) * 0.7" />
-              <Transform target="endY" value="(245 - 66 * (([HOUR_0_23] * 60 + [MINUTE]) / 1440)) * 0.30000000000000004 + (207 - 66 * (([HOUR_0_23] * 60 + [MINUTE]) / 1440)) * 0.7" />
+              <Transform target="endX" value="(174 + 92 * (([HOUR_0_23] * 60 + [MINUTE]) / 1440.0)) * 0.30000000000000004 + (188 + 92 * (([HOUR_0_23] * 60 + [MINUTE]) / 1440.0)) * 0.7" />
+              <Transform target="endY" value="(245 - 66 * (([HOUR_0_23] * 60 + [MINUTE]) / 1440.0)) * 0.30000000000000004 + (207 - 66 * (([HOUR_0_23] * 60 + [MINUTE]) / 1440.0)) * 0.7" />
             </Line>
           </PartDraw>
           <PartDraw name="fold_future_7" x="0" y="0" width="450" height="450" alpha="85">
             <Line startX="0" startY="0" endX="0" endY="0">
-              <Stroke color="#77F4E6" thickness="0.8" cap="ROUND">
-                <Transform target="color" value="[CONFIGURATION.accent.0]" />
-              </Stroke>
-              <Transform target="startX" value="(174 + 92 * (([HOUR_0_23] * 60 + [MINUTE]) / 1440)) * 0.30000000000000004 + (188 + 92 * (([HOUR_0_23] * 60 + [MINUTE]) / 1440)) * 0.7" />
-              <Transform target="startY" value="(245 - 66 * (([HOUR_0_23] * 60 + [MINUTE]) / 1440)) * 0.30000000000000004 + (207 - 66 * (([HOUR_0_23] * 60 + [MINUTE]) / 1440)) * 0.7" />
+              <Stroke color="[CONFIGURATION.accent.0]" thickness="0.8" cap="ROUND" />
+              <Transform target="startX" value="(174 + 92 * (([HOUR_0_23] * 60 + [MINUTE]) / 1440.0)) * 0.30000000000000004 + (188 + 92 * (([HOUR_0_23] * 60 + [MINUTE]) / 1440.0)) * 0.7" />
+              <Transform target="startY" value="(245 - 66 * (([HOUR_0_23] * 60 + [MINUTE]) / 1440.0)) * 0.30000000000000004 + (207 - 66 * (([HOUR_0_23] * 60 + [MINUTE]) / 1440.0)) * 0.7" />
               <Transform target="endX" value="(359) * 0.30000000000000004 + (377) * 0.7" />
               <Transform target="endY" value="(171) * 0.30000000000000004 + (92) * 0.7" />
             </Line>
           </PartDraw>
           <PartDraw name="fold_past_8" x="0" y="0" width="450" height="450" alpha="53">
             <Line startX="0" startY="0" endX="0" endY="0">
-              <Stroke color="#77F4E6" thickness="0.8" cap="ROUND">
-                <Transform target="color" value="[CONFIGURATION.accent.0]" />
-              </Stroke>
+              <Stroke color="[CONFIGURATION.accent.0]" thickness="0.8" cap="ROUND" />
               <Transform target="startX" value="(52) * 0.19999999999999996 + (99) * 0.8" />
               <Transform target="startY" value="(283) * 0.19999999999999996 + (206) * 0.8" />
-              <Transform target="endX" value="(174 + 92 * (([HOUR_0_23] * 60 + [MINUTE]) / 1440)) * 0.19999999999999996 + (188 + 92 * (([HOUR_0_23] * 60 + [MINUTE]) / 1440)) * 0.8" />
-              <Transform target="endY" value="(245 - 66 * (([HOUR_0_23] * 60 + [MINUTE]) / 1440)) * 0.19999999999999996 + (207 - 66 * (([HOUR_0_23] * 60 + [MINUTE]) / 1440)) * 0.8" />
+              <Transform target="endX" value="(174 + 92 * (([HOUR_0_23] * 60 + [MINUTE]) / 1440.0)) * 0.19999999999999996 + (188 + 92 * (([HOUR_0_23] * 60 + [MINUTE]) / 1440.0)) * 0.8" />
+              <Transform target="endY" value="(245 - 66 * (([HOUR_0_23] * 60 + [MINUTE]) / 1440.0)) * 0.19999999999999996 + (207 - 66 * (([HOUR_0_23] * 60 + [MINUTE]) / 1440.0)) * 0.8" />
             </Line>
           </PartDraw>
           <PartDraw name="fold_future_8" x="0" y="0" width="450" height="450" alpha="85">
             <Line startX="0" startY="0" endX="0" endY="0">
-              <Stroke color="#77F4E6" thickness="0.8" cap="ROUND">
-                <Transform target="color" value="[CONFIGURATION.accent.0]" />
-              </Stroke>
-              <Transform target="startX" value="(174 + 92 * (([HOUR_0_23] * 60 + [MINUTE]) / 1440)) * 0.19999999999999996 + (188 + 92 * (([HOUR_0_23] * 60 + [MINUTE]) / 1440)) * 0.8" />
-              <Transform target="startY" value="(245 - 66 * (([HOUR_0_23] * 60 + [MINUTE]) / 1440)) * 0.19999999999999996 + (207 - 66 * (([HOUR_0_23] * 60 + [MINUTE]) / 1440)) * 0.8" />
+              <Stroke color="[CONFIGURATION.accent.0]" thickness="0.8" cap="ROUND" />
+              <Transform target="startX" value="(174 + 92 * (([HOUR_0_23] * 60 + [MINUTE]) / 1440.0)) * 0.19999999999999996 + (188 + 92 * (([HOUR_0_23] * 60 + [MINUTE]) / 1440.0)) * 0.8" />
+              <Transform target="startY" value="(245 - 66 * (([HOUR_0_23] * 60 + [MINUTE]) / 1440.0)) * 0.19999999999999996 + (207 - 66 * (([HOUR_0_23] * 60 + [MINUTE]) / 1440.0)) * 0.8" />
               <Transform target="endX" value="(359) * 0.19999999999999996 + (377) * 0.8" />
               <Transform target="endY" value="(171) * 0.19999999999999996 + (92) * 0.8" />
             </Line>
           </PartDraw>
           <PartDraw name="fold_past_9" x="0" y="0" width="450" height="450" alpha="53">
             <Line startX="0" startY="0" endX="0" endY="0">
-              <Stroke color="#77F4E6" thickness="0.8" cap="ROUND">
-                <Transform target="color" value="[CONFIGURATION.accent.0]" />
-              </Stroke>
+              <Stroke color="[CONFIGURATION.accent.0]" thickness="0.8" cap="ROUND" />
               <Transform target="startX" value="(52) * 0.09999999999999998 + (99) * 0.9" />
               <Transform target="startY" value="(283) * 0.09999999999999998 + (206) * 0.9" />
-              <Transform target="endX" value="(174 + 92 * (([HOUR_0_23] * 60 + [MINUTE]) / 1440)) * 0.09999999999999998 + (188 + 92 * (([HOUR_0_23] * 60 + [MINUTE]) / 1440)) * 0.9" />
-              <Transform target="endY" value="(245 - 66 * (([HOUR_0_23] * 60 + [MINUTE]) / 1440)) * 0.09999999999999998 + (207 - 66 * (([HOUR_0_23] * 60 + [MINUTE]) / 1440)) * 0.9" />
+              <Transform target="endX" value="(174 + 92 * (([HOUR_0_23] * 60 + [MINUTE]) / 1440.0)) * 0.09999999999999998 + (188 + 92 * (([HOUR_0_23] * 60 + [MINUTE]) / 1440.0)) * 0.9" />
+              <Transform target="endY" value="(245 - 66 * (([HOUR_0_23] * 60 + [MINUTE]) / 1440.0)) * 0.09999999999999998 + (207 - 66 * (([HOUR_0_23] * 60 + [MINUTE]) / 1440.0)) * 0.9" />
             </Line>
           </PartDraw>
           <PartDraw name="fold_future_9" x="0" y="0" width="450" height="450" alpha="85">
             <Line startX="0" startY="0" endX="0" endY="0">
-              <Stroke color="#77F4E6" thickness="0.8" cap="ROUND">
-                <Transform target="color" value="[CONFIGURATION.accent.0]" />
-              </Stroke>
-              <Transform target="startX" value="(174 + 92 * (([HOUR_0_23] * 60 + [MINUTE]) / 1440)) * 0.09999999999999998 + (188 + 92 * (([HOUR_0_23] * 60 + [MINUTE]) / 1440)) * 0.9" />
-              <Transform target="startY" value="(245 - 66 * (([HOUR_0_23] * 60 + [MINUTE]) / 1440)) * 0.09999999999999998 + (207 - 66 * (([HOUR_0_23] * 60 + [MINUTE]) / 1440)) * 0.9" />
+              <Stroke color="[CONFIGURATION.accent.0]" thickness="0.8" cap="ROUND" />
+              <Transform target="startX" value="(174 + 92 * (([HOUR_0_23] * 60 + [MINUTE]) / 1440.0)) * 0.09999999999999998 + (188 + 92 * (([HOUR_0_23] * 60 + [MINUTE]) / 1440.0)) * 0.9" />
+              <Transform target="startY" value="(245 - 66 * (([HOUR_0_23] * 60 + [MINUTE]) / 1440.0)) * 0.09999999999999998 + (207 - 66 * (([HOUR_0_23] * 60 + [MINUTE]) / 1440.0)) * 0.9" />
               <Transform target="endX" value="(359) * 0.09999999999999998 + (377) * 0.9" />
               <Transform target="endY" value="(171) * 0.09999999999999998 + (92) * 0.9" />
             </Line>
           </PartDraw>
           <PartDraw name="fold_past_10" x="0" y="0" width="450" height="450" alpha="85">
             <Line startX="0" startY="0" endX="0" endY="0">
-              <Stroke color="#77F4E6" thickness="0.8" cap="ROUND">
-                <Transform target="color" value="[CONFIGURATION.accent.0]" />
-              </Stroke>
+              <Stroke color="[CONFIGURATION.accent.0]" thickness="0.8" cap="ROUND" />
               <Transform target="startX" value="(52) * 0 + (99) * 1" />
               <Transform target="startY" value="(283) * 0 + (206) * 1" />
-              <Transform target="endX" value="(174 + 92 * (([HOUR_0_23] * 60 + [MINUTE]) / 1440)) * 0 + (188 + 92 * (([HOUR_0_23] * 60 + [MINUTE]) / 1440)) * 1" />
-              <Transform target="endY" value="(245 - 66 * (([HOUR_0_23] * 60 + [MINUTE]) / 1440)) * 0 + (207 - 66 * (([HOUR_0_23] * 60 + [MINUTE]) / 1440)) * 1" />
+              <Transform target="endX" value="(174 + 92 * (([HOUR_0_23] * 60 + [MINUTE]) / 1440.0)) * 0 + (188 + 92 * (([HOUR_0_23] * 60 + [MINUTE]) / 1440.0)) * 1" />
+              <Transform target="endY" value="(245 - 66 * (([HOUR_0_23] * 60 + [MINUTE]) / 1440.0)) * 0 + (207 - 66 * (([HOUR_0_23] * 60 + [MINUTE]) / 1440.0)) * 1" />
             </Line>
           </PartDraw>
           <PartDraw name="fold_future_10" x="0" y="0" width="450" height="450" alpha="153">
             <Line startX="0" startY="0" endX="0" endY="0">
-              <Stroke color="#77F4E6" thickness="0.8" cap="ROUND">
-                <Transform target="color" value="[CONFIGURATION.accent.0]" />
-              </Stroke>
-              <Transform target="startX" value="(174 + 92 * (([HOUR_0_23] * 60 + [MINUTE]) / 1440)) * 0 + (188 + 92 * (([HOUR_0_23] * 60 + [MINUTE]) / 1440)) * 1" />
-              <Transform target="startY" value="(245 - 66 * (([HOUR_0_23] * 60 + [MINUTE]) / 1440)) * 0 + (207 - 66 * (([HOUR_0_23] * 60 + [MINUTE]) / 1440)) * 1" />
+              <Stroke color="[CONFIGURATION.accent.0]" thickness="0.8" cap="ROUND" />
+              <Transform target="startX" value="(174 + 92 * (([HOUR_0_23] * 60 + [MINUTE]) / 1440.0)) * 0 + (188 + 92 * (([HOUR_0_23] * 60 + [MINUTE]) / 1440.0)) * 1" />
+              <Transform target="startY" value="(245 - 66 * (([HOUR_0_23] * 60 + [MINUTE]) / 1440.0)) * 0 + (207 - 66 * (([HOUR_0_23] * 60 + [MINUTE]) / 1440.0)) * 1" />
               <Transform target="endX" value="(359) * 0 + (377) * 1" />
               <Transform target="endY" value="(171) * 0 + (92) * 1" />
             </Line>
           </PartDraw>
           <PartDraw name="fold_left_edge" x="0" y="0" width="450" height="450" alpha="136">
             <Line startX="52" startY="283" endX="99" endY="206">
-              <Stroke color="#77F4E6" thickness="0.8" cap="ROUND">
-                <Transform target="color" value="[CONFIGURATION.accent.0]" />
-              </Stroke>
+              <Stroke color="[CONFIGURATION.accent.0]" thickness="0.8" cap="ROUND" />
             </Line>
           </PartDraw>
           <PartDraw name="fold_right_edge" x="0" y="0" width="450" height="450" alpha="187">
             <Line startX="359" startY="171" endX="377" endY="92">
-              <Stroke color="#77F4E6" thickness="0.8" cap="ROUND">
-                <Transform target="color" value="[CONFIGURATION.accent.0]" />
-              </Stroke>
+              <Stroke color="[CONFIGURATION.accent.0]" thickness="0.8" cap="ROUND" />
             </Line>
           </PartDraw>
           <PartDraw name="fold_now" x="0" y="0" width="450" height="450">
             <Line startX="213" startY="217" endX="227" endY="179">
-              <Stroke color="#77F4E6" thickness="2.4" cap="ROUND">
-                <Transform target="color" value="[CONFIGURATION.accent.0]" />
-              </Stroke>
-              <Transform target="startX" value="174 + 92 * (([HOUR_0_23] * 60 + [MINUTE]) / 1440)" />
-              <Transform target="startY" value="245 - 66 * (([HOUR_0_23] * 60 + [MINUTE]) / 1440)" />
-              <Transform target="endX" value="188 + 92 * (([HOUR_0_23] * 60 + [MINUTE]) / 1440)" />
-              <Transform target="endY" value="207 - 66 * (([HOUR_0_23] * 60 + [MINUTE]) / 1440)" />
+              <Stroke color="[CONFIGURATION.accent.0]" thickness="2.4" cap="ROUND" />
+              <Transform target="startX" value="174 + 92 * (([HOUR_0_23] * 60 + [MINUTE]) / 1440.0)" />
+              <Transform target="startY" value="245 - 66 * (([HOUR_0_23] * 60 + [MINUTE]) / 1440.0)" />
+              <Transform target="endX" value="188 + 92 * (([HOUR_0_23] * 60 + [MINUTE]) / 1440.0)" />
+              <Transform target="endY" value="207 - 66 * (([HOUR_0_23] * 60 + [MINUTE]) / 1440.0)" />
             </Line>
           </PartDraw>
         </Group>
@@ -312,57 +260,33 @@
     </PartDraw>
     <PartText name="date" x="108" y="37" width="234" height="26">
       <Text align="CENTER" ellipsis="TRUE" maxLines="1" isAutoSize="TRUE">
-        <Font family="sans-serif" size="17" weight="NORMAL" color="#EDF2EA">
-          <Template>
-            %s %s %s
-            <Parameter expression="[DAY_OF_WEEK_S]" />
-            <Parameter expression="[DAY_Z]" />
-            <Parameter expression="[MONTH_S]" />
-          </Template>
-        </Font>
+        <Font family="sans-serif" size="17" weight="NORMAL" color="#EDF2EA"><Template>%s %s %s<Parameter expression="[DAY_OF_WEEK_S]" /><Parameter expression="[DAY_Z]" /><Parameter expression="[MONTH_S]" /></Template></Font>
       </Text>
     </PartText>
     <Group name="time_active" x="0" y="0" width="450" height="450">
       <Variant mode="AMBIENT" target="alpha" value="0" />
       <Condition>
         <Expressions>
-          <Expression name="hour_active">
-            [CONFIGURATION.time_format] == '24' || ([CONFIGURATION.time_format] == 'system' &amp;&amp; [IS_24_HOUR_MODE])
-          </Expression>
+          <Expression name="hour_active">[CONFIGURATION.time_format] == &quot;24&quot; || ([CONFIGURATION.time_format] == &quot;system&quot; &amp;&amp; [IS_24_HOUR_MODE])</Expression>
         </Expressions>
         <Compare expression="hour_active">
           <PartText name="hour_active_24" x="98" y="67" width="156" height="126">
             <Text align="CENTER" ellipsis="TRUE" maxLines="1" isAutoSize="FALSE">
-              <Font family="rajdhani_light" size="146" weight="NORMAL" color="#EDF2EA">
-                <Template>
-                  %02d
-                  <Parameter expression="[HOUR_0_23]" />
-                </Template>
-              </Font>
+              <Font family="rajdhani_light" size="146" weight="NORMAL" color="#EDF2EA"><Template>%02d<Parameter expression="[HOUR_0_23]" /></Template></Font>
             </Text>
           </PartText>
         </Compare>
         <Default>
           <PartText name="hour_active_12" x="98" y="67" width="156" height="126">
             <Text align="CENTER" ellipsis="TRUE" maxLines="1" isAutoSize="FALSE">
-              <Font family="rajdhani_light" size="146" weight="NORMAL" color="#EDF2EA">
-                <Template>
-                  %d
-                  <Parameter expression="([HOUR_0_23] + 11) % 12 + 1" />
-                </Template>
-              </Font>
+              <Font family="rajdhani_light" size="146" weight="NORMAL" color="#EDF2EA"><Template>%d<Parameter expression="([HOUR_0_23] + 11) % 12 + 1" /></Template></Font>
             </Text>
           </PartText>
         </Default>
       </Condition>
       <PartText name="minute_active" x="246" y="181" width="156" height="126">
         <Text align="CENTER" ellipsis="TRUE" maxLines="1" isAutoSize="FALSE">
-          <Font family="rajdhani_light" size="146" weight="NORMAL" color="#EDF2EA">
-            <Template>
-              %s
-              <Parameter expression="[MINUTE_Z]" />
-            </Template>
-          </Font>
+          <Font family="rajdhani_light" size="146" weight="NORMAL" color="#EDF2EA"><Template>%s<Parameter expression="[MINUTE_Z]" /></Template></Font>
         </Text>
       </PartText>
     </Group>
@@ -370,57 +294,32 @@
       <Variant mode="AMBIENT" target="alpha" value="255" />
       <Condition>
         <Expressions>
-          <Expression name="ambient_outline">
-            [CONFIGURATION.ambient_style] == 'outline'
-          </Expression>
+          <Expression name="ambient_outline">[CONFIGURATION.ambient_style] == &quot;outline&quot;</Expression>
         </Expressions>
         <Compare expression="ambient_outline">
           <Group name="outlined_time" x="0" y="0" width="450" height="450">
             <Condition>
               <Expressions>
-                <Expression name="hour_ambient">
-                  [CONFIGURATION.time_format] == '24' || ([CONFIGURATION.time_format] == 'system' &amp;&amp; [IS_24_HOUR_MODE])
-                </Expression>
+                <Expression name="hour_ambient">[CONFIGURATION.time_format] == &quot;24&quot; || ([CONFIGURATION.time_format] == &quot;system&quot; &amp;&amp; [IS_24_HOUR_MODE])</Expression>
               </Expressions>
               <Compare expression="hour_ambient">
                 <PartText name="hour_ambient_24" x="98" y="67" width="156" height="126">
                   <Text align="CENTER" ellipsis="TRUE" maxLines="1" isAutoSize="FALSE">
-                    <Font family="rajdhani_light" size="146" weight="NORMAL" color="#000000">
-                      <Outline color="#EDF2EA" width="1">
-                        <Template>
-                          %02d
-                          <Parameter expression="[HOUR_0_23]" />
-                        </Template>
-                      </Outline>
-                    </Font>
+                    <Font family="rajdhani_light" size="146" weight="NORMAL" color="#000000"><Outline color="#EDF2EA" width="1"><Template>%02d<Parameter expression="[HOUR_0_23]" /></Template></Outline></Font>
                   </Text>
                 </PartText>
               </Compare>
               <Default>
                 <PartText name="hour_ambient_12" x="98" y="67" width="156" height="126">
                   <Text align="CENTER" ellipsis="TRUE" maxLines="1" isAutoSize="FALSE">
-                    <Font family="rajdhani_light" size="146" weight="NORMAL" color="#000000">
-                      <Outline color="#EDF2EA" width="1">
-                        <Template>
-                          %d
-                          <Parameter expression="([HOUR_0_23] + 11) % 12 + 1" />
-                        </Template>
-                      </Outline>
-                    </Font>
+                    <Font family="rajdhani_light" size="146" weight="NORMAL" color="#000000"><Outline color="#EDF2EA" width="1"><Template>%d<Parameter expression="([HOUR_0_23] + 11) % 12 + 1" /></Template></Outline></Font>
                   </Text>
                 </PartText>
               </Default>
             </Condition>
             <PartText name="minute_ambient" x="246" y="181" width="156" height="126">
               <Text align="CENTER" ellipsis="TRUE" maxLines="1" isAutoSize="FALSE">
-                <Font family="rajdhani_light" size="146" weight="NORMAL" color="#000000">
-                  <Outline color="#EDF2EA" width="1">
-                    <Template>
-                      %s
-                      <Parameter expression="[MINUTE_Z]" />
-                    </Template>
-                  </Outline>
-                </Font>
+                <Font family="rajdhani_light" size="146" weight="NORMAL" color="#000000"><Outline color="#EDF2EA" width="1"><Template>%s<Parameter expression="[MINUTE_Z]" /></Template></Outline></Font>
               </Text>
             </PartText>
           </Group>
@@ -429,43 +328,26 @@
           <Group name="solid_time" x="0" y="0" width="450" height="450">
             <Condition>
               <Expressions>
-                <Expression name="hour_ambient_solid">
-                  [CONFIGURATION.time_format] == '24' || ([CONFIGURATION.time_format] == 'system' &amp;&amp; [IS_24_HOUR_MODE])
-                </Expression>
+                <Expression name="hour_ambient_solid">[CONFIGURATION.time_format] == &quot;24&quot; || ([CONFIGURATION.time_format] == &quot;system&quot; &amp;&amp; [IS_24_HOUR_MODE])</Expression>
               </Expressions>
               <Compare expression="hour_ambient_solid">
                 <PartText name="hour_ambient_solid_24" x="98" y="67" width="156" height="126">
                   <Text align="CENTER" ellipsis="TRUE" maxLines="1" isAutoSize="FALSE">
-                    <Font family="rajdhani_light" size="146" weight="NORMAL" color="#EDF2EA">
-                      <Template>
-                        %02d
-                        <Parameter expression="[HOUR_0_23]" />
-                      </Template>
-                    </Font>
+                    <Font family="rajdhani_light" size="146" weight="NORMAL" color="#EDF2EA"><Template>%02d<Parameter expression="[HOUR_0_23]" /></Template></Font>
                   </Text>
                 </PartText>
               </Compare>
               <Default>
                 <PartText name="hour_ambient_solid_12" x="98" y="67" width="156" height="126">
                   <Text align="CENTER" ellipsis="TRUE" maxLines="1" isAutoSize="FALSE">
-                    <Font family="rajdhani_light" size="146" weight="NORMAL" color="#EDF2EA">
-                      <Template>
-                        %d
-                        <Parameter expression="([HOUR_0_23] + 11) % 12 + 1" />
-                      </Template>
-                    </Font>
+                    <Font family="rajdhani_light" size="146" weight="NORMAL" color="#EDF2EA"><Template>%d<Parameter expression="([HOUR_0_23] + 11) % 12 + 1" /></Template></Font>
                   </Text>
                 </PartText>
               </Default>
             </Condition>
             <PartText name="minute_ambient_solid" x="246" y="181" width="156" height="126">
               <Text align="CENTER" ellipsis="TRUE" maxLines="1" isAutoSize="FALSE">
-                <Font family="rajdhani_light" size="146" weight="NORMAL" color="#EDF2EA">
-                  <Template>
-                    %s
-                    <Parameter expression="[MINUTE_Z]" />
-                  </Template>
-                </Font>
+                <Font family="rajdhani_light" size="146" weight="NORMAL" color="#EDF2EA"><Template>%s<Parameter expression="[MINUTE_Z]" /></Template></Font>
               </Text>
             </PartText>
           </Group>
@@ -474,9 +356,7 @@
     </Group>
     <Condition>
       <Expressions>
-        <Expression name="ampm_visible">
-          !([CONFIGURATION.time_format] == '24' || ([CONFIGURATION.time_format] == 'system' &amp;&amp; [IS_24_HOUR_MODE]))
-        </Expression>
+        <Expression name="ampm_visible">!([CONFIGURATION.time_format] == &quot;24&quot; || ([CONFIGURATION.time_format] == &quot;system&quot; &amp;&amp; [IS_24_HOUR_MODE]))</Expression>
       </Expressions>
       <Compare expression="ampm_visible">
         <Group name="ampm_label" x="0" y="0" width="450" height="450">
@@ -487,12 +367,7 @@
           </PartDraw>
           <PartText name="ampm" x="280" y="163" width="70" height="20">
             <Text align="CENTER" ellipsis="TRUE" maxLines="1" isAutoSize="TRUE">
-              <Font family="sans-serif" size="12" weight="NORMAL" color="#A0AAA6">
-                <Template>
-                  %s
-                  <Parameter expression="[AMPM_STRING]" />
-                </Template>
-              </Font>
+              <Font family="sans-serif" size="12" weight="NORMAL" color="#A0AAA6"><Template>%s<Parameter expression="[AMPM_STRING]" /></Template></Font>
             </Text>
           </PartText>
         </Group>
@@ -500,124 +375,184 @@
     </Condition>
     <Group name="battery_rail" x="0" y="0" width="450" height="450">
       <Variant mode="AMBIENT" target="alpha" value="0" />
-      <PartDraw name="battery_segment_0" x="0" y="0" width="450" height="450">
+      <PartDraw name="battery_segment_0_track" x="0" y="0" width="450" height="450">
         <Arc centerX="225" centerY="225" width="406" height="406" startAngle="247" endAngle="252">
-          <Stroke thickness="2.8" cap="ROUND" color="#34433F">
-            <Transform target="color" value="[BATTERY_PERCENT] &gt;= 12.5 &amp;&amp; [BATTERY_PERCENT] &lt;= 100 ? [CONFIGURATION.accent.0] : '#34433F'" />
-          </Stroke>
+          <Stroke thickness="2.8" cap="ROUND" color="#34433F" />
         </Arc>
       </PartDraw>
-      <PartDraw name="battery_segment_1" x="0" y="0" width="450" height="450">
+      <Condition>
+        <Expressions>
+          <Expression name="battery_fill_0">[BATTERY_PERCENT] &gt;= 12.5 &amp;&amp; [BATTERY_PERCENT] &lt;= 100</Expression>
+        </Expressions>
+        <Compare expression="battery_fill_0">
+          <PartDraw name="battery_segment_0_fill" x="0" y="0" width="450" height="450">
+            <Arc centerX="225" centerY="225" width="406" height="406" startAngle="247" endAngle="252">
+              <Stroke thickness="2.8" cap="ROUND" color="[CONFIGURATION.accent.0]" />
+            </Arc>
+          </PartDraw>
+        </Compare>
+      </Condition>
+      <PartDraw name="battery_segment_1_track" x="0" y="0" width="450" height="450">
         <Arc centerX="225" centerY="225" width="406" height="406" startAngle="255" endAngle="260">
-          <Stroke thickness="2.8" cap="ROUND" color="#34433F">
-            <Transform target="color" value="[BATTERY_PERCENT] &gt;= 25 &amp;&amp; [BATTERY_PERCENT] &lt;= 100 ? [CONFIGURATION.accent.0] : '#34433F'" />
-          </Stroke>
+          <Stroke thickness="2.8" cap="ROUND" color="#34433F" />
         </Arc>
       </PartDraw>
-      <PartDraw name="battery_segment_2" x="0" y="0" width="450" height="450">
+      <Condition>
+        <Expressions>
+          <Expression name="battery_fill_1">[BATTERY_PERCENT] &gt;= 25 &amp;&amp; [BATTERY_PERCENT] &lt;= 100</Expression>
+        </Expressions>
+        <Compare expression="battery_fill_1">
+          <PartDraw name="battery_segment_1_fill" x="0" y="0" width="450" height="450">
+            <Arc centerX="225" centerY="225" width="406" height="406" startAngle="255" endAngle="260">
+              <Stroke thickness="2.8" cap="ROUND" color="[CONFIGURATION.accent.0]" />
+            </Arc>
+          </PartDraw>
+        </Compare>
+      </Condition>
+      <PartDraw name="battery_segment_2_track" x="0" y="0" width="450" height="450">
         <Arc centerX="225" centerY="225" width="406" height="406" startAngle="263" endAngle="268">
-          <Stroke thickness="2.8" cap="ROUND" color="#34433F">
-            <Transform target="color" value="[BATTERY_PERCENT] &gt;= 37.5 &amp;&amp; [BATTERY_PERCENT] &lt;= 100 ? [CONFIGURATION.accent.0] : '#34433F'" />
-          </Stroke>
+          <Stroke thickness="2.8" cap="ROUND" color="#34433F" />
         </Arc>
       </PartDraw>
-      <PartDraw name="battery_segment_3" x="0" y="0" width="450" height="450">
+      <Condition>
+        <Expressions>
+          <Expression name="battery_fill_2">[BATTERY_PERCENT] &gt;= 37.5 &amp;&amp; [BATTERY_PERCENT] &lt;= 100</Expression>
+        </Expressions>
+        <Compare expression="battery_fill_2">
+          <PartDraw name="battery_segment_2_fill" x="0" y="0" width="450" height="450">
+            <Arc centerX="225" centerY="225" width="406" height="406" startAngle="263" endAngle="268">
+              <Stroke thickness="2.8" cap="ROUND" color="[CONFIGURATION.accent.0]" />
+            </Arc>
+          </PartDraw>
+        </Compare>
+      </Condition>
+      <PartDraw name="battery_segment_3_track" x="0" y="0" width="450" height="450">
         <Arc centerX="225" centerY="225" width="406" height="406" startAngle="271" endAngle="276">
-          <Stroke thickness="2.8" cap="ROUND" color="#34433F">
-            <Transform target="color" value="[BATTERY_PERCENT] &gt;= 50 &amp;&amp; [BATTERY_PERCENT] &lt;= 100 ? [CONFIGURATION.accent.0] : '#34433F'" />
-          </Stroke>
+          <Stroke thickness="2.8" cap="ROUND" color="#34433F" />
         </Arc>
       </PartDraw>
-      <PartDraw name="battery_segment_4" x="0" y="0" width="450" height="450">
+      <Condition>
+        <Expressions>
+          <Expression name="battery_fill_3">[BATTERY_PERCENT] &gt;= 50 &amp;&amp; [BATTERY_PERCENT] &lt;= 100</Expression>
+        </Expressions>
+        <Compare expression="battery_fill_3">
+          <PartDraw name="battery_segment_3_fill" x="0" y="0" width="450" height="450">
+            <Arc centerX="225" centerY="225" width="406" height="406" startAngle="271" endAngle="276">
+              <Stroke thickness="2.8" cap="ROUND" color="[CONFIGURATION.accent.0]" />
+            </Arc>
+          </PartDraw>
+        </Compare>
+      </Condition>
+      <PartDraw name="battery_segment_4_track" x="0" y="0" width="450" height="450">
         <Arc centerX="225" centerY="225" width="406" height="406" startAngle="279" endAngle="284">
-          <Stroke thickness="2.8" cap="ROUND" color="#34433F">
-            <Transform target="color" value="[BATTERY_PERCENT] &gt;= 62.5 &amp;&amp; [BATTERY_PERCENT] &lt;= 100 ? [CONFIGURATION.accent.0] : '#34433F'" />
-          </Stroke>
+          <Stroke thickness="2.8" cap="ROUND" color="#34433F" />
         </Arc>
       </PartDraw>
-      <PartDraw name="battery_segment_5" x="0" y="0" width="450" height="450">
+      <Condition>
+        <Expressions>
+          <Expression name="battery_fill_4">[BATTERY_PERCENT] &gt;= 62.5 &amp;&amp; [BATTERY_PERCENT] &lt;= 100</Expression>
+        </Expressions>
+        <Compare expression="battery_fill_4">
+          <PartDraw name="battery_segment_4_fill" x="0" y="0" width="450" height="450">
+            <Arc centerX="225" centerY="225" width="406" height="406" startAngle="279" endAngle="284">
+              <Stroke thickness="2.8" cap="ROUND" color="[CONFIGURATION.accent.0]" />
+            </Arc>
+          </PartDraw>
+        </Compare>
+      </Condition>
+      <PartDraw name="battery_segment_5_track" x="0" y="0" width="450" height="450">
         <Arc centerX="225" centerY="225" width="406" height="406" startAngle="287" endAngle="292">
-          <Stroke thickness="2.8" cap="ROUND" color="#34433F">
-            <Transform target="color" value="[BATTERY_PERCENT] &gt;= 75 &amp;&amp; [BATTERY_PERCENT] &lt;= 100 ? [CONFIGURATION.accent.0] : '#34433F'" />
-          </Stroke>
+          <Stroke thickness="2.8" cap="ROUND" color="#34433F" />
         </Arc>
       </PartDraw>
-      <PartDraw name="battery_segment_6" x="0" y="0" width="450" height="450">
+      <Condition>
+        <Expressions>
+          <Expression name="battery_fill_5">[BATTERY_PERCENT] &gt;= 75 &amp;&amp; [BATTERY_PERCENT] &lt;= 100</Expression>
+        </Expressions>
+        <Compare expression="battery_fill_5">
+          <PartDraw name="battery_segment_5_fill" x="0" y="0" width="450" height="450">
+            <Arc centerX="225" centerY="225" width="406" height="406" startAngle="287" endAngle="292">
+              <Stroke thickness="2.8" cap="ROUND" color="[CONFIGURATION.accent.0]" />
+            </Arc>
+          </PartDraw>
+        </Compare>
+      </Condition>
+      <PartDraw name="battery_segment_6_track" x="0" y="0" width="450" height="450">
         <Arc centerX="225" centerY="225" width="406" height="406" startAngle="295" endAngle="300">
-          <Stroke thickness="2.8" cap="ROUND" color="#34433F">
-            <Transform target="color" value="[BATTERY_PERCENT] &gt;= 87.5 &amp;&amp; [BATTERY_PERCENT] &lt;= 100 ? [CONFIGURATION.accent.0] : '#34433F'" />
-          </Stroke>
+          <Stroke thickness="2.8" cap="ROUND" color="#34433F" />
         </Arc>
       </PartDraw>
-      <PartDraw name="battery_segment_7" x="0" y="0" width="450" height="450">
+      <Condition>
+        <Expressions>
+          <Expression name="battery_fill_6">[BATTERY_PERCENT] &gt;= 87.5 &amp;&amp; [BATTERY_PERCENT] &lt;= 100</Expression>
+        </Expressions>
+        <Compare expression="battery_fill_6">
+          <PartDraw name="battery_segment_6_fill" x="0" y="0" width="450" height="450">
+            <Arc centerX="225" centerY="225" width="406" height="406" startAngle="295" endAngle="300">
+              <Stroke thickness="2.8" cap="ROUND" color="[CONFIGURATION.accent.0]" />
+            </Arc>
+          </PartDraw>
+        </Compare>
+      </Condition>
+      <PartDraw name="battery_segment_7_track" x="0" y="0" width="450" height="450">
         <Arc centerX="225" centerY="225" width="406" height="406" startAngle="303" endAngle="308">
-          <Stroke thickness="2.8" cap="ROUND" color="#34433F">
-            <Transform target="color" value="[BATTERY_PERCENT] &gt;= 100 &amp;&amp; [BATTERY_PERCENT] &lt;= 100 ? [CONFIGURATION.accent.0] : '#34433F'" />
-          </Stroke>
+          <Stroke thickness="2.8" cap="ROUND" color="#34433F" />
         </Arc>
       </PartDraw>
+      <Condition>
+        <Expressions>
+          <Expression name="battery_fill_7">[BATTERY_PERCENT] &gt;= 100 &amp;&amp; [BATTERY_PERCENT] &lt;= 100</Expression>
+        </Expressions>
+        <Compare expression="battery_fill_7">
+          <PartDraw name="battery_segment_7_fill" x="0" y="0" width="450" height="450">
+            <Arc centerX="225" centerY="225" width="406" height="406" startAngle="303" endAngle="308">
+              <Stroke thickness="2.8" cap="ROUND" color="[CONFIGURATION.accent.0]" />
+            </Arc>
+          </PartDraw>
+        </Compare>
+      </Condition>
     </Group>
     <Condition>
       <Expressions>
-        <Expression name="battery_available">
-          [BATTERY_PERCENT] &gt;= 0 &amp;&amp; [BATTERY_PERCENT] &lt;= 100
-        </Expression>
+        <Expression name="battery_available">[BATTERY_PERCENT] &gt;= 0 &amp;&amp; [BATTERY_PERCENT] &lt;= 100</Expression>
       </Expressions>
       <Compare expression="battery_available">
         <PartText name="battery" x="24" y="187" width="60" height="25">
           <Text align="CENTER" ellipsis="TRUE" maxLines="1" isAutoSize="TRUE">
-            <Font family="sans-serif" size="19" weight="NORMAL" color="#EDF2EA">
-              <Template>
-                %d%%
-                <Parameter expression="[BATTERY_PERCENT]" />
-              </Template>
-            </Font>
+            <Font family="sans-serif" size="19" weight="NORMAL" color="#EDF2EA"><Template>%d%%<Parameter expression="[BATTERY_PERCENT]" /></Template></Font>
           </Text>
         </PartText>
       </Compare>
       <Default>
         <PartText name="battery_unknown" x="24" y="187" width="60" height="25">
           <Text align="CENTER" ellipsis="TRUE" maxLines="1" isAutoSize="TRUE">
-            <Font family="sans-serif" size="19" weight="NORMAL" color="#EDF2EA">
-              —
-            </Font>
+            <Font family="sans-serif" size="19" weight="NORMAL" color="#EDF2EA">—</Font>
           </Text>
         </PartText>
       </Default>
     </Condition>
     <Condition>
       <Expressions>
-        <Expression name="battery_warning">
-          [BATTERY_PERCENT] &gt;= 0 &amp;&amp; [BATTERY_PERCENT] &lt;= 20
-        </Expression>
+        <Expression name="battery_warning">[BATTERY_PERCENT] &gt;= 0 &amp;&amp; [BATTERY_PERCENT] &lt;= 20</Expression>
       </Expressions>
       <Compare expression="battery_warning">
         <PartText name="battery_warning_mark" x="30" y="214" width="36" height="20">
           <Text align="CENTER" ellipsis="TRUE" maxLines="1" isAutoSize="TRUE">
-            <Font family="sans-serif" size="15" weight="NORMAL" color="#EDF2EA">
-              !
-            </Font>
+            <Font family="sans-serif" size="15" weight="NORMAL" color="#EDF2EA">!</Font>
           </Text>
         </PartText>
       </Compare>
     </Condition>
     <Condition>
       <Expressions>
-        <Expression name="show_day_caption">
-          [CONFIGURATION.fold] &amp;&amp; [BATTERY_PERCENT] &gt; 20 &amp;&amp; [BATTERY_PERCENT] &lt;= 100
-        </Expression>
+        <Expression name="show_day_caption">[CONFIGURATION.fold] == &quot;TRUE&quot; &amp;&amp; [BATTERY_PERCENT] &gt; 20 &amp;&amp; [BATTERY_PERCENT] &lt;= 100</Expression>
       </Expressions>
       <Compare expression="show_day_caption">
         <Group name="day_caption" x="0" y="0" width="450" height="450">
           <Variant mode="AMBIENT" target="alpha" value="0" />
           <PartText name="day_percent" x="150" y="288" width="150" height="26">
             <Text align="CENTER" ellipsis="TRUE" maxLines="1" isAutoSize="TRUE">
-              <Font family="sans-serif" size="16" weight="NORMAL" color="#C9F279">
-                <Template>
-                  DAY %d%%
-                  <Parameter expression="floor(100 * (([HOUR_0_23] * 60 + [MINUTE]) / 1440))" />
-                </Template>
-              </Font>
+              <Font family="sans-serif" size="16" weight="NORMAL" color="#C9F279"><Template>DAY %d%%<Parameter expression="floor(100 * (([HOUR_0_23] * 60 + [MINUTE]) / 1440.0))" /></Template></Font>
             </Text>
           </PartText>
         </Group>
@@ -692,94 +627,92 @@
         </Line>
       </PartDraw>
     </Group>
+    <Group name="dock_empty_defaults" x="0" y="0" width="450" height="450">
+      <Variant mode="AMBIENT" target="alpha" value="0" />
+      <PartText name="no_data_101" x="77" y="321" width="84" height="28">
+        <Text align="CENTER" ellipsis="TRUE" maxLines="1" isAutoSize="TRUE">
+          <Font family="sans-serif" size="24" weight="NORMAL" color="#A0AAA6">—</Font>
+        </Text>
+      </PartText>
+      <PartText name="no_data_102" x="183" y="338" width="84" height="28">
+        <Text align="CENTER" ellipsis="TRUE" maxLines="1" isAutoSize="TRUE">
+          <Font family="sans-serif" size="24" weight="NORMAL" color="#A0AAA6">—</Font>
+        </Text>
+      </PartText>
+      <PartText name="no_data_103" x="289" y="321" width="84" height="28">
+        <Text align="CENTER" ellipsis="TRUE" maxLines="1" isAutoSize="TRUE">
+          <Font family="sans-serif" size="24" weight="NORMAL" color="#A0AAA6">—</Font>
+        </Text>
+      </PartText>
+    </Group>
     <ComplicationSlot name="dock_a" slotId="101" displayName="dock_a" x="67" y="290" width="104" height="104" isCustomizable="TRUE" supportedTypes="SHORT_TEXT RANGED_VALUE GOAL_PROGRESS MONOCHROMATIC_IMAGE EMPTY">
       <Variant mode="AMBIENT" target="alpha" value="0" />
       <BoundingOval x="0" y="0" width="104" height="104" />
       <DefaultProviderPolicy primaryProvider="com.samsung.android.wear.shealth/com.samsung.android.wear.shealth.complications.steps.StepsComplicationProviderService" primaryProviderType="GOAL_PROGRESS" defaultSystemProvider="STEP_COUNT" defaultSystemProviderType="RANGED_VALUE" />
       <Complication type="SHORT_TEXT">
+        <PartDraw name="value_background_101_SHORT_TEXT" x="0" y="0" width="450" height="450">
+          <Rectangle x="9" y="28" width="86" height="48">
+            <Fill color="#000000" />
+          </Rectangle>
+        </PartDraw>
         <Condition>
           <Expressions>
-            <Expression name="has_text_101_SHORT_TEXT">
-              [COMPLICATION.TEXT] != ''
-            </Expression>
+            <Expression name="has_text_101_SHORT_TEXT">[COMPLICATION.TEXT] != &quot;&quot;</Expression>
           </Expressions>
           <Compare expression="has_text_101_SHORT_TEXT">
             <PartText name="value_101_SHORT_TEXT" x="10" y="29" width="84" height="30">
               <Text align="CENTER" ellipsis="TRUE" maxLines="1" isAutoSize="TRUE">
-                <Font family="sans-serif" size="25" weight="NORMAL" color="#EDF2EA">
-                  <Template>
-                    %s
-                    <Parameter expression="[COMPLICATION.TEXT]" />
-                  </Template>
-                </Font>
+                <Font family="sans-serif" size="25" weight="NORMAL" color="#EDF2EA"><Template>%s<Parameter expression="[COMPLICATION.TEXT]" /></Template></Font>
               </Text>
             </PartText>
           </Compare>
           <Default>
             <PartText name="missing_101" x="10" y="29" width="84" height="30">
               <Text align="CENTER" ellipsis="TRUE" maxLines="1" isAutoSize="TRUE">
-                <Font family="sans-serif" size="25" weight="NORMAL" color="#EDF2EA">
-                  —
-                </Font>
+                <Font family="sans-serif" size="25" weight="NORMAL" color="#EDF2EA">—</Font>
               </Text>
             </PartText>
           </Default>
         </Condition>
         <PartText name="label_101_SHORT_TEXT" x="10" y="58" width="84" height="15">
           <Text align="CENTER" ellipsis="TRUE" maxLines="1" isAutoSize="TRUE">
-            <Font family="sans-serif" size="11" weight="NORMAL" color="#A0AAA6">
-              <Template>
-                %s
-                <Parameter expression="[COMPLICATION.TITLE]" />
-              </Template>
-            </Font>
+            <Font family="sans-serif" size="11" weight="NORMAL" color="#A0AAA6"><Template>%s<Parameter expression="[COMPLICATION.TITLE]" /></Template></Font>
           </Text>
         </PartText>
       </Complication>
       <Complication type="GOAL_PROGRESS">
+        <PartDraw name="value_background_101_GOAL_PROGRESS" x="0" y="0" width="450" height="450">
+          <Rectangle x="9" y="28" width="86" height="48">
+            <Fill color="#000000" />
+          </Rectangle>
+        </PartDraw>
         <Condition>
           <Expressions>
-            <Expression name="has_text_101_GOAL_PROGRESS">
-              [COMPLICATION.TEXT] != ''
-            </Expression>
+            <Expression name="has_text_101_GOAL_PROGRESS">[COMPLICATION.TEXT] != &quot;&quot;</Expression>
           </Expressions>
           <Compare expression="has_text_101_GOAL_PROGRESS">
             <PartText name="value_101_GOAL_PROGRESS" x="10" y="29" width="84" height="30">
               <Text align="CENTER" ellipsis="TRUE" maxLines="1" isAutoSize="TRUE">
-                <Font family="sans-serif" size="25" weight="NORMAL" color="#EDF2EA">
-                  <Template>
-                    %s
-                    <Parameter expression="[COMPLICATION.TEXT]" />
-                  </Template>
-                </Font>
+                <Font family="sans-serif" size="25" weight="NORMAL" color="#EDF2EA"><Template>%s<Parameter expression="[COMPLICATION.TEXT]" /></Template></Font>
               </Text>
             </PartText>
           </Compare>
           <Default>
             <Condition>
               <Expressions>
-                <Expression name="finite_101_GOAL_PROGRESS">
-                  ([COMPLICATION.GOAL_PROGRESS_VALUE] - [COMPLICATION.GOAL_PROGRESS_VALUE]) == 0
-                </Expression>
+                <Expression name="finite_101_GOAL_PROGRESS">([COMPLICATION.GOAL_PROGRESS_VALUE] - [COMPLICATION.GOAL_PROGRESS_VALUE]) == 0</Expression>
               </Expressions>
               <Compare expression="finite_101_GOAL_PROGRESS">
                 <PartText name="number_101_GOAL_PROGRESS" x="10" y="29" width="84" height="30">
                   <Text align="CENTER" ellipsis="TRUE" maxLines="1" isAutoSize="TRUE">
-                    <Font family="sans-serif" size="25" weight="NORMAL" color="#EDF2EA">
-                      <Template>
-                        %.0f
-                        <Parameter expression="[COMPLICATION.GOAL_PROGRESS_VALUE]" />
-                      </Template>
-                    </Font>
+                    <Font family="sans-serif" size="25" weight="NORMAL" color="#EDF2EA"><Template>%.0f<Parameter expression="[COMPLICATION.GOAL_PROGRESS_VALUE]" /></Template></Font>
                   </Text>
                 </PartText>
               </Compare>
               <Default>
                 <PartText name="invalid_101_GOAL_PROGRESS" x="10" y="29" width="84" height="30">
                   <Text align="CENTER" ellipsis="TRUE" maxLines="1" isAutoSize="TRUE">
-                    <Font family="sans-serif" size="25" weight="NORMAL" color="#EDF2EA">
-                      —
-                    </Font>
+                    <Font family="sans-serif" size="25" weight="NORMAL" color="#EDF2EA">—</Font>
                   </Text>
                 </PartText>
               </Default>
@@ -788,19 +721,12 @@
         </Condition>
         <PartText name="label_101_GOAL_PROGRESS" x="10" y="58" width="84" height="15">
           <Text align="CENTER" ellipsis="TRUE" maxLines="1" isAutoSize="TRUE">
-            <Font family="sans-serif" size="11" weight="NORMAL" color="#A0AAA6">
-              <Template>
-                %s
-                <Parameter expression="[COMPLICATION.TITLE] != '' ? [COMPLICATION.TITLE] : 'GOAL'" />
-              </Template>
-            </Font>
+            <Font family="sans-serif" size="11" weight="NORMAL" color="#A0AAA6"><Template>%s<Parameter expression="[COMPLICATION.TITLE] != &quot;&quot; ? [COMPLICATION.TITLE] : &quot;GOAL&quot;" /></Template></Font>
           </Text>
         </PartText>
         <Condition>
           <Expressions>
-            <Expression name="valid_101_GOAL_PROGRESS">
-              [COMPLICATION.GOAL_PROGRESS_TARGET_VALUE] &gt; 0 &amp;&amp; ([COMPLICATION.GOAL_PROGRESS_TARGET_VALUE] - [COMPLICATION.GOAL_PROGRESS_TARGET_VALUE]) == 0 &amp;&amp; [COMPLICATION.GOAL_PROGRESS_VALUE] &gt;= 0 &amp;&amp; ([COMPLICATION.GOAL_PROGRESS_VALUE] - [COMPLICATION.GOAL_PROGRESS_VALUE]) == 0
-            </Expression>
+            <Expression name="valid_101_GOAL_PROGRESS">[COMPLICATION.GOAL_PROGRESS_TARGET_VALUE] &gt; 0 &amp;&amp; ([COMPLICATION.GOAL_PROGRESS_TARGET_VALUE] - [COMPLICATION.GOAL_PROGRESS_TARGET_VALUE]) == 0 &amp;&amp; [COMPLICATION.GOAL_PROGRESS_VALUE] &gt;= 0 &amp;&amp; ([COMPLICATION.GOAL_PROGRESS_VALUE] - [COMPLICATION.GOAL_PROGRESS_VALUE]) == 0</Expression>
           </Expressions>
           <Compare expression="valid_101_GOAL_PROGRESS">
             <Group name="range_101_GOAL_PROGRESS" x="0" y="0" width="450" height="450">
@@ -811,15 +737,13 @@
               </PartDraw>
               <Condition>
                 <Expressions>
-                  <Expression name="positive_101_GOAL_PROGRESS">
-                    min(1, max(0, [COMPLICATION.GOAL_PROGRESS_VALUE] / [COMPLICATION.GOAL_PROGRESS_TARGET_VALUE])) &gt; 0
-                  </Expression>
+                  <Expression name="positive_101_GOAL_PROGRESS">clamp(1.0 * [COMPLICATION.GOAL_PROGRESS_VALUE] / [COMPLICATION.GOAL_PROGRESS_TARGET_VALUE], 0, 1) &gt; 0</Expression>
                 </Expressions>
                 <Compare expression="positive_101_GOAL_PROGRESS">
                   <PartDraw name="progress_101_GOAL_PROGRESS" x="0" y="0" width="450" height="450">
                     <Line startX="15" startY="78" endX="15" endY="78">
                       <Stroke color="#C9F279" thickness="2.5" cap="ROUND" />
-                      <Transform target="endX" value="15 + 68 * (min(1, max(0, [COMPLICATION.GOAL_PROGRESS_VALUE] / [COMPLICATION.GOAL_PROGRESS_TARGET_VALUE])))" />
+                      <Transform target="endX" value="15 + 68 * (clamp(1.0 * [COMPLICATION.GOAL_PROGRESS_VALUE] / [COMPLICATION.GOAL_PROGRESS_TARGET_VALUE], 0, 1))" />
                     </Line>
                   </PartDraw>
                 </Compare>
@@ -829,49 +753,38 @@
         </Condition>
       </Complication>
       <Complication type="RANGED_VALUE">
+        <PartDraw name="value_background_101_RANGED_VALUE" x="0" y="0" width="450" height="450">
+          <Rectangle x="9" y="28" width="86" height="48">
+            <Fill color="#000000" />
+          </Rectangle>
+        </PartDraw>
         <Condition>
           <Expressions>
-            <Expression name="has_text_101_RANGED_VALUE">
-              [COMPLICATION.TEXT] != ''
-            </Expression>
+            <Expression name="has_text_101_RANGED_VALUE">[COMPLICATION.TEXT] != &quot;&quot;</Expression>
           </Expressions>
           <Compare expression="has_text_101_RANGED_VALUE">
             <PartText name="value_101_RANGED_VALUE" x="10" y="29" width="84" height="30">
               <Text align="CENTER" ellipsis="TRUE" maxLines="1" isAutoSize="TRUE">
-                <Font family="sans-serif" size="25" weight="NORMAL" color="#EDF2EA">
-                  <Template>
-                    %s
-                    <Parameter expression="[COMPLICATION.TEXT]" />
-                  </Template>
-                </Font>
+                <Font family="sans-serif" size="25" weight="NORMAL" color="#EDF2EA"><Template>%s<Parameter expression="[COMPLICATION.TEXT]" /></Template></Font>
               </Text>
             </PartText>
           </Compare>
           <Default>
             <Condition>
               <Expressions>
-                <Expression name="finite_101_RANGED_VALUE">
-                  ([COMPLICATION.RANGED_VALUE_VALUE] - [COMPLICATION.RANGED_VALUE_VALUE]) == 0
-                </Expression>
+                <Expression name="finite_101_RANGED_VALUE">([COMPLICATION.RANGED_VALUE_VALUE] - [COMPLICATION.RANGED_VALUE_VALUE]) == 0</Expression>
               </Expressions>
               <Compare expression="finite_101_RANGED_VALUE">
                 <PartText name="number_101_RANGED_VALUE" x="10" y="29" width="84" height="30">
                   <Text align="CENTER" ellipsis="TRUE" maxLines="1" isAutoSize="TRUE">
-                    <Font family="sans-serif" size="25" weight="NORMAL" color="#EDF2EA">
-                      <Template>
-                        %.0f
-                        <Parameter expression="[COMPLICATION.RANGED_VALUE_VALUE]" />
-                      </Template>
-                    </Font>
+                    <Font family="sans-serif" size="25" weight="NORMAL" color="#EDF2EA"><Template>%.0f<Parameter expression="[COMPLICATION.RANGED_VALUE_VALUE]" /></Template></Font>
                   </Text>
                 </PartText>
               </Compare>
               <Default>
                 <PartText name="invalid_101_RANGED_VALUE" x="10" y="29" width="84" height="30">
                   <Text align="CENTER" ellipsis="TRUE" maxLines="1" isAutoSize="TRUE">
-                    <Font family="sans-serif" size="25" weight="NORMAL" color="#EDF2EA">
-                      —
-                    </Font>
+                    <Font family="sans-serif" size="25" weight="NORMAL" color="#EDF2EA">—</Font>
                   </Text>
                 </PartText>
               </Default>
@@ -880,19 +793,12 @@
         </Condition>
         <PartText name="label_101_RANGED_VALUE" x="10" y="58" width="84" height="15">
           <Text align="CENTER" ellipsis="TRUE" maxLines="1" isAutoSize="TRUE">
-            <Font family="sans-serif" size="11" weight="NORMAL" color="#A0AAA6">
-              <Template>
-                %s
-                <Parameter expression="[COMPLICATION.TITLE] != '' ? [COMPLICATION.TITLE] : 'RANGE'" />
-              </Template>
-            </Font>
+            <Font family="sans-serif" size="11" weight="NORMAL" color="#A0AAA6"><Template>%s<Parameter expression="[COMPLICATION.TITLE] != &quot;&quot; ? [COMPLICATION.TITLE] : &quot;RANGE&quot;" /></Template></Font>
           </Text>
         </PartText>
         <Condition>
           <Expressions>
-            <Expression name="valid_101_RANGED_VALUE">
-              [COMPLICATION.RANGED_VALUE_MAX] &gt; [COMPLICATION.RANGED_VALUE_MIN] &amp;&amp; ([COMPLICATION.RANGED_VALUE_MAX] - [COMPLICATION.RANGED_VALUE_MAX]) == 0 &amp;&amp; ([COMPLICATION.RANGED_VALUE_MIN] - [COMPLICATION.RANGED_VALUE_MIN]) == 0 &amp;&amp; ([COMPLICATION.RANGED_VALUE_VALUE] - [COMPLICATION.RANGED_VALUE_VALUE]) == 0
-            </Expression>
+            <Expression name="valid_101_RANGED_VALUE">[COMPLICATION.RANGED_VALUE_MAX] &gt; [COMPLICATION.RANGED_VALUE_MIN] &amp;&amp; ([COMPLICATION.RANGED_VALUE_MAX] - [COMPLICATION.RANGED_VALUE_MAX]) == 0 &amp;&amp; ([COMPLICATION.RANGED_VALUE_MIN] - [COMPLICATION.RANGED_VALUE_MIN]) == 0 &amp;&amp; ([COMPLICATION.RANGED_VALUE_VALUE] - [COMPLICATION.RANGED_VALUE_VALUE]) == 0</Expression>
           </Expressions>
           <Compare expression="valid_101_RANGED_VALUE">
             <Group name="range_101_RANGED_VALUE" x="0" y="0" width="450" height="450">
@@ -903,15 +809,13 @@
               </PartDraw>
               <Condition>
                 <Expressions>
-                  <Expression name="positive_101_RANGED_VALUE">
-                    min(1, max(0, ([COMPLICATION.RANGED_VALUE_VALUE] - [COMPLICATION.RANGED_VALUE_MIN]) / ([COMPLICATION.RANGED_VALUE_MAX] - [COMPLICATION.RANGED_VALUE_MIN]))) &gt; 0
-                  </Expression>
+                  <Expression name="positive_101_RANGED_VALUE">clamp(1.0 * ([COMPLICATION.RANGED_VALUE_VALUE] - [COMPLICATION.RANGED_VALUE_MIN]) / ([COMPLICATION.RANGED_VALUE_MAX] - [COMPLICATION.RANGED_VALUE_MIN]), 0, 1) &gt; 0</Expression>
                 </Expressions>
                 <Compare expression="positive_101_RANGED_VALUE">
                   <PartDraw name="progress_101_RANGED_VALUE" x="0" y="0" width="450" height="450">
                     <Line startX="15" startY="78" endX="15" endY="78">
                       <Stroke color="#C9F279" thickness="2.5" cap="ROUND" />
-                      <Transform target="endX" value="15 + 68 * (min(1, max(0, ([COMPLICATION.RANGED_VALUE_VALUE] - [COMPLICATION.RANGED_VALUE_MIN]) / ([COMPLICATION.RANGED_VALUE_MAX] - [COMPLICATION.RANGED_VALUE_MIN]))))" />
+                      <Transform target="endX" value="15 + 68 * (clamp(1.0 * ([COMPLICATION.RANGED_VALUE_VALUE] - [COMPLICATION.RANGED_VALUE_MIN]) / ([COMPLICATION.RANGED_VALUE_MAX] - [COMPLICATION.RANGED_VALUE_MIN]), 0, 1))" />
                     </Line>
                   </PartDraw>
                 </Compare>
@@ -921,6 +825,11 @@
         </Condition>
       </Complication>
       <Complication type="MONOCHROMATIC_IMAGE">
+        <PartDraw name="icon_background_101" x="0" y="0" width="450" height="450">
+          <Rectangle x="9" y="28" width="86" height="48">
+            <Fill color="#000000" />
+          </Rectangle>
+        </PartDraw>
         <PartImage name="icon_101" x="34" y="31" width="36" height="36" tintColor="#EDF2EA">
           <Image resource="[COMPLICATION.MONOCHROMATIC_IMAGE]" />
         </PartImage>
@@ -928,9 +837,7 @@
       <Complication type="EMPTY">
         <PartText name="empty_101" x="10" y="31" width="84" height="28">
           <Text align="CENTER" ellipsis="TRUE" maxLines="1" isAutoSize="TRUE">
-            <Font family="sans-serif" size="24" weight="NORMAL" color="#A0AAA6">
-              —
-            </Font>
+            <Font family="sans-serif" size="24" weight="NORMAL" color="#A0AAA6">—</Font>
           </Text>
         </PartText>
       </Complication>
@@ -940,89 +847,69 @@
       <BoundingOval x="0" y="0" width="104" height="104" />
       <DefaultProviderPolicy primaryProvider="com.bobbfwed.emberphase.health/com.bobbfwed.emberphase.health.watch.MinutesDataSource" primaryProviderType="GOAL_PROGRESS" defaultSystemProvider="EMPTY" defaultSystemProviderType="EMPTY" />
       <Complication type="SHORT_TEXT">
+        <PartDraw name="value_background_102_SHORT_TEXT" x="0" y="0" width="450" height="450">
+          <Rectangle x="9" y="28" width="86" height="48">
+            <Fill color="#000000" />
+          </Rectangle>
+        </PartDraw>
         <Condition>
           <Expressions>
-            <Expression name="has_text_102_SHORT_TEXT">
-              [COMPLICATION.TEXT] != ''
-            </Expression>
+            <Expression name="has_text_102_SHORT_TEXT">[COMPLICATION.TEXT] != &quot;&quot;</Expression>
           </Expressions>
           <Compare expression="has_text_102_SHORT_TEXT">
             <PartText name="value_102_SHORT_TEXT" x="10" y="29" width="84" height="30">
               <Text align="CENTER" ellipsis="TRUE" maxLines="1" isAutoSize="TRUE">
-                <Font family="sans-serif" size="25" weight="NORMAL" color="#EDF2EA">
-                  <Template>
-                    %s
-                    <Parameter expression="[COMPLICATION.TEXT]" />
-                  </Template>
-                </Font>
+                <Font family="sans-serif" size="25" weight="NORMAL" color="#EDF2EA"><Template>%s<Parameter expression="[COMPLICATION.TEXT]" /></Template></Font>
               </Text>
             </PartText>
           </Compare>
           <Default>
             <PartText name="missing_102" x="10" y="29" width="84" height="30">
               <Text align="CENTER" ellipsis="TRUE" maxLines="1" isAutoSize="TRUE">
-                <Font family="sans-serif" size="25" weight="NORMAL" color="#EDF2EA">
-                  —
-                </Font>
+                <Font family="sans-serif" size="25" weight="NORMAL" color="#EDF2EA">—</Font>
               </Text>
             </PartText>
           </Default>
         </Condition>
         <PartText name="label_102_SHORT_TEXT" x="10" y="58" width="84" height="15">
           <Text align="CENTER" ellipsis="TRUE" maxLines="1" isAutoSize="TRUE">
-            <Font family="sans-serif" size="11" weight="NORMAL" color="#A0AAA6">
-              <Template>
-                %s
-                <Parameter expression="[COMPLICATION.TITLE]" />
-              </Template>
-            </Font>
+            <Font family="sans-serif" size="11" weight="NORMAL" color="#A0AAA6"><Template>%s<Parameter expression="[COMPLICATION.TITLE]" /></Template></Font>
           </Text>
         </PartText>
       </Complication>
       <Complication type="GOAL_PROGRESS">
+        <PartDraw name="value_background_102_GOAL_PROGRESS" x="0" y="0" width="450" height="450">
+          <Rectangle x="9" y="28" width="86" height="48">
+            <Fill color="#000000" />
+          </Rectangle>
+        </PartDraw>
         <Condition>
           <Expressions>
-            <Expression name="has_text_102_GOAL_PROGRESS">
-              [COMPLICATION.TEXT] != ''
-            </Expression>
+            <Expression name="has_text_102_GOAL_PROGRESS">[COMPLICATION.TEXT] != &quot;&quot;</Expression>
           </Expressions>
           <Compare expression="has_text_102_GOAL_PROGRESS">
             <PartText name="value_102_GOAL_PROGRESS" x="10" y="29" width="84" height="30">
               <Text align="CENTER" ellipsis="TRUE" maxLines="1" isAutoSize="TRUE">
-                <Font family="sans-serif" size="25" weight="NORMAL" color="#EDF2EA">
-                  <Template>
-                    %s
-                    <Parameter expression="[COMPLICATION.TEXT]" />
-                  </Template>
-                </Font>
+                <Font family="sans-serif" size="25" weight="NORMAL" color="#EDF2EA"><Template>%s<Parameter expression="[COMPLICATION.TEXT]" /></Template></Font>
               </Text>
             </PartText>
           </Compare>
           <Default>
             <Condition>
               <Expressions>
-                <Expression name="finite_102_GOAL_PROGRESS">
-                  ([COMPLICATION.GOAL_PROGRESS_VALUE] - [COMPLICATION.GOAL_PROGRESS_VALUE]) == 0
-                </Expression>
+                <Expression name="finite_102_GOAL_PROGRESS">([COMPLICATION.GOAL_PROGRESS_VALUE] - [COMPLICATION.GOAL_PROGRESS_VALUE]) == 0</Expression>
               </Expressions>
               <Compare expression="finite_102_GOAL_PROGRESS">
                 <PartText name="number_102_GOAL_PROGRESS" x="10" y="29" width="84" height="30">
                   <Text align="CENTER" ellipsis="TRUE" maxLines="1" isAutoSize="TRUE">
-                    <Font family="sans-serif" size="25" weight="NORMAL" color="#EDF2EA">
-                      <Template>
-                        %.0f
-                        <Parameter expression="[COMPLICATION.GOAL_PROGRESS_VALUE]" />
-                      </Template>
-                    </Font>
+                    <Font family="sans-serif" size="25" weight="NORMAL" color="#EDF2EA"><Template>%.0f<Parameter expression="[COMPLICATION.GOAL_PROGRESS_VALUE]" /></Template></Font>
                   </Text>
                 </PartText>
               </Compare>
               <Default>
                 <PartText name="invalid_102_GOAL_PROGRESS" x="10" y="29" width="84" height="30">
                   <Text align="CENTER" ellipsis="TRUE" maxLines="1" isAutoSize="TRUE">
-                    <Font family="sans-serif" size="25" weight="NORMAL" color="#EDF2EA">
-                      —
-                    </Font>
+                    <Font family="sans-serif" size="25" weight="NORMAL" color="#EDF2EA">—</Font>
                   </Text>
                 </PartText>
               </Default>
@@ -1031,19 +918,12 @@
         </Condition>
         <PartText name="label_102_GOAL_PROGRESS" x="10" y="58" width="84" height="15">
           <Text align="CENTER" ellipsis="TRUE" maxLines="1" isAutoSize="TRUE">
-            <Font family="sans-serif" size="11" weight="NORMAL" color="#A0AAA6">
-              <Template>
-                %s
-                <Parameter expression="[COMPLICATION.TITLE] != '' ? [COMPLICATION.TITLE] : 'GOAL'" />
-              </Template>
-            </Font>
+            <Font family="sans-serif" size="11" weight="NORMAL" color="#A0AAA6"><Template>%s<Parameter expression="[COMPLICATION.TITLE] != &quot;&quot; ? [COMPLICATION.TITLE] : &quot;GOAL&quot;" /></Template></Font>
           </Text>
         </PartText>
         <Condition>
           <Expressions>
-            <Expression name="valid_102_GOAL_PROGRESS">
-              [COMPLICATION.GOAL_PROGRESS_TARGET_VALUE] &gt; 0 &amp;&amp; ([COMPLICATION.GOAL_PROGRESS_TARGET_VALUE] - [COMPLICATION.GOAL_PROGRESS_TARGET_VALUE]) == 0 &amp;&amp; [COMPLICATION.GOAL_PROGRESS_VALUE] &gt;= 0 &amp;&amp; ([COMPLICATION.GOAL_PROGRESS_VALUE] - [COMPLICATION.GOAL_PROGRESS_VALUE]) == 0
-            </Expression>
+            <Expression name="valid_102_GOAL_PROGRESS">[COMPLICATION.GOAL_PROGRESS_TARGET_VALUE] &gt; 0 &amp;&amp; ([COMPLICATION.GOAL_PROGRESS_TARGET_VALUE] - [COMPLICATION.GOAL_PROGRESS_TARGET_VALUE]) == 0 &amp;&amp; [COMPLICATION.GOAL_PROGRESS_VALUE] &gt;= 0 &amp;&amp; ([COMPLICATION.GOAL_PROGRESS_VALUE] - [COMPLICATION.GOAL_PROGRESS_VALUE]) == 0</Expression>
           </Expressions>
           <Compare expression="valid_102_GOAL_PROGRESS">
             <Group name="range_102_GOAL_PROGRESS" x="0" y="0" width="450" height="450">
@@ -1054,15 +934,13 @@
               </PartDraw>
               <Condition>
                 <Expressions>
-                  <Expression name="positive_102_GOAL_PROGRESS">
-                    min(1, max(0, [COMPLICATION.GOAL_PROGRESS_VALUE] / [COMPLICATION.GOAL_PROGRESS_TARGET_VALUE])) &gt; 0
-                  </Expression>
+                  <Expression name="positive_102_GOAL_PROGRESS">clamp(1.0 * [COMPLICATION.GOAL_PROGRESS_VALUE] / [COMPLICATION.GOAL_PROGRESS_TARGET_VALUE], 0, 1) &gt; 0</Expression>
                 </Expressions>
                 <Compare expression="positive_102_GOAL_PROGRESS">
                   <PartDraw name="progress_102_GOAL_PROGRESS" x="0" y="0" width="450" height="450">
                     <Line startX="15" startY="78" endX="15" endY="78">
                       <Stroke color="#C9F279" thickness="2.5" cap="ROUND" />
-                      <Transform target="endX" value="15 + 68 * (min(1, max(0, [COMPLICATION.GOAL_PROGRESS_VALUE] / [COMPLICATION.GOAL_PROGRESS_TARGET_VALUE])))" />
+                      <Transform target="endX" value="15 + 68 * (clamp(1.0 * [COMPLICATION.GOAL_PROGRESS_VALUE] / [COMPLICATION.GOAL_PROGRESS_TARGET_VALUE], 0, 1))" />
                     </Line>
                   </PartDraw>
                 </Compare>
@@ -1072,49 +950,38 @@
         </Condition>
       </Complication>
       <Complication type="RANGED_VALUE">
+        <PartDraw name="value_background_102_RANGED_VALUE" x="0" y="0" width="450" height="450">
+          <Rectangle x="9" y="28" width="86" height="48">
+            <Fill color="#000000" />
+          </Rectangle>
+        </PartDraw>
         <Condition>
           <Expressions>
-            <Expression name="has_text_102_RANGED_VALUE">
-              [COMPLICATION.TEXT] != ''
-            </Expression>
+            <Expression name="has_text_102_RANGED_VALUE">[COMPLICATION.TEXT] != &quot;&quot;</Expression>
           </Expressions>
           <Compare expression="has_text_102_RANGED_VALUE">
             <PartText name="value_102_RANGED_VALUE" x="10" y="29" width="84" height="30">
               <Text align="CENTER" ellipsis="TRUE" maxLines="1" isAutoSize="TRUE">
-                <Font family="sans-serif" size="25" weight="NORMAL" color="#EDF2EA">
-                  <Template>
-                    %s
-                    <Parameter expression="[COMPLICATION.TEXT]" />
-                  </Template>
-                </Font>
+                <Font family="sans-serif" size="25" weight="NORMAL" color="#EDF2EA"><Template>%s<Parameter expression="[COMPLICATION.TEXT]" /></Template></Font>
               </Text>
             </PartText>
           </Compare>
           <Default>
             <Condition>
               <Expressions>
-                <Expression name="finite_102_RANGED_VALUE">
-                  ([COMPLICATION.RANGED_VALUE_VALUE] - [COMPLICATION.RANGED_VALUE_VALUE]) == 0
-                </Expression>
+                <Expression name="finite_102_RANGED_VALUE">([COMPLICATION.RANGED_VALUE_VALUE] - [COMPLICATION.RANGED_VALUE_VALUE]) == 0</Expression>
               </Expressions>
               <Compare expression="finite_102_RANGED_VALUE">
                 <PartText name="number_102_RANGED_VALUE" x="10" y="29" width="84" height="30">
                   <Text align="CENTER" ellipsis="TRUE" maxLines="1" isAutoSize="TRUE">
-                    <Font family="sans-serif" size="25" weight="NORMAL" color="#EDF2EA">
-                      <Template>
-                        %.0f
-                        <Parameter expression="[COMPLICATION.RANGED_VALUE_VALUE]" />
-                      </Template>
-                    </Font>
+                    <Font family="sans-serif" size="25" weight="NORMAL" color="#EDF2EA"><Template>%.0f<Parameter expression="[COMPLICATION.RANGED_VALUE_VALUE]" /></Template></Font>
                   </Text>
                 </PartText>
               </Compare>
               <Default>
                 <PartText name="invalid_102_RANGED_VALUE" x="10" y="29" width="84" height="30">
                   <Text align="CENTER" ellipsis="TRUE" maxLines="1" isAutoSize="TRUE">
-                    <Font family="sans-serif" size="25" weight="NORMAL" color="#EDF2EA">
-                      —
-                    </Font>
+                    <Font family="sans-serif" size="25" weight="NORMAL" color="#EDF2EA">—</Font>
                   </Text>
                 </PartText>
               </Default>
@@ -1123,19 +990,12 @@
         </Condition>
         <PartText name="label_102_RANGED_VALUE" x="10" y="58" width="84" height="15">
           <Text align="CENTER" ellipsis="TRUE" maxLines="1" isAutoSize="TRUE">
-            <Font family="sans-serif" size="11" weight="NORMAL" color="#A0AAA6">
-              <Template>
-                %s
-                <Parameter expression="[COMPLICATION.TITLE] != '' ? [COMPLICATION.TITLE] : 'RANGE'" />
-              </Template>
-            </Font>
+            <Font family="sans-serif" size="11" weight="NORMAL" color="#A0AAA6"><Template>%s<Parameter expression="[COMPLICATION.TITLE] != &quot;&quot; ? [COMPLICATION.TITLE] : &quot;RANGE&quot;" /></Template></Font>
           </Text>
         </PartText>
         <Condition>
           <Expressions>
-            <Expression name="valid_102_RANGED_VALUE">
-              [COMPLICATION.RANGED_VALUE_MAX] &gt; [COMPLICATION.RANGED_VALUE_MIN] &amp;&amp; ([COMPLICATION.RANGED_VALUE_MAX] - [COMPLICATION.RANGED_VALUE_MAX]) == 0 &amp;&amp; ([COMPLICATION.RANGED_VALUE_MIN] - [COMPLICATION.RANGED_VALUE_MIN]) == 0 &amp;&amp; ([COMPLICATION.RANGED_VALUE_VALUE] - [COMPLICATION.RANGED_VALUE_VALUE]) == 0
-            </Expression>
+            <Expression name="valid_102_RANGED_VALUE">[COMPLICATION.RANGED_VALUE_MAX] &gt; [COMPLICATION.RANGED_VALUE_MIN] &amp;&amp; ([COMPLICATION.RANGED_VALUE_MAX] - [COMPLICATION.RANGED_VALUE_MAX]) == 0 &amp;&amp; ([COMPLICATION.RANGED_VALUE_MIN] - [COMPLICATION.RANGED_VALUE_MIN]) == 0 &amp;&amp; ([COMPLICATION.RANGED_VALUE_VALUE] - [COMPLICATION.RANGED_VALUE_VALUE]) == 0</Expression>
           </Expressions>
           <Compare expression="valid_102_RANGED_VALUE">
             <Group name="range_102_RANGED_VALUE" x="0" y="0" width="450" height="450">
@@ -1146,15 +1006,13 @@
               </PartDraw>
               <Condition>
                 <Expressions>
-                  <Expression name="positive_102_RANGED_VALUE">
-                    min(1, max(0, ([COMPLICATION.RANGED_VALUE_VALUE] - [COMPLICATION.RANGED_VALUE_MIN]) / ([COMPLICATION.RANGED_VALUE_MAX] - [COMPLICATION.RANGED_VALUE_MIN]))) &gt; 0
-                  </Expression>
+                  <Expression name="positive_102_RANGED_VALUE">clamp(1.0 * ([COMPLICATION.RANGED_VALUE_VALUE] - [COMPLICATION.RANGED_VALUE_MIN]) / ([COMPLICATION.RANGED_VALUE_MAX] - [COMPLICATION.RANGED_VALUE_MIN]), 0, 1) &gt; 0</Expression>
                 </Expressions>
                 <Compare expression="positive_102_RANGED_VALUE">
                   <PartDraw name="progress_102_RANGED_VALUE" x="0" y="0" width="450" height="450">
                     <Line startX="15" startY="78" endX="15" endY="78">
                       <Stroke color="#C9F279" thickness="2.5" cap="ROUND" />
-                      <Transform target="endX" value="15 + 68 * (min(1, max(0, ([COMPLICATION.RANGED_VALUE_VALUE] - [COMPLICATION.RANGED_VALUE_MIN]) / ([COMPLICATION.RANGED_VALUE_MAX] - [COMPLICATION.RANGED_VALUE_MIN]))))" />
+                      <Transform target="endX" value="15 + 68 * (clamp(1.0 * ([COMPLICATION.RANGED_VALUE_VALUE] - [COMPLICATION.RANGED_VALUE_MIN]) / ([COMPLICATION.RANGED_VALUE_MAX] - [COMPLICATION.RANGED_VALUE_MIN]), 0, 1))" />
                     </Line>
                   </PartDraw>
                 </Compare>
@@ -1164,6 +1022,11 @@
         </Condition>
       </Complication>
       <Complication type="MONOCHROMATIC_IMAGE">
+        <PartDraw name="icon_background_102" x="0" y="0" width="450" height="450">
+          <Rectangle x="9" y="28" width="86" height="48">
+            <Fill color="#000000" />
+          </Rectangle>
+        </PartDraw>
         <PartImage name="icon_102" x="34" y="31" width="36" height="36" tintColor="#EDF2EA">
           <Image resource="[COMPLICATION.MONOCHROMATIC_IMAGE]" />
         </PartImage>
@@ -1171,9 +1034,7 @@
       <Complication type="EMPTY">
         <PartText name="empty_102" x="10" y="31" width="84" height="28">
           <Text align="CENTER" ellipsis="TRUE" maxLines="1" isAutoSize="TRUE">
-            <Font family="sans-serif" size="24" weight="NORMAL" color="#A0AAA6">
-              —
-            </Font>
+            <Font family="sans-serif" size="24" weight="NORMAL" color="#A0AAA6">—</Font>
           </Text>
         </PartText>
       </Complication>
@@ -1183,89 +1044,69 @@
       <BoundingOval x="0" y="0" width="104" height="104" />
       <DefaultProviderPolicy primaryProvider="com.bobbfwed.emberphase.health/com.bobbfwed.emberphase.health.watch.CaloriesDataSource" primaryProviderType="GOAL_PROGRESS" defaultSystemProvider="EMPTY" defaultSystemProviderType="EMPTY" />
       <Complication type="SHORT_TEXT">
+        <PartDraw name="value_background_103_SHORT_TEXT" x="0" y="0" width="450" height="450">
+          <Rectangle x="9" y="28" width="86" height="48">
+            <Fill color="#000000" />
+          </Rectangle>
+        </PartDraw>
         <Condition>
           <Expressions>
-            <Expression name="has_text_103_SHORT_TEXT">
-              [COMPLICATION.TEXT] != ''
-            </Expression>
+            <Expression name="has_text_103_SHORT_TEXT">[COMPLICATION.TEXT] != &quot;&quot;</Expression>
           </Expressions>
           <Compare expression="has_text_103_SHORT_TEXT">
             <PartText name="value_103_SHORT_TEXT" x="10" y="29" width="84" height="30">
               <Text align="CENTER" ellipsis="TRUE" maxLines="1" isAutoSize="TRUE">
-                <Font family="sans-serif" size="25" weight="NORMAL" color="#EDF2EA">
-                  <Template>
-                    %s
-                    <Parameter expression="[COMPLICATION.TEXT]" />
-                  </Template>
-                </Font>
+                <Font family="sans-serif" size="25" weight="NORMAL" color="#EDF2EA"><Template>%s<Parameter expression="[COMPLICATION.TEXT]" /></Template></Font>
               </Text>
             </PartText>
           </Compare>
           <Default>
             <PartText name="missing_103" x="10" y="29" width="84" height="30">
               <Text align="CENTER" ellipsis="TRUE" maxLines="1" isAutoSize="TRUE">
-                <Font family="sans-serif" size="25" weight="NORMAL" color="#EDF2EA">
-                  —
-                </Font>
+                <Font family="sans-serif" size="25" weight="NORMAL" color="#EDF2EA">—</Font>
               </Text>
             </PartText>
           </Default>
         </Condition>
         <PartText name="label_103_SHORT_TEXT" x="10" y="58" width="84" height="15">
           <Text align="CENTER" ellipsis="TRUE" maxLines="1" isAutoSize="TRUE">
-            <Font family="sans-serif" size="11" weight="NORMAL" color="#A0AAA6">
-              <Template>
-                %s
-                <Parameter expression="[COMPLICATION.TITLE]" />
-              </Template>
-            </Font>
+            <Font family="sans-serif" size="11" weight="NORMAL" color="#A0AAA6"><Template>%s<Parameter expression="[COMPLICATION.TITLE]" /></Template></Font>
           </Text>
         </PartText>
       </Complication>
       <Complication type="GOAL_PROGRESS">
+        <PartDraw name="value_background_103_GOAL_PROGRESS" x="0" y="0" width="450" height="450">
+          <Rectangle x="9" y="28" width="86" height="48">
+            <Fill color="#000000" />
+          </Rectangle>
+        </PartDraw>
         <Condition>
           <Expressions>
-            <Expression name="has_text_103_GOAL_PROGRESS">
-              [COMPLICATION.TEXT] != ''
-            </Expression>
+            <Expression name="has_text_103_GOAL_PROGRESS">[COMPLICATION.TEXT] != &quot;&quot;</Expression>
           </Expressions>
           <Compare expression="has_text_103_GOAL_PROGRESS">
             <PartText name="value_103_GOAL_PROGRESS" x="10" y="29" width="84" height="30">
               <Text align="CENTER" ellipsis="TRUE" maxLines="1" isAutoSize="TRUE">
-                <Font family="sans-serif" size="25" weight="NORMAL" color="#EDF2EA">
-                  <Template>
-                    %s
-                    <Parameter expression="[COMPLICATION.TEXT]" />
-                  </Template>
-                </Font>
+                <Font family="sans-serif" size="25" weight="NORMAL" color="#EDF2EA"><Template>%s<Parameter expression="[COMPLICATION.TEXT]" /></Template></Font>
               </Text>
             </PartText>
           </Compare>
           <Default>
             <Condition>
               <Expressions>
-                <Expression name="finite_103_GOAL_PROGRESS">
-                  ([COMPLICATION.GOAL_PROGRESS_VALUE] - [COMPLICATION.GOAL_PROGRESS_VALUE]) == 0
-                </Expression>
+                <Expression name="finite_103_GOAL_PROGRESS">([COMPLICATION.GOAL_PROGRESS_VALUE] - [COMPLICATION.GOAL_PROGRESS_VALUE]) == 0</Expression>
               </Expressions>
               <Compare expression="finite_103_GOAL_PROGRESS">
                 <PartText name="number_103_GOAL_PROGRESS" x="10" y="29" width="84" height="30">
                   <Text align="CENTER" ellipsis="TRUE" maxLines="1" isAutoSize="TRUE">
-                    <Font family="sans-serif" size="25" weight="NORMAL" color="#EDF2EA">
-                      <Template>
-                        %.0f
-                        <Parameter expression="[COMPLICATION.GOAL_PROGRESS_VALUE]" />
-                      </Template>
-                    </Font>
+                    <Font family="sans-serif" size="25" weight="NORMAL" color="#EDF2EA"><Template>%.0f<Parameter expression="[COMPLICATION.GOAL_PROGRESS_VALUE]" /></Template></Font>
                   </Text>
                 </PartText>
               </Compare>
               <Default>
                 <PartText name="invalid_103_GOAL_PROGRESS" x="10" y="29" width="84" height="30">
                   <Text align="CENTER" ellipsis="TRUE" maxLines="1" isAutoSize="TRUE">
-                    <Font family="sans-serif" size="25" weight="NORMAL" color="#EDF2EA">
-                      —
-                    </Font>
+                    <Font family="sans-serif" size="25" weight="NORMAL" color="#EDF2EA">—</Font>
                   </Text>
                 </PartText>
               </Default>
@@ -1274,19 +1115,12 @@
         </Condition>
         <PartText name="label_103_GOAL_PROGRESS" x="10" y="58" width="84" height="15">
           <Text align="CENTER" ellipsis="TRUE" maxLines="1" isAutoSize="TRUE">
-            <Font family="sans-serif" size="11" weight="NORMAL" color="#A0AAA6">
-              <Template>
-                %s
-                <Parameter expression="[COMPLICATION.TITLE] != '' ? [COMPLICATION.TITLE] : 'GOAL'" />
-              </Template>
-            </Font>
+            <Font family="sans-serif" size="11" weight="NORMAL" color="#A0AAA6"><Template>%s<Parameter expression="[COMPLICATION.TITLE] != &quot;&quot; ? [COMPLICATION.TITLE] : &quot;GOAL&quot;" /></Template></Font>
           </Text>
         </PartText>
         <Condition>
           <Expressions>
-            <Expression name="valid_103_GOAL_PROGRESS">
-              [COMPLICATION.GOAL_PROGRESS_TARGET_VALUE] &gt; 0 &amp;&amp; ([COMPLICATION.GOAL_PROGRESS_TARGET_VALUE] - [COMPLICATION.GOAL_PROGRESS_TARGET_VALUE]) == 0 &amp;&amp; [COMPLICATION.GOAL_PROGRESS_VALUE] &gt;= 0 &amp;&amp; ([COMPLICATION.GOAL_PROGRESS_VALUE] - [COMPLICATION.GOAL_PROGRESS_VALUE]) == 0
-            </Expression>
+            <Expression name="valid_103_GOAL_PROGRESS">[COMPLICATION.GOAL_PROGRESS_TARGET_VALUE] &gt; 0 &amp;&amp; ([COMPLICATION.GOAL_PROGRESS_TARGET_VALUE] - [COMPLICATION.GOAL_PROGRESS_TARGET_VALUE]) == 0 &amp;&amp; [COMPLICATION.GOAL_PROGRESS_VALUE] &gt;= 0 &amp;&amp; ([COMPLICATION.GOAL_PROGRESS_VALUE] - [COMPLICATION.GOAL_PROGRESS_VALUE]) == 0</Expression>
           </Expressions>
           <Compare expression="valid_103_GOAL_PROGRESS">
             <Group name="range_103_GOAL_PROGRESS" x="0" y="0" width="450" height="450">
@@ -1297,15 +1131,13 @@
               </PartDraw>
               <Condition>
                 <Expressions>
-                  <Expression name="positive_103_GOAL_PROGRESS">
-                    min(1, max(0, [COMPLICATION.GOAL_PROGRESS_VALUE] / [COMPLICATION.GOAL_PROGRESS_TARGET_VALUE])) &gt; 0
-                  </Expression>
+                  <Expression name="positive_103_GOAL_PROGRESS">clamp(1.0 * [COMPLICATION.GOAL_PROGRESS_VALUE] / [COMPLICATION.GOAL_PROGRESS_TARGET_VALUE], 0, 1) &gt; 0</Expression>
                 </Expressions>
                 <Compare expression="positive_103_GOAL_PROGRESS">
                   <PartDraw name="progress_103_GOAL_PROGRESS" x="0" y="0" width="450" height="450">
                     <Line startX="15" startY="78" endX="15" endY="78">
                       <Stroke color="#C9F279" thickness="2.5" cap="ROUND" />
-                      <Transform target="endX" value="15 + 68 * (min(1, max(0, [COMPLICATION.GOAL_PROGRESS_VALUE] / [COMPLICATION.GOAL_PROGRESS_TARGET_VALUE])))" />
+                      <Transform target="endX" value="15 + 68 * (clamp(1.0 * [COMPLICATION.GOAL_PROGRESS_VALUE] / [COMPLICATION.GOAL_PROGRESS_TARGET_VALUE], 0, 1))" />
                     </Line>
                   </PartDraw>
                 </Compare>
@@ -1315,49 +1147,38 @@
         </Condition>
       </Complication>
       <Complication type="RANGED_VALUE">
+        <PartDraw name="value_background_103_RANGED_VALUE" x="0" y="0" width="450" height="450">
+          <Rectangle x="9" y="28" width="86" height="48">
+            <Fill color="#000000" />
+          </Rectangle>
+        </PartDraw>
         <Condition>
           <Expressions>
-            <Expression name="has_text_103_RANGED_VALUE">
-              [COMPLICATION.TEXT] != ''
-            </Expression>
+            <Expression name="has_text_103_RANGED_VALUE">[COMPLICATION.TEXT] != &quot;&quot;</Expression>
           </Expressions>
           <Compare expression="has_text_103_RANGED_VALUE">
             <PartText name="value_103_RANGED_VALUE" x="10" y="29" width="84" height="30">
               <Text align="CENTER" ellipsis="TRUE" maxLines="1" isAutoSize="TRUE">
-                <Font family="sans-serif" size="25" weight="NORMAL" color="#EDF2EA">
-                  <Template>
-                    %s
-                    <Parameter expression="[COMPLICATION.TEXT]" />
-                  </Template>
-                </Font>
+                <Font family="sans-serif" size="25" weight="NORMAL" color="#EDF2EA"><Template>%s<Parameter expression="[COMPLICATION.TEXT]" /></Template></Font>
               </Text>
             </PartText>
           </Compare>
           <Default>
             <Condition>
               <Expressions>
-                <Expression name="finite_103_RANGED_VALUE">
-                  ([COMPLICATION.RANGED_VALUE_VALUE] - [COMPLICATION.RANGED_VALUE_VALUE]) == 0
-                </Expression>
+                <Expression name="finite_103_RANGED_VALUE">([COMPLICATION.RANGED_VALUE_VALUE] - [COMPLICATION.RANGED_VALUE_VALUE]) == 0</Expression>
               </Expressions>
               <Compare expression="finite_103_RANGED_VALUE">
                 <PartText name="number_103_RANGED_VALUE" x="10" y="29" width="84" height="30">
                   <Text align="CENTER" ellipsis="TRUE" maxLines="1" isAutoSize="TRUE">
-                    <Font family="sans-serif" size="25" weight="NORMAL" color="#EDF2EA">
-                      <Template>
-                        %.0f
-                        <Parameter expression="[COMPLICATION.RANGED_VALUE_VALUE]" />
-                      </Template>
-                    </Font>
+                    <Font family="sans-serif" size="25" weight="NORMAL" color="#EDF2EA"><Template>%.0f<Parameter expression="[COMPLICATION.RANGED_VALUE_VALUE]" /></Template></Font>
                   </Text>
                 </PartText>
               </Compare>
               <Default>
                 <PartText name="invalid_103_RANGED_VALUE" x="10" y="29" width="84" height="30">
                   <Text align="CENTER" ellipsis="TRUE" maxLines="1" isAutoSize="TRUE">
-                    <Font family="sans-serif" size="25" weight="NORMAL" color="#EDF2EA">
-                      —
-                    </Font>
+                    <Font family="sans-serif" size="25" weight="NORMAL" color="#EDF2EA">—</Font>
                   </Text>
                 </PartText>
               </Default>
@@ -1366,19 +1187,12 @@
         </Condition>
         <PartText name="label_103_RANGED_VALUE" x="10" y="58" width="84" height="15">
           <Text align="CENTER" ellipsis="TRUE" maxLines="1" isAutoSize="TRUE">
-            <Font family="sans-serif" size="11" weight="NORMAL" color="#A0AAA6">
-              <Template>
-                %s
-                <Parameter expression="[COMPLICATION.TITLE] != '' ? [COMPLICATION.TITLE] : 'RANGE'" />
-              </Template>
-            </Font>
+            <Font family="sans-serif" size="11" weight="NORMAL" color="#A0AAA6"><Template>%s<Parameter expression="[COMPLICATION.TITLE] != &quot;&quot; ? [COMPLICATION.TITLE] : &quot;RANGE&quot;" /></Template></Font>
           </Text>
         </PartText>
         <Condition>
           <Expressions>
-            <Expression name="valid_103_RANGED_VALUE">
-              [COMPLICATION.RANGED_VALUE_MAX] &gt; [COMPLICATION.RANGED_VALUE_MIN] &amp;&amp; ([COMPLICATION.RANGED_VALUE_MAX] - [COMPLICATION.RANGED_VALUE_MAX]) == 0 &amp;&amp; ([COMPLICATION.RANGED_VALUE_MIN] - [COMPLICATION.RANGED_VALUE_MIN]) == 0 &amp;&amp; ([COMPLICATION.RANGED_VALUE_VALUE] - [COMPLICATION.RANGED_VALUE_VALUE]) == 0
-            </Expression>
+            <Expression name="valid_103_RANGED_VALUE">[COMPLICATION.RANGED_VALUE_MAX] &gt; [COMPLICATION.RANGED_VALUE_MIN] &amp;&amp; ([COMPLICATION.RANGED_VALUE_MAX] - [COMPLICATION.RANGED_VALUE_MAX]) == 0 &amp;&amp; ([COMPLICATION.RANGED_VALUE_MIN] - [COMPLICATION.RANGED_VALUE_MIN]) == 0 &amp;&amp; ([COMPLICATION.RANGED_VALUE_VALUE] - [COMPLICATION.RANGED_VALUE_VALUE]) == 0</Expression>
           </Expressions>
           <Compare expression="valid_103_RANGED_VALUE">
             <Group name="range_103_RANGED_VALUE" x="0" y="0" width="450" height="450">
@@ -1389,15 +1203,13 @@
               </PartDraw>
               <Condition>
                 <Expressions>
-                  <Expression name="positive_103_RANGED_VALUE">
-                    min(1, max(0, ([COMPLICATION.RANGED_VALUE_VALUE] - [COMPLICATION.RANGED_VALUE_MIN]) / ([COMPLICATION.RANGED_VALUE_MAX] - [COMPLICATION.RANGED_VALUE_MIN]))) &gt; 0
-                  </Expression>
+                  <Expression name="positive_103_RANGED_VALUE">clamp(1.0 * ([COMPLICATION.RANGED_VALUE_VALUE] - [COMPLICATION.RANGED_VALUE_MIN]) / ([COMPLICATION.RANGED_VALUE_MAX] - [COMPLICATION.RANGED_VALUE_MIN]), 0, 1) &gt; 0</Expression>
                 </Expressions>
                 <Compare expression="positive_103_RANGED_VALUE">
                   <PartDraw name="progress_103_RANGED_VALUE" x="0" y="0" width="450" height="450">
                     <Line startX="15" startY="78" endX="15" endY="78">
                       <Stroke color="#C9F279" thickness="2.5" cap="ROUND" />
-                      <Transform target="endX" value="15 + 68 * (min(1, max(0, ([COMPLICATION.RANGED_VALUE_VALUE] - [COMPLICATION.RANGED_VALUE_MIN]) / ([COMPLICATION.RANGED_VALUE_MAX] - [COMPLICATION.RANGED_VALUE_MIN]))))" />
+                      <Transform target="endX" value="15 + 68 * (clamp(1.0 * ([COMPLICATION.RANGED_VALUE_VALUE] - [COMPLICATION.RANGED_VALUE_MIN]) / ([COMPLICATION.RANGED_VALUE_MAX] - [COMPLICATION.RANGED_VALUE_MIN]), 0, 1))" />
                     </Line>
                   </PartDraw>
                 </Compare>
@@ -1407,6 +1219,11 @@
         </Condition>
       </Complication>
       <Complication type="MONOCHROMATIC_IMAGE">
+        <PartDraw name="icon_background_103" x="0" y="0" width="450" height="450">
+          <Rectangle x="9" y="28" width="86" height="48">
+            <Fill color="#000000" />
+          </Rectangle>
+        </PartDraw>
         <PartImage name="icon_103" x="34" y="31" width="36" height="36" tintColor="#EDF2EA">
           <Image resource="[COMPLICATION.MONOCHROMATIC_IMAGE]" />
         </PartImage>
@@ -1414,27 +1231,21 @@
       <Complication type="EMPTY">
         <PartText name="empty_103" x="10" y="31" width="84" height="28">
           <Text align="CENTER" ellipsis="TRUE" maxLines="1" isAutoSize="TRUE">
-            <Font family="sans-serif" size="24" weight="NORMAL" color="#A0AAA6">
-              —
-            </Font>
+            <Font family="sans-serif" size="24" weight="NORMAL" color="#A0AAA6">—</Font>
           </Text>
         </PartText>
       </Complication>
     </ComplicationSlot>
     <Condition>
       <Expressions>
-        <Expression name="show_signature">
-          [CONFIGURATION.signature]
-        </Expression>
+        <Expression name="show_signature">[CONFIGURATION.signature] == &quot;TRUE&quot;</Expression>
       </Expressions>
       <Compare expression="show_signature">
         <Group name="signature" x="0" y="0" width="450" height="450">
           <Variant mode="AMBIENT" target="alpha" value="0" />
           <PartText name="brand" x="140" y="400" width="170" height="23">
             <Text align="CENTER" ellipsis="TRUE" maxLines="1" isAutoSize="TRUE">
-              <Font family="sans-serif" size="12" weight="NORMAL" color="#A0AAA6">
-                P A R A L L A X
-              </Font>
+              <Font family="sans-serif" size="12" weight="NORMAL" color="#A0AAA6">P A R A L L A X</Font>
             </Text>
           </PartText>
         </Group>

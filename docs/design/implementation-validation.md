@@ -1,6 +1,7 @@
 # PARALLAX local validation
 
-Validated 2026-11-07, without a physical watch or installation.
+Initial local validation completed 2026-11-07. The subsequent installation and
+native rendering fixes are recorded in [device acceptance](device-acceptance.md).
 
 | Check | Result |
 | --- | --- |
@@ -46,6 +47,14 @@ saving is not guessed from battery level: only the explicit battery cutoff is
 implemented until the companion signal can be verified on the watch.
 
 The superseded design-only checks remain in [the design-round record](validation.md).
+
+The first physical install required additional native compatibility fixes:
+compact rich-text serialization, double-quoted WFF expression strings, explicit
+`"TRUE"` Boolean comparisons, direct configuration color bindings, native clamp
+for progress, and no-data fallback rendering outside the complication branch.
+These now have regression checks. The native active and ambient captures were
+inspected; the latter measures 3.150% lit circular pixels. Renderer offload was
+rejected for a timeDataSource node and is not marked passed.
 
 ## Device-readiness preflight
 

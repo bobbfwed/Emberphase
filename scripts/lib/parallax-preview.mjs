@@ -1,8 +1,8 @@
 import fs from 'node:fs';
 import {scene,evaluate,escapeXml,colors} from './parallax-scene.mjs';
-export const sampleSources={HOUR_0_23:10,MINUTE:8,MINUTE_Z:'08',DAY_OF_WEEK_S:'SAT',DAY_Z:'07',MONTH_S:'NOV',BATTERY_PERCENT:73,IS_24_HOUR_MODE:true,AMPM_STRING:'AM','CONFIGURATION.fold':true,'CONFIGURATION.signature':true,'CONFIGURATION.time_format':'system','CONFIGURATION.ambient_style':'outline','CONFIGURATION.accent.0':colors.cyan};
+export const sampleSources={HOUR_0_23:10,MINUTE:8,MINUTE_Z:'08',DAY_OF_WEEK_S:'SAT',DAY_Z:'07',MONTH_S:'NOV',BATTERY_PERCENT:73,IS_24_HOUR_MODE:true,AMPM_STRING:'AM','CONFIGURATION.fold':'TRUE','CONFIGURATION.signature':'TRUE','CONFIGURATION.time_format':'system','CONFIGURATION.ambient_style':'outline','CONFIGURATION.accent.0':colors.cyan};
 const font=fs.readFileSync(new URL('../../watchface/src/main/res/font/rajdhani_light.ttf',import.meta.url)).toString('base64');
-const val=(v,s)=>v&&typeof v==='object'?evaluate(v.expression,s):v;
+const val=(v,s)=>v&&typeof v==='object'?evaluate(v.expression,s):typeof v==='string'&&/^\[[\w.]+\]$/.test(v)?evaluate(v,s):v;
 function color(value) {
   if(value?.length===9 && value.startsWith('#'))return {paint:'#'+value.slice(3),opacity:parseInt(value.slice(1,3),16)/255};
   return {paint:value,opacity:1};

@@ -28,9 +28,8 @@ export function dockFrame({id,x,y}) {
 export function scene() {
   const battery=[];
   for(let i=0;i<8;i++) {
-    const arc=element('Arc',{centerX:225,centerY:225,width:406,height:406,startAngle:247+i*8,endAngle:252+i*8},
-      element('Stroke',{thickness:2.8,cap:'ROUND',color:dynamic(`[BATTERY_PERCENT] >= ${(i+1)*12.5} && [BATTERY_PERCENT] <= 100 ? [CONFIGURATION.accent.0] : '${colors.structure}'`,colors.structure)}));
-    battery.push(element('PartDraw',{name:`battery_segment_${i}`,x:0,y:0,width:450,height:450},arc));
+    const arc=color=>element('PartDraw',{name:`battery_segment_${i}_${color===colors.structure?'track':'fill'}`,x:0,y:0,width:450,height:450},element('Arc',{centerX:225,centerY:225,width:406,height:406,startAngle:247+i*8,endAngle:252+i*8},element('Stroke',{thickness:2.8,cap:'ROUND',color})));
+    battery.push(arc(colors.structure),conditional(`battery_fill_${i}`,`[BATTERY_PERCENT] >= ${(i+1)*12.5} && [BATTERY_PERCENT] <= 100`,arc('[CONFIGURATION.accent.0]')));
   }
   return element('Scene',{backgroundColor:colors.black},
     applyAccent(fold()),
@@ -43,18 +42,25 @@ export function scene() {
     conditional('battery_warning','[BATTERY_PERCENT] >= 0 && [BATTERY_PERCENT] <= 20',text('battery_warning_mark',30,214,36,20,15,'!')),
     conditional('show_day_caption',foldVisible,group('day_caption',activeOnly(),text('day_percent',150,288,150,26,16,'DAY %d%%',[`floor(100 * ${dayProgress})`],{color:colors.lime}))),
     ...docks.map(dockFrame),
+    group('dock_empty_defaults',activeOnly(),...docks.map(dock=>text(`no_data_${dock.id}`,dock.x-42,dock.y-21,84,28,24,'—',[],{color:colors.secondary}))),
     ...docks.map(complicationDock),
-    conditional('show_signature','[CONFIGURATION.signature]',group('signature',activeOnly(),text('brand',140,400,170,23,12,'P A R A L L A X',[],{color:colors.secondary}))));
+    conditional('show_signature',"[CONFIGURATION.signature] == 'TRUE'",group('signature',activeOnly(),text('brand',140,400,170,23,12,'P A R A L L A X',[],{color:colors.secondary}))));
 }
 export function xml(node,depth=0) {
   if(typeof node==='string') return escapeXml(node);
   const indent='  '.repeat(depth), transforms=[];
   const attributes=Object.entries(node.attrs).map(([key,value])=>{
     if(value && typeof value==='object') {transforms.push(transform(key,value.expression));value=value.base;}
+    if(typeof value==='string' && (key==='expression' || (node.tag==='Transform'&&key==='value')))value=value.replace(/'([^']*)'/g,'"$1"');
     return ` ${key}="${escapeXml(value)}"`;
   }).join('');
   const children=[...node.children,...transforms];
   if(!children.length) return `${indent}<${node.tag}${attributes} />`;
+  // WFF preserves whitespace in rich text. Pretty-printing Font/Template adds
+  // literal padding/newlines and can turn otherwise fitting numerals into ellipses.
+  if(children.some(c=>typeof c==='string') || ['Font','Template','Outline','Upper','Lower'].includes(node.tag)) {
+    return `${indent}<${node.tag}${attributes}>${children.map(c=>typeof c==='string'?escapeXml(node.tag==='Expression'?c.replace(/'([^']*)'/g,'"$1"'):c):xml(c,0).trim()).join('')}</${node.tag}>`;
+  }
   return `${indent}<${node.tag}${attributes}>\n${children.map(c=>typeof c==='string'?indent+'  '+escapeXml(c):xml(c,depth+1)).join('\n')}\n${indent}</${node.tag}>`;
 }
 export function watchFace() {

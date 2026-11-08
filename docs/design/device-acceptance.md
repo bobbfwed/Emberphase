@@ -1,12 +1,12 @@
 # Physical-device acceptance
 
-Status: pending watch availability. No watch connection or installation has been
-attempted. Local build and simulation evidence is in
+Status: installed and activated on the Watch6 Classic on 2026-11-07. Active and
+ambient rendering were inspected; extended acceptance remains open. Local build and simulation evidence is in
 [implementation validation](implementation-validation.md).
 
-Stage 5's offline readiness work is complete. The following checks require the
-watch and remain unperformed. Target first: Galaxy Watch6 Classic SM-R950 on
-Wear OS 6 / API 36, then a second size/device when available.
+Device: Galaxy Watch6 Classic SM-R950, API 36, firmware R950XXS2CZF5, 432x432.
+Both packages were updated in place, preserving the verified Android debug signer.
+The face uses version code 39 to update the watch's existing 0.6.4/code-38 face.
 
 ## Candidate handoff
 
@@ -17,7 +17,7 @@ matching candidate signer fingerprints, then copies:
 
 | File under `artifacts/device-ready/` | Purpose |
 | --- | --- |
-| `parallax-1.0.0-debug.apk` | Face: `com.bobbfwed.emberphase`, version code 34 |
+| `parallax-1.0.0-debug.apk` | Face: `com.bobbfwed.emberphase`, version code 39 (above the connected watch's existing code 38) |
 | `emberphase-health-watch-0.1.9-debug.apk` | Optional watch companion: `com.bobbfwed.emberphase.health`, code 2010; adds MIN/KCAL titles |
 | `candidate.json` | Source revision, face-source hash, package/version, size, SHA-256, certificate fingerprint, and pending physical status |
 | `device-acceptance.md` | This runbook |
@@ -54,27 +54,28 @@ Commands to use only after the watch is available (replace all placeholders):
 
 ## Acceptance matrix
 
-Every row is pending a physical result.
+The installation smoke check covers the observed current time and selected
+providers. Rows marked pending still require a dedicated test.
 
 | Check | Expected result | Status |
 | --- | --- | --- |
-| Picker and launch | Correct name/icon/preview; no blank or clipped face | Pending |
+| Picker and launch | Correct name/icon/preview; no blank or clipped face | Installed and activated; face renders |
 | Time geometry | All numeral pairs fit at a stable size; compare 00:00, 10:08, 12:00, 23:59 | Pending |
-| Clock format | Device, explicit 12-hour, explicit 24-hour work; localized AM/PM does not cross the fold | Pending |
-| Day Fold | Crease changes on minute boundaries, resets with local date, no continuous idle motion | Pending |
-| Date/localization | Current weekday/day/month and longer localized text fit | Pending |
+| Clock format | Device, explicit 12-hour, explicit 24-hour work; localized AM/PM does not cross the fold | Device 12-hour/PM observed; other modes pending |
+| Day Fold | Crease changes on minute boundaries, resets with local date, no continuous idle motion | Visible with correct current day percentage; rollover pending |
+| Date/localization | Current weekday/day/month and longer localized text fit | Current en-US date fits; other locales pending |
 | Editor targets | A/B/C independently selectable; no overlap or accidental neighboring selection | Pending |
-| Provider defaults | Samsung steps and optional MIN/KCAL providers are selectable; missing sources remain empty | Pending |
+| Provider defaults | Samsung steps and optional MIN/KCAL providers are selectable; missing sources remain empty | Existing selections retained: A no-data, B Samsung Steps, C companion MIN; full defaults/CAL check pending |
 | Provider replacement | Weather/event/heart/other compatible sources replace the title as well as the value; no leftover metric name or goal bar on text-only data | Pending |
 | Provider tap | Populated dock invokes its supplied action; no action when none exists | Pending |
 | Health comparison | Values/goals match consented companion data and Samsung's displayed totals, allowing normal sync delays | Pending |
-| Zero / over goal | Measured zero is zero; progress caps visually while actual over-goal total stays visible | Pending |
-| No data / expiry | Denied, stale, offline-expired, midnight-expired data shows a dash with no progress, never sample values | Pending |
+| Zero / over goal | Measured zero is zero; progress caps visually while actual over-goal total stays visible | Live Steps/MIN bars render; zero/over-goal cases pending |
+| No data / expiry | Denied, stale, offline-expired, midnight-expired data shows a dash with no progress, never sample values | Current no-data dock shows dash; expiry/revocation pending |
 | Reconnect and goals | New sync and changed goals update correctly after delivery | Pending |
 | Accent and toggles | All accents, fold/signature toggles survive editor save and ambient transitions | Pending |
 | Low battery | At 20% or less the fold/caption disappear; battery warning, time and data remain | Pending |
-| Ambient | Same time positions, selected outline/solid style, date/battery only; no bright circle, fold, docks, or seconds | Pending |
-| Ambient coverage/offload | Measure actual nonblack-pixel coverage; remain below 15%, target below 10%; verify display offload where observable | Pending |
+| Ambient | Same time positions, selected outline/solid style, date/battery only; no bright circle, fold, docks, or seconds | Outline mode verified; no fold/docks/rail/signature; native runtime reports ambient=true, shouldAnimate=false |
+| Ambient coverage/offload | Measure actual nonblack-pixel coverage; remain below 15%, target below 10%; verify display offload where observable | Captured 3.150% nonblack circular pixels, including system notification indicator. Offload not accepted: renderer reports a timeDataSource node is not offloadable; follow-up required |
 | Power saving | Check platform display transitions. No companion-driven power-save behavior is claimed in this candidate | Pending |
 | Wrist legibility / size | Read time and values at actual size; inspect 360/450 profiles and a second device when available | Pending |
 | Battery run | Debugging off; compare representative active/ambient usage over a recorded interval before making battery-life claims | Pending |
@@ -86,7 +87,25 @@ implementation round and commit.
 
 ## Results record
 
-Candidate/source revision: pending on-device run. Device/firmware: pending.
-Install result: not attempted. Live data: not verified. Native font/outline
-legibility: not verified. Offload/ambient pixels: not measured on the watch.
-Battery comparison: not performed. No physical pass is recorded yet.
+Install result: face 1.0.0/code 39 and watch companion 0.1.9/code 2010 installed
+successfully in place and PARALLAX activated. The previous installed APK was saved
+locally under ignored `artifacts/device-install/previous-face-0.6.4.apk`.
+
+Initial physical inspection exposed rich-text indentation becoming literal
+whitespace/ellipsis, WFF's double-quoted string requirements, string-valued Boolean
+configuration options, and unsupported min/max expressions. These were corrected
+and regression-checked; progress now uses native clamp. Static configuration color
+bindings and a scene-level no-data fallback were also verified on the watch.
+
+Actual screenshots and renderer dumps remain under ignored
+`artifacts/device-install/`; live health readings are not committed. The current
+selected Steps and MIN payloads render and fill their tracks. No independent
+Samsung-app total comparison or permission/expiry test was performed during this
+install request. Native active and outline-ambient legibility were inspected.
+Offload remains an open issue; battery comparison has not been performed.
+
+Wireless debugging disconnected after the successful native rendering checks.
+The runtime fixes are installed and captured; the subsequently regenerated picker
+preview was packaged and validated locally but that refreshed package was not
+reapplied after the connection closed. Reinstall the current candidate when
+connected if the picker preview needs refreshing.

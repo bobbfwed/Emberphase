@@ -1,13 +1,13 @@
-import {element,group,text,line,conditional,dynamic,colors,activeOnly} from './parallax-primitives.mjs';
+import {element,group,text,line,rectangle,conditional,dynamic,colors,activeOnly} from './parallax-primitives.mjs';
 export const progressExpressions={
   GOAL_PROGRESS: {
     valid:'[COMPLICATION.GOAL_PROGRESS_TARGET_VALUE] > 0 && ([COMPLICATION.GOAL_PROGRESS_TARGET_VALUE] - [COMPLICATION.GOAL_PROGRESS_TARGET_VALUE]) == 0 && [COMPLICATION.GOAL_PROGRESS_VALUE] >= 0 && ([COMPLICATION.GOAL_PROGRESS_VALUE] - [COMPLICATION.GOAL_PROGRESS_VALUE]) == 0',
-    fraction:'min(1, max(0, [COMPLICATION.GOAL_PROGRESS_VALUE] / [COMPLICATION.GOAL_PROGRESS_TARGET_VALUE]))',
+    fraction:'clamp(1.0 * [COMPLICATION.GOAL_PROGRESS_VALUE] / [COMPLICATION.GOAL_PROGRESS_TARGET_VALUE], 0, 1)',
     value:'[COMPLICATION.GOAL_PROGRESS_VALUE]',fallback:'GOAL'
   },
   RANGED_VALUE: {
     valid:'[COMPLICATION.RANGED_VALUE_MAX] > [COMPLICATION.RANGED_VALUE_MIN] && ([COMPLICATION.RANGED_VALUE_MAX] - [COMPLICATION.RANGED_VALUE_MAX]) == 0 && ([COMPLICATION.RANGED_VALUE_MIN] - [COMPLICATION.RANGED_VALUE_MIN]) == 0 && ([COMPLICATION.RANGED_VALUE_VALUE] - [COMPLICATION.RANGED_VALUE_VALUE]) == 0',
-    fraction:'min(1, max(0, ([COMPLICATION.RANGED_VALUE_VALUE] - [COMPLICATION.RANGED_VALUE_MIN]) / ([COMPLICATION.RANGED_VALUE_MAX] - [COMPLICATION.RANGED_VALUE_MIN])))',
+    fraction:'clamp(1.0 * ([COMPLICATION.RANGED_VALUE_VALUE] - [COMPLICATION.RANGED_VALUE_MIN]) / ([COMPLICATION.RANGED_VALUE_MAX] - [COMPLICATION.RANGED_VALUE_MIN]), 0, 1)',
     value:'[COMPLICATION.RANGED_VALUE_VALUE]',fallback:'RANGE'
   }
 };
@@ -26,10 +26,10 @@ export function complicationDock({id,name,x,y}) {
     const bar=progress?conditional(`valid_${id}_${type}`,progress.valid,group(`range_${id}_${type}`,
       line(`track_${id}_${type}`,[15,78],[83,78],colors.structure,2.5),
       conditional(`positive_${id}_${type}`,`${progress.fraction} > 0`,line(`progress_${id}_${type}`,[15,78],[dynamic(`15 + 68 * (${progress.fraction})`,15),78],colors.lime,2.5)))):null;
-    return element('Complication',{type},value,label,bar);
+    return element('Complication',{type},rectangle(`value_background_${id}_${type}`,9,28,86,48,colors.black),value,label,bar);
   });
   return element('ComplicationSlot',{name,slotId:id,displayName:name,x:x-52,y:y-52,width:104,height:104,isCustomizable:'TRUE',supportedTypes:'SHORT_TEXT RANGED_VALUE GOAL_PROGRESS MONOCHROMATIC_IMAGE EMPTY'},
     activeOnly(),element('BoundingOval',{x:0,y:0,width:104,height:104}),element('DefaultProviderPolicy',policy),...renderings,
-    element('Complication',{type:'MONOCHROMATIC_IMAGE'},element('PartImage',{name:`icon_${id}`,x:34,y:31,width:36,height:36,tintColor:colors.ivory},element('Image',{resource:'[COMPLICATION.MONOCHROMATIC_IMAGE]'}))),
+    element('Complication',{type:'MONOCHROMATIC_IMAGE'},rectangle(`icon_background_${id}`,9,28,86,48,colors.black),element('PartImage',{name:`icon_${id}`,x:34,y:31,width:36,height:36,tintColor:colors.ivory},element('Image',{resource:'[COMPLICATION.MONOCHROMATIC_IMAGE]'}))),
     element('Complication',{type:'EMPTY'},text(`empty_${id}`,10,31,84,28,24,'—',[],{color:colors.secondary})));
 }

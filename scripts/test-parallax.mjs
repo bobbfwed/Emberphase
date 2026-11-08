@@ -27,6 +27,10 @@ for(let i=0;i<docks.length;i++) {
   for(let j=i+1;j<docks.length;j++)assert.ok(Math.hypot(docks[i].x-docks[j].x,docks[i].y-docks[j].y)>104);
 }
 assert.doesNotMatch(watchFace(),/\[(?:SECOND|MILLISECOND|UTC_TIMESTAMP)\]/);
+assert.doesNotMatch(watchFace(),/<(?:Font|Template|Outline)\b[^>]*>\s*\n/,'Native rich text must not acquire indentation or newlines.');
+assert.doesNotMatch(watchFace(),/'(?:TRUE|FALSE|system|12|24|GOAL|RANGE|outline)'/,'WFF string literals use double quotes, unlike the JavaScript preview.');
+assert.match(watchFace(),/&quot;TRUE&quot;/);
+assert.doesNotMatch(watchFace(),/\b(?:min|max)\(/,'Use the WFF clamp function for bounded progress.');
 walk(scene(),node=>{if(node.tag==='Text'&&node.children.some(c=>c.tag==='Font'&&c.attrs.size>=100))assert.equal(node.attrs.isAutoSize,'FALSE','Clock numerals have a fixed, measured size.');});
 const goal=progressExpressions.GOAL_PROGRESS,range=progressExpressions.RANGED_VALUE;
 const g=(value,target)=>({'COMPLICATION.GOAL_PROGRESS_VALUE':value,'COMPLICATION.GOAL_PROGRESS_TARGET_VALUE':target});
@@ -54,14 +58,15 @@ assert.doesNotMatch(svg({docks:{101:{type:'GOAL_PROGRESS',GOAL_PROGRESS_VALUE:Na
 for(const [selection,device,expected] of [['system',true,true],['system',false,false],['12',true,false],['24',false,true]]) {
   assert.equal(evaluate(use24,{'CONFIGURATION.time_format':selection,IS_24_HOUR_MODE:device}),expected);
 }
-assert.equal(evaluate(foldVisible,{'CONFIGURATION.fold':true,BATTERY_PERCENT:20}),false);
-assert.equal(evaluate(foldVisible,{'CONFIGURATION.fold':true,BATTERY_PERCENT:21}),true);
-assert.equal(evaluate(foldVisible,{'CONFIGURATION.fold':false,BATTERY_PERCENT:80}),false);
+assert.equal(evaluate(foldVisible,{'CONFIGURATION.fold':'TRUE',BATTERY_PERCENT:20}),false);
+assert.equal(evaluate(foldVisible,{'CONFIGURATION.fold':'TRUE',BATTERY_PERCENT:21}),true);
+assert.equal(evaluate(foldVisible,{'CONFIGURATION.fold':'FALSE',BATTERY_PERCENT:80}),false);
 const ambient=svg({},'AMBIENT');
 assert.doesNotMatch(ambient,/DAY |P A R A L L A X|<line|<path/);
 assert.match(ambient,/data-name="hour_ambient_24"/);
 assert.doesNotMatch(ambient,/data-name="hour_active/);
 assert.doesNotMatch(svg({BATTERY_PERCENT:20}),/DAY |fold_now/);
+assert.doesNotMatch(svg({'CONFIGURATION.signature':'FALSE'}),/P A R A L L A X/);
 for(const [hour,expected] of [[0,'12'],[12,'12'],[23,'11']]) {
   const view=svg({HOUR_0_23:hour,'CONFIGURATION.time_format':'12'});
   assert.match(view,new RegExp(`data-name="hour_active_12"[^>]*>${expected}<`));
