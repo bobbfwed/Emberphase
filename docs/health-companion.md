@@ -1,9 +1,10 @@
 # Samsung Health companion
 
 Emberphase Health supplies active minutes, active calories and their real daily
-goals to the face. It consists of a phone app and a Wear OS complication-provider
-app. The watch face itself remains a resource-only WFF APK. Samsung's installed
-watch providers still supply steps; the bridge does not replace that source.
+goals to compatible watch-face complications. It consists of a phone app and a
+Wear OS complication-provider app. The face itself remains a resource-only WFF
+APK. Samsung's installed watch providers still supply steps; the bridge does not
+replace that source.
 
 ## Current status
 
@@ -52,12 +53,13 @@ when it is absent.
 
 ## Build and install
 
-Set `JAVA_HOME` and `ANDROID_HOME` as described in the project README. Connect
-the phone with USB debugging and the watch with wireless debugging. Use their
+Set `JAVA_HOME` to Android Studio's JBR directory and `ANDROID_HOME` to your
+Android SDK directory. Connect the phone with USB debugging and the watch with
+wireless debugging. Use their
 separate serials from `adb devices -l`:
 
 ```powershell
-.\gradlew.bat :health-common:testDebugUnitTest :health-phone:assembleDebug :health-watch:assembleDebug :health-phone:lintDebug :health-watch:lintDebug :watchface:verifyResourceOnlyDebug
+.\gradlew.bat :health-common:testDebugUnitTest :health-phone:assembleDebug :health-watch:assembleDebug :health-phone:lintDebug :health-watch:lintDebug
 & "$env:ANDROID_HOME\platform-tools\adb.exe" -s PHONE_SERIAL install -r .\health-phone\build\outputs\apk\debug\health-phone-debug.apk
 & "$env:ANDROID_HOME\platform-tools\adb.exe" -s WATCH_IP:DEBUG_PORT install -r .\health-watch\build\outputs\apk\debug\health-watch-debug.apk
 ```
@@ -78,8 +80,8 @@ key and register the phone app's package and release SHA-256 with Samsung.
    Optimized setting blocked the scheduled worker overnight. This setting applies
    to the phone companion; it does not change watch-face animation or watch power
    settings. Android can still delay work, and disconnected devices cannot sync.
-4. Edit the face's Complications. Tap the number/dash above **MIN**, select
-   **Emberphase · Active minutes**; do the same for **CAL** with
+4. In a compatible face's complication editor, choose a short-text or goal-progress
+   slot for **Emberphase · Active minutes** and another for
    **Emberphase · Active calories**. Save the face. Existing selections persist
    across face updates, so changing default providers does not replace them.
 
@@ -104,8 +106,8 @@ requests are limited to one every 15 minutes. Wear OS requests each activity
 provider about every 60 minutes as a recovery path when pushes stop; those
 requests read the local cache. There is no foreground service, sensor sampling,
 exact alarm, or new watch-face timer. Sleep, theater, and watch power saving
-remain system display states. Ambient already omits seconds, the balance, moon,
-weather, and activity.
+remain system display states. PARALLAX ambient behavior is proposed separately in
+the [design specification](design/README.md).
 
 Only dated totals and goals travel through Google's paired-device Data Layer.
 The watch caches them in private storage, excluded from backup and device

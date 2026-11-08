@@ -2,6 +2,10 @@
 param([switch]$Install, [string]$Serial)
 $ErrorActionPreference = 'Stop'
 $projectRoot = Split-Path -Parent $PSScriptRoot
+$faceDefinition = Join-Path $projectRoot 'watchface\src\main\res\raw\watchface.xml'
+if (-not (Test-Path -LiteralPath $faceDefinition)) {
+    throw 'Watch-face implementation is paused for design approval. Review docs/design/README.md. The previous visual resources have been removed; there is no face to build or install yet.'
+}
 $sdkRoot = $env:ANDROID_HOME
 if (-not $sdkRoot) { $sdkRoot = [Environment]::GetEnvironmentVariable('ANDROID_HOME','User') }
 if (-not $sdkRoot) { $sdkRoot = Join-Path $env:LOCALAPPDATA 'Android\Sdk' }
@@ -31,7 +35,6 @@ $validation = Get-Content -LiteralPath $validatorLog -Raw
 Write-Host $validation
 if ($validation -match 'FAILED|SEVERE|NOT valid' -or $validation -notmatch 'SUCCESS|is valid') { throw "WFF validation failed; see $validatorLog" }
 
-& (Join-Path $PSScriptRoot 'New-Previews.ps1')
 $aapt2 = Join-Path $buildTools 'aapt2.exe'
 & $aapt2 compile --dir (Join-Path $sourceRoot 'res') -o (Join-Path $buildRoot 'resources.zip')
 Check-Exit 'Resource compilation'
