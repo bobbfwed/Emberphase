@@ -165,6 +165,15 @@ Long-press the current watch face, choose **Add watch face**, and select
 **Emberphase**. Open its editor to configure the data sources, second hand,
 and hidden balance.
 
+Emberphase stays installed and available under **Add watch face** when another
+face is active. Add it once to keep it in the watch's face carousel for quick
+switching. The mechanical face uses the package ID
+`com.bobbfwed.emberphase.mechanical`, so it can coexist with PARALLAX or other
+forks that use the original `com.bobbfwed.emberphase` ID. This is a separate
+installation from older Emberphase builds; configure its complications once.
+Future updates to this package preserve its settings. Give other watch-face
+forks their own application IDs so installing one does not replace another.
+
 ## Customize the displays
 
 Use **Left inset → Weather** for current temperature, today's high, and conditions

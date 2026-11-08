@@ -7,7 +7,8 @@ android {
     compileSdk = 36
     buildToolsVersion = "36.0.0"
     defaultConfig {
-        applicationId = "com.bobbfwed.emberphase"
+        // Keep the mechanical face installed alongside forks such as PARALLAX.
+        applicationId = "com.bobbfwed.emberphase.mechanical"
         minSdk = 36
         targetSdk = 36
         versionCode = 33

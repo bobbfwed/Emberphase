@@ -38,7 +38,7 @@ Check-Exit 'Resource compilation'
 
 # Keep the AGP manifest namespace-free; aapt2's standalone path needs package.
 [xml]$manifest = Get-Content -LiteralPath (Join-Path $sourceRoot 'AndroidManifest.xml') -Raw
-$manifest.manifest.SetAttribute('package','com.bobbfwed.emberphase')
+$manifest.manifest.SetAttribute('package','com.bobbfwed.emberphase.mechanical')
 $manifestPath = Join-Path $buildRoot 'AndroidManifest.xml'
 $manifest.Save($manifestPath)
 & $aapt2 link -o (Join-Path $buildRoot 'unsigned.apk') --manifest $manifestPath -I (Join-Path $sdkRoot 'platforms\android-36\android.jar') --min-sdk-version 36 --target-sdk-version 36 --version-code 33 --version-name '0.5.16' --auto-add-overlay -R (Join-Path $buildRoot 'resources.zip')
