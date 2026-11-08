@@ -24,6 +24,18 @@ export function render(node,sources,mode='ACTIVE') {
   if(Number(a.alpha??255)===0)return '';
   const children=()=>node.children.map(c=>render(c,sources,mode)).join('');
   switch(node.tag) {
+    case 'Condition': {
+      const expressions=node.children.find(c=>c.tag==='Expressions');
+      const branch=node.children.find(c=>c.tag==='Compare'&&evaluate(expressions.children.find(e=>e.attrs.name===c.attrs.expression).children.join(''),sources))??node.children.find(c=>c.tag==='Default');
+      return branch?branch.children.map(c=>render(c,sources,mode)).join(''):'';
+    }
+    case 'ComplicationSlot': {
+      const fixture=sources.docks?.[a.slotId]??{type:'EMPTY'};
+      const scoped={...sources,'COMPLICATION.TEXT':'','COMPLICATION.TITLE':'',...Object.fromEntries(Object.entries(fixture).map(([k,v])=>['COMPLICATION.'+k,v]))};
+      const branch=node.children.find(c=>c.tag==='Complication'&&c.attrs.type===fixture.type);
+      return `<g transform="translate(${a.x} ${a.y})">${branch?branch.children.map(c=>render(c,scoped,mode)).join(''):''}</g>`;
+    }
+    case 'PartImage': return `<g transform="translate(${a.x} ${a.y})" ${style(colors.ivory)}><circle cx="18" cy="18" r="10" fill="none" stroke="${colors.ivory}" stroke-width="2"/><path d="M8,18h20 M18,8v20" stroke="${colors.ivory}" stroke-width="2"/></g>`;
     case 'Scene':return children();
     case 'Group':case 'PartDraw':return `<g transform="translate(${a.x??0} ${a.y??0})" opacity="${Number(a.alpha??255)/255}">${children()}</g>`;
     case 'Line': {

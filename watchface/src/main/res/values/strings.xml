@@ -1,4 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="watch_face_name">PARALLAX</string>
+    <string name="dock_a">Dock A · steps by default</string>
+    <string name="dock_b">Dock B · active minutes by default</string>
+    <string name="dock_c">Dock C · active kcal by default</string>
 </resources>

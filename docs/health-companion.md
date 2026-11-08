@@ -8,6 +8,12 @@ replace that source.
 
 ## Current status
 
+The PARALLAX implementation includes watch companion **0.1.9**, which adds
+MIN/KCAL titles to its existing goal-progress payloads. Install that companion
+update for the default goal docks to show those labels. Earlier companion
+versions still supply values and goals, with a generic GOAL label on PARALLAX.
+The health data pipeline and phone companion are unchanged by this display update.
+
 The companion is installed and working on a Galaxy S24 Ultra (Android 17,
 Samsung Health 7.1.0.053) paired with a Watch6 Classic SM-R950 (Wear OS 6).
 On 2026-11-02 the developer enabled Samsung's read-testing mode and accepted

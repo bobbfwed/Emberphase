@@ -416,6 +416,735 @@
         </Line>
       </PartDraw>
     </Group>
+    <ComplicationSlot name="dock_a" slotId="101" displayName="dock_a" x="67" y="290" width="104" height="104" isCustomizable="TRUE" supportedTypes="SHORT_TEXT RANGED_VALUE GOAL_PROGRESS MONOCHROMATIC_IMAGE EMPTY" tintColor="#EDF2EA">
+      <Variant mode="AMBIENT" target="alpha" value="0" />
+      <BoundingOval x="0" y="0" width="104" height="104" />
+      <DefaultProviderPolicy primaryProvider="com.samsung.android.wear.shealth/com.samsung.android.wear.shealth.complications.steps.StepsComplicationProviderService" primaryProviderType="GOAL_PROGRESS" defaultSystemProvider="STEP_COUNT" defaultSystemProviderType="RANGED_VALUE" />
+      <Complication type="SHORT_TEXT">
+        <Condition>
+          <Expressions>
+            <Expression name="has_text_101_SHORT_TEXT">
+              [COMPLICATION.TEXT] != ''
+            </Expression>
+          </Expressions>
+          <Compare expression="has_text_101_SHORT_TEXT">
+            <PartText name="value_101_SHORT_TEXT" x="10" y="29" width="84" height="30">
+              <Text align="CENTER" ellipsis="TRUE" maxLines="1" isAutoSize="TRUE">
+                <Font family="sans-serif" size="25" weight="NORMAL" color="#EDF2EA">
+                  <Template>
+                    %s
+                    <Parameter expression="[COMPLICATION.TEXT]" />
+                  </Template>
+                </Font>
+              </Text>
+            </PartText>
+          </Compare>
+          <Default>
+            <PartText name="missing_101" x="10" y="29" width="84" height="30">
+              <Text align="CENTER" ellipsis="TRUE" maxLines="1" isAutoSize="TRUE">
+                <Font family="sans-serif" size="25" weight="NORMAL" color="#EDF2EA">
+                  —
+                </Font>
+              </Text>
+            </PartText>
+          </Default>
+        </Condition>
+        <PartText name="label_101_SHORT_TEXT" x="10" y="58" width="84" height="15">
+          <Text align="CENTER" ellipsis="TRUE" maxLines="1" isAutoSize="TRUE">
+            <Font family="sans-serif" size="11" weight="NORMAL" color="#A0AAA6">
+              <Template>
+                %s
+                <Parameter expression="[COMPLICATION.TITLE]" />
+              </Template>
+            </Font>
+          </Text>
+        </PartText>
+      </Complication>
+      <Complication type="GOAL_PROGRESS">
+        <Condition>
+          <Expressions>
+            <Expression name="has_text_101_GOAL_PROGRESS">
+              [COMPLICATION.TEXT] != ''
+            </Expression>
+          </Expressions>
+          <Compare expression="has_text_101_GOAL_PROGRESS">
+            <PartText name="value_101_GOAL_PROGRESS" x="10" y="29" width="84" height="30">
+              <Text align="CENTER" ellipsis="TRUE" maxLines="1" isAutoSize="TRUE">
+                <Font family="sans-serif" size="25" weight="NORMAL" color="#EDF2EA">
+                  <Template>
+                    %s
+                    <Parameter expression="[COMPLICATION.TEXT]" />
+                  </Template>
+                </Font>
+              </Text>
+            </PartText>
+          </Compare>
+          <Default>
+            <Condition>
+              <Expressions>
+                <Expression name="finite_101_GOAL_PROGRESS">
+                  ([COMPLICATION.GOAL_PROGRESS_VALUE] - [COMPLICATION.GOAL_PROGRESS_VALUE]) == 0
+                </Expression>
+              </Expressions>
+              <Compare expression="finite_101_GOAL_PROGRESS">
+                <PartText name="number_101_GOAL_PROGRESS" x="10" y="29" width="84" height="30">
+                  <Text align="CENTER" ellipsis="TRUE" maxLines="1" isAutoSize="TRUE">
+                    <Font family="sans-serif" size="25" weight="NORMAL" color="#EDF2EA">
+                      <Template>
+                        %.0f
+                        <Parameter expression="[COMPLICATION.GOAL_PROGRESS_VALUE]" />
+                      </Template>
+                    </Font>
+                  </Text>
+                </PartText>
+              </Compare>
+              <Default>
+                <PartText name="invalid_101_GOAL_PROGRESS" x="10" y="29" width="84" height="30">
+                  <Text align="CENTER" ellipsis="TRUE" maxLines="1" isAutoSize="TRUE">
+                    <Font family="sans-serif" size="25" weight="NORMAL" color="#EDF2EA">
+                      —
+                    </Font>
+                  </Text>
+                </PartText>
+              </Default>
+            </Condition>
+          </Default>
+        </Condition>
+        <PartText name="label_101_GOAL_PROGRESS" x="10" y="58" width="84" height="15">
+          <Text align="CENTER" ellipsis="TRUE" maxLines="1" isAutoSize="TRUE">
+            <Font family="sans-serif" size="11" weight="NORMAL" color="#A0AAA6">
+              <Template>
+                %s
+                <Parameter expression="[COMPLICATION.TITLE] != '' ? [COMPLICATION.TITLE] : 'GOAL'" />
+              </Template>
+            </Font>
+          </Text>
+        </PartText>
+        <Condition>
+          <Expressions>
+            <Expression name="valid_101_GOAL_PROGRESS">
+              [COMPLICATION.GOAL_PROGRESS_TARGET_VALUE] &gt; 0 &amp;&amp; ([COMPLICATION.GOAL_PROGRESS_TARGET_VALUE] - [COMPLICATION.GOAL_PROGRESS_TARGET_VALUE]) == 0 &amp;&amp; [COMPLICATION.GOAL_PROGRESS_VALUE] &gt;= 0 &amp;&amp; ([COMPLICATION.GOAL_PROGRESS_VALUE] - [COMPLICATION.GOAL_PROGRESS_VALUE]) == 0
+            </Expression>
+          </Expressions>
+          <Compare expression="valid_101_GOAL_PROGRESS">
+            <Group name="range_101_GOAL_PROGRESS" x="0" y="0" width="450" height="450">
+              <PartDraw name="track_101_GOAL_PROGRESS" x="0" y="0" width="450" height="450">
+                <Line startX="15" startY="78" endX="83" endY="78">
+                  <Stroke color="#34433F" thickness="2.5" cap="ROUND" />
+                </Line>
+              </PartDraw>
+              <Condition>
+                <Expressions>
+                  <Expression name="positive_101_GOAL_PROGRESS">
+                    min(1, max(0, [COMPLICATION.GOAL_PROGRESS_VALUE] / [COMPLICATION.GOAL_PROGRESS_TARGET_VALUE])) &gt; 0
+                  </Expression>
+                </Expressions>
+                <Compare expression="positive_101_GOAL_PROGRESS">
+                  <PartDraw name="progress_101_GOAL_PROGRESS" x="0" y="0" width="450" height="450">
+                    <Line startX="15" startY="78" endX="15" endY="78">
+                      <Stroke color="#C9F279" thickness="2.5" cap="ROUND" />
+                      <Transform target="endX" value="15 + 68 * (min(1, max(0, [COMPLICATION.GOAL_PROGRESS_VALUE] / [COMPLICATION.GOAL_PROGRESS_TARGET_VALUE])))" />
+                    </Line>
+                  </PartDraw>
+                </Compare>
+              </Condition>
+            </Group>
+          </Compare>
+        </Condition>
+      </Complication>
+      <Complication type="RANGED_VALUE">
+        <Condition>
+          <Expressions>
+            <Expression name="has_text_101_RANGED_VALUE">
+              [COMPLICATION.TEXT] != ''
+            </Expression>
+          </Expressions>
+          <Compare expression="has_text_101_RANGED_VALUE">
+            <PartText name="value_101_RANGED_VALUE" x="10" y="29" width="84" height="30">
+              <Text align="CENTER" ellipsis="TRUE" maxLines="1" isAutoSize="TRUE">
+                <Font family="sans-serif" size="25" weight="NORMAL" color="#EDF2EA">
+                  <Template>
+                    %s
+                    <Parameter expression="[COMPLICATION.TEXT]" />
+                  </Template>
+                </Font>
+              </Text>
+            </PartText>
+          </Compare>
+          <Default>
+            <Condition>
+              <Expressions>
+                <Expression name="finite_101_RANGED_VALUE">
+                  ([COMPLICATION.RANGED_VALUE_VALUE] - [COMPLICATION.RANGED_VALUE_VALUE]) == 0
+                </Expression>
+              </Expressions>
+              <Compare expression="finite_101_RANGED_VALUE">
+                <PartText name="number_101_RANGED_VALUE" x="10" y="29" width="84" height="30">
+                  <Text align="CENTER" ellipsis="TRUE" maxLines="1" isAutoSize="TRUE">
+                    <Font family="sans-serif" size="25" weight="NORMAL" color="#EDF2EA">
+                      <Template>
+                        %.0f
+                        <Parameter expression="[COMPLICATION.RANGED_VALUE_VALUE]" />
+                      </Template>
+                    </Font>
+                  </Text>
+                </PartText>
+              </Compare>
+              <Default>
+                <PartText name="invalid_101_RANGED_VALUE" x="10" y="29" width="84" height="30">
+                  <Text align="CENTER" ellipsis="TRUE" maxLines="1" isAutoSize="TRUE">
+                    <Font family="sans-serif" size="25" weight="NORMAL" color="#EDF2EA">
+                      —
+                    </Font>
+                  </Text>
+                </PartText>
+              </Default>
+            </Condition>
+          </Default>
+        </Condition>
+        <PartText name="label_101_RANGED_VALUE" x="10" y="58" width="84" height="15">
+          <Text align="CENTER" ellipsis="TRUE" maxLines="1" isAutoSize="TRUE">
+            <Font family="sans-serif" size="11" weight="NORMAL" color="#A0AAA6">
+              <Template>
+                %s
+                <Parameter expression="[COMPLICATION.TITLE] != '' ? [COMPLICATION.TITLE] : 'RANGE'" />
+              </Template>
+            </Font>
+          </Text>
+        </PartText>
+        <Condition>
+          <Expressions>
+            <Expression name="valid_101_RANGED_VALUE">
+              [COMPLICATION.RANGED_VALUE_MAX] &gt; [COMPLICATION.RANGED_VALUE_MIN] &amp;&amp; ([COMPLICATION.RANGED_VALUE_MAX] - [COMPLICATION.RANGED_VALUE_MAX]) == 0 &amp;&amp; ([COMPLICATION.RANGED_VALUE_MIN] - [COMPLICATION.RANGED_VALUE_MIN]) == 0 &amp;&amp; ([COMPLICATION.RANGED_VALUE_VALUE] - [COMPLICATION.RANGED_VALUE_VALUE]) == 0
+            </Expression>
+          </Expressions>
+          <Compare expression="valid_101_RANGED_VALUE">
+            <Group name="range_101_RANGED_VALUE" x="0" y="0" width="450" height="450">
+              <PartDraw name="track_101_RANGED_VALUE" x="0" y="0" width="450" height="450">
+                <Line startX="15" startY="78" endX="83" endY="78">
+                  <Stroke color="#34433F" thickness="2.5" cap="ROUND" />
+                </Line>
+              </PartDraw>
+              <Condition>
+                <Expressions>
+                  <Expression name="positive_101_RANGED_VALUE">
+                    min(1, max(0, ([COMPLICATION.RANGED_VALUE_VALUE] - [COMPLICATION.RANGED_VALUE_MIN]) / ([COMPLICATION.RANGED_VALUE_MAX] - [COMPLICATION.RANGED_VALUE_MIN]))) &gt; 0
+                  </Expression>
+                </Expressions>
+                <Compare expression="positive_101_RANGED_VALUE">
+                  <PartDraw name="progress_101_RANGED_VALUE" x="0" y="0" width="450" height="450">
+                    <Line startX="15" startY="78" endX="15" endY="78">
+                      <Stroke color="#C9F279" thickness="2.5" cap="ROUND" />
+                      <Transform target="endX" value="15 + 68 * (min(1, max(0, ([COMPLICATION.RANGED_VALUE_VALUE] - [COMPLICATION.RANGED_VALUE_MIN]) / ([COMPLICATION.RANGED_VALUE_MAX] - [COMPLICATION.RANGED_VALUE_MIN]))))" />
+                    </Line>
+                  </PartDraw>
+                </Compare>
+              </Condition>
+            </Group>
+          </Compare>
+        </Condition>
+      </Complication>
+      <Complication type="MONOCHROMATIC_IMAGE">
+        <PartImage name="icon_101" x="34" y="31" width="36" height="36" tintColor="#EDF2EA">
+          <Image resource="[COMPLICATION.MONOCHROMATIC_IMAGE]" />
+        </PartImage>
+      </Complication>
+      <Complication type="EMPTY">
+        <PartText name="empty_101" x="10" y="31" width="84" height="28">
+          <Text align="CENTER" ellipsis="TRUE" maxLines="1" isAutoSize="TRUE">
+            <Font family="sans-serif" size="24" weight="NORMAL" color="#A0AAA6">
+              —
+            </Font>
+          </Text>
+        </PartText>
+      </Complication>
+    </ComplicationSlot>
+    <ComplicationSlot name="dock_b" slotId="102" displayName="dock_b" x="173" y="307" width="104" height="104" isCustomizable="TRUE" supportedTypes="SHORT_TEXT RANGED_VALUE GOAL_PROGRESS MONOCHROMATIC_IMAGE EMPTY" tintColor="#EDF2EA">
+      <Variant mode="AMBIENT" target="alpha" value="0" />
+      <BoundingOval x="0" y="0" width="104" height="104" />
+      <DefaultProviderPolicy primaryProvider="com.bobbfwed.emberphase.health/com.bobbfwed.emberphase.health.watch.MinutesDataSource" primaryProviderType="GOAL_PROGRESS" defaultSystemProvider="EMPTY" defaultSystemProviderType="EMPTY" />
+      <Complication type="SHORT_TEXT">
+        <Condition>
+          <Expressions>
+            <Expression name="has_text_102_SHORT_TEXT">
+              [COMPLICATION.TEXT] != ''
+            </Expression>
+          </Expressions>
+          <Compare expression="has_text_102_SHORT_TEXT">
+            <PartText name="value_102_SHORT_TEXT" x="10" y="29" width="84" height="30">
+              <Text align="CENTER" ellipsis="TRUE" maxLines="1" isAutoSize="TRUE">
+                <Font family="sans-serif" size="25" weight="NORMAL" color="#EDF2EA">
+                  <Template>
+                    %s
+                    <Parameter expression="[COMPLICATION.TEXT]" />
+                  </Template>
+                </Font>
+              </Text>
+            </PartText>
+          </Compare>
+          <Default>
+            <PartText name="missing_102" x="10" y="29" width="84" height="30">
+              <Text align="CENTER" ellipsis="TRUE" maxLines="1" isAutoSize="TRUE">
+                <Font family="sans-serif" size="25" weight="NORMAL" color="#EDF2EA">
+                  —
+                </Font>
+              </Text>
+            </PartText>
+          </Default>
+        </Condition>
+        <PartText name="label_102_SHORT_TEXT" x="10" y="58" width="84" height="15">
+          <Text align="CENTER" ellipsis="TRUE" maxLines="1" isAutoSize="TRUE">
+            <Font family="sans-serif" size="11" weight="NORMAL" color="#A0AAA6">
+              <Template>
+                %s
+                <Parameter expression="[COMPLICATION.TITLE]" />
+              </Template>
+            </Font>
+          </Text>
+        </PartText>
+      </Complication>
+      <Complication type="GOAL_PROGRESS">
+        <Condition>
+          <Expressions>
+            <Expression name="has_text_102_GOAL_PROGRESS">
+              [COMPLICATION.TEXT] != ''
+            </Expression>
+          </Expressions>
+          <Compare expression="has_text_102_GOAL_PROGRESS">
+            <PartText name="value_102_GOAL_PROGRESS" x="10" y="29" width="84" height="30">
+              <Text align="CENTER" ellipsis="TRUE" maxLines="1" isAutoSize="TRUE">
+                <Font family="sans-serif" size="25" weight="NORMAL" color="#EDF2EA">
+                  <Template>
+                    %s
+                    <Parameter expression="[COMPLICATION.TEXT]" />
+                  </Template>
+                </Font>
+              </Text>
+            </PartText>
+          </Compare>
+          <Default>
+            <Condition>
+              <Expressions>
+                <Expression name="finite_102_GOAL_PROGRESS">
+                  ([COMPLICATION.GOAL_PROGRESS_VALUE] - [COMPLICATION.GOAL_PROGRESS_VALUE]) == 0
+                </Expression>
+              </Expressions>
+              <Compare expression="finite_102_GOAL_PROGRESS">
+                <PartText name="number_102_GOAL_PROGRESS" x="10" y="29" width="84" height="30">
+                  <Text align="CENTER" ellipsis="TRUE" maxLines="1" isAutoSize="TRUE">
+                    <Font family="sans-serif" size="25" weight="NORMAL" color="#EDF2EA">
+                      <Template>
+                        %.0f
+                        <Parameter expression="[COMPLICATION.GOAL_PROGRESS_VALUE]" />
+                      </Template>
+                    </Font>
+                  </Text>
+                </PartText>
+              </Compare>
+              <Default>
+                <PartText name="invalid_102_GOAL_PROGRESS" x="10" y="29" width="84" height="30">
+                  <Text align="CENTER" ellipsis="TRUE" maxLines="1" isAutoSize="TRUE">
+                    <Font family="sans-serif" size="25" weight="NORMAL" color="#EDF2EA">
+                      —
+                    </Font>
+                  </Text>
+                </PartText>
+              </Default>
+            </Condition>
+          </Default>
+        </Condition>
+        <PartText name="label_102_GOAL_PROGRESS" x="10" y="58" width="84" height="15">
+          <Text align="CENTER" ellipsis="TRUE" maxLines="1" isAutoSize="TRUE">
+            <Font family="sans-serif" size="11" weight="NORMAL" color="#A0AAA6">
+              <Template>
+                %s
+                <Parameter expression="[COMPLICATION.TITLE] != '' ? [COMPLICATION.TITLE] : 'GOAL'" />
+              </Template>
+            </Font>
+          </Text>
+        </PartText>
+        <Condition>
+          <Expressions>
+            <Expression name="valid_102_GOAL_PROGRESS">
+              [COMPLICATION.GOAL_PROGRESS_TARGET_VALUE] &gt; 0 &amp;&amp; ([COMPLICATION.GOAL_PROGRESS_TARGET_VALUE] - [COMPLICATION.GOAL_PROGRESS_TARGET_VALUE]) == 0 &amp;&amp; [COMPLICATION.GOAL_PROGRESS_VALUE] &gt;= 0 &amp;&amp; ([COMPLICATION.GOAL_PROGRESS_VALUE] - [COMPLICATION.GOAL_PROGRESS_VALUE]) == 0
+            </Expression>
+          </Expressions>
+          <Compare expression="valid_102_GOAL_PROGRESS">
+            <Group name="range_102_GOAL_PROGRESS" x="0" y="0" width="450" height="450">
+              <PartDraw name="track_102_GOAL_PROGRESS" x="0" y="0" width="450" height="450">
+                <Line startX="15" startY="78" endX="83" endY="78">
+                  <Stroke color="#34433F" thickness="2.5" cap="ROUND" />
+                </Line>
+              </PartDraw>
+              <Condition>
+                <Expressions>
+                  <Expression name="positive_102_GOAL_PROGRESS">
+                    min(1, max(0, [COMPLICATION.GOAL_PROGRESS_VALUE] / [COMPLICATION.GOAL_PROGRESS_TARGET_VALUE])) &gt; 0
+                  </Expression>
+                </Expressions>
+                <Compare expression="positive_102_GOAL_PROGRESS">
+                  <PartDraw name="progress_102_GOAL_PROGRESS" x="0" y="0" width="450" height="450">
+                    <Line startX="15" startY="78" endX="15" endY="78">
+                      <Stroke color="#C9F279" thickness="2.5" cap="ROUND" />
+                      <Transform target="endX" value="15 + 68 * (min(1, max(0, [COMPLICATION.GOAL_PROGRESS_VALUE] / [COMPLICATION.GOAL_PROGRESS_TARGET_VALUE])))" />
+                    </Line>
+                  </PartDraw>
+                </Compare>
+              </Condition>
+            </Group>
+          </Compare>
+        </Condition>
+      </Complication>
+      <Complication type="RANGED_VALUE">
+        <Condition>
+          <Expressions>
+            <Expression name="has_text_102_RANGED_VALUE">
+              [COMPLICATION.TEXT] != ''
+            </Expression>
+          </Expressions>
+          <Compare expression="has_text_102_RANGED_VALUE">
+            <PartText name="value_102_RANGED_VALUE" x="10" y="29" width="84" height="30">
+              <Text align="CENTER" ellipsis="TRUE" maxLines="1" isAutoSize="TRUE">
+                <Font family="sans-serif" size="25" weight="NORMAL" color="#EDF2EA">
+                  <Template>
+                    %s
+                    <Parameter expression="[COMPLICATION.TEXT]" />
+                  </Template>
+                </Font>
+              </Text>
+            </PartText>
+          </Compare>
+          <Default>
+            <Condition>
+              <Expressions>
+                <Expression name="finite_102_RANGED_VALUE">
+                  ([COMPLICATION.RANGED_VALUE_VALUE] - [COMPLICATION.RANGED_VALUE_VALUE]) == 0
+                </Expression>
+              </Expressions>
+              <Compare expression="finite_102_RANGED_VALUE">
+                <PartText name="number_102_RANGED_VALUE" x="10" y="29" width="84" height="30">
+                  <Text align="CENTER" ellipsis="TRUE" maxLines="1" isAutoSize="TRUE">
+                    <Font family="sans-serif" size="25" weight="NORMAL" color="#EDF2EA">
+                      <Template>
+                        %.0f
+                        <Parameter expression="[COMPLICATION.RANGED_VALUE_VALUE]" />
+                      </Template>
+                    </Font>
+                  </Text>
+                </PartText>
+              </Compare>
+              <Default>
+                <PartText name="invalid_102_RANGED_VALUE" x="10" y="29" width="84" height="30">
+                  <Text align="CENTER" ellipsis="TRUE" maxLines="1" isAutoSize="TRUE">
+                    <Font family="sans-serif" size="25" weight="NORMAL" color="#EDF2EA">
+                      —
+                    </Font>
+                  </Text>
+                </PartText>
+              </Default>
+            </Condition>
+          </Default>
+        </Condition>
+        <PartText name="label_102_RANGED_VALUE" x="10" y="58" width="84" height="15">
+          <Text align="CENTER" ellipsis="TRUE" maxLines="1" isAutoSize="TRUE">
+            <Font family="sans-serif" size="11" weight="NORMAL" color="#A0AAA6">
+              <Template>
+                %s
+                <Parameter expression="[COMPLICATION.TITLE] != '' ? [COMPLICATION.TITLE] : 'RANGE'" />
+              </Template>
+            </Font>
+          </Text>
+        </PartText>
+        <Condition>
+          <Expressions>
+            <Expression name="valid_102_RANGED_VALUE">
+              [COMPLICATION.RANGED_VALUE_MAX] &gt; [COMPLICATION.RANGED_VALUE_MIN] &amp;&amp; ([COMPLICATION.RANGED_VALUE_MAX] - [COMPLICATION.RANGED_VALUE_MAX]) == 0 &amp;&amp; ([COMPLICATION.RANGED_VALUE_MIN] - [COMPLICATION.RANGED_VALUE_MIN]) == 0 &amp;&amp; ([COMPLICATION.RANGED_VALUE_VALUE] - [COMPLICATION.RANGED_VALUE_VALUE]) == 0
+            </Expression>
+          </Expressions>
+          <Compare expression="valid_102_RANGED_VALUE">
+            <Group name="range_102_RANGED_VALUE" x="0" y="0" width="450" height="450">
+              <PartDraw name="track_102_RANGED_VALUE" x="0" y="0" width="450" height="450">
+                <Line startX="15" startY="78" endX="83" endY="78">
+                  <Stroke color="#34433F" thickness="2.5" cap="ROUND" />
+                </Line>
+              </PartDraw>
+              <Condition>
+                <Expressions>
+                  <Expression name="positive_102_RANGED_VALUE">
+                    min(1, max(0, ([COMPLICATION.RANGED_VALUE_VALUE] - [COMPLICATION.RANGED_VALUE_MIN]) / ([COMPLICATION.RANGED_VALUE_MAX] - [COMPLICATION.RANGED_VALUE_MIN]))) &gt; 0
+                  </Expression>
+                </Expressions>
+                <Compare expression="positive_102_RANGED_VALUE">
+                  <PartDraw name="progress_102_RANGED_VALUE" x="0" y="0" width="450" height="450">
+                    <Line startX="15" startY="78" endX="15" endY="78">
+                      <Stroke color="#C9F279" thickness="2.5" cap="ROUND" />
+                      <Transform target="endX" value="15 + 68 * (min(1, max(0, ([COMPLICATION.RANGED_VALUE_VALUE] - [COMPLICATION.RANGED_VALUE_MIN]) / ([COMPLICATION.RANGED_VALUE_MAX] - [COMPLICATION.RANGED_VALUE_MIN]))))" />
+                    </Line>
+                  </PartDraw>
+                </Compare>
+              </Condition>
+            </Group>
+          </Compare>
+        </Condition>
+      </Complication>
+      <Complication type="MONOCHROMATIC_IMAGE">
+        <PartImage name="icon_102" x="34" y="31" width="36" height="36" tintColor="#EDF2EA">
+          <Image resource="[COMPLICATION.MONOCHROMATIC_IMAGE]" />
+        </PartImage>
+      </Complication>
+      <Complication type="EMPTY">
+        <PartText name="empty_102" x="10" y="31" width="84" height="28">
+          <Text align="CENTER" ellipsis="TRUE" maxLines="1" isAutoSize="TRUE">
+            <Font family="sans-serif" size="24" weight="NORMAL" color="#A0AAA6">
+              —
+            </Font>
+          </Text>
+        </PartText>
+      </Complication>
+    </ComplicationSlot>
+    <ComplicationSlot name="dock_c" slotId="103" displayName="dock_c" x="279" y="290" width="104" height="104" isCustomizable="TRUE" supportedTypes="SHORT_TEXT RANGED_VALUE GOAL_PROGRESS MONOCHROMATIC_IMAGE EMPTY" tintColor="#EDF2EA">
+      <Variant mode="AMBIENT" target="alpha" value="0" />
+      <BoundingOval x="0" y="0" width="104" height="104" />
+      <DefaultProviderPolicy primaryProvider="com.bobbfwed.emberphase.health/com.bobbfwed.emberphase.health.watch.CaloriesDataSource" primaryProviderType="GOAL_PROGRESS" defaultSystemProvider="EMPTY" defaultSystemProviderType="EMPTY" />
+      <Complication type="SHORT_TEXT">
+        <Condition>
+          <Expressions>
+            <Expression name="has_text_103_SHORT_TEXT">
+              [COMPLICATION.TEXT] != ''
+            </Expression>
+          </Expressions>
+          <Compare expression="has_text_103_SHORT_TEXT">
+            <PartText name="value_103_SHORT_TEXT" x="10" y="29" width="84" height="30">
+              <Text align="CENTER" ellipsis="TRUE" maxLines="1" isAutoSize="TRUE">
+                <Font family="sans-serif" size="25" weight="NORMAL" color="#EDF2EA">
+                  <Template>
+                    %s
+                    <Parameter expression="[COMPLICATION.TEXT]" />
+                  </Template>
+                </Font>
+              </Text>
+            </PartText>
+          </Compare>
+          <Default>
+            <PartText name="missing_103" x="10" y="29" width="84" height="30">
+              <Text align="CENTER" ellipsis="TRUE" maxLines="1" isAutoSize="TRUE">
+                <Font family="sans-serif" size="25" weight="NORMAL" color="#EDF2EA">
+                  —
+                </Font>
+              </Text>
+            </PartText>
+          </Default>
+        </Condition>
+        <PartText name="label_103_SHORT_TEXT" x="10" y="58" width="84" height="15">
+          <Text align="CENTER" ellipsis="TRUE" maxLines="1" isAutoSize="TRUE">
+            <Font family="sans-serif" size="11" weight="NORMAL" color="#A0AAA6">
+              <Template>
+                %s
+                <Parameter expression="[COMPLICATION.TITLE]" />
+              </Template>
+            </Font>
+          </Text>
+        </PartText>
+      </Complication>
+      <Complication type="GOAL_PROGRESS">
+        <Condition>
+          <Expressions>
+            <Expression name="has_text_103_GOAL_PROGRESS">
+              [COMPLICATION.TEXT] != ''
+            </Expression>
+          </Expressions>
+          <Compare expression="has_text_103_GOAL_PROGRESS">
+            <PartText name="value_103_GOAL_PROGRESS" x="10" y="29" width="84" height="30">
+              <Text align="CENTER" ellipsis="TRUE" maxLines="1" isAutoSize="TRUE">
+                <Font family="sans-serif" size="25" weight="NORMAL" color="#EDF2EA">
+                  <Template>
+                    %s
+                    <Parameter expression="[COMPLICATION.TEXT]" />
+                  </Template>
+                </Font>
+              </Text>
+            </PartText>
+          </Compare>
+          <Default>
+            <Condition>
+              <Expressions>
+                <Expression name="finite_103_GOAL_PROGRESS">
+                  ([COMPLICATION.GOAL_PROGRESS_VALUE] - [COMPLICATION.GOAL_PROGRESS_VALUE]) == 0
+                </Expression>
+              </Expressions>
+              <Compare expression="finite_103_GOAL_PROGRESS">
+                <PartText name="number_103_GOAL_PROGRESS" x="10" y="29" width="84" height="30">
+                  <Text align="CENTER" ellipsis="TRUE" maxLines="1" isAutoSize="TRUE">
+                    <Font family="sans-serif" size="25" weight="NORMAL" color="#EDF2EA">
+                      <Template>
+                        %.0f
+                        <Parameter expression="[COMPLICATION.GOAL_PROGRESS_VALUE]" />
+                      </Template>
+                    </Font>
+                  </Text>
+                </PartText>
+              </Compare>
+              <Default>
+                <PartText name="invalid_103_GOAL_PROGRESS" x="10" y="29" width="84" height="30">
+                  <Text align="CENTER" ellipsis="TRUE" maxLines="1" isAutoSize="TRUE">
+                    <Font family="sans-serif" size="25" weight="NORMAL" color="#EDF2EA">
+                      —
+                    </Font>
+                  </Text>
+                </PartText>
+              </Default>
+            </Condition>
+          </Default>
+        </Condition>
+        <PartText name="label_103_GOAL_PROGRESS" x="10" y="58" width="84" height="15">
+          <Text align="CENTER" ellipsis="TRUE" maxLines="1" isAutoSize="TRUE">
+            <Font family="sans-serif" size="11" weight="NORMAL" color="#A0AAA6">
+              <Template>
+                %s
+                <Parameter expression="[COMPLICATION.TITLE] != '' ? [COMPLICATION.TITLE] : 'GOAL'" />
+              </Template>
+            </Font>
+          </Text>
+        </PartText>
+        <Condition>
+          <Expressions>
+            <Expression name="valid_103_GOAL_PROGRESS">
+              [COMPLICATION.GOAL_PROGRESS_TARGET_VALUE] &gt; 0 &amp;&amp; ([COMPLICATION.GOAL_PROGRESS_TARGET_VALUE] - [COMPLICATION.GOAL_PROGRESS_TARGET_VALUE]) == 0 &amp;&amp; [COMPLICATION.GOAL_PROGRESS_VALUE] &gt;= 0 &amp;&amp; ([COMPLICATION.GOAL_PROGRESS_VALUE] - [COMPLICATION.GOAL_PROGRESS_VALUE]) == 0
+            </Expression>
+          </Expressions>
+          <Compare expression="valid_103_GOAL_PROGRESS">
+            <Group name="range_103_GOAL_PROGRESS" x="0" y="0" width="450" height="450">
+              <PartDraw name="track_103_GOAL_PROGRESS" x="0" y="0" width="450" height="450">
+                <Line startX="15" startY="78" endX="83" endY="78">
+                  <Stroke color="#34433F" thickness="2.5" cap="ROUND" />
+                </Line>
+              </PartDraw>
+              <Condition>
+                <Expressions>
+                  <Expression name="positive_103_GOAL_PROGRESS">
+                    min(1, max(0, [COMPLICATION.GOAL_PROGRESS_VALUE] / [COMPLICATION.GOAL_PROGRESS_TARGET_VALUE])) &gt; 0
+                  </Expression>
+                </Expressions>
+                <Compare expression="positive_103_GOAL_PROGRESS">
+                  <PartDraw name="progress_103_GOAL_PROGRESS" x="0" y="0" width="450" height="450">
+                    <Line startX="15" startY="78" endX="15" endY="78">
+                      <Stroke color="#C9F279" thickness="2.5" cap="ROUND" />
+                      <Transform target="endX" value="15 + 68 * (min(1, max(0, [COMPLICATION.GOAL_PROGRESS_VALUE] / [COMPLICATION.GOAL_PROGRESS_TARGET_VALUE])))" />
+                    </Line>
+                  </PartDraw>
+                </Compare>
+              </Condition>
+            </Group>
+          </Compare>
+        </Condition>
+      </Complication>
+      <Complication type="RANGED_VALUE">
+        <Condition>
+          <Expressions>
+            <Expression name="has_text_103_RANGED_VALUE">
+              [COMPLICATION.TEXT] != ''
+            </Expression>
+          </Expressions>
+          <Compare expression="has_text_103_RANGED_VALUE">
+            <PartText name="value_103_RANGED_VALUE" x="10" y="29" width="84" height="30">
+              <Text align="CENTER" ellipsis="TRUE" maxLines="1" isAutoSize="TRUE">
+                <Font family="sans-serif" size="25" weight="NORMAL" color="#EDF2EA">
+                  <Template>
+                    %s
+                    <Parameter expression="[COMPLICATION.TEXT]" />
+                  </Template>
+                </Font>
+              </Text>
+            </PartText>
+          </Compare>
+          <Default>
+            <Condition>
+              <Expressions>
+                <Expression name="finite_103_RANGED_VALUE">
+                  ([COMPLICATION.RANGED_VALUE_VALUE] - [COMPLICATION.RANGED_VALUE_VALUE]) == 0
+                </Expression>
+              </Expressions>
+              <Compare expression="finite_103_RANGED_VALUE">
+                <PartText name="number_103_RANGED_VALUE" x="10" y="29" width="84" height="30">
+                  <Text align="CENTER" ellipsis="TRUE" maxLines="1" isAutoSize="TRUE">
+                    <Font family="sans-serif" size="25" weight="NORMAL" color="#EDF2EA">
+                      <Template>
+                        %.0f
+                        <Parameter expression="[COMPLICATION.RANGED_VALUE_VALUE]" />
+                      </Template>
+                    </Font>
+                  </Text>
+                </PartText>
+              </Compare>
+              <Default>
+                <PartText name="invalid_103_RANGED_VALUE" x="10" y="29" width="84" height="30">
+                  <Text align="CENTER" ellipsis="TRUE" maxLines="1" isAutoSize="TRUE">
+                    <Font family="sans-serif" size="25" weight="NORMAL" color="#EDF2EA">
+                      —
+                    </Font>
+                  </Text>
+                </PartText>
+              </Default>
+            </Condition>
+          </Default>
+        </Condition>
+        <PartText name="label_103_RANGED_VALUE" x="10" y="58" width="84" height="15">
+          <Text align="CENTER" ellipsis="TRUE" maxLines="1" isAutoSize="TRUE">
+            <Font family="sans-serif" size="11" weight="NORMAL" color="#A0AAA6">
+              <Template>
+                %s
+                <Parameter expression="[COMPLICATION.TITLE] != '' ? [COMPLICATION.TITLE] : 'RANGE'" />
+              </Template>
+            </Font>
+          </Text>
+        </PartText>
+        <Condition>
+          <Expressions>
+            <Expression name="valid_103_RANGED_VALUE">
+              [COMPLICATION.RANGED_VALUE_MAX] &gt; [COMPLICATION.RANGED_VALUE_MIN] &amp;&amp; ([COMPLICATION.RANGED_VALUE_MAX] - [COMPLICATION.RANGED_VALUE_MAX]) == 0 &amp;&amp; ([COMPLICATION.RANGED_VALUE_MIN] - [COMPLICATION.RANGED_VALUE_MIN]) == 0 &amp;&amp; ([COMPLICATION.RANGED_VALUE_VALUE] - [COMPLICATION.RANGED_VALUE_VALUE]) == 0
+            </Expression>
+          </Expressions>
+          <Compare expression="valid_103_RANGED_VALUE">
+            <Group name="range_103_RANGED_VALUE" x="0" y="0" width="450" height="450">
+              <PartDraw name="track_103_RANGED_VALUE" x="0" y="0" width="450" height="450">
+                <Line startX="15" startY="78" endX="83" endY="78">
+                  <Stroke color="#34433F" thickness="2.5" cap="ROUND" />
+                </Line>
+              </PartDraw>
+              <Condition>
+                <Expressions>
+                  <Expression name="positive_103_RANGED_VALUE">
+                    min(1, max(0, ([COMPLICATION.RANGED_VALUE_VALUE] - [COMPLICATION.RANGED_VALUE_MIN]) / ([COMPLICATION.RANGED_VALUE_MAX] - [COMPLICATION.RANGED_VALUE_MIN]))) &gt; 0
+                  </Expression>
+                </Expressions>
+                <Compare expression="positive_103_RANGED_VALUE">
+                  <PartDraw name="progress_103_RANGED_VALUE" x="0" y="0" width="450" height="450">
+                    <Line startX="15" startY="78" endX="15" endY="78">
+                      <Stroke color="#C9F279" thickness="2.5" cap="ROUND" />
+                      <Transform target="endX" value="15 + 68 * (min(1, max(0, ([COMPLICATION.RANGED_VALUE_VALUE] - [COMPLICATION.RANGED_VALUE_MIN]) / ([COMPLICATION.RANGED_VALUE_MAX] - [COMPLICATION.RANGED_VALUE_MIN]))))" />
+                    </Line>
+                  </PartDraw>
+                </Compare>
+              </Condition>
+            </Group>
+          </Compare>
+        </Condition>
+      </Complication>
+      <Complication type="MONOCHROMATIC_IMAGE">
+        <PartImage name="icon_103" x="34" y="31" width="36" height="36" tintColor="#EDF2EA">
+          <Image resource="[COMPLICATION.MONOCHROMATIC_IMAGE]" />
+        </PartImage>
+      </Complication>
+      <Complication type="EMPTY">
+        <PartText name="empty_103" x="10" y="31" width="84" height="28">
+          <Text align="CENTER" ellipsis="TRUE" maxLines="1" isAutoSize="TRUE">
+            <Font family="sans-serif" size="24" weight="NORMAL" color="#A0AAA6">
+              —
+            </Font>
+          </Text>
+        </PartText>
+      </Complication>
+    </ComplicationSlot>
     <Group name="signature" x="0" y="0" width="450" height="450">
       <Variant mode="AMBIENT" target="alpha" value="0" />
       <PartText name="brand" x="140" y="400" width="170" height="23">
