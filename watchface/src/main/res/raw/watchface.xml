@@ -2,136 +2,173 @@
 <WatchFace width="450" height="450" clipShape="CIRCLE">
     <Metadata key="CLOCK_TYPE" value="DIGITAL" />
     <Metadata key="PREVIEW_TIME" value="22:10:00" />
-        <UserConfigurations>
+    <UserConfigurations>
         <BooleanConfiguration id="steps_range_as_goal" displayName="steps_range_label" screenReaderText="steps_range_reader" defaultValue="TRUE" />
-        <BooleanConfiguration id="latch_motion" displayName="latch_motion_label" screenReaderText="latch_motion_reader" defaultValue="FALSE" />
+        <BooleanConfiguration id="ring_motion" displayName="ring_motion_label" screenReaderText="ring_motion_reader" defaultValue="TRUE" />
     </UserConfigurations>
     <Scene backgroundColor="#ff000000">
         <Group x="0" y="0" width="450" height="450" name="interactive">
-            <Variant mode="AMBIENT" target="alpha" value="0" duration="0.0" />
-            <PartText x="145" y="46" width="160" height="18" name="date">
+            <Variant mode="AMBIENT" target="alpha" value="0" duration="1.0" interpolation="EASE_IN_OUT" />
+            <PartDraw x="95" y="95" width="260" height="260" name="well">
+                <Ellipse x="0" y="0" width="260" height="260">
+                    <Fill color="#ff102038">
+                        <RadialGradient centerX="130" centerY="130" radius="130" colors="#ff1a3a66 #ff102038 #00000000" positions="0 0.45 1" />
+                    </Fill>
+                </Ellipse>
+            </PartDraw>
+            <PartDraw x="31" y="31" width="388" height="388" name="ring_track">
+                <Arc centerX="194" centerY="194" width="372" height="372" startAngle="0" endAngle="360" direction="CLOCKWISE">
+                    <Stroke color="#ff121c30" thickness="16" cap="BUTT" />
+                </Arc>
+            </PartDraw>
+            <PartDraw x="0" y="0" width="450" height="450" name="quarter_ticks">
+                <Line startX="225" startY="35" endX="225" endY="55"><Stroke color="#ff9fdfff" thickness="2" cap="ROUND" /></Line>
+                <Line startX="395" startY="225" endX="415" endY="225"><Stroke color="#ff9fdfff" thickness="2" cap="ROUND" /></Line>
+                <Line startX="225" startY="395" endX="225" endY="415"><Stroke color="#ff9fdfff" thickness="2" cap="ROUND" /></Line>
+                <Line startX="35" startY="225" endX="55" endY="225"><Stroke color="#ff9fdfff" thickness="2" cap="ROUND" /></Line>
+            </PartDraw>
+            <Group x="0" y="0" width="450" height="450" name="day_arc">
+                <Condition>
+                    <Expressions>
+                        <Expression name="ring_moves"><![CDATA[[CONFIGURATION.ring_motion] == "TRUE" && [BATTERY_PERCENT] > 20 && [REFERENCE.power_saving] == 0 && ![BATTERY_IS_LOW]]]></Expression>
+                    </Expressions>
+                    <Compare expression="ring_moves">
+            <PartDraw x="39" y="39" width="372" height="372" name="day_arc_moves">
+                <Arc centerX="186" centerY="186" width="356" height="356" startAngle="0" endAngle="0" direction="CLOCKWISE">
+                    <Stroke color="#ff3ee0ff" thickness="10" cap="ROUND">
+                        <SweepGradient centerX="186" centerY="186" startAngle="0" endAngle="360" colors="#ff3ee0ff #ff5b8cff #ffb14bff #ffff4d9a" positions="0 0.34 0.67 1" />
+                    </Stroke>
+                    <Transform target="endAngle" value="([HOUR_0_23] * 60 + [MINUTE]) / 1440 * 360"><Animation duration="0.8" fps="15" interpolation="EASE_IN_OUT" angleDirection="CLOCKWISE" /></Transform>
+                </Arc>
+            </PartDraw>
+                    </Compare>
+                    <Default>
+            <PartDraw x="39" y="39" width="372" height="372" name="day_arc_static">
+                <Arc centerX="186" centerY="186" width="356" height="356" startAngle="0" endAngle="0" direction="CLOCKWISE">
+                    <Stroke color="#ff3ee0ff" thickness="10" cap="ROUND">
+                        <SweepGradient centerX="186" centerY="186" startAngle="0" endAngle="360" colors="#ff3ee0ff #ff5b8cff #ffb14bff #ffff4d9a" positions="0 0.34 0.67 1" />
+                    </Stroke>
+                    <Transform target="endAngle" value="([HOUR_0_23] * 60 + [MINUTE]) / 1440 * 360"></Transform>
+                </Arc>
+            </PartDraw>
+                    </Default>
+                </Condition>
+            </Group>
+            <Group x="0" y="0" width="450" height="450" name="day_mark">
+                <ScreenReader stringId="reader_day" />
+            <Group x="0" y="0" width="450" height="450" name="day_bead">
+                <Condition>
+                    <Expressions>
+                        <Expression name="ring_moves"><![CDATA[[CONFIGURATION.ring_motion] == "TRUE" && [BATTERY_PERCENT] > 20 && [REFERENCE.power_saving] == 0 && ![BATTERY_IS_LOW]]]></Expression>
+                    </Expressions>
+                    <Compare expression="ring_moves">
+            <PartDraw x="0" y="0" width="450" height="450" name="bead_moves">
+                <Ellipse x="0" y="0" width="28" height="28">
+                    <Fill color="#553ee0ff" />
+                    <Transform target="x" value="225 + sin(rad(([HOUR_0_23] * 60 + [MINUTE]) / 1440 * 360)) * 178 - 14"><Animation duration="0.8" fps="15" interpolation="EASE_IN_OUT" /></Transform>
+                    <Transform target="y" value="225 - cos(rad(([HOUR_0_23] * 60 + [MINUTE]) / 1440 * 360)) * 178 - 14"><Animation duration="0.8" fps="15" interpolation="EASE_IN_OUT" /></Transform>
+                </Ellipse>
+                <Ellipse x="0" y="0" width="12" height="12">
+                    <Fill color="#fff7ffff" />
+                    <Transform target="x" value="225 + sin(rad(([HOUR_0_23] * 60 + [MINUTE]) / 1440 * 360)) * 178 - 6"><Animation duration="0.8" fps="15" interpolation="EASE_IN_OUT" /></Transform>
+                    <Transform target="y" value="225 - cos(rad(([HOUR_0_23] * 60 + [MINUTE]) / 1440 * 360)) * 178 - 6"><Animation duration="0.8" fps="15" interpolation="EASE_IN_OUT" /></Transform>
+                </Ellipse>
+            </PartDraw>
+                    </Compare>
+                    <Default>
+            <PartDraw x="0" y="0" width="450" height="450" name="bead_static">
+                <Ellipse x="0" y="0" width="28" height="28">
+                    <Fill color="#553ee0ff" />
+                    <Transform target="x" value="225 + sin(rad(([HOUR_0_23] * 60 + [MINUTE]) / 1440 * 360)) * 178 - 14"></Transform>
+                    <Transform target="y" value="225 - cos(rad(([HOUR_0_23] * 60 + [MINUTE]) / 1440 * 360)) * 178 - 14"></Transform>
+                </Ellipse>
+                <Ellipse x="0" y="0" width="12" height="12">
+                    <Fill color="#fff7ffff" />
+                    <Transform target="x" value="225 + sin(rad(([HOUR_0_23] * 60 + [MINUTE]) / 1440 * 360)) * 178 - 6"></Transform>
+                    <Transform target="y" value="225 - cos(rad(([HOUR_0_23] * 60 + [MINUTE]) / 1440 * 360)) * 178 - 6"></Transform>
+                </Ellipse>
+            </PartDraw>
+                    </Default>
+                </Condition>
+            </Group>
+            </Group>
+            <PartDraw x="92" y="300" width="58" height="56" name="panel_92">
+                <RoundRectangle x="0" y="0" width="58" height="56" cornerRadiusX="8" cornerRadiusY="8">
+                    <Fill color="#ff0c1424" />
+                    <Stroke color="#ff3ee0ff" thickness="1.5" />
+                </RoundRectangle>
+            </PartDraw>
+            <PartDraw x="160" y="300" width="58" height="56" name="panel_160">
+                <RoundRectangle x="0" y="0" width="58" height="56" cornerRadiusX="8" cornerRadiusY="8">
+                    <Fill color="#ff0c1424" />
+                    <Stroke color="#ffb14bff" thickness="1.5" />
+                </RoundRectangle>
+            </PartDraw>
+            <PartDraw x="228" y="300" width="58" height="56" name="panel_228">
+                <RoundRectangle x="0" y="0" width="58" height="56" cornerRadiusX="8" cornerRadiusY="8">
+                    <Fill color="#ff0c1424" />
+                    <Stroke color="#ffffb24a" thickness="1.5" />
+                </RoundRectangle>
+            </PartDraw>
+            <PartDraw x="296" y="300" width="58" height="56" name="panel_296">
+                <RoundRectangle x="0" y="0" width="58" height="56" cornerRadiusX="8" cornerRadiusY="8">
+                    <Fill color="#ff0c1424" />
+                    <Stroke color="#ffff4d9a" thickness="1.5" />
+                </RoundRectangle>
+            </PartDraw>
+            <PartText x="125" y="108" width="200" height="20" name="date">
                 <Text align="CENTER" maxLines="1">
-                    <Font family="SYNC_TO_DEVICE" size="13" weight="NORMAL" slant="NORMAL" color="#ffc4c0b8">
+                    <Font family="SYNC_TO_DEVICE" size="13" weight="MEDIUM" slant="NORMAL" letterSpacing="0.08" color="#ffc9a6ff">
                         <Template>%s %s %s<Parameter expression="[DAY_OF_WEEK_S]" /><Parameter expression="[MONTH_S]" /><Parameter expression="[DAY]" /></Template>
                     </Font>
                 </Text>
             </PartText>
-            <Group x="0" y="0" width="450" height="450" name="battery">
-                <ScreenReader stringId="reader_battery" />
-                <PartDraw x="226" y="278" width="48" height="3" name="battery_track">
-                    <Rectangle x="0" y="0" width="48" height="3">
-                        <Fill color="#ff3a3834" />
-                    </Rectangle>
+            <Group x="0" y="0" width="450" height="450" name="time">
+                <ScreenReader stringId="reader_time" />
+                <PartText x="242" y="142" width="100" height="66">
+                    <Text align="CENTER" maxLines="1">
+                        <Font family="SYNC_TO_DEVICE" size="54" weight="MEDIUM" slant="NORMAL" letterSpacing="0.02" color="#ffe8f4ff">
+                            <Template>%s<Parameter expression="[MINUTE_Z]" /></Template>
+                        </Font>
+                    </Text>
+                </PartText>
+                <PartDraw x="217" y="158" width="16" height="34" name="colon">
+                    <Ellipse x="4" y="2" width="8" height="8"><Fill color="#ff3ee0ff" /></Ellipse>
+                    <Ellipse x="4" y="22" width="8" height="8"><Fill color="#ffff4d9a" /></Ellipse>
                 </PartDraw>
                 <Condition>
                     <Expressions>
-                        <Expression name="battery_charging"><![CDATA[[BATTERY_CHARGING_STATUS]]]></Expression>
-                        <Expression name="battery_low"><![CDATA[![BATTERY_CHARGING_STATUS] && [BATTERY_PERCENT] <= 15]]></Expression>
+                        <Expression name="mode_24"><![CDATA[[IS_24_HOUR_MODE]]]></Expression>
                     </Expressions>
-                    <Compare expression="battery_charging">
-                        <Group x="0" y="0" width="450" height="450" name="battery_charging">
-                            <PartText x="180" y="272" width="42" height="16">
-                                <Text align="END" maxLines="1">
-                                    <Font family="SYNC_TO_DEVICE" size="12" weight="NORMAL" slant="NORMAL" color="#fff4f1ea">
-                                        <Template>%s<Parameter expression="numberFormat(&quot;#&quot;, [BATTERY_PERCENT])" /></Template>
-                                    </Font>
-                                </Text>
-                            </PartText>
-                            <PartDraw x="226" y="278" width="48" height="3">
-                                <Rectangle x="0" y="0" width="48" height="3">
-                                    <Fill color="#fff4f1ea" />
-                                    <Transform target="width" value="[BATTERY_PERCENT] / 100 * 48" />
-                                </Rectangle>
-                            </PartDraw>
-                        </Group>
-                    </Compare>
-                    <Compare expression="battery_low">
-                        <Group x="0" y="0" width="450" height="450" name="battery_low">
-                            <PartText x="180" y="272" width="42" height="16">
-                                <Text align="END" maxLines="1">
-                                    <Font family="SYNC_TO_DEVICE" size="12" weight="NORMAL" slant="NORMAL" color="#ffe24b16">
-                                        <Template>%s<Parameter expression="numberFormat(&quot;#&quot;, [BATTERY_PERCENT])" /></Template>
-                                    </Font>
-                                </Text>
-                            </PartText>
-                            <PartDraw x="226" y="278" width="48" height="3">
-                                <Rectangle x="0" y="0" width="48" height="3">
-                                    <Fill color="#ffe24b16" />
-                                    <Transform target="width" value="[BATTERY_PERCENT] / 100 * 48" />
-                                </Rectangle>
-                            </PartDraw>
-                        </Group>
+                    <Compare expression="mode_24">
+                        <PartText x="108" y="142" width="100" height="66">
+                            <Text align="CENTER" maxLines="1">
+                                <Font family="SYNC_TO_DEVICE" size="54" weight="MEDIUM" slant="NORMAL" letterSpacing="0.02" color="#ffe8f4ff">
+                                    <Template>%s<Parameter expression="[HOUR_0_23_Z]" /></Template>
+                                </Font>
+                            </Text>
+                        </PartText>
                     </Compare>
                     <Default>
-                        <Group x="0" y="0" width="450" height="450" name="battery_rest">
-                            <PartText x="180" y="272" width="42" height="16">
-                                <Text align="END" maxLines="1">
-                                    <Font family="SYNC_TO_DEVICE" size="12" weight="NORMAL" slant="NORMAL" color="#ffc4c0b8">
-                                        <Template>%s<Parameter expression="numberFormat(&quot;#&quot;, [BATTERY_PERCENT])" /></Template>
+                        <Group x="0" y="0" width="450" height="450" name="time_12">
+                            <PartText x="108" y="142" width="100" height="66">
+                                <Text align="CENTER" maxLines="1">
+                                    <Font family="SYNC_TO_DEVICE" size="54" weight="MEDIUM" slant="NORMAL" letterSpacing="0.02" color="#ffe8f4ff">
+                                        <Template>%s<Parameter expression="[HOUR_1_12_Z]" /></Template>
                                     </Font>
                                 </Text>
                             </PartText>
-                            <PartDraw x="226" y="278" width="48" height="3">
-                                <Rectangle x="0" y="0" width="48" height="3">
-                                    <Fill color="#ff8a8680" />
-                                    <Transform target="width" value="[BATTERY_PERCENT] / 100 * 48" />
-                                </Rectangle>
-                            </PartDraw>
+                            <PartText x="176" y="204" width="98" height="16">
+                                <Text align="CENTER" maxLines="1">
+                                    <Font family="SYNC_TO_DEVICE" size="12" weight="MEDIUM" slant="NORMAL" letterSpacing="0.06" color="#ffd0b0ff">
+                                        <Template>%s<Parameter expression="[AMPM_STRING]" /></Template>
+                                    </Font>
+                                </Text>
+                            </PartText>
                         </Group>
                     </Default>
                 </Condition>
             </Group>
-            <PartDraw x="104" y="187" width="242" height="3" name="day_staff">
-                <Line startX="1" startY="1" endX="241" endY="1">
-                    <Stroke color="#ff3a3834" thickness="1" cap="BUTT" />
-                </Line>
-            </PartDraw>
-            <PartDraw x="104" y="181" width="242" height="14" name="day_ticks">
-                <Line startX="1" startY="1" endX="1" endY="13">
-                    <Stroke color="#ffc4c0b8" thickness="1" cap="BUTT" />
-                </Line>
-                <Line startX="61" startY="1" endX="61" endY="13">
-                    <Stroke color="#ffc4c0b8" thickness="1" cap="BUTT" />
-                </Line>
-                <Line startX="181" startY="1" endX="181" endY="13">
-                    <Stroke color="#ffc4c0b8" thickness="1" cap="BUTT" />
-                </Line>
-                <Line startX="241" startY="1" endX="241" endY="13">
-                    <Stroke color="#ffc4c0b8" thickness="1" cap="BUTT" />
-                </Line>
-            </PartDraw>
-            <Group x="0" y="0" width="450" height="450" name="staff_labels">
-                <PartText x="92" y="232" width="26" height="14">
-                    <Text align="CENTER" maxLines="1">
-                        <Font family="SYNC_TO_DEVICE" size="11" weight="NORMAL" slant="NORMAL" color="#ffc4c0b8">00</Font>
-                    </Text>
-                </PartText>
-                <PartText x="152" y="232" width="26" height="14">
-                    <Text align="CENTER" maxLines="1">
-                        <Font family="SYNC_TO_DEVICE" size="11" weight="NORMAL" slant="NORMAL" color="#ffc4c0b8">06</Font>
-                    </Text>
-                </PartText>
-                <PartText x="212" y="232" width="26" height="14">
-                    <Text align="CENTER" maxLines="1">
-                        <Font family="SYNC_TO_DEVICE" size="11" weight="NORMAL" slant="NORMAL" color="#ffc4c0b8">12</Font>
-                    </Text>
-                </PartText>
-                <PartText x="272" y="232" width="26" height="14">
-                    <Text align="CENTER" maxLines="1">
-                        <Font family="SYNC_TO_DEVICE" size="11" weight="NORMAL" slant="NORMAL" color="#ffc4c0b8">18</Font>
-                    </Text>
-                </PartText>
-                <PartText x="332" y="232" width="26" height="14">
-                    <Text align="CENTER" maxLines="1">
-                        <Font family="SYNC_TO_DEVICE" size="11" weight="NORMAL" slant="NORMAL" color="#ffc4c0b8">24</Font>
-                    </Text>
-                </PartText>
-            </Group>
-            <PartDraw x="224" y="155" width="3" height="66" name="temperature_staff">
-                <Line startX="1" startY="1" endX="1" endY="65">
-                    <Stroke color="#ff3a3834" thickness="1" cap="BUTT" />
-                </Line>
-            </PartDraw>
             <Group x="0" y="0" width="450" height="450" name="weather">
                 <ScreenReader stringId="reader_weather" />
                 <Condition>
@@ -142,289 +179,266 @@
                         <Group x="0" y="0" width="450" height="450" name="weather_on">
                             <Condition>
                                 <Expressions>
-                                    <Expression name="unit_c"><![CDATA[[WEATHER.TEMPERATURE_UNIT] == 1]]></Expression>
-                                    <Expression name="unit_f"><![CDATA[[WEATHER.TEMPERATURE_UNIT] == 2]]></Expression>
+                                    <Expression name="weather_stale"><![CDATA[[WEATHER.IS_ERROR]]]></Expression>
                                 </Expressions>
-                                <Compare expression="unit_c">
-                                    <PartText x="230" y="248" width="70" height="22">
-                                        <Text align="START" maxLines="1">
-                                            <Font family="SYNC_TO_DEVICE" size="16" weight="NORMAL" slant="NORMAL" color="#fff4f1ea">
+                                <Compare expression="weather_stale">
+                                    <Group x="0" y="0" width="450" height="450" name="weather_stale">
+                                <Condition>
+                                    <Expressions>
+                                        <Expression name="unit_c"><![CDATA[[WEATHER.TEMPERATURE_UNIT] == 1]]></Expression>
+                                        <Expression name="unit_f"><![CDATA[[WEATHER.TEMPERATURE_UNIT] == 2]]></Expression>
+                                    </Expressions>
+                                    <Compare expression="unit_c">
+                                    <PartText x="115" y="222" width="140" height="24">
+                                        <Text align="CENTER" maxLines="1">
+                                            <Font family="SYNC_TO_DEVICE" size="18" weight="MEDIUM" slant="NORMAL" color="#ff8ea0bd">
                                                 <Template>%s C<Parameter expression="[WEATHER.TEMPERATURE]" /></Template>
                                             </Font>
                                         </Text>
                                     </PartText>
-                                </Compare>
-                                <Compare expression="unit_f">
-                                    <PartText x="230" y="248" width="70" height="22">
-                                        <Text align="START" maxLines="1">
-                                            <Font family="SYNC_TO_DEVICE" size="16" weight="NORMAL" slant="NORMAL" color="#fff4f1ea">
+                                    </Compare>
+                                    <Compare expression="unit_f">
+                                    <PartText x="115" y="222" width="140" height="24">
+                                        <Text align="CENTER" maxLines="1">
+                                            <Font family="SYNC_TO_DEVICE" size="18" weight="MEDIUM" slant="NORMAL" color="#ff8ea0bd">
                                                 <Template>%s F<Parameter expression="[WEATHER.TEMPERATURE]" /></Template>
                                             </Font>
                                         </Text>
                                     </PartText>
-                                </Compare>
-                                <Default>
-                                    <PartText x="230" y="248" width="70" height="22">
-                                        <Text align="START" maxLines="1">
-                                            <Font family="SYNC_TO_DEVICE" size="16" weight="NORMAL" slant="NORMAL" color="#fff4f1ea">
+                                    </Compare>
+                                    <Default>
+                                    <PartText x="115" y="222" width="140" height="24">
+                                        <Text align="CENTER" maxLines="1">
+                                            <Font family="SYNC_TO_DEVICE" size="18" weight="MEDIUM" slant="NORMAL" color="#ff8ea0bd">
                                                 <Template>%s<Parameter expression="[WEATHER.TEMPERATURE]" /></Template>
                                             </Font>
                                         </Text>
                                     </PartText>
+                                    </Default>
+                                </Condition>
+                                        <PartDraw x="262" y="228" width="8" height="8" name="stale_dot">
+                                            <Ellipse x="1" y="1" width="6" height="6"><Fill color="#ffffb24a" /></Ellipse>
+                                        </PartDraw>
+                                    </Group>
+                                </Compare>
+                                <Default>
+                                <Condition>
+                                    <Expressions>
+                                        <Expression name="unit_c"><![CDATA[[WEATHER.TEMPERATURE_UNIT] == 1]]></Expression>
+                                        <Expression name="unit_f"><![CDATA[[WEATHER.TEMPERATURE_UNIT] == 2]]></Expression>
+                                    </Expressions>
+                                    <Compare expression="unit_c">
+                                    <PartText x="115" y="222" width="140" height="24">
+                                        <Text align="CENTER" maxLines="1">
+                                            <Font family="SYNC_TO_DEVICE" size="18" weight="MEDIUM" slant="NORMAL" color="#ff7dfff2">
+                                                <Template>%s C<Parameter expression="[WEATHER.TEMPERATURE]" /></Template>
+                                            </Font>
+                                        </Text>
+                                    </PartText>
+                                    </Compare>
+                                    <Compare expression="unit_f">
+                                    <PartText x="115" y="222" width="140" height="24">
+                                        <Text align="CENTER" maxLines="1">
+                                            <Font family="SYNC_TO_DEVICE" size="18" weight="MEDIUM" slant="NORMAL" color="#ff7dfff2">
+                                                <Template>%s F<Parameter expression="[WEATHER.TEMPERATURE]" /></Template>
+                                            </Font>
+                                        </Text>
+                                    </PartText>
+                                    </Compare>
+                                    <Default>
+                                    <PartText x="115" y="222" width="140" height="24">
+                                        <Text align="CENTER" maxLines="1">
+                                            <Font family="SYNC_TO_DEVICE" size="18" weight="MEDIUM" slant="NORMAL" color="#ff7dfff2">
+                                                <Template>%s<Parameter expression="[WEATHER.TEMPERATURE]" /></Template>
+                                            </Font>
+                                        </Text>
+                                    </PartText>
+                                    </Default>
+                                </Condition>
                                 </Default>
                             </Condition>
-                            <PartText x="80" y="250" width="140" height="18" name="condition_name">
-                                <Text align="END" ellipsis="TRUE" maxLines="1">
-                                    <Font family="SYNC_TO_DEVICE" size="13" weight="NORMAL" slant="NORMAL" color="#ff8a8680">
+                            <PartText x="95" y="246" width="180" height="18" name="condition_name">
+                                <Text align="CENTER" ellipsis="TRUE" maxLines="1">
+                                    <Font family="SYNC_TO_DEVICE" size="13" weight="NORMAL" slant="NORMAL" color="#ff8ea0bd">
                                         <Template>%s<Parameter expression="[WEATHER.CONDITION_NAME]" /></Template>
                                     </Font>
                                 </Text>
                             </PartText>
-                            <PartText x="244" y="152" width="36" height="14" name="high_label">
+                            <PartText x="275" y="226" width="40" height="16" name="high_label">
                                 <Text align="START" maxLines="1">
-                                    <Font family="SYNC_TO_DEVICE" size="11" weight="NORMAL" slant="NORMAL" color="#ffc4c0b8">
-                                        <Template>%s<Parameter expression="[WEATHER.DAY_TEMPERATURE_HIGH]" /></Template>
+                                    <Font family="SYNC_TO_DEVICE" size="11" weight="NORMAL" slant="NORMAL" color="#ff8ea0bd">
+                                        <Template>H %s<Parameter expression="[WEATHER.DAY_TEMPERATURE_HIGH]" /></Template>
                                     </Font>
                                 </Text>
                             </PartText>
-                            <PartText x="244" y="214" width="36" height="14" name="low_label">
-                                <Text align="START" maxLines="1">
-                                    <Font family="SYNC_TO_DEVICE" size="11" weight="NORMAL" slant="NORMAL" color="#ffc4c0b8">
-                                        <Template>%s<Parameter expression="[WEATHER.DAY_TEMPERATURE_LOW]" /></Template>
-                                    </Font>
-                                </Text>
-                            </PartText>
-                            <Condition>
-                                <Expressions>
-                                    <Expression name="weather_stale"><![CDATA[[WEATHER.IS_ERROR]]]></Expression>
-                                </Expressions>
-                                <Compare expression="weather_stale">
-                                    <PartDraw x="303" y="253" width="8" height="8" name="stale_dot">
-                                        <Ellipse x="1" y="1" width="6" height="6">
-                                            <Fill color="#ff8a8680" />
-                                        </Ellipse>
-                                    </PartDraw>
-                                </Compare>
-                            </Condition>
                         </Group>
                     </Compare>
                     <Default>
                         <Group x="0" y="0" width="450" height="450" name="weather_off">
-                            <PartText x="230" y="248" width="70" height="22">
-                                <Text align="START" maxLines="1">
-                                    <Font family="SYNC_TO_DEVICE" size="16" weight="NORMAL" slant="NORMAL" color="#fff4f1ea">--</Font>
+                            <PartText x="155" y="222" width="100" height="24">
+                                <Text align="CENTER" maxLines="1">
+                                    <Font family="SYNC_TO_DEVICE" size="18" weight="MEDIUM" slant="NORMAL" color="#ffe8f4ff">--</Font>
                                 </Text>
                             </PartText>
-                            <PartDraw x="207" y="255" width="8" height="8" name="weather_unknown">
+                            <PartDraw x="258" y="228" width="8" height="8" name="weather_unknown">
                                 <Ellipse x="1" y="1" width="6" height="6">
-                                    <Stroke color="#ff8a8680" thickness="1" />
+                                    <Stroke color="#ff8ea0bd" thickness="1" />
                                 </Ellipse>
                             </PartDraw>
                         </Group>
                     </Default>
                 </Condition>
-                <Condition>
-                    <Expressions>
-                        <Expression name="heat_fresh"><![CDATA[[WEATHER.IS_AVAILABLE] && [WEATHER.DAY_TEMPERATURE_HIGH] > [WEATHER.DAY_TEMPERATURE_LOW] && ![WEATHER.IS_ERROR]]]></Expression>
-                        <Expression name="heat_stale"><![CDATA[[WEATHER.IS_AVAILABLE] && [WEATHER.DAY_TEMPERATURE_HIGH] > [WEATHER.DAY_TEMPERATURE_LOW] && [WEATHER.IS_ERROR]]]></Expression>
-                    </Expressions>
-                    <Compare expression="heat_fresh">
-                        <Condition>
-                            <Expressions>
-                                <Expression name="tooth_moves"><![CDATA[[CONFIGURATION.latch_motion] == "TRUE" && [BATTERY_PERCENT] > 20 && [REFERENCE.power_saving] == 0 && ![BATTERY_IS_LOW]]]></Expression>
-                            </Expressions>
-                            <Compare expression="tooth_moves">
-                                <PartDraw x="212" y="154" width="26" height="68" name="tooth_fresh_moves">
-                                    <Line startX="2" startY="66" endX="24" endY="66">
-                                        <Stroke color="#ffe24b16" thickness="3" cap="ROUND" />
-                                        <Transform target="startY" value="66 - clamp(([WEATHER.TEMPERATURE] - [WEATHER.DAY_TEMPERATURE_LOW]) / ([WEATHER.DAY_TEMPERATURE_HIGH] - [WEATHER.DAY_TEMPERATURE_LOW]), 0, 1) * 64">
-                                            <Animation duration="0.2" fps="15" interpolation="EASE_OUT" repeat="0" />
-                                        </Transform>
-                                        <Transform target="endY" value="66 - clamp(([WEATHER.TEMPERATURE] - [WEATHER.DAY_TEMPERATURE_LOW]) / ([WEATHER.DAY_TEMPERATURE_HIGH] - [WEATHER.DAY_TEMPERATURE_LOW]), 0, 1) * 64">
-                                            <Animation duration="0.2" fps="15" interpolation="EASE_OUT" repeat="0" />
-                                        </Transform>
-                                    </Line>
-                                </PartDraw>
-                            </Compare>
-                            <Default>
-                                <PartDraw x="212" y="154" width="26" height="68" name="tooth_fresh">
-                                    <Line startX="2" startY="66" endX="24" endY="66">
-                                        <Stroke color="#ffe24b16" thickness="3" cap="ROUND" />
-                                        <Transform target="startY" value="66 - clamp(([WEATHER.TEMPERATURE] - [WEATHER.DAY_TEMPERATURE_LOW]) / ([WEATHER.DAY_TEMPERATURE_HIGH] - [WEATHER.DAY_TEMPERATURE_LOW]), 0, 1) * 64" />
-                                        <Transform target="endY" value="66 - clamp(([WEATHER.TEMPERATURE] - [WEATHER.DAY_TEMPERATURE_LOW]) / ([WEATHER.DAY_TEMPERATURE_HIGH] - [WEATHER.DAY_TEMPERATURE_LOW]), 0, 1) * 64" />
-                                    </Line>
-                                </PartDraw>
-                            </Default>
-                        </Condition>
-                    </Compare>
-                    <Compare expression="heat_stale">
-                        <Condition>
-                            <Expressions>
-                                <Expression name="tooth_moves"><![CDATA[[CONFIGURATION.latch_motion] == "TRUE" && [BATTERY_PERCENT] > 20 && [REFERENCE.power_saving] == 0 && ![BATTERY_IS_LOW]]]></Expression>
-                            </Expressions>
-                            <Compare expression="tooth_moves">
-                                <PartDraw x="212" y="154" width="26" height="68" name="tooth_stale_moves">
-                                    <Line startX="2" startY="66" endX="24" endY="66">
-                                        <Stroke color="#ff8a8680" thickness="3" cap="ROUND" />
-                                        <Transform target="startY" value="66 - clamp(([WEATHER.TEMPERATURE] - [WEATHER.DAY_TEMPERATURE_LOW]) / ([WEATHER.DAY_TEMPERATURE_HIGH] - [WEATHER.DAY_TEMPERATURE_LOW]), 0, 1) * 64">
-                                            <Animation duration="0.2" fps="15" interpolation="EASE_OUT" repeat="0" />
-                                        </Transform>
-                                        <Transform target="endY" value="66 - clamp(([WEATHER.TEMPERATURE] - [WEATHER.DAY_TEMPERATURE_LOW]) / ([WEATHER.DAY_TEMPERATURE_HIGH] - [WEATHER.DAY_TEMPERATURE_LOW]), 0, 1) * 64">
-                                            <Animation duration="0.2" fps="15" interpolation="EASE_OUT" repeat="0" />
-                                        </Transform>
-                                    </Line>
-                                </PartDraw>
-                            </Compare>
-                            <Default>
-                                <PartDraw x="212" y="154" width="26" height="68" name="tooth_stale">
-                                    <Line startX="2" startY="66" endX="24" endY="66">
-                                        <Stroke color="#ff8a8680" thickness="3" cap="ROUND" />
-                                        <Transform target="startY" value="66 - clamp(([WEATHER.TEMPERATURE] - [WEATHER.DAY_TEMPERATURE_LOW]) / ([WEATHER.DAY_TEMPERATURE_HIGH] - [WEATHER.DAY_TEMPERATURE_LOW]), 0, 1) * 64" />
-                                        <Transform target="endY" value="66 - clamp(([WEATHER.TEMPERATURE] - [WEATHER.DAY_TEMPERATURE_LOW]) / ([WEATHER.DAY_TEMPERATURE_HIGH] - [WEATHER.DAY_TEMPERATURE_LOW]), 0, 1) * 64" />
-                                    </Line>
-                                </PartDraw>
-                            </Default>
-                        </Condition>
-                    </Compare>
-                </Condition>
             </Group>
-            <Group x="0" y="0" width="450" height="450" name="day_cinder">
-                <ScreenReader stringId="reader_day" />
+            <Group x="0" y="0" width="450" height="450" name="battery">
+                <ScreenReader stringId="reader_battery" />
+                <PartDraw x="69" y="69" width="312" height="312" name="battery_track">
+                    <Arc centerX="156" centerY="156" width="296" height="296" startAngle="55" endAngle="115" direction="CLOCKWISE">
+                        <Stroke color="#ff1a2740" thickness="7" cap="ROUND" />
+                    </Arc>
+                </PartDraw>
                 <Condition>
                     <Expressions>
-                        <Expression name="cinder_moves"><![CDATA[[CONFIGURATION.latch_motion] == "TRUE" && [BATTERY_PERCENT] > 20 && [REFERENCE.power_saving] == 0 && ![BATTERY_IS_LOW]]]></Expression>
+                        <Expression name="battery_charging"><![CDATA[[BATTERY_CHARGING_STATUS]]]></Expression>
+                        <Expression name="battery_low"><![CDATA[![BATTERY_CHARGING_STATUS] && [BATTERY_PERCENT] <= 15]]></Expression>
                     </Expressions>
-                    <Compare expression="cinder_moves">
-                        <PartDraw x="103" y="168" width="244" height="40" name="cinder_moves">
-                            <Line startX="2" startY="2" endX="2" endY="38">
-                                <Stroke color="#ffe24b16" thickness="3" cap="ROUND" />
-                                <Transform target="startX" value="2 + (([HOUR_0_23] * 60 + [MINUTE]) / 1440) * 240">
-                                    <Animation duration="0.2" fps="15" interpolation="EASE_OUT" repeat="0" />
-                                </Transform>
-                                <Transform target="endX" value="2 + (([HOUR_0_23] * 60 + [MINUTE]) / 1440) * 240">
-                                    <Animation duration="0.2" fps="15" interpolation="EASE_OUT" repeat="0" />
-                                </Transform>
-                            </Line>
-                        </PartDraw>
-                    </Compare>
-                    <Default>
-                        <PartDraw x="103" y="168" width="244" height="40" name="cinder_static">
-                            <Line startX="2" startY="2" endX="2" endY="38">
-                                <Stroke color="#ffe24b16" thickness="3" cap="ROUND" />
-                                <Transform target="startX" value="2 + (([HOUR_0_23] * 60 + [MINUTE]) / 1440) * 240" />
-                                <Transform target="endX" value="2 + (([HOUR_0_23] * 60 + [MINUTE]) / 1440) * 240" />
-                            </Line>
-                        </PartDraw>
-                    </Default>
-                </Condition>
-            </Group>
-            <Group x="0" y="0" width="450" height="450" name="time">
-                <ScreenReader stringId="reader_time" />
-                <Condition>
-                    <Expressions>
-                        <Expression name="mode_24"><![CDATA[[IS_24_HOUR_MODE]]]></Expression>
-                    </Expressions>
-                    <Compare expression="mode_24">
-                        <Group x="0" y="0" width="450" height="450" name="time_24">
-                            <PartText x="108" y="68" width="92" height="64">
-                                <Text align="CENTER" maxLines="1">
-                                    <Font family="SYNC_TO_DEVICE" size="52" weight="MEDIUM" slant="NORMAL" letterSpacing="0.02" color="#fff4f1ea">
-                                        <Template>%s<Parameter expression="[HOUR_0_23_Z]" /></Template>
+                    <Compare expression="battery_charging">
+                        <Group x="0" y="0" width="450" height="450" name="battery_battery_charging">
+                            <PartText x="300" y="206" width="52" height="18">
+                                <Text align="END" maxLines="1">
+                                    <Font family="SYNC_TO_DEVICE" size="13" weight="MEDIUM" slant="NORMAL" color="#ff5dffa8">
+                                        <Template>%s<Parameter expression="numberFormat(&quot;#&quot;, [BATTERY_PERCENT])" /></Template>
                                     </Font>
                                 </Text>
                             </PartText>
-                            <PartText x="250" y="68" width="92" height="64">
-                                <Text align="CENTER" maxLines="1">
-                                    <Font family="SYNC_TO_DEVICE" size="52" weight="MEDIUM" slant="NORMAL" letterSpacing="0.02" color="#fff4f1ea">
-                                        <Template>%s<Parameter expression="[MINUTE_Z]" /></Template>
+                            <Condition>
+                                <Expressions>
+                                    <Expression name="ring_moves"><![CDATA[[CONFIGURATION.ring_motion] == "TRUE" && [BATTERY_PERCENT] > 20 && [REFERENCE.power_saving] == 0 && ![BATTERY_IS_LOW]]]></Expression>
+                                </Expressions>
+                                <Compare expression="ring_moves">
+                        <PartDraw x="69" y="69" width="312" height="312" name="battery_arc_moves">
+                            <Arc centerX="156" centerY="156" width="296" height="296" startAngle="55" endAngle="55" direction="CLOCKWISE">
+                                <Stroke color="#ff5dffa8" thickness="5" cap="ROUND" />
+                                <Transform target="endAngle" value="55 + [BATTERY_PERCENT] / 100 * 50"><Animation duration="0.8" fps="15" interpolation="EASE_IN_OUT" angleDirection="CLOCKWISE" /></Transform>
+                            </Arc>
+                        </PartDraw>
+                                </Compare>
+                                <Default>
+                        <PartDraw x="69" y="69" width="312" height="312" name="battery_arc_static">
+                            <Arc centerX="156" centerY="156" width="296" height="296" startAngle="55" endAngle="55" direction="CLOCKWISE">
+                                <Stroke color="#ff5dffa8" thickness="5" cap="ROUND" />
+                                <Transform target="endAngle" value="55 + [BATTERY_PERCENT] / 100 * 50"></Transform>
+                            </Arc>
+                        </PartDraw>
+                                </Default>
+                            </Condition>
+                        </Group>
+                    </Compare>
+                    <Compare expression="battery_low">
+                        <Group x="0" y="0" width="450" height="450" name="battery_battery_low">
+                            <PartText x="300" y="206" width="52" height="18">
+                                <Text align="END" maxLines="1">
+                                    <Font family="SYNC_TO_DEVICE" size="13" weight="MEDIUM" slant="NORMAL" color="#ffff4d6a">
+                                        <Template>%s<Parameter expression="numberFormat(&quot;#&quot;, [BATTERY_PERCENT])" /></Template>
                                     </Font>
                                 </Text>
                             </PartText>
-                            <PartDraw x="223" y="82" width="4" height="38" name="notch_24">
-                                <Line startX="2" startY="2" endX="2" endY="36">
-                                    <Stroke color="#ffe24b16" thickness="2" cap="ROUND" />
-                                </Line>
-                            </PartDraw>
+                            <Condition>
+                                <Expressions>
+                                    <Expression name="ring_moves"><![CDATA[[CONFIGURATION.ring_motion] == "TRUE" && [BATTERY_PERCENT] > 20 && [REFERENCE.power_saving] == 0 && ![BATTERY_IS_LOW]]]></Expression>
+                                </Expressions>
+                                <Compare expression="ring_moves">
+                        <PartDraw x="69" y="69" width="312" height="312" name="battery_arc_moves">
+                            <Arc centerX="156" centerY="156" width="296" height="296" startAngle="55" endAngle="55" direction="CLOCKWISE">
+                                <Stroke color="#ffff4d6a" thickness="5" cap="ROUND" />
+                                <Transform target="endAngle" value="55 + [BATTERY_PERCENT] / 100 * 50"><Animation duration="0.8" fps="15" interpolation="EASE_IN_OUT" angleDirection="CLOCKWISE" /></Transform>
+                            </Arc>
+                        </PartDraw>
+                                </Compare>
+                                <Default>
+                        <PartDraw x="69" y="69" width="312" height="312" name="battery_arc_static">
+                            <Arc centerX="156" centerY="156" width="296" height="296" startAngle="55" endAngle="55" direction="CLOCKWISE">
+                                <Stroke color="#ffff4d6a" thickness="5" cap="ROUND" />
+                                <Transform target="endAngle" value="55 + [BATTERY_PERCENT] / 100 * 50"></Transform>
+                            </Arc>
+                        </PartDraw>
+                                </Default>
+                            </Condition>
                         </Group>
                     </Compare>
                     <Default>
-                        <Group x="0" y="0" width="450" height="450" name="time_12">
-                            <PartText x="108" y="68" width="92" height="64">
-                                <Text align="CENTER" maxLines="1">
-                                    <Font family="SYNC_TO_DEVICE" size="52" weight="MEDIUM" slant="NORMAL" letterSpacing="0.02" color="#fff4f1ea">
-                                        <Template>%s<Parameter expression="[HOUR_1_12_Z]" /></Template>
+                        <Group x="0" y="0" width="450" height="450" name="battery_rest">
+                            <PartText x="300" y="206" width="52" height="18">
+                                <Text align="END" maxLines="1">
+                                    <Font family="SYNC_TO_DEVICE" size="13" weight="MEDIUM" slant="NORMAL" color="#ff3ee0ff">
+                                        <Template>%s<Parameter expression="numberFormat(&quot;#&quot;, [BATTERY_PERCENT])" /></Template>
                                     </Font>
                                 </Text>
                             </PartText>
-                            <PartText x="250" y="68" width="92" height="64">
-                                <Text align="CENTER" maxLines="1">
-                                    <Font family="SYNC_TO_DEVICE" size="52" weight="MEDIUM" slant="NORMAL" letterSpacing="0.02" color="#fff4f1ea">
-                                        <Template>%s<Parameter expression="[MINUTE_Z]" /></Template>
-                                    </Font>
-                                </Text>
-                            </PartText>
-                            <PartDraw x="223" y="82" width="4" height="38" name="notch_12">
-                                <Line startX="2" startY="2" endX="2" endY="36">
-                                    <Stroke color="#ffe24b16" thickness="2" cap="ROUND" />
-                                </Line>
-                            </PartDraw>
-                            <PartText x="196" y="136" width="58" height="16">
-                                <Text align="CENTER" maxLines="1">
-                                    <Font family="SYNC_TO_DEVICE" size="12" weight="NORMAL" slant="NORMAL" color="#ffc4c0b8">
-                                        <Template>%s<Parameter expression="[AMPM_STRING]" /></Template>
-                                    </Font>
-                                </Text>
-                            </PartText>
+                            <Condition>
+                                <Expressions>
+                                    <Expression name="ring_moves"><![CDATA[[CONFIGURATION.ring_motion] == "TRUE" && [BATTERY_PERCENT] > 20 && [REFERENCE.power_saving] == 0 && ![BATTERY_IS_LOW]]]></Expression>
+                                </Expressions>
+                                <Compare expression="ring_moves">
+                        <PartDraw x="69" y="69" width="312" height="312" name="battery_arc_moves">
+                            <Arc centerX="156" centerY="156" width="296" height="296" startAngle="55" endAngle="55" direction="CLOCKWISE">
+                                <Stroke color="#ff3ee0ff" thickness="5" cap="ROUND" />
+                                <Transform target="endAngle" value="55 + [BATTERY_PERCENT] / 100 * 50"><Animation duration="0.8" fps="15" interpolation="EASE_IN_OUT" angleDirection="CLOCKWISE" /></Transform>
+                            </Arc>
+                        </PartDraw>
+                                </Compare>
+                                <Default>
+                        <PartDraw x="69" y="69" width="312" height="312" name="battery_arc_static">
+                            <Arc centerX="156" centerY="156" width="296" height="296" startAngle="55" endAngle="55" direction="CLOCKWISE">
+                                <Stroke color="#ff3ee0ff" thickness="5" cap="ROUND" />
+                                <Transform target="endAngle" value="55 + [BATTERY_PERCENT] / 100 * 50"></Transform>
+                            </Arc>
+                        </PartDraw>
+                                </Default>
+                            </Condition>
                         </Group>
                     </Default>
                 </Condition>
             </Group>
         </Group>
         <Group x="0" y="0" width="450" height="450" name="ambient" alpha="0">
-            <Variant mode="AMBIENT" target="alpha" value="255" duration="0.0" />
+            <Variant mode="AMBIENT" target="alpha" value="255" duration="1.0" interpolation="EASE_IN_OUT" />
             <Group x="0" y="0" width="450" height="450" name="ambient_time">
                 <ScreenReader stringId="reader_time" />
-                <!-- The minute and notch match in both hour modes. A second
-                     size-52 copy is counted in the ambient memory budget. -->
-                <PartText x="250" y="68" width="92" height="64">
+                <PartText x="242" y="142" width="100" height="66">
                     <Text align="CENTER" maxLines="1">
-                        <Font family="SYNC_TO_DEVICE" size="52" weight="NORMAL" slant="NORMAL" letterSpacing="0.02" color="#ffc4c0b8">
+                        <Font family="SYNC_TO_DEVICE" size="54" weight="NORMAL" slant="NORMAL" letterSpacing="0.02" color="#ff7f93a8">
                             <Template>%s<Parameter expression="[MINUTE_Z]" /></Template>
                         </Font>
                     </Text>
                 </PartText>
-                <PartDraw x="223" y="82" width="4" height="38" name="ambient_notch">
-                    <Line startX="2" startY="2" endX="2" endY="36">
-                        <Stroke color="#ffe24b16" thickness="2" cap="ROUND" />
-                    </Line>
+                <PartDraw x="221" y="166" width="8" height="8" name="ambient_colon">
+                    <Ellipse x="1" y="1" width="6" height="6"><Fill color="#ff3ee0ff" /></Ellipse>
                 </PartDraw>
                 <Condition>
                     <Expressions>
                         <Expression name="mode_24"><![CDATA[[IS_24_HOUR_MODE]]]></Expression>
                     </Expressions>
                     <Compare expression="mode_24">
-                        <Group x="0" y="0" width="450" height="450" name="ambient_time_24">
-                            <PartText x="108" y="68" width="92" height="64">
-                                <Text align="CENTER" maxLines="1">
-                                    <Font family="SYNC_TO_DEVICE" size="52" weight="NORMAL" slant="NORMAL" letterSpacing="0.02" color="#ffc4c0b8">
-                                        <Template>%s<Parameter expression="[HOUR_0_23_Z]" /></Template>
-                                    </Font>
-                                </Text>
-                            </PartText>
-                        </Group>
+                        <PartText x="108" y="142" width="100" height="66">
+                            <Text align="CENTER" maxLines="1">
+                                <Font family="SYNC_TO_DEVICE" size="54" weight="NORMAL" slant="NORMAL" letterSpacing="0.02" color="#ff7f93a8">
+                                    <Template>%s<Parameter expression="[HOUR_0_23_Z]" /></Template>
+                                </Font>
+                            </Text>
+                        </PartText>
                     </Compare>
                     <Default>
                         <Group x="0" y="0" width="450" height="450" name="ambient_time_12">
-                            <PartText x="108" y="68" width="92" height="64">
+                            <PartText x="108" y="142" width="100" height="66">
                                 <Text align="CENTER" maxLines="1">
-                                    <Font family="SYNC_TO_DEVICE" size="52" weight="NORMAL" slant="NORMAL" letterSpacing="0.02" color="#ffc4c0b8">
+                                    <Font family="SYNC_TO_DEVICE" size="54" weight="NORMAL" slant="NORMAL" letterSpacing="0.02" color="#ff7f93a8">
                                         <Template>%s<Parameter expression="[HOUR_1_12_Z]" /></Template>
                                     </Font>
                                 </Text>
                             </PartText>
-                            <PartText x="196" y="136" width="58" height="16">
+                            <PartText x="176" y="204" width="98" height="16">
                                 <Text align="CENTER" maxLines="1">
-                                    <Font family="SYNC_TO_DEVICE" size="12" weight="NORMAL" slant="NORMAL" color="#ff8a8680">
+                                    <Font family="SYNC_TO_DEVICE" size="12" weight="NORMAL" slant="NORMAL" color="#ff6e6480">
                                         <Template>%s<Parameter expression="[AMPM_STRING]" /></Template>
                                     </Font>
                                 </Text>
@@ -433,39 +447,20 @@
                     </Default>
                 </Condition>
             </Group>
-            <PartDraw x="104" y="187" width="242" height="3" name="ambient_day_staff">
-                <Line startX="1" startY="1" endX="241" endY="1">
-                    <Stroke color="#ff3a3834" thickness="1" cap="BUTT" />
-                </Line>
-            </PartDraw>
-            <PartDraw x="104" y="183" width="242" height="10" name="ambient_day_ticks">
-                <Line startX="1" startY="1" endX="1" endY="9">
-                    <Stroke color="#ff3a3834" thickness="1" cap="BUTT" />
-                </Line>
-                <Line startX="61" startY="1" endX="61" endY="9">
-                    <Stroke color="#ff3a3834" thickness="1" cap="BUTT" />
-                </Line>
-                <Line startX="181" startY="1" endX="181" endY="9">
-                    <Stroke color="#ff3a3834" thickness="1" cap="BUTT" />
-                </Line>
-                <Line startX="241" startY="1" endX="241" endY="9">
-                    <Stroke color="#ff3a3834" thickness="1" cap="BUTT" />
-                </Line>
-            </PartDraw>
-            <PartDraw x="104" y="175" width="242" height="26" name="ambient_cinder">
+            <PartDraw x="0" y="0" width="450" height="450" name="ambient_bead">
                 <ScreenReader stringId="reader_day" />
-                <Line startX="1" startY="1" endX="1" endY="25">
-                    <Stroke color="#ffc4c0b8" thickness="1" cap="BUTT" />
-                    <Transform target="startX" value="1 + (([HOUR_0_23] * 60 + [MINUTE]) / 1440) * 240" />
-                    <Transform target="endX" value="1 + (([HOUR_0_23] * 60 + [MINUTE]) / 1440) * 240" />
-                </Line>
+                <Ellipse x="0" y="0" width="8" height="8">
+                    <Fill color="#ff9fdfff" />
+                    <Transform target="x" value="225 + sin(rad(([HOUR_0_23] * 60 + [MINUTE]) / 1440 * 360)) * 178 - 4" />
+                    <Transform target="y" value="225 - cos(rad(([HOUR_0_23] * 60 + [MINUTE]) / 1440 * 360)) * 178 - 4" />
+                </Ellipse>
             </PartDraw>
         </Group>
-        <ComplicationSlot slotId="10" displayName="slot_steps_name" x="94" y="300" width="58" height="56" isCustomizable="TRUE" supportedTypes="GOAL_PROGRESS RANGED_VALUE SHORT_TEXT LONG_TEXT MONOCHROMATIC_IMAGE SMALL_IMAGE EMPTY">
+    <ComplicationSlot slotId="10" displayName="slot_steps_name" x="92" y="300" width="58" height="56" isCustomizable="TRUE" supportedTypes="GOAL_PROGRESS RANGED_VALUE SHORT_TEXT LONG_TEXT MONOCHROMATIC_IMAGE SMALL_IMAGE EMPTY">
         <BoundingBox x="0" y="0" width="58" height="56" outlinePadding="1" />
         <DefaultProviderPolicy primaryProvider="com.samsung.android.wear.shealth/com.samsung.android.wear.shealth.complications.steps.StepsComplicationProviderService" primaryProviderType="GOAL_PROGRESS" secondaryProvider="com.samsung.android.wear.shealth/com.samsung.android.wear.shealth.complications.steps.StepsComplicationProviderService" secondaryProviderType="RANGED_VALUE" defaultSystemProvider="EMPTY" defaultSystemProviderType="EMPTY" />
-    <ScreenReader stringId="reader_steps" />
-        <Variant mode="AMBIENT" target="alpha" value="0" duration="0.0" />
+        <ScreenReader stringId="reader_steps" />
+        <Variant mode="AMBIENT" target="alpha" value="0" duration="0.75" startOffset="0.15" interpolation="EASE_OUT" />
         <Complication type="GOAL_PROGRESS">
             <Condition>
                 <Expressions>
@@ -474,7 +469,7 @@
                 <Compare expression="has_text">
                 <PartText x="1" y="0" width="56" height="24">
                     <Text align="CENTER" maxLines="1" ellipsis="TRUE" isAutoSize="TRUE">
-                        <Font family="SYNC_TO_DEVICE" size="18" weight="NORMAL" slant="NORMAL" color="#fff4f1ea">
+                        <Font family="SYNC_TO_DEVICE" size="18" weight="NORMAL" slant="NORMAL" color="#ffe8f4ff">
                             <Template>%s<Parameter expression="[COMPLICATION.TEXT]" /></Template>
                         </Font>
                     </Text>
@@ -483,7 +478,7 @@
                 <Default>
                 <PartText x="1" y="0" width="56" height="24">
                     <Text align="CENTER" maxLines="1" ellipsis="TRUE" isAutoSize="TRUE">
-                        <Font family="SYNC_TO_DEVICE" size="18" weight="NORMAL" slant="NORMAL" color="#fff4f1ea">
+                        <Font family="SYNC_TO_DEVICE" size="18" weight="NORMAL" slant="NORMAL" color="#ffe8f4ff">
                             <Template>%s<Parameter expression="numberFormat(&quot;#&quot;, [COMPLICATION.GOAL_PROGRESS_VALUE])" /></Template>
                         </Font>
                     </Text>
@@ -497,20 +492,18 @@
                 <Compare expression="goal_target">
                     <Group x="0" y="0" width="58" height="56" name="goal_target">
                 <PartText x="1" y="24" width="56" height="14">
-                    <Text align="CENTER" maxLines="1">
-                        <Font family="SYNC_TO_DEVICE" size="11" weight="NORMAL" slant="NORMAL" color="#ffc4c0b8">
+                    <Text align="CENTER" maxLines="1" ellipsis="TRUE" isAutoSize="TRUE">
+                        <Font family="SYNC_TO_DEVICE" size="11" weight="NORMAL" slant="NORMAL" color="#ff8ea0bd">
                             <Template>%s<Parameter expression="numberFormat(&quot;#&quot;, [COMPLICATION.GOAL_PROGRESS_TARGET_VALUE])" /></Template>
                         </Font>
                     </Text>
                 </PartText>
                 <PartDraw x="8" y="44" width="42" height="3">
-                    <Rectangle x="0" y="0" width="42" height="3">
-                        <Fill color="#ff3a3834" />
-                    </Rectangle>
+                    <Rectangle x="0" y="0" width="42" height="3"><Fill color="#ff1a2740" /></Rectangle>
                 </PartDraw>
                 <PartDraw x="8" y="44" width="42" height="3">
                     <Rectangle x="0" y="0" width="42" height="3">
-                        <Fill color="#ffe24b16" />
+                        <Fill color="#ff3ee0ff" />
                         <Transform target="width" value="clamp([COMPLICATION.GOAL_PROGRESS_VALUE] / [COMPLICATION.GOAL_PROGRESS_TARGET_VALUE], 0, 1) * 42" />
                     </Rectangle>
                 </PartDraw>
@@ -526,7 +519,7 @@
                 <Compare expression="has_text">
                 <PartText x="1" y="0" width="56" height="24">
                     <Text align="CENTER" maxLines="1" ellipsis="TRUE" isAutoSize="TRUE">
-                        <Font family="SYNC_TO_DEVICE" size="18" weight="NORMAL" slant="NORMAL" color="#fff4f1ea">
+                        <Font family="SYNC_TO_DEVICE" size="18" weight="NORMAL" slant="NORMAL" color="#ffe8f4ff">
                             <Template>%s<Parameter expression="[COMPLICATION.TEXT]" /></Template>
                         </Font>
                     </Text>
@@ -535,7 +528,7 @@
                 <Default>
                 <PartText x="1" y="0" width="56" height="24">
                     <Text align="CENTER" maxLines="1" ellipsis="TRUE" isAutoSize="TRUE">
-                        <Font family="SYNC_TO_DEVICE" size="18" weight="NORMAL" slant="NORMAL" color="#fff4f1ea">
+                        <Font family="SYNC_TO_DEVICE" size="18" weight="NORMAL" slant="NORMAL" color="#ffe8f4ff">
                             <Template>%s<Parameter expression="numberFormat(&quot;#&quot;, [COMPLICATION.RANGED_VALUE_VALUE])" /></Template>
                         </Font>
                     </Text>
@@ -550,20 +543,18 @@
                 <Compare expression="steps_goal">
                     <Group x="0" y="0" width="58" height="56" name="steps_goal">
                 <PartText x="1" y="24" width="56" height="14">
-                    <Text align="CENTER" maxLines="1">
-                        <Font family="SYNC_TO_DEVICE" size="11" weight="NORMAL" slant="NORMAL" color="#ffc4c0b8">
+                    <Text align="CENTER" maxLines="1" ellipsis="TRUE" isAutoSize="TRUE">
+                        <Font family="SYNC_TO_DEVICE" size="11" weight="NORMAL" slant="NORMAL" color="#ff8ea0bd">
                             <Template>%s<Parameter expression="numberFormat(&quot;#&quot;, [COMPLICATION.RANGED_VALUE_MAX])" /></Template>
                         </Font>
                     </Text>
                 </PartText>
                 <PartDraw x="8" y="44" width="42" height="3">
-                    <Rectangle x="0" y="0" width="42" height="3">
-                        <Fill color="#ff3a3834" />
-                    </Rectangle>
+                    <Rectangle x="0" y="0" width="42" height="3"><Fill color="#ff1a2740" /></Rectangle>
                 </PartDraw>
                 <PartDraw x="8" y="44" width="42" height="3">
                     <Rectangle x="0" y="0" width="42" height="3">
-                        <Fill color="#ffe24b16" />
+                        <Fill color="#ff3ee0ff" />
                         <Transform target="width" value="clamp([COMPLICATION.RANGED_VALUE_VALUE] / [COMPLICATION.RANGED_VALUE_MAX], 0, 1) * 42" />
                     </Rectangle>
                 </PartDraw>
@@ -572,13 +563,11 @@
                 <Compare expression="range_span">
                     <Group x="0" y="0" width="58" height="56" name="range_bar">
                 <PartDraw x="8" y="44" width="42" height="3">
-                    <Rectangle x="0" y="0" width="42" height="3">
-                        <Fill color="#ff3a3834" />
-                    </Rectangle>
+                    <Rectangle x="0" y="0" width="42" height="3"><Fill color="#ff1a2740" /></Rectangle>
                 </PartDraw>
                 <PartDraw x="8" y="44" width="42" height="3">
                     <Rectangle x="0" y="0" width="42" height="3">
-                        <Fill color="#ffe24b16" />
+                        <Fill color="#ff3ee0ff" />
                         <Transform target="width" value="clamp(([COMPLICATION.RANGED_VALUE_VALUE] - [COMPLICATION.RANGED_VALUE_MIN]) / ([COMPLICATION.RANGED_VALUE_MAX] - [COMPLICATION.RANGED_VALUE_MIN]), 0, 1) * 42" />
                     </Rectangle>
                 </PartDraw>
@@ -594,7 +583,7 @@
                 <Compare expression="has_title">
                 <PartText x="1" y="2" width="56" height="12">
                     <Text align="CENTER" maxLines="1">
-                        <Font family="SYNC_TO_DEVICE" size="10" weight="NORMAL" slant="NORMAL" color="#ffc4c0b8">
+                        <Font family="SYNC_TO_DEVICE" size="10" weight="NORMAL" slant="NORMAL" color="#ff8ea0bd">
                             <Template>%s<Parameter expression="[COMPLICATION.TITLE]" /></Template>
                         </Font>
                     </Text>
@@ -603,7 +592,7 @@
             </Condition>
                 <PartText x="1" y="16" width="56" height="36">
                     <Text align="CENTER" maxLines="2" ellipsis="TRUE" isAutoSize="TRUE">
-                        <Font family="SYNC_TO_DEVICE" size="15" weight="NORMAL" slant="NORMAL" color="#fff4f1ea">
+                        <Font family="SYNC_TO_DEVICE" size="15" weight="NORMAL" slant="NORMAL" color="#ffe8f4ff">
                             <Template>%s<Parameter expression="[COMPLICATION.TEXT]" /></Template>
                         </Font>
                     </Text>
@@ -617,7 +606,7 @@
                 <Compare expression="has_title">
                 <PartText x="1" y="2" width="56" height="12">
                     <Text align="CENTER" maxLines="1">
-                        <Font family="SYNC_TO_DEVICE" size="10" weight="NORMAL" slant="NORMAL" color="#ffc4c0b8">
+                        <Font family="SYNC_TO_DEVICE" size="10" weight="NORMAL" slant="NORMAL" color="#ff8ea0bd">
                             <Template>%s<Parameter expression="[COMPLICATION.TITLE]" /></Template>
                         </Font>
                     </Text>
@@ -626,14 +615,14 @@
             </Condition>
                 <PartText x="1" y="14" width="56" height="40">
                     <Text align="CENTER" maxLines="3" ellipsis="TRUE">
-                        <Font family="SYNC_TO_DEVICE" size="12" weight="NORMAL" slant="NORMAL" color="#fff4f1ea">
+                        <Font family="SYNC_TO_DEVICE" size="12" weight="NORMAL" slant="NORMAL" color="#ffe8f4ff">
                             <Template>%s<Parameter expression="[COMPLICATION.TEXT]" /></Template>
                         </Font>
                     </Text>
                 </PartText>
         </Complication>
         <Complication type="MONOCHROMATIC_IMAGE">
-            <PartImage x="15" y="12" width="28" height="28" tintColor="#fff4f1ea">
+            <PartImage x="15" y="12" width="28" height="28" tintColor="#ff3ee0ff">
                 <Image resource="[COMPLICATION.MONOCHROMATIC_IMAGE]" />
             </PartImage>
         </Complication>
@@ -657,18 +646,19 @@
         <Complication type="EMPTY">
             <Group x="0" y="0" width="58" height="56" name="slot_empty">
                 <ScreenReader stringId="reader_empty" />
-                <PartDraw x="15" y="27" width="28" height="4">
-                    <Line startX="1" startY="1" endX="27" endY="1">
-                        <Stroke color="#ff3a3834" thickness="2" cap="BUTT" />
+                <PartDraw x="12" y="27" width="34" height="4">
+                    <Line startX="1" startY="1" endX="33" endY="1">
+                        <Stroke color="#ff3ee0ff" thickness="2" cap="ROUND" />
                     </Line>
                 </PartDraw>
             </Group>
         </Complication>
     </ComplicationSlot>
-    <ComplicationSlot slotId="20" displayName="slot_minutes_name" x="162" y="300" width="58" height="56" isCustomizable="TRUE" supportedTypes="GOAL_PROGRESS RANGED_VALUE SHORT_TEXT LONG_TEXT MONOCHROMATIC_IMAGE SMALL_IMAGE EMPTY">
+    <ComplicationSlot slotId="20" displayName="slot_minutes_name" x="160" y="300" width="58" height="56" isCustomizable="TRUE" supportedTypes="GOAL_PROGRESS RANGED_VALUE SHORT_TEXT LONG_TEXT MONOCHROMATIC_IMAGE SMALL_IMAGE EMPTY">
         <BoundingBox x="0" y="0" width="58" height="56" outlinePadding="1" />
         <DefaultProviderPolicy primaryProvider="com.bobbfwed.emberphase.health/com.bobbfwed.emberphase.health.watch.MinutesDataSource" primaryProviderType="GOAL_PROGRESS" secondaryProvider="com.bobbfwed.emberphase.health/com.bobbfwed.emberphase.health.watch.MinutesDataSource" secondaryProviderType="SHORT_TEXT" defaultSystemProvider="EMPTY" defaultSystemProviderType="EMPTY" />
-        <Variant mode="AMBIENT" target="alpha" value="0" duration="0.0" />
+
+        <Variant mode="AMBIENT" target="alpha" value="0" duration="0.75" startOffset="0.15" interpolation="EASE_OUT" />
         <Complication type="GOAL_PROGRESS">
             <Condition>
                 <Expressions>
@@ -677,7 +667,7 @@
                 <Compare expression="has_text">
                 <PartText x="1" y="0" width="56" height="24">
                     <Text align="CENTER" maxLines="1" ellipsis="TRUE" isAutoSize="TRUE">
-                        <Font family="SYNC_TO_DEVICE" size="18" weight="NORMAL" slant="NORMAL" color="#fff4f1ea">
+                        <Font family="SYNC_TO_DEVICE" size="18" weight="NORMAL" slant="NORMAL" color="#ffe8f4ff">
                             <Template>%s<Parameter expression="[COMPLICATION.TEXT]" /></Template>
                         </Font>
                     </Text>
@@ -686,7 +676,7 @@
                 <Default>
                 <PartText x="1" y="0" width="56" height="24">
                     <Text align="CENTER" maxLines="1" ellipsis="TRUE" isAutoSize="TRUE">
-                        <Font family="SYNC_TO_DEVICE" size="18" weight="NORMAL" slant="NORMAL" color="#fff4f1ea">
+                        <Font family="SYNC_TO_DEVICE" size="18" weight="NORMAL" slant="NORMAL" color="#ffe8f4ff">
                             <Template>%s<Parameter expression="numberFormat(&quot;#&quot;, [COMPLICATION.GOAL_PROGRESS_VALUE])" /></Template>
                         </Font>
                     </Text>
@@ -700,20 +690,18 @@
                 <Compare expression="goal_target">
                     <Group x="0" y="0" width="58" height="56" name="goal_target">
                 <PartText x="1" y="24" width="56" height="14">
-                    <Text align="CENTER" maxLines="1">
-                        <Font family="SYNC_TO_DEVICE" size="11" weight="NORMAL" slant="NORMAL" color="#ffc4c0b8">
+                    <Text align="CENTER" maxLines="1" ellipsis="TRUE" isAutoSize="TRUE">
+                        <Font family="SYNC_TO_DEVICE" size="11" weight="NORMAL" slant="NORMAL" color="#ff8ea0bd">
                             <Template>%s<Parameter expression="numberFormat(&quot;#&quot;, [COMPLICATION.GOAL_PROGRESS_TARGET_VALUE])" /></Template>
                         </Font>
                     </Text>
                 </PartText>
                 <PartDraw x="8" y="44" width="42" height="3">
-                    <Rectangle x="0" y="0" width="42" height="3">
-                        <Fill color="#ff3a3834" />
-                    </Rectangle>
+                    <Rectangle x="0" y="0" width="42" height="3"><Fill color="#ff1a2740" /></Rectangle>
                 </PartDraw>
                 <PartDraw x="8" y="44" width="42" height="3">
                     <Rectangle x="0" y="0" width="42" height="3">
-                        <Fill color="#ffe24b16" />
+                        <Fill color="#ffb14bff" />
                         <Transform target="width" value="clamp([COMPLICATION.GOAL_PROGRESS_VALUE] / [COMPLICATION.GOAL_PROGRESS_TARGET_VALUE], 0, 1) * 42" />
                     </Rectangle>
                 </PartDraw>
@@ -729,7 +717,7 @@
                 <Compare expression="has_text">
                 <PartText x="1" y="0" width="56" height="24">
                     <Text align="CENTER" maxLines="1" ellipsis="TRUE" isAutoSize="TRUE">
-                        <Font family="SYNC_TO_DEVICE" size="18" weight="NORMAL" slant="NORMAL" color="#fff4f1ea">
+                        <Font family="SYNC_TO_DEVICE" size="18" weight="NORMAL" slant="NORMAL" color="#ffe8f4ff">
                             <Template>%s<Parameter expression="[COMPLICATION.TEXT]" /></Template>
                         </Font>
                     </Text>
@@ -738,7 +726,7 @@
                 <Default>
                 <PartText x="1" y="0" width="56" height="24">
                     <Text align="CENTER" maxLines="1" ellipsis="TRUE" isAutoSize="TRUE">
-                        <Font family="SYNC_TO_DEVICE" size="18" weight="NORMAL" slant="NORMAL" color="#fff4f1ea">
+                        <Font family="SYNC_TO_DEVICE" size="18" weight="NORMAL" slant="NORMAL" color="#ffe8f4ff">
                             <Template>%s<Parameter expression="numberFormat(&quot;#&quot;, [COMPLICATION.RANGED_VALUE_VALUE])" /></Template>
                         </Font>
                     </Text>
@@ -752,13 +740,11 @@
                 <Compare expression="range_span">
                     <Group x="0" y="0" width="58" height="56" name="range_bar">
                 <PartDraw x="8" y="44" width="42" height="3">
-                    <Rectangle x="0" y="0" width="42" height="3">
-                        <Fill color="#ff3a3834" />
-                    </Rectangle>
+                    <Rectangle x="0" y="0" width="42" height="3"><Fill color="#ff1a2740" /></Rectangle>
                 </PartDraw>
                 <PartDraw x="8" y="44" width="42" height="3">
                     <Rectangle x="0" y="0" width="42" height="3">
-                        <Fill color="#ffe24b16" />
+                        <Fill color="#ffb14bff" />
                         <Transform target="width" value="clamp(([COMPLICATION.RANGED_VALUE_VALUE] - [COMPLICATION.RANGED_VALUE_MIN]) / ([COMPLICATION.RANGED_VALUE_MAX] - [COMPLICATION.RANGED_VALUE_MIN]), 0, 1) * 42" />
                     </Rectangle>
                 </PartDraw>
@@ -774,7 +760,7 @@
                 <Compare expression="has_title">
                 <PartText x="1" y="2" width="56" height="12">
                     <Text align="CENTER" maxLines="1">
-                        <Font family="SYNC_TO_DEVICE" size="10" weight="NORMAL" slant="NORMAL" color="#ffc4c0b8">
+                        <Font family="SYNC_TO_DEVICE" size="10" weight="NORMAL" slant="NORMAL" color="#ff8ea0bd">
                             <Template>%s<Parameter expression="[COMPLICATION.TITLE]" /></Template>
                         </Font>
                     </Text>
@@ -783,7 +769,7 @@
             </Condition>
                 <PartText x="1" y="16" width="56" height="36">
                     <Text align="CENTER" maxLines="2" ellipsis="TRUE" isAutoSize="TRUE">
-                        <Font family="SYNC_TO_DEVICE" size="15" weight="NORMAL" slant="NORMAL" color="#fff4f1ea">
+                        <Font family="SYNC_TO_DEVICE" size="15" weight="NORMAL" slant="NORMAL" color="#ffe8f4ff">
                             <Template>%s<Parameter expression="[COMPLICATION.TEXT]" /></Template>
                         </Font>
                     </Text>
@@ -797,7 +783,7 @@
                 <Compare expression="has_title">
                 <PartText x="1" y="2" width="56" height="12">
                     <Text align="CENTER" maxLines="1">
-                        <Font family="SYNC_TO_DEVICE" size="10" weight="NORMAL" slant="NORMAL" color="#ffc4c0b8">
+                        <Font family="SYNC_TO_DEVICE" size="10" weight="NORMAL" slant="NORMAL" color="#ff8ea0bd">
                             <Template>%s<Parameter expression="[COMPLICATION.TITLE]" /></Template>
                         </Font>
                     </Text>
@@ -806,14 +792,14 @@
             </Condition>
                 <PartText x="1" y="14" width="56" height="40">
                     <Text align="CENTER" maxLines="3" ellipsis="TRUE">
-                        <Font family="SYNC_TO_DEVICE" size="12" weight="NORMAL" slant="NORMAL" color="#fff4f1ea">
+                        <Font family="SYNC_TO_DEVICE" size="12" weight="NORMAL" slant="NORMAL" color="#ffe8f4ff">
                             <Template>%s<Parameter expression="[COMPLICATION.TEXT]" /></Template>
                         </Font>
                     </Text>
                 </PartText>
         </Complication>
         <Complication type="MONOCHROMATIC_IMAGE">
-            <PartImage x="15" y="12" width="28" height="28" tintColor="#fff4f1ea">
+            <PartImage x="15" y="12" width="28" height="28" tintColor="#ffb14bff">
                 <Image resource="[COMPLICATION.MONOCHROMATIC_IMAGE]" />
             </PartImage>
         </Complication>
@@ -837,18 +823,19 @@
         <Complication type="EMPTY">
             <Group x="0" y="0" width="58" height="56" name="slot_empty">
                 <ScreenReader stringId="reader_empty" />
-                <PartDraw x="15" y="27" width="28" height="4">
-                    <Line startX="1" startY="1" endX="27" endY="1">
-                        <Stroke color="#ff3a3834" thickness="2" cap="BUTT" />
+                <PartDraw x="12" y="27" width="34" height="4">
+                    <Line startX="1" startY="1" endX="33" endY="1">
+                        <Stroke color="#ffb14bff" thickness="2" cap="ROUND" />
                     </Line>
                 </PartDraw>
             </Group>
         </Complication>
     </ComplicationSlot>
-    <ComplicationSlot slotId="30" displayName="slot_calories_name" x="230" y="300" width="58" height="56" isCustomizable="TRUE" supportedTypes="GOAL_PROGRESS RANGED_VALUE SHORT_TEXT LONG_TEXT MONOCHROMATIC_IMAGE SMALL_IMAGE EMPTY">
+    <ComplicationSlot slotId="30" displayName="slot_calories_name" x="228" y="300" width="58" height="56" isCustomizable="TRUE" supportedTypes="GOAL_PROGRESS RANGED_VALUE SHORT_TEXT LONG_TEXT MONOCHROMATIC_IMAGE SMALL_IMAGE EMPTY">
         <BoundingBox x="0" y="0" width="58" height="56" outlinePadding="1" />
         <DefaultProviderPolicy primaryProvider="com.bobbfwed.emberphase.health/com.bobbfwed.emberphase.health.watch.CaloriesDataSource" primaryProviderType="GOAL_PROGRESS" secondaryProvider="com.bobbfwed.emberphase.health/com.bobbfwed.emberphase.health.watch.CaloriesDataSource" secondaryProviderType="SHORT_TEXT" defaultSystemProvider="EMPTY" defaultSystemProviderType="EMPTY" />
-        <Variant mode="AMBIENT" target="alpha" value="0" duration="0.0" />
+
+        <Variant mode="AMBIENT" target="alpha" value="0" duration="0.75" startOffset="0.15" interpolation="EASE_OUT" />
         <Complication type="GOAL_PROGRESS">
             <Condition>
                 <Expressions>
@@ -857,7 +844,7 @@
                 <Compare expression="has_text">
                 <PartText x="1" y="0" width="56" height="24">
                     <Text align="CENTER" maxLines="1" ellipsis="TRUE" isAutoSize="TRUE">
-                        <Font family="SYNC_TO_DEVICE" size="18" weight="NORMAL" slant="NORMAL" color="#fff4f1ea">
+                        <Font family="SYNC_TO_DEVICE" size="18" weight="NORMAL" slant="NORMAL" color="#ffe8f4ff">
                             <Template>%s<Parameter expression="[COMPLICATION.TEXT]" /></Template>
                         </Font>
                     </Text>
@@ -866,7 +853,7 @@
                 <Default>
                 <PartText x="1" y="0" width="56" height="24">
                     <Text align="CENTER" maxLines="1" ellipsis="TRUE" isAutoSize="TRUE">
-                        <Font family="SYNC_TO_DEVICE" size="18" weight="NORMAL" slant="NORMAL" color="#fff4f1ea">
+                        <Font family="SYNC_TO_DEVICE" size="18" weight="NORMAL" slant="NORMAL" color="#ffe8f4ff">
                             <Template>%s<Parameter expression="numberFormat(&quot;#&quot;, [COMPLICATION.GOAL_PROGRESS_VALUE])" /></Template>
                         </Font>
                     </Text>
@@ -880,20 +867,18 @@
                 <Compare expression="goal_target">
                     <Group x="0" y="0" width="58" height="56" name="goal_target">
                 <PartText x="1" y="24" width="56" height="14">
-                    <Text align="CENTER" maxLines="1">
-                        <Font family="SYNC_TO_DEVICE" size="11" weight="NORMAL" slant="NORMAL" color="#ffc4c0b8">
+                    <Text align="CENTER" maxLines="1" ellipsis="TRUE" isAutoSize="TRUE">
+                        <Font family="SYNC_TO_DEVICE" size="11" weight="NORMAL" slant="NORMAL" color="#ff8ea0bd">
                             <Template>%s<Parameter expression="numberFormat(&quot;#&quot;, [COMPLICATION.GOAL_PROGRESS_TARGET_VALUE])" /></Template>
                         </Font>
                     </Text>
                 </PartText>
                 <PartDraw x="8" y="44" width="42" height="3">
-                    <Rectangle x="0" y="0" width="42" height="3">
-                        <Fill color="#ff3a3834" />
-                    </Rectangle>
+                    <Rectangle x="0" y="0" width="42" height="3"><Fill color="#ff1a2740" /></Rectangle>
                 </PartDraw>
                 <PartDraw x="8" y="44" width="42" height="3">
                     <Rectangle x="0" y="0" width="42" height="3">
-                        <Fill color="#ffe24b16" />
+                        <Fill color="#ffffb24a" />
                         <Transform target="width" value="clamp([COMPLICATION.GOAL_PROGRESS_VALUE] / [COMPLICATION.GOAL_PROGRESS_TARGET_VALUE], 0, 1) * 42" />
                     </Rectangle>
                 </PartDraw>
@@ -909,7 +894,7 @@
                 <Compare expression="has_text">
                 <PartText x="1" y="0" width="56" height="24">
                     <Text align="CENTER" maxLines="1" ellipsis="TRUE" isAutoSize="TRUE">
-                        <Font family="SYNC_TO_DEVICE" size="18" weight="NORMAL" slant="NORMAL" color="#fff4f1ea">
+                        <Font family="SYNC_TO_DEVICE" size="18" weight="NORMAL" slant="NORMAL" color="#ffe8f4ff">
                             <Template>%s<Parameter expression="[COMPLICATION.TEXT]" /></Template>
                         </Font>
                     </Text>
@@ -918,7 +903,7 @@
                 <Default>
                 <PartText x="1" y="0" width="56" height="24">
                     <Text align="CENTER" maxLines="1" ellipsis="TRUE" isAutoSize="TRUE">
-                        <Font family="SYNC_TO_DEVICE" size="18" weight="NORMAL" slant="NORMAL" color="#fff4f1ea">
+                        <Font family="SYNC_TO_DEVICE" size="18" weight="NORMAL" slant="NORMAL" color="#ffe8f4ff">
                             <Template>%s<Parameter expression="numberFormat(&quot;#&quot;, [COMPLICATION.RANGED_VALUE_VALUE])" /></Template>
                         </Font>
                     </Text>
@@ -932,13 +917,11 @@
                 <Compare expression="range_span">
                     <Group x="0" y="0" width="58" height="56" name="range_bar">
                 <PartDraw x="8" y="44" width="42" height="3">
-                    <Rectangle x="0" y="0" width="42" height="3">
-                        <Fill color="#ff3a3834" />
-                    </Rectangle>
+                    <Rectangle x="0" y="0" width="42" height="3"><Fill color="#ff1a2740" /></Rectangle>
                 </PartDraw>
                 <PartDraw x="8" y="44" width="42" height="3">
                     <Rectangle x="0" y="0" width="42" height="3">
-                        <Fill color="#ffe24b16" />
+                        <Fill color="#ffffb24a" />
                         <Transform target="width" value="clamp(([COMPLICATION.RANGED_VALUE_VALUE] - [COMPLICATION.RANGED_VALUE_MIN]) / ([COMPLICATION.RANGED_VALUE_MAX] - [COMPLICATION.RANGED_VALUE_MIN]), 0, 1) * 42" />
                     </Rectangle>
                 </PartDraw>
@@ -954,7 +937,7 @@
                 <Compare expression="has_title">
                 <PartText x="1" y="2" width="56" height="12">
                     <Text align="CENTER" maxLines="1">
-                        <Font family="SYNC_TO_DEVICE" size="10" weight="NORMAL" slant="NORMAL" color="#ffc4c0b8">
+                        <Font family="SYNC_TO_DEVICE" size="10" weight="NORMAL" slant="NORMAL" color="#ff8ea0bd">
                             <Template>%s<Parameter expression="[COMPLICATION.TITLE]" /></Template>
                         </Font>
                     </Text>
@@ -963,7 +946,7 @@
             </Condition>
                 <PartText x="1" y="16" width="56" height="36">
                     <Text align="CENTER" maxLines="2" ellipsis="TRUE" isAutoSize="TRUE">
-                        <Font family="SYNC_TO_DEVICE" size="15" weight="NORMAL" slant="NORMAL" color="#fff4f1ea">
+                        <Font family="SYNC_TO_DEVICE" size="15" weight="NORMAL" slant="NORMAL" color="#ffe8f4ff">
                             <Template>%s<Parameter expression="[COMPLICATION.TEXT]" /></Template>
                         </Font>
                     </Text>
@@ -977,7 +960,7 @@
                 <Compare expression="has_title">
                 <PartText x="1" y="2" width="56" height="12">
                     <Text align="CENTER" maxLines="1">
-                        <Font family="SYNC_TO_DEVICE" size="10" weight="NORMAL" slant="NORMAL" color="#ffc4c0b8">
+                        <Font family="SYNC_TO_DEVICE" size="10" weight="NORMAL" slant="NORMAL" color="#ff8ea0bd">
                             <Template>%s<Parameter expression="[COMPLICATION.TITLE]" /></Template>
                         </Font>
                     </Text>
@@ -986,14 +969,14 @@
             </Condition>
                 <PartText x="1" y="14" width="56" height="40">
                     <Text align="CENTER" maxLines="3" ellipsis="TRUE">
-                        <Font family="SYNC_TO_DEVICE" size="12" weight="NORMAL" slant="NORMAL" color="#fff4f1ea">
+                        <Font family="SYNC_TO_DEVICE" size="12" weight="NORMAL" slant="NORMAL" color="#ffe8f4ff">
                             <Template>%s<Parameter expression="[COMPLICATION.TEXT]" /></Template>
                         </Font>
                     </Text>
                 </PartText>
         </Complication>
         <Complication type="MONOCHROMATIC_IMAGE">
-            <PartImage x="15" y="12" width="28" height="28" tintColor="#fff4f1ea">
+            <PartImage x="15" y="12" width="28" height="28" tintColor="#ffffb24a">
                 <Image resource="[COMPLICATION.MONOCHROMATIC_IMAGE]" />
             </PartImage>
         </Complication>
@@ -1017,18 +1000,19 @@
         <Complication type="EMPTY">
             <Group x="0" y="0" width="58" height="56" name="slot_empty">
                 <ScreenReader stringId="reader_empty" />
-                <PartDraw x="15" y="27" width="28" height="4">
-                    <Line startX="1" startY="1" endX="27" endY="1">
-                        <Stroke color="#ff3a3834" thickness="2" cap="BUTT" />
+                <PartDraw x="12" y="27" width="34" height="4">
+                    <Line startX="1" startY="1" endX="33" endY="1">
+                        <Stroke color="#ffffb24a" thickness="2" cap="ROUND" />
                     </Line>
                 </PartDraw>
             </Group>
         </Complication>
     </ComplicationSlot>
-    <ComplicationSlot slotId="40" displayName="slot_open_name" x="298" y="300" width="58" height="56" isCustomizable="TRUE" supportedTypes="GOAL_PROGRESS RANGED_VALUE SHORT_TEXT LONG_TEXT MONOCHROMATIC_IMAGE SMALL_IMAGE EMPTY">
+    <ComplicationSlot slotId="40" displayName="slot_open_name" x="296" y="300" width="58" height="56" isCustomizable="TRUE" supportedTypes="GOAL_PROGRESS RANGED_VALUE SHORT_TEXT LONG_TEXT MONOCHROMATIC_IMAGE SMALL_IMAGE EMPTY">
         <BoundingBox x="0" y="0" width="58" height="56" outlinePadding="1" />
         <DefaultProviderPolicy defaultSystemProvider="EMPTY" defaultSystemProviderType="EMPTY" />
-        <Variant mode="AMBIENT" target="alpha" value="0" duration="0.0" />
+
+        <Variant mode="AMBIENT" target="alpha" value="0" duration="0.75" startOffset="0.15" interpolation="EASE_OUT" />
         <Complication type="GOAL_PROGRESS">
             <Condition>
                 <Expressions>
@@ -1037,7 +1021,7 @@
                 <Compare expression="has_text">
                 <PartText x="1" y="0" width="56" height="24">
                     <Text align="CENTER" maxLines="1" ellipsis="TRUE" isAutoSize="TRUE">
-                        <Font family="SYNC_TO_DEVICE" size="18" weight="NORMAL" slant="NORMAL" color="#fff4f1ea">
+                        <Font family="SYNC_TO_DEVICE" size="18" weight="NORMAL" slant="NORMAL" color="#ffe8f4ff">
                             <Template>%s<Parameter expression="[COMPLICATION.TEXT]" /></Template>
                         </Font>
                     </Text>
@@ -1046,7 +1030,7 @@
                 <Default>
                 <PartText x="1" y="0" width="56" height="24">
                     <Text align="CENTER" maxLines="1" ellipsis="TRUE" isAutoSize="TRUE">
-                        <Font family="SYNC_TO_DEVICE" size="18" weight="NORMAL" slant="NORMAL" color="#fff4f1ea">
+                        <Font family="SYNC_TO_DEVICE" size="18" weight="NORMAL" slant="NORMAL" color="#ffe8f4ff">
                             <Template>%s<Parameter expression="numberFormat(&quot;#&quot;, [COMPLICATION.GOAL_PROGRESS_VALUE])" /></Template>
                         </Font>
                     </Text>
@@ -1060,20 +1044,18 @@
                 <Compare expression="goal_target">
                     <Group x="0" y="0" width="58" height="56" name="goal_target">
                 <PartText x="1" y="24" width="56" height="14">
-                    <Text align="CENTER" maxLines="1">
-                        <Font family="SYNC_TO_DEVICE" size="11" weight="NORMAL" slant="NORMAL" color="#ffc4c0b8">
+                    <Text align="CENTER" maxLines="1" ellipsis="TRUE" isAutoSize="TRUE">
+                        <Font family="SYNC_TO_DEVICE" size="11" weight="NORMAL" slant="NORMAL" color="#ff8ea0bd">
                             <Template>%s<Parameter expression="numberFormat(&quot;#&quot;, [COMPLICATION.GOAL_PROGRESS_TARGET_VALUE])" /></Template>
                         </Font>
                     </Text>
                 </PartText>
                 <PartDraw x="8" y="44" width="42" height="3">
-                    <Rectangle x="0" y="0" width="42" height="3">
-                        <Fill color="#ff3a3834" />
-                    </Rectangle>
+                    <Rectangle x="0" y="0" width="42" height="3"><Fill color="#ff1a2740" /></Rectangle>
                 </PartDraw>
                 <PartDraw x="8" y="44" width="42" height="3">
                     <Rectangle x="0" y="0" width="42" height="3">
-                        <Fill color="#ffe24b16" />
+                        <Fill color="#ffff4d9a" />
                         <Transform target="width" value="clamp([COMPLICATION.GOAL_PROGRESS_VALUE] / [COMPLICATION.GOAL_PROGRESS_TARGET_VALUE], 0, 1) * 42" />
                     </Rectangle>
                 </PartDraw>
@@ -1089,7 +1071,7 @@
                 <Compare expression="has_text">
                 <PartText x="1" y="0" width="56" height="24">
                     <Text align="CENTER" maxLines="1" ellipsis="TRUE" isAutoSize="TRUE">
-                        <Font family="SYNC_TO_DEVICE" size="18" weight="NORMAL" slant="NORMAL" color="#fff4f1ea">
+                        <Font family="SYNC_TO_DEVICE" size="18" weight="NORMAL" slant="NORMAL" color="#ffe8f4ff">
                             <Template>%s<Parameter expression="[COMPLICATION.TEXT]" /></Template>
                         </Font>
                     </Text>
@@ -1098,7 +1080,7 @@
                 <Default>
                 <PartText x="1" y="0" width="56" height="24">
                     <Text align="CENTER" maxLines="1" ellipsis="TRUE" isAutoSize="TRUE">
-                        <Font family="SYNC_TO_DEVICE" size="18" weight="NORMAL" slant="NORMAL" color="#fff4f1ea">
+                        <Font family="SYNC_TO_DEVICE" size="18" weight="NORMAL" slant="NORMAL" color="#ffe8f4ff">
                             <Template>%s<Parameter expression="numberFormat(&quot;#&quot;, [COMPLICATION.RANGED_VALUE_VALUE])" /></Template>
                         </Font>
                     </Text>
@@ -1112,13 +1094,11 @@
                 <Compare expression="range_span">
                     <Group x="0" y="0" width="58" height="56" name="range_bar">
                 <PartDraw x="8" y="44" width="42" height="3">
-                    <Rectangle x="0" y="0" width="42" height="3">
-                        <Fill color="#ff3a3834" />
-                    </Rectangle>
+                    <Rectangle x="0" y="0" width="42" height="3"><Fill color="#ff1a2740" /></Rectangle>
                 </PartDraw>
                 <PartDraw x="8" y="44" width="42" height="3">
                     <Rectangle x="0" y="0" width="42" height="3">
-                        <Fill color="#ffe24b16" />
+                        <Fill color="#ffff4d9a" />
                         <Transform target="width" value="clamp(([COMPLICATION.RANGED_VALUE_VALUE] - [COMPLICATION.RANGED_VALUE_MIN]) / ([COMPLICATION.RANGED_VALUE_MAX] - [COMPLICATION.RANGED_VALUE_MIN]), 0, 1) * 42" />
                     </Rectangle>
                 </PartDraw>
@@ -1134,7 +1114,7 @@
                 <Compare expression="has_title">
                 <PartText x="1" y="2" width="56" height="12">
                     <Text align="CENTER" maxLines="1">
-                        <Font family="SYNC_TO_DEVICE" size="10" weight="NORMAL" slant="NORMAL" color="#ffc4c0b8">
+                        <Font family="SYNC_TO_DEVICE" size="10" weight="NORMAL" slant="NORMAL" color="#ff8ea0bd">
                             <Template>%s<Parameter expression="[COMPLICATION.TITLE]" /></Template>
                         </Font>
                     </Text>
@@ -1143,7 +1123,7 @@
             </Condition>
                 <PartText x="1" y="16" width="56" height="36">
                     <Text align="CENTER" maxLines="2" ellipsis="TRUE" isAutoSize="TRUE">
-                        <Font family="SYNC_TO_DEVICE" size="15" weight="NORMAL" slant="NORMAL" color="#fff4f1ea">
+                        <Font family="SYNC_TO_DEVICE" size="15" weight="NORMAL" slant="NORMAL" color="#ffe8f4ff">
                             <Template>%s<Parameter expression="[COMPLICATION.TEXT]" /></Template>
                         </Font>
                     </Text>
@@ -1157,7 +1137,7 @@
                 <Compare expression="has_title">
                 <PartText x="1" y="2" width="56" height="12">
                     <Text align="CENTER" maxLines="1">
-                        <Font family="SYNC_TO_DEVICE" size="10" weight="NORMAL" slant="NORMAL" color="#ffc4c0b8">
+                        <Font family="SYNC_TO_DEVICE" size="10" weight="NORMAL" slant="NORMAL" color="#ff8ea0bd">
                             <Template>%s<Parameter expression="[COMPLICATION.TITLE]" /></Template>
                         </Font>
                     </Text>
@@ -1166,14 +1146,14 @@
             </Condition>
                 <PartText x="1" y="14" width="56" height="40">
                     <Text align="CENTER" maxLines="3" ellipsis="TRUE">
-                        <Font family="SYNC_TO_DEVICE" size="12" weight="NORMAL" slant="NORMAL" color="#fff4f1ea">
+                        <Font family="SYNC_TO_DEVICE" size="12" weight="NORMAL" slant="NORMAL" color="#ffe8f4ff">
                             <Template>%s<Parameter expression="[COMPLICATION.TEXT]" /></Template>
                         </Font>
                     </Text>
                 </PartText>
         </Complication>
         <Complication type="MONOCHROMATIC_IMAGE">
-            <PartImage x="15" y="12" width="28" height="28" tintColor="#fff4f1ea">
+            <PartImage x="15" y="12" width="28" height="28" tintColor="#ffff4d9a">
                 <Image resource="[COMPLICATION.MONOCHROMATIC_IMAGE]" />
             </PartImage>
         </Complication>
@@ -1197,15 +1177,15 @@
         <Complication type="EMPTY">
             <Group x="0" y="0" width="58" height="56" name="slot_empty">
                 <ScreenReader stringId="reader_empty" />
-                <PartDraw x="15" y="27" width="28" height="4">
-                    <Line startX="1" startY="1" endX="27" endY="1">
-                        <Stroke color="#ff3a3834" thickness="2" cap="BUTT" />
+                <PartDraw x="12" y="27" width="34" height="4">
+                    <Line startX="1" startY="1" endX="33" endY="1">
+                        <Stroke color="#ffff4d9a" thickness="2" cap="ROUND" />
                     </Line>
                 </PartDraw>
             </Group>
         </Complication>
     </ComplicationSlot>
-    <ComplicationSlot slotId="50" displayName="slot_power_name" x="221" y="288" width="8" height="8" isCustomizable="FALSE" supportedTypes="RANGED_VALUE EMPTY">
+    <ComplicationSlot slotId="50" displayName="slot_power_name" x="348" y="52" width="8" height="8" isCustomizable="FALSE" supportedTypes="RANGED_VALUE EMPTY">
         <BoundingBox x="0" y="0" width="8" height="8" outlinePadding="1" />
         <DefaultProviderPolicy primaryProvider="com.bobbfwed.emberphase.health/com.bobbfwed.emberphase.health.watch.PowerSaveDataSource" primaryProviderType="RANGED_VALUE" defaultSystemProvider="EMPTY" defaultSystemProviderType="EMPTY" />
         <Variant mode="AMBIENT" target="alpha" value="0" duration="0.0" />
@@ -1220,5 +1200,5 @@
         </Complication>
         <Complication type="EMPTY" />
     </ComplicationSlot>
-</Scene>
+    </Scene>
 </WatchFace>

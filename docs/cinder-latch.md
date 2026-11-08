@@ -1,5 +1,9 @@
 # Cinder Latch
 
+Superseded by the Ionwell scene in `watchface/src/main/res/raw/watchface.xml`
+and [ionwell.md](ionwell.md). This note is the previous design. It is not the
+face that ships.
+
 | | |
 | --- | --- |
 | Author | TBD |

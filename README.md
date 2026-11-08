@@ -6,18 +6,17 @@ activity totals.
 
 The face is hand-written Watch Face Format 4. Its APK contains no executable
 code. Wear OS scales a circular 450-unit layout to the round display. The
-current scene is the Cinder Latch. Time is split hour and minute numerals
-with a notch between them. A horizontal staff marks the local day, and one
-vertical mark walks that staff from midnight to midnight. Weather, battery,
-and four complication slots sit around that instrument. Always-on mode keeps
-the numerals, the notch, the day staff, and the day mark.
+current scene is the Ionwell. Time sits in a dark well. A cyan-to-magenta arc
+walks the local day from midnight, and a short arc on the right is the battery.
+Weather and four complication slots use the same color set. Raising the watch
+fades the color scene in. Always-on mode keeps the numerals and one day mark.
 
 These pictures are the design fixture at 22:10 in 24-hour time, drawn from
 the scene. The interactive picture is the picker preview.
 
 | Interactive | Always-on |
 | :---: | :---: |
-| ![Cinder Latch interactive layout](docs/images/cinder-latch-interactive.png) | ![Cinder Latch always-on layout](docs/images/cinder-latch-ambient.png) |
+| ![Ionwell interactive layout](docs/images/ionwell-interactive.png) | ![Ionwell always-on layout](docs/images/ionwell-ambient.png) |
 
 ## What still exists
 
