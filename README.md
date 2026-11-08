@@ -12,6 +12,13 @@ vertical mark walks that staff from midnight to midnight. Weather, battery,
 and four complication slots sit around that instrument. Always-on mode keeps
 the numerals, the notch, the day staff, and the day mark.
 
+These pictures are the design fixture at 22:10 in 24-hour time, drawn from
+the scene. The interactive picture is the picker preview.
+
+| Interactive | Always-on |
+| :---: | :---: |
+| ![Cinder Latch interactive layout](docs/images/cinder-latch-interactive.png) | ![Cinder Latch always-on layout](docs/images/cinder-latch-ambient.png) |
+
 ## What still exists
 
 * Package `com.bobbfwed.emberphase` for the face, and
