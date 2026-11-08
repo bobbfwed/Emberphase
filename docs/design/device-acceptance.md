@@ -117,4 +117,8 @@ time-clearance rectangles are removed, so the line graphics remain continuous
 over the numbering in both the native face and generated previews. Ambient and
 low-battery visibility rules are unchanged. Schema, memory, signing,
 resource-only packaging, existing scene checks, browser checks, and the 10:08
-preview passed. Installation is pending the watch's wireless ADB reconnection.
+preview passed. After wireless debugging reconnected, version 1.0.1/code 40 was
+installed in place and activated successfully on the same verified Watch6 Classic.
+The native screenshot confirms uninterrupted fold lines above the time numerals.
+The updated picker preview is also included in the installed package. Evidence
+is retained locally in `artifacts/device-install/layering-1.0.1-face.png`.

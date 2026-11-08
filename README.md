@@ -75,7 +75,7 @@ IDs and signing certificates for paired-device Data Layer.
 See [validation results and commands](docs/design/implementation-validation.md)
 and [the pending device acceptance runbook](docs/design/device-acceptance.md).
 The local candidate handoff contains both APKs and a checksummed `candidate.json`
-under `artifacts/device-ready/`. Face version code 39 and companion 0.1.9 have
+under `artifacts/device-ready/`. Face 1.0.1/version code 40 and companion 0.1.9 have
 been loaded onto the watch. Display offload remains an open issue; longer battery
 testing and the rest of the physical acceptance matrix are still required.
 

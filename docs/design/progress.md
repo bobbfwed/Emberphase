@@ -10,7 +10,7 @@ smoke checks are recorded in device-acceptance.md; extended checks remain open.
 | 2. Complication docks | Complete | WFF schema, numeric/empty/type/title-switch tests, and visual check passed. Watch companion build, unit tests, and lint passed. |
 | 3. Ambient, power, editor | Complete | Schema and time/visibility tests passed. Browser ambient coverage: 3.085% sample, 3.525% outline stress, 4.590% thin-solid stress. Hardware results pending. |
 | 4. Build and previews | Complete | Native/Gradle APKs, schema, signature, resource-only, memory limits, lint, model/browser/resource checks, and 12 state previews passed. See implementation-validation.md. |
-| 5. Device readiness | Installed; extended acceptance open | Face/code 39 and watch companion 0.1.9 installed and activated; active/ambient screenshots, live Steps/MIN progress, no-data fallback verified. Offload/battery follow-up remains. |
+| 5. Device readiness | Installed; extended acceptance open | Face 1.0.1/code 40 and watch companion 0.1.9 installed and activated; fold-over-numerals layering verified in a native screenshot. Earlier active/ambient and live progress smoke checks passed. Offload/battery follow-up remains. |
 
 Stage 2 adds MIN/KCAL titles to the watch companion's existing GOAL_PROGRESS
 payloads (watch companion 0.1.9). Its consent, health reads, sync, expiry, and tap
