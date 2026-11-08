@@ -9,7 +9,7 @@ export const transform = (target,value) => element('Transform',{target,value});
 export const activeOnly = () => element('Variant',{mode:'AMBIENT',target:'alpha',value:0});
 // Expressions are build-time authored WFF, never provider-controlled source code.
 export function evaluate(expression,sources={}) {
-  const js=expression.replace(/\[([A-Z0-9_.]+)\]/g,(_,key)=>typeof sources[key]==='number'?String(sources[key]):JSON.stringify(sources[key]??0));
+  const js=expression.replace(/\[([A-Za-z0-9_.]+)\]/g,(_,key)=>typeof sources[key]==='number'?String(sources[key]):JSON.stringify(sources[key]??0));
   return Function('min','max','floor','round','abs',`"use strict"; return (${js});`)(Math.min,Math.max,Math.floor,Math.round,Math.abs);
 }
 export function line(name,a,b,color=colors.cyan,thickness=0.8) {

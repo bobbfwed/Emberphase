@@ -4,4 +4,17 @@
     <string name="dock_a">Dock A · steps by default</string>
     <string name="dock_b">Dock B · active minutes by default</string>
     <string name="dock_c">Dock C · active kcal by default</string>
+    <string name="accent">Accent</string>
+    <string name="accent_cyan">Ion cyan</string>
+    <string name="accent_white">Cool white</string>
+    <string name="accent_violet">Violet</string>
+    <string name="fold_setting">Day Fold · local clock-day progress</string>
+    <string name="signature_setting">PARALLAX signature</string>
+    <string name="time_format">Time format</string>
+    <string name="time_system">Follow device</string>
+    <string name="time_12">12 hour</string>
+    <string name="time_24">24 hour</string>
+    <string name="ambient_style">Always-on numerals</string>
+    <string name="ambient_outline">Outline</string>
+    <string name="ambient_solid">Thin solid</string>
 </resources>

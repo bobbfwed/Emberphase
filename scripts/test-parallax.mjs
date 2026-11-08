@@ -3,6 +3,7 @@ import fs from 'node:fs';
 import {dayProgress,docks,evaluate,fold,watchFace} from './lib/parallax-scene.mjs';
 import {progressExpressions,complicationDock} from './lib/parallax-docks.mjs';
 import {svg} from './lib/parallax-preview.mjs';
+import {use24,foldVisible} from './lib/parallax-settings.mjs';
 const walk=(node,visit)=>{if(typeof node==='string')return;visit(node);node.children.forEach(c=>walk(c,visit));};
 assert.equal(evaluate(dayProgress,{HOUR_0_23:0,MINUTE:0}),0);
 assert.equal(evaluate(dayProgress,{HOUR_0_23:12,MINUTE:0}),0.5);
@@ -48,5 +49,20 @@ const alternate=svg({docks:{101:{type:'SHORT_TEXT',TEXT:'18°',TITLE:'WEATHER'},
 assert.match(alternate,/>WEATHER</);assert.match(alternate,/>NEXT</);assert.match(alternate,/>BPM</);
 assert.doesNotMatch(alternate,/>MIN<|>KCAL<|>STEPS</);
 assert.doesNotMatch(svg({docks:{101:{type:'GOAL_PROGRESS',GOAL_PROGRESS_VALUE:NaN,GOAL_PROGRESS_TARGET_VALUE:0}}}),/>NaN<|>Infinity</);
+for(const [selection,device,expected] of [['system',true,true],['system',false,false],['12',true,false],['24',false,true]]) {
+  assert.equal(evaluate(use24,{'CONFIGURATION.time_format':selection,IS_24_HOUR_MODE:device}),expected);
+}
+assert.equal(evaluate(foldVisible,{'CONFIGURATION.fold':true,BATTERY_PERCENT:20}),false);
+assert.equal(evaluate(foldVisible,{'CONFIGURATION.fold':true,BATTERY_PERCENT:21}),true);
+assert.equal(evaluate(foldVisible,{'CONFIGURATION.fold':false,BATTERY_PERCENT:80}),false);
+const ambient=svg({},'AMBIENT');
+assert.doesNotMatch(ambient,/DAY |P A R A L L A X|<line|<path/);
+assert.match(ambient,/data-name="hour_ambient_24"/);
+assert.doesNotMatch(ambient,/data-name="hour_active/);
+assert.doesNotMatch(svg({BATTERY_PERCENT:20}),/DAY |fold_now/);
+for(const [hour,expected] of [[0,'12'],[12,'12'],[23,'11']]) {
+  const view=svg({HOUR_0_23:hour,'CONFIGURATION.time_format':'12'});
+  assert.match(view,new RegExp(`data-name="hour_active_12"[^>]*>${expected}<`));
+}
 assert.equal(fs.readFileSync(new URL('../watchface/src/main/res/raw/watchface.xml',import.meta.url),'utf8'),watchFace(),'Generated scene is stale');
 console.log('PASS: all 1440 fold positions, civil-day endpoints, dock geometry, minute cadence, and generated WFF consistency.');
