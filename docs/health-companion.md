@@ -23,6 +23,13 @@ complete scheduled interval, changed goals, permission revocation and midnight
 rollover on physical devices remains pending. Do not interpret editor previews
 as live health readings.
 
+Watch companion 0.1.9 lists the Apsis face (`com.bobbfwed.emberphase.apsis`) as
+an allowed client of its fixed providers, adds MIN and KCAL titles and an icon
+to goal data, and renames the tap provider to **Emberphase · Face tap**. It
+compiles and passes its unit tests and lint; it has not yet been installed on
+the physical watch. The statements above were observed with the earlier
+mechanical face and need repeating with Apsis.
+
 ## Requirements and SDK access
 
 Use an Android phone with Samsung Health 6.30.2 or newer, Google Play services,

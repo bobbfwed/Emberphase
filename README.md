@@ -49,7 +49,8 @@ More previews: [Solar](docs/previews/afternoon-solar.png),
 [Glacier](docs/previews/evening-glacier.png),
 [always-on](docs/previews/ambient.png) and
 [low battery](docs/previews/low-battery.png). These are drawings with sample
-data, not device screenshots. The [design document](docs/design.md) has the
+data, not device screenshots. There is also a
+[Wear OS 6 emulator capture](docs/previews/emulator-normal.png). The [design document](docs/design.md) has the
 geometry and an [interactive browser mockup](docs/design/apsis-mockup.html).
 
 ## Compatibility and current limitations

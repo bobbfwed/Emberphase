@@ -39,39 +39,36 @@ does not document native active-time or calorie sources. A Wear OS step count or
 goal must not be described as Samsung Health's phone-merged value without a
 device comparison. [WFF sources](https://developer.android.com/reference/wear-os/wff/common/attributes/source-type).
 
-Each activity inset accepts `GOAL_PROGRESS`, `RANGED_VALUE`, `SHORT_TEXT`, and
-`EMPTY` complications. The step inset prefers the verified Samsung Health Steps
-provider's `GOAL_PROGRESS` type, with the system `STEP_COUNT` provider's
-`RANGED_VALUE` type as a fallback. Existing selected sources/types can persist
-through updates; changing the default does not force them to change. The other
-two prefer the optional Emberphase Health companion's individual `GOAL_PROGRESS`
-providers, falling back to empty when unavailable. See [companion setup](health-companion.md).
+The Apsis face has four customizable rim slots. Each accepts `GOAL_PROGRESS`,
+`RANGED_VALUE`, `SHORT_TEXT`, and `EMPTY` complications. The lower-left slot
+prefers the verified Samsung Health Steps provider's `GOAL_PROGRESS` type, with
+the system `STEP_COUNT` provider as a fallback. The upper-left and lower-right
+slots prefer the optional Emberphase Health companion's active-minutes and
+active-calories `GOAL_PROGRESS` providers, falling back to empty when
+unavailable. The upper-right slot defaults to the system sunrise / sunset
+provider. Selected sources persist through updates; changing a default does not
+force them to change. See [companion setup](health-companion.md).
 
-* `GOAL_PROGRESS`: render the supplied numeric value and target; clamp only the
-  drawing to 0–100%, allowing the numeric total to exceed the target. Invalid or
-  zero targets have no fill and display no target.
+* `GOAL_PROGRESS`: render the supplied numeric value; fill the progress line to
+  value / target, clamped to 0–100%, so the numeric total can exceed the target.
+  Invalid or zero targets have no fill.
 * `RANGED_VALUE`: render supplied text (or its numeric value when text is empty)
-  and normalize the gauge using its minimum and maximum. The goal label remains
-  `—`, except for the explicit Samsung Health Steps compatibility option. That
-  option displays a positive range maximum when its minimum is zero; the watch's
-  range maximum was compared with its Samsung Health Steps goal. Disable it for
-  another steps provider whose range limit is not a personal goal. Minutes and
-  calorie targets never use this exception.
+  and fill the progress line using its minimum and maximum. A range maximum is
+  not presented as a personal goal.
 * `SHORT_TEXT`: display the provider's text. Do not parse it for numbers or infer
-  a goal. The gauge remains unfilled and the goal remains `—`.
-* Empty/unavailable: `—`, unfilled track, no fabricated zero or mockup sample.
+  a goal. No progress line is drawn.
+* Empty/unavailable: `—`, no fabricated zero or sample value.
 
+Each slot also shows the provider's title and monochromatic icon when supplied.
 [WFF complication fields](https://developer.android.com/reference/wear-os/wff/complication/complication).
-Each activity slot subscribes to one provider and renders its numeric total in
-a compact box. WFF 4 `Reference` exports share the calculated progress angle and
-numeric target with separate scene elements that draw the track and target.
-The selection boxes around the three activity values do not overlap, and they
-do not have to contain the tracks. Missing or text-only data uses reference
-defaults (214 degrees for an empty track and zero for an unavailable target).
-The empty export groups use their transformable angle attribute as a numeric
-carrier and draw no artwork. This avoids extra complication subscriptions.
+Each slot subscribes to one provider and draws everything inside its own arc
+bounds, because the runtime clips a slot's content to its bounding shape. On
+the tested runtime a `BoundingArc` band is measured inward from the given
+diameter, not centred on it.
 [Bounding areas and clipping](https://developer.android.com/reference/wear-os/wff/complication/bounding).
-See also [WFF references](https://developer.android.com/reference/wear-os/wff/common/reference/reference).
+The two fixed slots (tap trigger and power saving) carry one number each to the
+rest of the scene through a WFF 4 `Reference` on an empty group's angle.
+See [WFF references](https://developer.android.com/reference/wear-os/wff/common/reference/reference).
 There is no sharing between different providers, private Samsung API, guessed component name, background
 service, health permission request, or sensor polling in this APK.
 
@@ -87,22 +84,24 @@ minutes/calories and their goals. They are separate APKs; the face remains resou
 
 ## Weather
 
-The default left inset uses native WFF weather, available since WFF 2:
-`WEATHER.TEMPERATURE`, `WEATHER.DAY_TEMPERATURE_HIGH`, `WEATHER.CONDITION`,
-`WEATHER.CONDITION_NAME`, and `WEATHER.TEMPERATURE_UNIT`. These are system-fed,
-not a weather API polled by this face. All documented condition values 0–15 have
-icons, with an unknown fallback and night variants for clear/partly cloudy.
-`IS_AVAILABLE` gates access; `IS_ERROR` marks available-but-stale data. When
-unavailable, show dashes and an unknown icon. Actual weather availability on the
-Samsung firmware remains a device acceptance check.
+The core and the forecast hour marks use native WFF weather, available since
+WFF 2. These are system-fed, not a weather API polled by this face.
 
-The editor's **Left inset** setting switches to **Custom complication**. Then
-assign its source through the normal complication chooser. This avoids guessing
-Samsung Weather's service component. It renders provider text/title/icon for
-`SHORT_TEXT`, `LONG_TEXT`, and `RANGED_VALUE`, plus image types. Those generic
-fields do not promise a separately addressable daily high or condition enum;
-the face does not split or reinterpret a provider's formatted string. Native
-weather mode supplies the mockup's three weather fields together.
+* Core: `WEATHER.TEMPERATURE`, `WEATHER.DAY_TEMPERATURE_HIGH`,
+  `WEATHER.DAY_TEMPERATURE_LOW`, `WEATHER.CONDITION` and `WEATHER.IS_DAY`.
+  Temperatures are in the watch's unit. All documented condition values 1–15
+  have a vector glyph, with a night variant for clear skies; an unknown
+  condition draws none. `IS_AVAILABLE` gates access and `IS_ERROR` marks
+  available-but-stale data with `!`. When unavailable the core shows dashes.
+* Forecast hour marks and Foresight: `WEATHER.HOURS.1` to `WEATHER.HOURS.8`
+  fields `IS_AVAILABLE`, `TEMPERATURE`, `CONDITION` and `CONDITION_NAME`. The
+  format documents hourly data for up to eight hours and no per-hour chance of
+  precipitation, so the precipitation dot is derived from the condition. The
+  meaning of index 0 is not documented, so the face starts at index 1. Bar
+  length is the hour's temperature between today's low and high, clamped.
+
+Hourly forecast availability on the Samsung firmware remains a device
+acceptance check. An hour without data shows only its plain tick.
 
 Sources: [WFF weather availability and staleness](https://developer.android.com/training/wearables/wff/weather),
 [weather source fields](https://developer.android.com/reference/wear-os/wff/common/attributes/source-type),
