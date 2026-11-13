@@ -1,0 +1,304 @@
+<title>Apsis Watch Face</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Oxanium:wght@400;500;600;700&display=swap">
+<style>
+/* Layout: the live dial and its controls sit beside the reading guide; the spec follows in a single column of plain sections. */
+:root {
+  --bg: #0d0e14; --panel: #151722; --fg: #e9ebf5; --muted: #9a9fb6; --line: #272b3c; --accent: #9d8cff; --ok: #6fdcae;
+  --display: "Oxanium", "Segoe UI", system-ui, sans-serif;
+  --body: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  color-scheme: dark;
+}
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme="dark"]) { --bg: #f2f2f8; --panel: #ffffff; --fg: #171923; --muted: #5a5f77; --line: #d8dae7; --accent: #5237e6; --ok: #177a55; color-scheme: light }
+}
+:root[data-theme="light"] { --bg: #f2f2f8; --panel: #ffffff; --fg: #171923; --muted: #5a5f77; --line: #d8dae7; --accent: #5237e6; --ok: #177a55; color-scheme: light }
+
+body { background: var(--bg); color: var(--fg); font-family: var(--body); font-size: 15px; line-height: 1.55; }
+.wrap { max-width: 1040px; margin: 0 auto; padding-block: 28px 56px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); display: flex; flex-direction: column; gap: 40px; }
+h1, h2, h3 { font-family: var(--display); text-wrap: balance; margin: 0; line-height: 1.15; }
+h1 { font-size: 34px; font-weight: 700; letter-spacing: 0.14em; }
+h2 { font-size: 21px; font-weight: 600; }
+h3 { font-size: 15px; font-weight: 600; letter-spacing: 0.04em; }
+p { margin: 0; max-width: 68ch; }
+.lede { color: var(--muted); font-size: 16px; }
+.eyebrow { font-family: var(--display); font-size: 12px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--accent); }
+header { display: flex; flex-direction: column; gap: 8px; }
+
+.stage { display: grid; grid-template-columns: minmax(0, 440px) minmax(0, 1fr); gap: 36px; align-items: start; }
+@media (max-width: 800px) { .stage { grid-template-columns: minmax(0, 1fr); } }
+.dialcol { display: flex; flex-direction: column; gap: 16px; min-width: 0; }
+.bezel { width: 100%; max-width: 440px; aspect-ratio: 1; margin: 0 auto; border-radius: 50%; padding: 3.2%; background: linear-gradient(145deg, #3a3d4a, #14151b 55%, #2b2d38); box-shadow: 0 18px 40px rgba(0,0,0,.35); }
+.bezel svg { display: block; width: 100%; height: 100%; border-radius: 50%; cursor: pointer; }
+.controls { display: flex; flex-direction: column; gap: 12px; background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 14px; }
+.row { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+.row label { color: var(--muted); font-size: 13px; }
+.row output { font-family: var(--display); font-variant-numeric: tabular-nums; min-width: 78px; }
+input[type=range] { flex: 1 1 140px; min-width: 0; accent-color: var(--accent); }
+button, select { font: inherit; font-size: 13px; color: var(--fg); background: transparent; border: 1px solid var(--line); border-radius: 6px; padding: 6px 10px; cursor: pointer; }
+button:hover, select:hover { border-color: var(--accent); }
+button:focus-visible, select:focus-visible, input:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+button[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: var(--bg); }
+.note { color: var(--muted); font-size: 13px; }
+
+.guide { display: flex; flex-direction: column; gap: 18px; min-width: 0; }
+.guide ol { margin: 0; padding-left: 20px; display: flex; flex-direction: column; gap: 12px; }
+.guide li::marker { font-family: var(--display); color: var(--accent); }
+section { display: flex; flex-direction: column; gap: 14px; }
+.cols { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 22px 32px; }
+.cols > div { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+.tablewrap { overflow-x: auto; }
+table { border-collapse: collapse; width: 100%; min-width: 560px; font-size: 14px; }
+th, td { text-align: left; padding: 8px 12px 8px 0; border-bottom: 1px solid var(--line); vertical-align: top; }
+th { font-family: var(--display); font-weight: 500; font-size: 12px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); }
+code { font-family: ui-monospace, "Cascadia Code", Consolas, monospace; font-size: 0.92em; }
+.plan { margin: 0; padding-left: 22px; display: flex; flex-direction: column; gap: 10px; max-width: 72ch; }
+.plan li::marker { font-family: var(--display); color: var(--accent); }
+ul.plain { margin: 0; padding-left: 20px; display: flex; flex-direction: column; gap: 8px; max-width: 72ch; }
+b { font-weight: 600; }
+</style>
+
+<div class="wrap">
+  <header>
+    <span class="eyebrow">Watch face design proposal · Wear OS 6 · WFF 4</span>
+    <h1>APSIS</h1>
+    <p class="lede">A watch with no hands. A ring of minutes orbits off-centre inside a fixed circle and touches it at exactly one point. That point is the hour.</p>
+  </header>
+
+  <div class="stage">
+    <div class="dialcol">
+      <div class="bezel"><svg id="face" viewBox="0 0 450 450" role="img" aria-label="Interactive mockup of the Apsis watch face"></svg></div>
+      <div class="controls">
+        <div class="row">
+          <label for="t">Time</label>
+          <input id="t" type="range" min="0" max="1439" step="1" value="0">
+          <output id="tout" for="t">--:--</output>
+          <button id="live" type="button" aria-pressed="true">Live</button>
+        </div>
+        <div class="row">
+          <button id="fore" type="button">Run Foresight</button>
+          <button id="aod" type="button" aria-pressed="false">Always-on</button>
+          <button id="slots" type="button" aria-pressed="false">Show slots</button>
+        </div>
+        <div class="row">
+          <label for="theme">Colour</label>
+          <select id="theme"><option value="ion">Ion</option><option value="solar">Solar</option><option value="glacier">Glacier</option></select>
+          <label for="core">Core</label>
+          <select id="core"><option value="wx">Weather</option><option value="time">Digital time</option></select>
+        </div>
+        <p class="note">Browser mockup with sample weather and activity data. Drag the time to watch the ring travel through a day. Tap the centre of the dial to run Foresight.</p>
+      </div>
+    </div>
+
+    <div class="guide">
+      <h2>How to read it</h2>
+      <ol>
+        <li><b>Hour: where the circles touch.</b> The white contact mark slides around the fixed circle once every 12 hours. The glowing crescent is always fattest directly opposite, so the whole dial leans toward the hour.</li>
+        <li><b>Minute: the satellite on the ring.</b> It circles the travelling ring once an hour, drags a short trail, and carries its own minute number so no counting is needed. The ring's ticks travel with it.</li>
+        <li><b>Seconds: the moonlet.</b> A small dot orbits the satellite once a minute. It is optional and rests on low battery.</li>
+        <li><b>The next 8 hours: the corona.</b> Each bar stands at the hour it describes. Height is temperature, colour runs cold to warm, a dot above means rain or snow. Bars fade the further ahead they are.</li>
+        <li><b>The core.</b> Weather now, the date, and a battery ring. It can show digital time or any complication instead.</li>
+        <li><b>The rim.</b> Four curved slots for whatever data the wearer wants, each with a progress line when the source has a goal.</li>
+      </ol>
+      <p class="note">The composition is never the same twice in a day: the ring swings around the core like a precessing orbit, so 3 o'clock and 9 o'clock look like different dials.</p>
+    </div>
+  </div>
+
+  <section>
+    <h2>What is new here</h2>
+    <div class="cols">
+      <div><h3>Tangent time</h3><p>Two circles and a point of contact replace the hands. The name comes from orbital mechanics: an apsis is the extreme point of an orbit, which is exactly where the minute ring meets the hour circle.</p></div>
+      <div><h3>Hour marks that forecast</h3><p>The hour markers are the weather for the hours they mark. Look at where 5 o'clock is and see what 5 o'clock will be like. Without forecast data they fall back to plain ticks.</p></div>
+      <div><h3>Foresight</h3><p>Tap the core and the dial fast-forwards: the contact point runs ahead through the next 8 hours while the core reads out each hour's temperature and conditions, then it glides back to now. Six seconds, on demand only.</p></div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Data on the dial</h2>
+    <div class="tablewrap"><table>
+      <thead><tr><th>Element</th><th>Shows</th><th>Source</th><th>Wearer can change</th></tr></thead>
+      <tbody>
+        <tr><td>Contact mark, ring, satellite</td><td>Hour, minute, minute number</td><td>Built in</td><td>Colour theme</td></tr>
+        <tr><td>Moonlet</td><td>Seconds</td><td>Built in</td><td>On / off</td></tr>
+        <tr><td>Corona</td><td>8-hour temperature and conditions</td><td>System weather</td><td>On / off</td></tr>
+        <tr><td>Core</td><td>Temperature, high / low, conditions, date</td><td>System weather, calendar</td><td>Weather, digital time, or any complication</td></tr>
+        <tr><td>Core ring</td><td>Battery, amber at 20%, red at 10%</td><td>Built in</td><td>No</td></tr>
+        <tr><td>Rim, upper right</td><td>Sunrise / sunset by default</td><td>Complication</td><td>Any source</td></tr>
+        <tr><td>Rim, lower right</td><td>Activity calories by default</td><td>Complication (companion)</td><td>Any source</td></tr>
+        <tr><td>Rim, lower left</td><td>Steps by default</td><td>Complication (Samsung Health)</td><td>Any source</td></tr>
+        <tr><td>Rim, upper left</td><td>Active minutes by default</td><td>Complication (companion)</td><td>Any source</td></tr>
+        <tr><td>Core tap</td><td>Foresight</td><td>Companion tap trigger</td><td>No</td></tr>
+      </tbody>
+    </table></div>
+  </section>
+
+  <section>
+    <h2>Always-on and power</h2>
+    <ul class="plain">
+      <li>Always-on keeps only the two circles as hairlines, the contact mark, the satellite with its minute number, and the date. The crescent glow, corona, rim and moonlet are off, so very few pixels are lit.</li>
+      <li>Everything is drawn as vectors that rotate. Nothing animates continuously: the dial changes once a minute, plus the moonlet once a second when it is on.</li>
+      <li>The moonlet hides at 15% battery and in power saving. Foresight is disabled at 15%.</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>Build plan</h2>
+    <ol class="plan">
+      <li><b>Scaffold.</b> New face name and application ID, bundled Oxanium font, new strings, and an updated build script. Add the new ID to the companion's allowed watch faces.</li>
+      <li><b>Time core.</b> Fixed circle, crescent, travelling ring, contact mark, satellite, trail, minute number, moonlet. Validate and install on the watch to confirm legibility before anything else.</li>
+      <li><b>Intrinsic data.</b> Core weather and date, battery ring, corona with its fallback ticks.</li>
+      <li><b>Complications.</b> Four rim slots and the core slot, each handling goal, range, text and empty data.</li>
+      <li><b>Foresight.</b> Wire the companion tap trigger to the fast-forward and the hourly readout.</li>
+      <li><b>Always-on, themes, power rules.</b> Three colour themes, ambient scene, battery and power-saving cutoffs.</li>
+      <li><b>Checks and documents.</b> Expression and geometry tests, validator and memory checks, picker preview, README and data docs, device test on the Watch6 Classic.</li>
+    </ol>
+  </section>
+
+  <section>
+    <h2>Open risks to settle on the watch</h2>
+    <ul class="plain">
+      <li><b>Hourly forecast availability.</b> The format documents up to 8 hours, but only current weather has been seen on the Watch6 so far. If hourly data is missing the corona shows ticks and Foresight reads only the current conditions.</li>
+      <li><b>Minute legibility.</b> Reading an angle on an off-centre ring is unfamiliar. The minute number on the satellite is the safeguard, and digital time in the core is the fallback.</li>
+      <li><b>Curved slots in the Samsung editor.</b> Arc-shaped tap targets and curved text need checking in the on-watch editor.</li>
+    </ul>
+  </section>
+</div>
+
+<script>
+(function () {
+  var NS = 'http://www.w3.org/2000/svg', C = 225, RF = 162, RM = 130, D = RF - RM;
+  var svg = document.getElementById('face');
+  function el(n, a, p) { var e = document.createElementNS(NS, n); for (var k in a) e.setAttribute(k, a[k]); (p || svg).appendChild(e); return e; }
+  function rad(a) { return a * Math.PI / 180; }
+  function pt(r, a, cx, cy) { return [(cx == null ? C : cx) + r * Math.sin(rad(a)), (cy == null ? C : cy) - r * Math.cos(rad(a))]; }
+  function arc(r, a0, a1, cx, cy) { var p = pt(r, a0, cx, cy), q = pt(r, a1, cx, cy), big = Math.abs(a1 - a0) > 180 ? 1 : 0, sw = a1 > a0 ? 1 : 0; return 'M' + p[0].toFixed(2) + ' ' + p[1].toFixed(2) + 'A' + r + ' ' + r + ' 0 ' + big + ' ' + sw + ' ' + q[0].toFixed(2) + ' ' + q[1].toFixed(2); }
+  function smooth(x) { x = Math.max(0, Math.min(1, x)); return x * x * (3 - 2 * x); }
+  function mix(a, b, t) { return a.map(function (v, i) { return Math.round(v + (b[i] - v) * t); }); }
+  function tempColor(t) { var c = t < .5 ? mix([86, 168, 255], [236, 240, 255], t * 2) : mix([236, 240, 255], [255, 170, 60], (t - .5) * 2); return 'rgb(' + c.join(',') + ')'; }
+
+  var THEMES = { ion: ['#6a4dff', '#22c3ff', '#d9ff43'], solar: ['#ff4d2e', '#ffb84a', '#ffffff'], glacier: ['#12d6b0', '#8cf2ff', '#ff6b8b'] };
+  var WX = { temp: 64, hi: 68, lo: 51, hours: [63, 65, 66, 64, 61, 58, 56, 55], cond: [14, 14, 2, 12, 6, 6, 2, 1] };
+  var CN = { 1: 'CLEAR', 2: 'CLOUDY', 6: 'RAIN', 12: 'LIGHT RAIN', 14: 'PARTLY CLOUDY' };
+  var RIM = [
+    { a: 45, label: 'SUNSET', value: '4:52', p: null },
+    { a: 135, label: 'KCAL', value: '312', p: .69 },
+    { a: 225, label: 'STEPS', value: '6,412', p: .8 },
+    { a: 315, label: 'MIN', value: '38', p: .63 }
+  ];
+  var FONT = 'Oxanium, "Segoe UI", sans-serif';
+
+  var defs = el('defs', {});
+  var lg = el('linearGradient', { id: 'lune', gradientUnits: 'userSpaceOnUse', x1: C, y1: C - RF, x2: C, y2: C + RF }, defs);
+  var s0 = el('stop', { offset: 0, 'stop-opacity': .04 }, lg), s1 = el('stop', { offset: .55, 'stop-opacity': .42 }, lg), s2 = el('stop', { offset: 1, 'stop-opacity': .95 }, lg);
+  var gl = el('radialGradient', { id: 'glow' }, defs);
+  var g0 = el('stop', { offset: 0, 'stop-opacity': .55 }, gl), g1 = el('stop', { offset: 1, 'stop-opacity': 0 }, gl);
+
+  el('rect', { width: 450, height: 450, fill: '#000' });
+
+  // Crescent and contact mark turn with the hour.
+  var hourG = el('g', {});
+  var lune = el('path', { d: 'M' + C + ' ' + (C - RF) + 'a' + RF + ' ' + RF + ' 0 1 0 .01 0zM' + C + ' ' + (C - RF) + 'a' + RM + ' ' + RM + ' 0 1 0 .01 0z', 'fill-rule': 'evenodd', fill: 'url(#lune)' }, hourG);
+  el('circle', { cx: C, cy: C, r: RF, fill: 'none', stroke: '#8e93ad', 'stroke-width': 1, opacity: .7 });
+  for (var h = 0; h < 12; h++) { var a = pt(164, h * 30), b = pt(168, h * 30); el('line', { x1: a[0], y1: a[1], x2: b[0], y2: b[1], stroke: '#7b8099', 'stroke-width': 1.5, class: 'act' }); }
+
+  // Corona: eight forecast bars, placed relative to the current hour.
+  var coronaG = el('g', { class: 'act' }), bars = [];
+  WX.hours.forEach(function (t, i) {
+    var k = (t - WX.lo) / (WX.hi - WX.lo), len = 6 + 16 * Math.max(0, Math.min(1, k)), ang = (i + 1) * 30;
+    var p = pt(171, ang), q = pt(171 + len, ang), g = el('g', { opacity: 1 - i * .085 }, coronaG);
+    el('line', { x1: p[0], y1: p[1], x2: q[0], y2: q[1], stroke: tempColor(Math.max(0, Math.min(1, k))), 'stroke-width': 5, 'stroke-linecap': 'round' }, g);
+    if (WX.cond[i] == 6 || WX.cond[i] == 12) { var d = pt(171 + len + 6.5, ang); el('circle', { cx: d[0], cy: d[1], r: 2, fill: '#4fd8ff' }, g); }
+    bars.push(g);
+  });
+
+  // Cardinal numerals and rim slots.
+  [['12', 0], ['3', 90], ['6', 180], ['9', 270]].forEach(function (n) { var p = pt(207, n[1]); el('text', { x: p[0], y: p[1] + 5.5, 'text-anchor': 'middle', 'font-family': FONT, 'font-size': 16, 'font-weight': 500, fill: '#7b8099', class: 'act' }).textContent = n[0]; });
+  var slotG = el('g', { opacity: 0 });
+  RIM.forEach(function (s, i) {
+    var top = s.a < 90 || s.a > 270, g = el('g', { class: 'act' });
+    el('path', { id: 'rp' + i, d: top ? arc(201, s.a - 30, s.a + 30) : arc(213, s.a + 30, s.a - 30), fill: 'none' }, defs);
+    var t = el('text', { 'font-family': FONT, 'font-size': 14.5, 'letter-spacing': 1, fill: '#e8ebf7' }, g);
+    var tp = el('textPath', { href: '#rp' + i, startOffset: '50%', 'text-anchor': 'middle' }, t);
+    el('tspan', { fill: '#8187a3' }, tp).textContent = s.label + '  ';
+    el('tspan', { 'font-weight': 600 }, tp).textContent = s.value;
+    if (s.p != null) {
+      el('path', { d: arc(219.5, s.a - 26, s.a + 26), fill: 'none', stroke: '#2a2e40', 'stroke-width': 2.2, 'stroke-linecap': 'round' }, g);
+      el('path', { d: arc(219.5, s.a - 26, s.a - 26 + 52 * s.p), fill: 'none', stroke: '#e8ebf7', 'stroke-width': 2.2, 'stroke-linecap': 'round' }, g);
+    }
+    el('path', { d: arc(209, s.a - 29, s.a + 29), fill: 'none', stroke: '#ff5fa2', 'stroke-width': 24, opacity: .22 }, slotG);
+    el('path', { d: arc(209, s.a - 29, s.a + 29), fill: 'none', stroke: '#ff5fa2', 'stroke-width': 1, 'stroke-dasharray': '3 3', opacity: .9 }, slotG);
+  });
+  el('circle', { cx: C, cy: C, r: 54, fill: '#ff5fa2', 'fill-opacity': .18, stroke: '#ff5fa2', 'stroke-dasharray': '3 3' }, slotG);
+
+  // Travelling minute ring.
+  var ringG = el('g', {});
+  var ringC = el('circle', { cx: 0, cy: 0, r: RM, fill: 'none', stroke: '#cfd3e6', 'stroke-width': 1.2 }, ringG);
+  for (var m = 0; m < 60; m++) { var five = m % 5 == 0, q4 = m % 15 == 0, p1 = pt(RM - (q4 ? 15 : five ? 11 : 6), m * 6, 0, 0), p2 = pt(RM - 1, m * 6, 0, 0); el('line', { x1: p1[0], y1: p1[1], x2: p2[0], y2: p2[1], stroke: five ? '#cfd3e6' : '#5d6279', 'stroke-width': q4 ? 2.2 : 1.1, class: five ? '' : 'act' }, ringG); }
+  var satG = el('g', {}, ringG), trail = [];
+  for (var i = 0; i < 14; i++) trail.push(el('path', { d: arc(RM, -70 + i * 5, -64.5 + i * 5, 0, 0), fill: 'none', 'stroke-width': 4, opacity: (i + 1) / 14 * .9, class: 'act' }, satG));
+  var halo = el('circle', { cx: 0, cy: -RM, r: 17, fill: 'url(#glow)', class: 'act' }, satG);
+  var bead = el('circle', { cx: 0, cy: -RM, r: 6.5 }, satG);
+  var tag = el('text', { 'text-anchor': 'middle', 'font-family': FONT, 'font-size': 17, 'font-weight': 700 }, ringG);
+  var moon = el('circle', { r: 2.3, fill: '#fff', class: 'act' }, ringG);
+
+  var kiss = el('path', { d: arc(RF, -4.5, 4.5), fill: 'none', stroke: '#fff', 'stroke-width': 6, 'stroke-linecap': 'round' }, hourG);
+  svg.appendChild(hourG);
+
+  // Core.
+  var coreG = el('g', {});
+  el('circle', { cx: C, cy: C, r: 60, fill: 'none', stroke: '#23273a', 'stroke-width': 2.4, class: 'act' }, coreG);
+  el('path', { d: arc(60, 0, 360 * .84), fill: 'none', stroke: '#e8ebf7', 'stroke-width': 2.4, 'stroke-linecap': 'round', class: 'act' }, coreG);
+  function ctext(y, size, w, fill, cls) { return el('text', { x: C, y: y, 'text-anchor': 'middle', 'font-family': FONT, 'font-size': size, 'font-weight': w, fill: fill, 'letter-spacing': size < 20 ? 1.2 : 0, class: cls || '' }, coreG); }
+  var l1 = ctext(197, 13, 500, '#9aa0bb'), big = ctext(241, 44, 600, '#f3f5ff', 'act'), l3 = ctext(260, 11.5, 500, '#9aa0bb', 'act');
+  svg.appendChild(slotG);
+
+  var state = { live: true, mins: 0, sec: 0, aod: false, core: 'wx', fore: 0 };
+  function applyTheme(n) { var t = THEMES[n]; s0.setAttribute('stop-color', t[1]); s1.setAttribute('stop-color', t[0]); s2.setAttribute('stop-color', t[1]); g0.setAttribute('stop-color', t[2]); g1.setAttribute('stop-color', t[2]); bead.setAttribute('fill', t[2]); tag.setAttribute('fill', t[2]); trail.forEach(function (p) { p.setAttribute('stroke', t[2]); }); }
+  function hourLabel(h24) { var h = ((h24 % 24) + 24) % 24; return (h % 12 || 12) + (h < 12 ? ' AM' : ' PM'); }
+  var DAYS = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
+
+  function render() {
+    var now = new Date(), mins = state.live ? now.getHours() * 60 + now.getMinutes() : state.mins, sec = state.live ? now.getSeconds() : 0;
+    var H = Math.floor(mins / 60), M = mins % 60, off = 0, p = state.fore;
+    if (p > 0) off = 8 * smooth(p / .75) * (1 - smooth((p - .8) / .2));
+    var ha = (H % 12) * 30 + M * .5 + off * 30, ma = M * 6 + sec * .1;
+    hourG.setAttribute('transform', 'rotate(' + ha + ' ' + C + ' ' + C + ')');
+    coronaG.setAttribute('transform', 'rotate(' + (H % 12) * 30 + ' ' + C + ' ' + C + ')');
+    var rc = pt(D, ha);
+    ringG.setAttribute('transform', 'translate(' + rc[0] + ' ' + rc[1] + ')');
+    satG.setAttribute('transform', 'rotate(' + ma + ')');
+    satG.setAttribute('opacity', 1 - Math.min(1, off) * .8);
+    var tp = pt(RM - 26, ma, 0, 0); tag.setAttribute('x', tp[0]); tag.setAttribute('y', tp[1] + 6); tag.textContent = (M < 10 ? '0' : '') + M; tag.setAttribute('opacity', 1 - Math.min(1, off));
+    var sp = pt(RM, ma, 0, 0), mp = pt(11, sec * 6, sp[0], sp[1]); moon.setAttribute('cx', mp[0]); moon.setAttribute('cy', mp[1]); moon.setAttribute('opacity', off > 0 ? 0 : 1);
+    var idx = Math.round(off);
+    bars.forEach(function (g, i) { g.setAttribute('opacity', idx > 0 ? (i + 1 == idx ? 1 : .25) : 1 - i * .085); });
+    var d = state.live ? now : new Date();
+    l1.textContent = DAYS[d.getDay()] + ' ' + d.getDate();
+    if (idx > 0 && !state.aod) { l1.textContent = '+' + idx + ' H · ' + hourLabel(H + idx); big.textContent = WX.hours[idx - 1] + '°'; l3.textContent = CN[WX.cond[idx - 1]]; }
+    else if (state.core == 'time') { big.textContent = (H % 12 || 12) + ':' + (M < 10 ? '0' : '') + M; l3.textContent = H < 12 ? 'AM' : 'PM'; }
+    else { big.textContent = WX.temp + '°'; l3.textContent = 'H ' + WX.hi + ' · L ' + WX.lo; }
+    lune.setAttribute('fill', state.aod ? 'none' : 'url(#lune)');
+    ringC.setAttribute('opacity', state.aod ? .55 : 1);
+    svg.querySelectorAll('.act').forEach(function (e) { e.style.display = state.aod ? 'none' : ''; });
+    document.getElementById('tout').textContent = (H % 12 || 12) + ':' + (M < 10 ? '0' : '') + M + (H < 12 ? ' AM' : ' PM');
+    if (state.live) document.getElementById('t').value = mins;
+  }
+
+  var foreStart = 0;
+  function runFore() { if (state.fore > 0 || state.aod) return; foreStart = performance.now(); requestAnimationFrame(step); }
+  function step(ts) { var p = (ts - foreStart) / 6000; if (p >= 1) { state.fore = 0; render(); return; } state.fore = Math.max(p, .0001); render(); requestAnimationFrame(step); }
+  function press(b, v) { b.setAttribute('aria-pressed', v ? 'true' : 'false'); }
+
+  document.getElementById('t').addEventListener('input', function (e) { state.live = false; state.mins = +e.target.value; press(document.getElementById('live'), false); render(); });
+  document.getElementById('live').addEventListener('click', function (e) { state.live = true; press(e.currentTarget, true); render(); });
+  document.getElementById('aod').addEventListener('click', function (e) { state.aod = !state.aod; press(e.currentTarget, state.aod); render(); });
+  document.getElementById('slots').addEventListener('click', function (e) { var on = slotG.getAttribute('opacity') == '0'; slotG.setAttribute('opacity', on ? 1 : 0); press(e.currentTarget, on); });
+  document.getElementById('theme').addEventListener('change', function (e) { applyTheme(e.target.value); });
+  document.getElementById('core').addEventListener('change', function (e) { state.core = e.target.value; render(); });
+  document.getElementById('fore').addEventListener('click', runFore);
+  svg.addEventListener('click', runFore);
+
+  applyTheme('ion'); render();
+  setInterval(function () { if (state.live && state.fore == 0) render(); }, 1000);
+})();
+</script>
