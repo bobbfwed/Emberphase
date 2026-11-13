@@ -11,16 +11,16 @@
             <intent-filter><action android:name="android.support.wearable.complications.ACTION_COMPLICATION_UPDATE_REQUEST" /></intent-filter>
             <meta-data android:name="android.support.wearable.complications.SUPPORTED_TYPES" android:value="RANGED_VALUE" />
             <meta-data android:name="androidx.wear.watchface.complications.datasource.SAFE_WATCH_FACE_SUPPORTED_TYPES" android:value="RANGED_VALUE" />
-            <meta-data android:name="android.support.wearable.complications.SAFE_WATCH_FACES" android:value="com.bobbfwed.emberphase,com.bobbfwed.emberphase.mechanical" />
+            <meta-data android:name="android.support.wearable.complications.SAFE_WATCH_FACES" android:value="com.bobbfwed.emberphase,com.bobbfwed.emberphase.mechanical,com.bobbfwed.emberphase.apsis" />
             <meta-data android:name="android.support.wearable.complications.UPDATE_PERIOD_SECONDS" android:value="0" />
         </service>
         <service android:name="com.bobbfwed.emberphase.health.watch.SweepDataSource"
-            android:label="Emberphase · Mechanical sweep" android:icon="@drawable/ic_emberphase_health"
+            android:label="Emberphase · Face tap" android:icon="@drawable/ic_emberphase_health"
             android:exported="true" android:permission="com.google.android.wearable.permission.BIND_COMPLICATION_PROVIDER">
             <intent-filter><action android:name="android.support.wearable.complications.ACTION_COMPLICATION_UPDATE_REQUEST" /></intent-filter>
             <meta-data android:name="android.support.wearable.complications.SUPPORTED_TYPES" android:value="RANGED_VALUE" />
             <meta-data android:name="androidx.wear.watchface.complications.datasource.SAFE_WATCH_FACE_SUPPORTED_TYPES" android:value="RANGED_VALUE" />
-            <meta-data android:name="android.support.wearable.complications.SAFE_WATCH_FACES" android:value="com.bobbfwed.emberphase,com.bobbfwed.emberphase.mechanical" />
+            <meta-data android:name="android.support.wearable.complications.SAFE_WATCH_FACES" android:value="com.bobbfwed.emberphase,com.bobbfwed.emberphase.mechanical,com.bobbfwed.emberphase.apsis" />
             <meta-data android:name="android.support.wearable.complications.UPDATE_PERIOD_SECONDS" android:value="0" />
         </service>
         <activity android:name="com.bobbfwed.emberphase.health.watch.HealthActivity" android:exported="true" android:taskAffinity="">
@@ -41,7 +41,7 @@
             <intent-filter><action android:name="android.support.wearable.complications.ACTION_COMPLICATION_UPDATE_REQUEST" /></intent-filter>
             <meta-data android:name="android.support.wearable.complications.SUPPORTED_TYPES" android:value="GOAL_PROGRESS,SHORT_TEXT" />
             <meta-data android:name="androidx.wear.watchface.complications.datasource.SAFE_WATCH_FACE_SUPPORTED_TYPES" android:value="GOAL_PROGRESS,SHORT_TEXT" />
-            <meta-data android:name="android.support.wearable.complications.SAFE_WATCH_FACES" android:value="com.bobbfwed.emberphase,com.bobbfwed.emberphase.mechanical" />
+            <meta-data android:name="android.support.wearable.complications.SAFE_WATCH_FACES" android:value="com.bobbfwed.emberphase,com.bobbfwed.emberphase.mechanical,com.bobbfwed.emberphase.apsis" />
             <meta-data android:name="android.support.wearable.complications.UPDATE_PERIOD_SECONDS" android:value="3600" />
         </service>
         <service android:name="com.bobbfwed.emberphase.health.watch.CaloriesDataSource"
@@ -50,7 +50,7 @@
             <intent-filter><action android:name="android.support.wearable.complications.ACTION_COMPLICATION_UPDATE_REQUEST" /></intent-filter>
             <meta-data android:name="android.support.wearable.complications.SUPPORTED_TYPES" android:value="GOAL_PROGRESS,SHORT_TEXT" />
             <meta-data android:name="androidx.wear.watchface.complications.datasource.SAFE_WATCH_FACE_SUPPORTED_TYPES" android:value="GOAL_PROGRESS,SHORT_TEXT" />
-            <meta-data android:name="android.support.wearable.complications.SAFE_WATCH_FACES" android:value="com.bobbfwed.emberphase,com.bobbfwed.emberphase.mechanical" />
+            <meta-data android:name="android.support.wearable.complications.SAFE_WATCH_FACES" android:value="com.bobbfwed.emberphase,com.bobbfwed.emberphase.mechanical,com.bobbfwed.emberphase.apsis" />
             <meta-data android:name="android.support.wearable.complications.UPDATE_PERIOD_SECONDS" android:value="3600" />
         </service>
     </application>

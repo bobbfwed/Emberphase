@@ -7,14 +7,14 @@ import androidx.wear.watchface.complications.datasource.*;
 import java.time.Instant;
 import java.util.List;
 
-/** Center-hub tap control. Publishes one timestamp, not animation frames. */
+/** Face tap control. Publishes one timestamp, not animation frames. */
 public final class SweepDataSource extends ComplicationDataSourceService {
     private RangedValueComplicationData data(float value) {
         PendingIntent tap = PendingIntent.getBroadcast(this, 1, new Intent(this, SweepReceiver.class),
                 PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
         return new RangedValueComplicationData.Builder(value, 0, SweepTiming.RANGE_MAX,
-                new PlainComplicationText.Builder("Run mechanical sweep").build())
-                .setText(new PlainComplicationText.Builder("Sweep").build()).setTapAction(tap).build();
+                new PlainComplicationText.Builder("Run face animation").build())
+                .setText(new PlainComplicationText.Builder("Tap").build()).setTapAction(tap).build();
     }
 
     @Override public void onComplicationRequest(ComplicationRequest request, ComplicationRequestListener listener) {

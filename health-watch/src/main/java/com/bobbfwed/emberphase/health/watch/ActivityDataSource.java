@@ -66,7 +66,8 @@ public abstract class ActivityDataSource extends ComplicationDataSourceService {
                 PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
         if (type == ComplicationType.GOAL_PROGRESS && metric.hasProgress()) {
             GoalProgressComplicationData.Builder builder = new GoalProgressComplicationData.Builder(
-                    metric.value.floatValue(), metric.goal.floatValue(), description).setText(text).setTapAction(tap);
+                    metric.value.floatValue(), metric.goal.floatValue(), description).setText(text)
+                    .setTitle(new PlainComplicationText.Builder(isMinutes() ? "MIN" : "KCAL").build()).setTapAction(tap);
             if (validity != null) builder.setValidTimeRange(validity);
             return builder.build();
         }

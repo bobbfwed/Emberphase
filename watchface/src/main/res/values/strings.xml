@@ -1,4 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- Samsung formats editor labels: never use a literal percent sign here. -->
 <resources>
-    <string name="watch_face_name">Emberphase</string>
+    <string name="watch_face_name">Apsis</string>
+    <string name="accent_setting">Color</string>
+    <string name="accent_ion">Ion</string>
+    <string name="accent_solar">Solar</string>
+    <string name="accent_glacier">Glacier</string>
+    <string name="core_setting">Core</string>
+    <string name="core_weather">Weather</string>
+    <string name="core_time">Digital time</string>
+    <string name="seconds_setting">Seconds moonlet · off at 15 percent or less</string>
+    <string name="corona_setting">Forecast hour marks</string>
+    <string name="rim_ne_slot">Rim · upper right</string>
+    <string name="rim_se_slot">Rim · lower right</string>
+    <string name="rim_sw_slot">Rim · lower left</string>
+    <string name="rim_nw_slot">Rim · upper left</string>
+    <string name="foresight_slot">Core tap · Foresight</string>
+    <string name="power_saving_slot">Power saving state</string>
 </resources>
