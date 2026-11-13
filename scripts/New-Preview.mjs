@@ -26,12 +26,12 @@ const hex = c => '#' + c.slice(-6);
 const alpha = c => parseInt(c.slice(1, 3), 16) / 255;
 
 export function svg({ hour = 10, minute = 8, second = 32, theme = 0, ambient = false, lowBattery = false } = {}) {
-  const t = G.THEMES[theme].colors, sat = hex(t[3]);
+  const t = G.THEMES[theme].lune, sat = G.THEMES[theme].sat;
   const ha = (hour % 12) * 30 + minute * 0.5, ma = minute * 6;
   const rc = pt(D, ha), FONT = 'font-family="Oxanium, sans-serif"';
   const o = [];
-  o.push(`<defs><linearGradient id="lune" gradientUnits="userSpaceOnUse" x1="${C}" y1="${C - RF}" x2="${C}" y2="${C + RF + 36}">` +
-    [0, 0.5, 0.9].map((p, i) => `<stop offset="${p}" stop-color="${hex(t[i])}" stop-opacity="${f(alpha(t[i]))}"/>`).join('') +
+  o.push(`<defs><linearGradient id="lune" gradientUnits="userSpaceOnUse" x1="${C}" y1="${C - RF}" x2="${C}" y2="${C + RF}">` +
+    [0, 0.55, 1].map((p, i) => `<stop offset="${p}" stop-color="${hex(t[i])}" stop-opacity="${f(alpha(t[i]))}"/>`).join('') +
     `</linearGradient><clipPath id="dial"><circle cx="${C}" cy="${C}" r="${C}"/></clipPath></defs>`);
   o.push(`<rect width="450" height="450" fill="#000"/><g clip-path="url(#dial)">`);
   if (!ambient) {

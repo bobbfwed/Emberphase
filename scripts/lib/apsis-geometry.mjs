@@ -27,9 +27,10 @@ export const RIM_SLOTS = [
 ];
 
 export const THEMES = [
-  { id: '0', key: 'accent_ion', colors: ['#0A22C3FF', '#6B6A4DFF', '#F222C3FF', '#FFD9FF43'] },
-  { id: '1', key: 'accent_solar', colors: ['#0AFFB84A', '#6BFF4D2E', '#F2FFB84A', '#FFFFFFFF'] },
-  { id: '2', key: 'accent_glacier', colors: ['#0A8CF2FF', '#6B12D6B0', '#F28CF2FF', '#FFFF6B8B'] },
+  // lune: crescent gradient from the contact point to the far side (#AARRGGBB).
+  { id: '0', key: 'theme_ion', lune: ['#0A22C3FF', '#6B6A4DFF', '#F222C3FF'], sat: '#D9FF43' },
+  { id: '1', key: 'theme_solar', lune: ['#0AFFB84A', '#6BFF4D2E', '#F2FFB84A'], sat: '#FFFFFF' },
+  { id: '2', key: 'theme_glacier', lune: ['#0A8CF2FF', '#6B12D6B0', '#F28CF2FF'], sat: '#FF6B8B' },
 ];
 
 // Conditions drawn with a precipitation dot: rain, snow, sleet, thunderstorm.

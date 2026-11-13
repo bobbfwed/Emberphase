@@ -4,11 +4,11 @@
     <Metadata key="CLOCK_TYPE" value="ANALOG" />
     <Metadata key="PREVIEW_TIME" value="10:08:32" />
     <UserConfigurations>
-        <ColorConfiguration id="accent" displayName="accent_setting" defaultValue="0">
-            <ColorOption id="0" displayName="accent_ion" colors="#0A22C3FF #6B6A4DFF #F222C3FF #FFD9FF43" />
-            <ColorOption id="1" displayName="accent_solar" colors="#0AFFB84A #6BFF4D2E #F2FFB84A #FFFFFFFF" />
-            <ColorOption id="2" displayName="accent_glacier" colors="#0A8CF2FF #6B12D6B0 #F28CF2FF #FFFF6B8B" />
-        </ColorConfiguration>
+        <ListConfiguration id="theme" displayName="theme_setting" defaultValue="0">
+            <ListOption id="0" displayName="theme_ion" />
+            <ListOption id="1" displayName="theme_solar" />
+            <ListOption id="2" displayName="theme_glacier" />
+        </ListConfiguration>
         <ListConfiguration id="core" displayName="core_setting" defaultValue="0">
             <ListOption id="0" displayName="core_weather" />
             <ListOption id="1" displayName="core_time" />
@@ -362,14 +362,46 @@
         </PartText>
         <Group name="hour_frame" x="0" y="0" width="450" height="450" pivotX="0.5" pivotY="0.5">
             <Transform target="angle" value="[HOUR_0_11_MINUTE] * 30 + 30 * [REFERENCE.fore_off]" />
-            <PartDraw x="0" y="0" width="450" height="450">
-                <Variant mode="AMBIENT" target="alpha" value="0" duration="0" />
-                <Ellipse x="63" y="63" width="324" height="324">
-                    <Fill color="#6A4DFF">
-                        <LinearGradient startX="225" startY="63" endX="225" endY="423" colors="[CONFIGURATION.accent]" positions="0 0.5 0.9 1" />
-                    </Fill>
-                </Ellipse>
-            </PartDraw>
+            <Group name="crescent" x="0" y="0" width="450" height="450">
+                <ListConfiguration id="theme">
+                    <ListOption id="0">
+                        <Group name="crescent_0" x="0" y="0" width="450" height="450">
+                            <PartDraw x="0" y="0" width="450" height="450">
+                                <Variant mode="AMBIENT" target="alpha" value="0" duration="0" />
+                                <Ellipse x="63" y="63" width="324" height="324">
+                                    <Fill color="#6A4DFF">
+                                        <LinearGradient startX="225" startY="63" endX="225" endY="387" colors="#0A22C3FF #6B6A4DFF #F222C3FF" positions="0 0.55 1" />
+                                    </Fill>
+                                </Ellipse>
+                            </PartDraw>
+                        </Group>
+                    </ListOption>
+                    <ListOption id="1">
+                        <Group name="crescent_1" x="0" y="0" width="450" height="450">
+                            <PartDraw x="0" y="0" width="450" height="450">
+                                <Variant mode="AMBIENT" target="alpha" value="0" duration="0" />
+                                <Ellipse x="63" y="63" width="324" height="324">
+                                    <Fill color="#FF4D2E">
+                                        <LinearGradient startX="225" startY="63" endX="225" endY="387" colors="#0AFFB84A #6BFF4D2E #F2FFB84A" positions="0 0.55 1" />
+                                    </Fill>
+                                </Ellipse>
+                            </PartDraw>
+                        </Group>
+                    </ListOption>
+                    <ListOption id="2">
+                        <Group name="crescent_2" x="0" y="0" width="450" height="450">
+                            <PartDraw x="0" y="0" width="450" height="450">
+                                <Variant mode="AMBIENT" target="alpha" value="0" duration="0" />
+                                <Ellipse x="63" y="63" width="324" height="324">
+                                    <Fill color="#12D6B0">
+                                        <LinearGradient startX="225" startY="63" endX="225" endY="387" colors="#0A8CF2FF #6B12D6B0 #F28CF2FF" positions="0 0.55 1" />
+                                    </Fill>
+                                </Ellipse>
+                            </PartDraw>
+                        </Group>
+                    </ListOption>
+                </ListConfiguration>
+            </Group>
             <PartDraw x="0" y="0" width="450" height="450">
                 <Ellipse x="95" y="63" width="260" height="260">
                     <Fill color="#000000" />
@@ -574,66 +606,226 @@
                 <Group name="satellite" x="0" y="0" width="300" height="300" pivotX="0.5" pivotY="0.5">
                     <Transform target="angle" value="[MINUTE] * 6" />
                     <Transform target="alpha" value="255 - 204 * clamp([REFERENCE.fore_off], 0, 1)" />
-                    <Group name="trail" x="0" y="0" width="300" height="300">
-                        <Variant mode="AMBIENT" target="alpha" value="0" duration="0" />
-                        <PartDraw x="0" y="0" width="300" height="300" alpha="29">
-                            <Arc centerX="150" centerY="150" width="260" height="260" startAngle="290" endAngle="299.35" direction="CLOCKWISE">
-                                <Stroke color="[CONFIGURATION.accent.3]" thickness="4" cap="BUTT" />
-                            </Arc>
-                        </PartDraw>
-                        <PartDraw x="0" y="0" width="300" height="300" alpha="57">
-                            <Arc centerX="150" centerY="150" width="260" height="260" startAngle="298.75" endAngle="308.1" direction="CLOCKWISE">
-                                <Stroke color="[CONFIGURATION.accent.3]" thickness="4" cap="BUTT" />
-                            </Arc>
-                        </PartDraw>
-                        <PartDraw x="0" y="0" width="300" height="300" alpha="86">
-                            <Arc centerX="150" centerY="150" width="260" height="260" startAngle="307.5" endAngle="316.85" direction="CLOCKWISE">
-                                <Stroke color="[CONFIGURATION.accent.3]" thickness="4" cap="BUTT" />
-                            </Arc>
-                        </PartDraw>
-                        <PartDraw x="0" y="0" width="300" height="300" alpha="115">
-                            <Arc centerX="150" centerY="150" width="260" height="260" startAngle="316.25" endAngle="325.6" direction="CLOCKWISE">
-                                <Stroke color="[CONFIGURATION.accent.3]" thickness="4" cap="BUTT" />
-                            </Arc>
-                        </PartDraw>
-                        <PartDraw x="0" y="0" width="300" height="300" alpha="143">
-                            <Arc centerX="150" centerY="150" width="260" height="260" startAngle="325" endAngle="334.35" direction="CLOCKWISE">
-                                <Stroke color="[CONFIGURATION.accent.3]" thickness="4" cap="BUTT" />
-                            </Arc>
-                        </PartDraw>
-                        <PartDraw x="0" y="0" width="300" height="300" alpha="172">
-                            <Arc centerX="150" centerY="150" width="260" height="260" startAngle="333.75" endAngle="343.1" direction="CLOCKWISE">
-                                <Stroke color="[CONFIGURATION.accent.3]" thickness="4" cap="BUTT" />
-                            </Arc>
-                        </PartDraw>
-                        <PartDraw x="0" y="0" width="300" height="300" alpha="201">
-                            <Arc centerX="150" centerY="150" width="260" height="260" startAngle="342.5" endAngle="351.85" direction="CLOCKWISE">
-                                <Stroke color="[CONFIGURATION.accent.3]" thickness="4" cap="BUTT" />
-                            </Arc>
-                        </PartDraw>
-                        <PartDraw x="0" y="0" width="300" height="300" alpha="230">
-                            <Arc centerX="150" centerY="150" width="260" height="260" startAngle="351.25" endAngle="360.6" direction="CLOCKWISE">
-                                <Stroke color="[CONFIGURATION.accent.3]" thickness="4" cap="BUTT" />
-                            </Arc>
-                        </PartDraw>
+                    <Group name="satellite_body" x="0" y="0" width="300" height="300">
+                        <ListConfiguration id="theme">
+                            <ListOption id="0">
+                                <Group name="satellite_body_0" x="0" y="0" width="300" height="300">
+                                    <Group name="trail_0" x="0" y="0" width="300" height="300">
+                                        <Variant mode="AMBIENT" target="alpha" value="0" duration="0" />
+                                        <PartDraw x="0" y="0" width="300" height="300" alpha="29">
+                                            <Arc centerX="150" centerY="150" width="260" height="260" startAngle="290" endAngle="299.35" direction="CLOCKWISE">
+                                                <Stroke color="#D9FF43" thickness="4" cap="BUTT" />
+                                            </Arc>
+                                        </PartDraw>
+                                        <PartDraw x="0" y="0" width="300" height="300" alpha="57">
+                                            <Arc centerX="150" centerY="150" width="260" height="260" startAngle="298.75" endAngle="308.1" direction="CLOCKWISE">
+                                                <Stroke color="#D9FF43" thickness="4" cap="BUTT" />
+                                            </Arc>
+                                        </PartDraw>
+                                        <PartDraw x="0" y="0" width="300" height="300" alpha="86">
+                                            <Arc centerX="150" centerY="150" width="260" height="260" startAngle="307.5" endAngle="316.85" direction="CLOCKWISE">
+                                                <Stroke color="#D9FF43" thickness="4" cap="BUTT" />
+                                            </Arc>
+                                        </PartDraw>
+                                        <PartDraw x="0" y="0" width="300" height="300" alpha="115">
+                                            <Arc centerX="150" centerY="150" width="260" height="260" startAngle="316.25" endAngle="325.6" direction="CLOCKWISE">
+                                                <Stroke color="#D9FF43" thickness="4" cap="BUTT" />
+                                            </Arc>
+                                        </PartDraw>
+                                        <PartDraw x="0" y="0" width="300" height="300" alpha="143">
+                                            <Arc centerX="150" centerY="150" width="260" height="260" startAngle="325" endAngle="334.35" direction="CLOCKWISE">
+                                                <Stroke color="#D9FF43" thickness="4" cap="BUTT" />
+                                            </Arc>
+                                        </PartDraw>
+                                        <PartDraw x="0" y="0" width="300" height="300" alpha="172">
+                                            <Arc centerX="150" centerY="150" width="260" height="260" startAngle="333.75" endAngle="343.1" direction="CLOCKWISE">
+                                                <Stroke color="#D9FF43" thickness="4" cap="BUTT" />
+                                            </Arc>
+                                        </PartDraw>
+                                        <PartDraw x="0" y="0" width="300" height="300" alpha="201">
+                                            <Arc centerX="150" centerY="150" width="260" height="260" startAngle="342.5" endAngle="351.85" direction="CLOCKWISE">
+                                                <Stroke color="#D9FF43" thickness="4" cap="BUTT" />
+                                            </Arc>
+                                        </PartDraw>
+                                        <PartDraw x="0" y="0" width="300" height="300" alpha="230">
+                                            <Arc centerX="150" centerY="150" width="260" height="260" startAngle="351.25" endAngle="360.6" direction="CLOCKWISE">
+                                                <Stroke color="#D9FF43" thickness="4" cap="BUTT" />
+                                            </Arc>
+                                        </PartDraw>
+                                    </Group>
+                                    <PartDraw x="0" y="0" width="300" height="300" alpha="40">
+                                        <Variant mode="AMBIENT" target="alpha" value="0" duration="0" />
+                                        <Ellipse x="136" y="6" width="28" height="28">
+                                            <Fill color="#D9FF43" />
+                                        </Ellipse>
+                                    </PartDraw>
+                                    <PartDraw x="0" y="0" width="300" height="300" alpha="70">
+                                        <Variant mode="AMBIENT" target="alpha" value="0" duration="0" />
+                                        <Ellipse x="140" y="10" width="20" height="20">
+                                            <Fill color="#D9FF43" />
+                                        </Ellipse>
+                                    </PartDraw>
+                                    <PartDraw x="0" y="0" width="300" height="300">
+                                        <Ellipse x="143.5" y="13.5" width="13" height="13">
+                                            <Fill color="#D9FF43" />
+                                        </Ellipse>
+                                    </PartDraw>
+                                    <PartText x="132" y="35" width="36" height="22" pivotX="0.5" pivotY="0.5">
+                                        <Transform target="angle" value="0 - ([MINUTE] * 6)" />
+                                        <Text align="CENTER">
+                                            <Font family="oxanium_bold" size="17" color="#D9FF43">
+                                                <Template>%s<Parameter expression="[MINUTE_Z]" /></Template>
+                                            </Font>
+                                        </Text>
+                                    </PartText>
+                                </Group>
+                            </ListOption>
+                            <ListOption id="1">
+                                <Group name="satellite_body_1" x="0" y="0" width="300" height="300">
+                                    <Group name="trail_1" x="0" y="0" width="300" height="300">
+                                        <Variant mode="AMBIENT" target="alpha" value="0" duration="0" />
+                                        <PartDraw x="0" y="0" width="300" height="300" alpha="29">
+                                            <Arc centerX="150" centerY="150" width="260" height="260" startAngle="290" endAngle="299.35" direction="CLOCKWISE">
+                                                <Stroke color="#FFFFFF" thickness="4" cap="BUTT" />
+                                            </Arc>
+                                        </PartDraw>
+                                        <PartDraw x="0" y="0" width="300" height="300" alpha="57">
+                                            <Arc centerX="150" centerY="150" width="260" height="260" startAngle="298.75" endAngle="308.1" direction="CLOCKWISE">
+                                                <Stroke color="#FFFFFF" thickness="4" cap="BUTT" />
+                                            </Arc>
+                                        </PartDraw>
+                                        <PartDraw x="0" y="0" width="300" height="300" alpha="86">
+                                            <Arc centerX="150" centerY="150" width="260" height="260" startAngle="307.5" endAngle="316.85" direction="CLOCKWISE">
+                                                <Stroke color="#FFFFFF" thickness="4" cap="BUTT" />
+                                            </Arc>
+                                        </PartDraw>
+                                        <PartDraw x="0" y="0" width="300" height="300" alpha="115">
+                                            <Arc centerX="150" centerY="150" width="260" height="260" startAngle="316.25" endAngle="325.6" direction="CLOCKWISE">
+                                                <Stroke color="#FFFFFF" thickness="4" cap="BUTT" />
+                                            </Arc>
+                                        </PartDraw>
+                                        <PartDraw x="0" y="0" width="300" height="300" alpha="143">
+                                            <Arc centerX="150" centerY="150" width="260" height="260" startAngle="325" endAngle="334.35" direction="CLOCKWISE">
+                                                <Stroke color="#FFFFFF" thickness="4" cap="BUTT" />
+                                            </Arc>
+                                        </PartDraw>
+                                        <PartDraw x="0" y="0" width="300" height="300" alpha="172">
+                                            <Arc centerX="150" centerY="150" width="260" height="260" startAngle="333.75" endAngle="343.1" direction="CLOCKWISE">
+                                                <Stroke color="#FFFFFF" thickness="4" cap="BUTT" />
+                                            </Arc>
+                                        </PartDraw>
+                                        <PartDraw x="0" y="0" width="300" height="300" alpha="201">
+                                            <Arc centerX="150" centerY="150" width="260" height="260" startAngle="342.5" endAngle="351.85" direction="CLOCKWISE">
+                                                <Stroke color="#FFFFFF" thickness="4" cap="BUTT" />
+                                            </Arc>
+                                        </PartDraw>
+                                        <PartDraw x="0" y="0" width="300" height="300" alpha="230">
+                                            <Arc centerX="150" centerY="150" width="260" height="260" startAngle="351.25" endAngle="360.6" direction="CLOCKWISE">
+                                                <Stroke color="#FFFFFF" thickness="4" cap="BUTT" />
+                                            </Arc>
+                                        </PartDraw>
+                                    </Group>
+                                    <PartDraw x="0" y="0" width="300" height="300" alpha="40">
+                                        <Variant mode="AMBIENT" target="alpha" value="0" duration="0" />
+                                        <Ellipse x="136" y="6" width="28" height="28">
+                                            <Fill color="#FFFFFF" />
+                                        </Ellipse>
+                                    </PartDraw>
+                                    <PartDraw x="0" y="0" width="300" height="300" alpha="70">
+                                        <Variant mode="AMBIENT" target="alpha" value="0" duration="0" />
+                                        <Ellipse x="140" y="10" width="20" height="20">
+                                            <Fill color="#FFFFFF" />
+                                        </Ellipse>
+                                    </PartDraw>
+                                    <PartDraw x="0" y="0" width="300" height="300">
+                                        <Ellipse x="143.5" y="13.5" width="13" height="13">
+                                            <Fill color="#FFFFFF" />
+                                        </Ellipse>
+                                    </PartDraw>
+                                    <PartText x="132" y="35" width="36" height="22" pivotX="0.5" pivotY="0.5">
+                                        <Transform target="angle" value="0 - ([MINUTE] * 6)" />
+                                        <Text align="CENTER">
+                                            <Font family="oxanium_bold" size="17" color="#FFFFFF">
+                                                <Template>%s<Parameter expression="[MINUTE_Z]" /></Template>
+                                            </Font>
+                                        </Text>
+                                    </PartText>
+                                </Group>
+                            </ListOption>
+                            <ListOption id="2">
+                                <Group name="satellite_body_2" x="0" y="0" width="300" height="300">
+                                    <Group name="trail_2" x="0" y="0" width="300" height="300">
+                                        <Variant mode="AMBIENT" target="alpha" value="0" duration="0" />
+                                        <PartDraw x="0" y="0" width="300" height="300" alpha="29">
+                                            <Arc centerX="150" centerY="150" width="260" height="260" startAngle="290" endAngle="299.35" direction="CLOCKWISE">
+                                                <Stroke color="#FF6B8B" thickness="4" cap="BUTT" />
+                                            </Arc>
+                                        </PartDraw>
+                                        <PartDraw x="0" y="0" width="300" height="300" alpha="57">
+                                            <Arc centerX="150" centerY="150" width="260" height="260" startAngle="298.75" endAngle="308.1" direction="CLOCKWISE">
+                                                <Stroke color="#FF6B8B" thickness="4" cap="BUTT" />
+                                            </Arc>
+                                        </PartDraw>
+                                        <PartDraw x="0" y="0" width="300" height="300" alpha="86">
+                                            <Arc centerX="150" centerY="150" width="260" height="260" startAngle="307.5" endAngle="316.85" direction="CLOCKWISE">
+                                                <Stroke color="#FF6B8B" thickness="4" cap="BUTT" />
+                                            </Arc>
+                                        </PartDraw>
+                                        <PartDraw x="0" y="0" width="300" height="300" alpha="115">
+                                            <Arc centerX="150" centerY="150" width="260" height="260" startAngle="316.25" endAngle="325.6" direction="CLOCKWISE">
+                                                <Stroke color="#FF6B8B" thickness="4" cap="BUTT" />
+                                            </Arc>
+                                        </PartDraw>
+                                        <PartDraw x="0" y="0" width="300" height="300" alpha="143">
+                                            <Arc centerX="150" centerY="150" width="260" height="260" startAngle="325" endAngle="334.35" direction="CLOCKWISE">
+                                                <Stroke color="#FF6B8B" thickness="4" cap="BUTT" />
+                                            </Arc>
+                                        </PartDraw>
+                                        <PartDraw x="0" y="0" width="300" height="300" alpha="172">
+                                            <Arc centerX="150" centerY="150" width="260" height="260" startAngle="333.75" endAngle="343.1" direction="CLOCKWISE">
+                                                <Stroke color="#FF6B8B" thickness="4" cap="BUTT" />
+                                            </Arc>
+                                        </PartDraw>
+                                        <PartDraw x="0" y="0" width="300" height="300" alpha="201">
+                                            <Arc centerX="150" centerY="150" width="260" height="260" startAngle="342.5" endAngle="351.85" direction="CLOCKWISE">
+                                                <Stroke color="#FF6B8B" thickness="4" cap="BUTT" />
+                                            </Arc>
+                                        </PartDraw>
+                                        <PartDraw x="0" y="0" width="300" height="300" alpha="230">
+                                            <Arc centerX="150" centerY="150" width="260" height="260" startAngle="351.25" endAngle="360.6" direction="CLOCKWISE">
+                                                <Stroke color="#FF6B8B" thickness="4" cap="BUTT" />
+                                            </Arc>
+                                        </PartDraw>
+                                    </Group>
+                                    <PartDraw x="0" y="0" width="300" height="300" alpha="40">
+                                        <Variant mode="AMBIENT" target="alpha" value="0" duration="0" />
+                                        <Ellipse x="136" y="6" width="28" height="28">
+                                            <Fill color="#FF6B8B" />
+                                        </Ellipse>
+                                    </PartDraw>
+                                    <PartDraw x="0" y="0" width="300" height="300" alpha="70">
+                                        <Variant mode="AMBIENT" target="alpha" value="0" duration="0" />
+                                        <Ellipse x="140" y="10" width="20" height="20">
+                                            <Fill color="#FF6B8B" />
+                                        </Ellipse>
+                                    </PartDraw>
+                                    <PartDraw x="0" y="0" width="300" height="300">
+                                        <Ellipse x="143.5" y="13.5" width="13" height="13">
+                                            <Fill color="#FF6B8B" />
+                                        </Ellipse>
+                                    </PartDraw>
+                                    <PartText x="132" y="35" width="36" height="22" pivotX="0.5" pivotY="0.5">
+                                        <Transform target="angle" value="0 - ([MINUTE] * 6)" />
+                                        <Text align="CENTER">
+                                            <Font family="oxanium_bold" size="17" color="#FF6B8B">
+                                                <Template>%s<Parameter expression="[MINUTE_Z]" /></Template>
+                                            </Font>
+                                        </Text>
+                                    </PartText>
+                                </Group>
+                            </ListOption>
+                        </ListConfiguration>
                     </Group>
-                    <PartDraw x="0" y="0" width="300" height="300" alpha="40">
-                        <Variant mode="AMBIENT" target="alpha" value="0" duration="0" />
-                        <Ellipse x="136" y="6" width="28" height="28">
-                            <Fill color="[CONFIGURATION.accent.3]" />
-                        </Ellipse>
-                    </PartDraw>
-                    <PartDraw x="0" y="0" width="300" height="300" alpha="70">
-                        <Variant mode="AMBIENT" target="alpha" value="0" duration="0" />
-                        <Ellipse x="140" y="10" width="20" height="20">
-                            <Fill color="[CONFIGURATION.accent.3]" />
-                        </Ellipse>
-                    </PartDraw>
-                    <PartDraw x="0" y="0" width="300" height="300">
-                        <Ellipse x="143.5" y="13.5" width="13" height="13">
-                            <Fill color="[CONFIGURATION.accent.3]" />
-                        </Ellipse>
-                    </PartDraw>
                     <Group name="seconds_setting" x="0" y="0" width="300" height="300">
                         <BooleanConfiguration id="seconds">
                             <BooleanOption id="TRUE">
@@ -656,14 +848,6 @@
                             </BooleanOption>
                         </BooleanConfiguration>
                     </Group>
-                    <PartText x="132" y="35" width="36" height="22" pivotX="0.5" pivotY="0.5">
-                        <Transform target="angle" value="0 - ([MINUTE] * 6)" />
-                        <Text align="CENTER">
-                            <Font family="oxanium_bold" size="17" color="[CONFIGURATION.accent.3]">
-                                <Template>%s<Parameter expression="[MINUTE_Z]" /></Template>
-                            </Font>
-                        </Text>
-                    </PartText>
                 </Group>
             </Group>
             <PartDraw x="0" y="0" width="450" height="450" pivotX="0.5" pivotY="0.5" angle="355.5">
@@ -723,7 +907,7 @@
             <Compare expression="test">
                 <PartText x="177" y="183" width="96" height="16">
                     <Text align="CENTER">
-                        <Font family="oxanium_medium" size="13" color="[CONFIGURATION.accent.3]">
+                        <Font family="oxanium_medium" size="13" color="#E8EBF7">
                             <Template>+%sH · %s%s<Parameter expression="numberFormat(&quot;0&quot;, [REFERENCE.fore_idx])" /><Parameter expression="[IS_24_HOUR_MODE] ? numberFormat(&quot;00&quot;, ([HOUR_0_23] + [REFERENCE.fore_idx]) % 24) : numberFormat(&quot;0&quot;, (([HOUR_0_23] + [REFERENCE.fore_idx]) % 24) % 12 == 0 ? 12 : (([HOUR_0_23] + [REFERENCE.fore_idx]) % 24) % 12)" /><Parameter expression="[IS_24_HOUR_MODE] ? &quot;:00&quot; : ((([HOUR_0_23] + [REFERENCE.fore_idx]) % 24) &lt; 12 ? &quot;AM&quot; : &quot;PM&quot;)" /></Template>
                         </Font>
                     </Text>
@@ -1033,7 +1217,7 @@
                                             <PartText x="177" y="250" width="96" height="15">
                                                 <Text align="CENTER">
                                                     <Font family="oxanium_medium" size="12" color="#9AA0BB">
-                                                        <Template>%s  %s°<Parameter expression="[IS_24_HOUR_MODE] ? &quot;&quot; : [AMPM_STRING_ENG]" /><Parameter expression="[WEATHER.TEMPERATURE]" /></Template>
+                                                        <Template>%s  %s°<Parameter expression="[IS_24_HOUR_MODE] ? &quot;&quot; : ([AMPM_STATE] == 0 ? &quot;AM&quot; : &quot;PM&quot;)" /><Parameter expression="[WEATHER.TEMPERATURE]" /></Template>
                                                     </Font>
                                                 </Text>
                                             </PartText>
@@ -1042,7 +1226,7 @@
                                             <PartText x="177" y="250" width="96" height="15">
                                                 <Text align="CENTER">
                                                     <Font family="oxanium_medium" size="12" color="#9AA0BB">
-                                                        <Template>%s<Parameter expression="[IS_24_HOUR_MODE] ? &quot;&quot; : [AMPM_STRING_ENG]" /></Template>
+                                                        <Template>%s<Parameter expression="[IS_24_HOUR_MODE] ? &quot;&quot; : ([AMPM_STATE] == 0 ? &quot;AM&quot; : &quot;PM&quot;)" /></Template>
                                                     </Font>
                                                 </Text>
                                             </PartText>
@@ -1057,14 +1241,14 @@
         </Condition>
         <ComplicationSlot slotId="10" name="rim_ne" displayName="rim_ne_slot" x="0" y="0" width="450" height="450" supportedTypes="GOAL_PROGRESS RANGED_VALUE SHORT_TEXT EMPTY" isCustomizable="TRUE">
             <Variant mode="AMBIENT" target="alpha" value="0" duration="0" />
-            <BoundingArc centerX="225" centerY="225" width="418" height="418" thickness="24" startAngle="16" endAngle="74" direction="CLOCKWISE" />
+            <BoundingArc centerX="225" centerY="225" width="442" height="442" thickness="24" startAngle="16" endAngle="74" direction="CLOCKWISE" />
             <DefaultProviderPolicy defaultSystemProvider="SUNRISE_SUNSET" defaultSystemProviderType="SHORT_TEXT" />
             <Complication type="GOAL_PROGRESS">
                 <PartImage x="287" y="23" width="16" height="16" pivotX="0.5" pivotY="0.5" angle="20" tintColor="#8187A3">
                     <Image resource="[COMPLICATION.MONOCHROMATIC_IMAGE]" />
                 </PartImage>
                 <PartText x="0" y="0" width="450" height="450">
-                    <TextCircular centerX="225" centerY="225" width="402" height="402" startAngle="26" endAngle="74" direction="CLOCKWISE" align="CENTER" ellipsis="TRUE">
+                    <TextCircular centerX="225" centerY="225" width="402" height="402" startAngle="26" endAngle="74" direction="CLOCKWISE" align="START" ellipsis="TRUE">
                         <Font family="oxanium_medium" size="14.5" color="#8187A3">
                             <Upper>
                                 <Template>%s <Parameter expression="[COMPLICATION.TITLE]" /></Template>
@@ -1093,7 +1277,7 @@
                     <Image resource="[COMPLICATION.MONOCHROMATIC_IMAGE]" />
                 </PartImage>
                 <PartText x="0" y="0" width="450" height="450">
-                    <TextCircular centerX="225" centerY="225" width="402" height="402" startAngle="26" endAngle="74" direction="CLOCKWISE" align="CENTER" ellipsis="TRUE">
+                    <TextCircular centerX="225" centerY="225" width="402" height="402" startAngle="26" endAngle="74" direction="CLOCKWISE" align="START" ellipsis="TRUE">
                         <Font family="oxanium_medium" size="14.5" color="#8187A3">
                             <Upper>
                                 <Template>%s <Parameter expression="[COMPLICATION.TITLE]" /></Template>
@@ -1122,7 +1306,7 @@
                     <Image resource="[COMPLICATION.MONOCHROMATIC_IMAGE]" />
                 </PartImage>
                 <PartText x="0" y="0" width="450" height="450">
-                    <TextCircular centerX="225" centerY="225" width="402" height="402" startAngle="26" endAngle="74" direction="CLOCKWISE" align="CENTER" ellipsis="TRUE">
+                    <TextCircular centerX="225" centerY="225" width="402" height="402" startAngle="26" endAngle="74" direction="CLOCKWISE" align="START" ellipsis="TRUE">
                         <Font family="oxanium_medium" size="14.5" color="#8187A3">
                             <Upper>
                                 <Template>%s <Parameter expression="[COMPLICATION.TITLE]" /></Template>
@@ -1136,7 +1320,7 @@
             </Complication>
             <Complication type="EMPTY">
                 <PartText x="0" y="0" width="450" height="450">
-                    <TextCircular centerX="225" centerY="225" width="402" height="402" startAngle="26" endAngle="74" direction="CLOCKWISE" align="CENTER" ellipsis="TRUE">
+                    <TextCircular centerX="225" centerY="225" width="402" height="402" startAngle="26" endAngle="74" direction="CLOCKWISE" align="START" ellipsis="TRUE">
                         <Font family="oxanium_bold" size="14.5" color="#8187A3">—</Font>
                     </TextCircular>
                 </PartText>
@@ -1144,14 +1328,14 @@
         </ComplicationSlot>
         <ComplicationSlot slotId="20" name="rim_se" displayName="rim_se_slot" x="0" y="0" width="450" height="450" supportedTypes="GOAL_PROGRESS RANGED_VALUE SHORT_TEXT EMPTY" isCustomizable="TRUE">
             <Variant mode="AMBIENT" target="alpha" value="0" duration="0" />
-            <BoundingArc centerX="225" centerY="225" width="418" height="418" thickness="24" startAngle="106" endAngle="164" direction="CLOCKWISE" />
+            <BoundingArc centerX="225" centerY="225" width="442" height="442" thickness="24" startAngle="106" endAngle="164" direction="CLOCKWISE" />
             <DefaultProviderPolicy primaryProvider="com.bobbfwed.emberphase.health/com.bobbfwed.emberphase.health.watch.CaloriesDataSource" primaryProviderType="GOAL_PROGRESS" defaultSystemProvider="EMPTY" defaultSystemProviderType="EMPTY" />
             <Complication type="GOAL_PROGRESS">
                 <PartImage x="287" y="411" width="16" height="16" pivotX="0.5" pivotY="0.5" angle="340" tintColor="#8187A3">
                     <Image resource="[COMPLICATION.MONOCHROMATIC_IMAGE]" />
                 </PartImage>
                 <PartText x="0" y="0" width="450" height="450">
-                    <TextCircular centerX="225" centerY="225" width="426" height="426" startAngle="154" endAngle="106" direction="COUNTER_CLOCKWISE" align="CENTER" ellipsis="TRUE">
+                    <TextCircular centerX="225" centerY="225" width="426" height="426" startAngle="154" endAngle="106" direction="COUNTER_CLOCKWISE" align="START" ellipsis="TRUE">
                         <Font family="oxanium_medium" size="14.5" color="#8187A3">
                             <Upper>
                                 <Template>%s <Parameter expression="[COMPLICATION.TITLE]" /></Template>
@@ -1163,14 +1347,14 @@
                     </TextCircular>
                 </PartText>
                 <PartDraw x="0" y="0" width="450" height="450">
-                    <Arc centerX="225" centerY="225" width="439" height="439" startAngle="161" endAngle="109" direction="COUNTER_CLOCKWISE">
+                    <Arc centerX="225" centerY="225" width="439" height="439" startAngle="109" endAngle="161" direction="CLOCKWISE">
                         <Stroke color="#2A2E40" thickness="2.2" cap="ROUND" />
                     </Arc>
                 </PartDraw>
                 <PartDraw x="0" y="0" width="450" height="450">
                     <Transform target="alpha" value="([COMPLICATION.GOAL_PROGRESS_TARGET_VALUE] &gt; 0 ? clamp([COMPLICATION.GOAL_PROGRESS_VALUE] / [COMPLICATION.GOAL_PROGRESS_TARGET_VALUE], 0, 1) : 0) &gt; 0 ? 255 : 0" />
-                    <Arc centerX="225" centerY="225" width="439" height="439" startAngle="161" endAngle="161" direction="COUNTER_CLOCKWISE">
-                        <Transform target="endAngle" value="161 - 52 * ([COMPLICATION.GOAL_PROGRESS_TARGET_VALUE] &gt; 0 ? clamp([COMPLICATION.GOAL_PROGRESS_VALUE] / [COMPLICATION.GOAL_PROGRESS_TARGET_VALUE], 0, 1) : 0)" />
+                    <Arc centerX="225" centerY="225" width="439" height="439" startAngle="161" endAngle="161" direction="CLOCKWISE">
+                        <Transform target="startAngle" value="161 - 52 * ([COMPLICATION.GOAL_PROGRESS_TARGET_VALUE] &gt; 0 ? clamp([COMPLICATION.GOAL_PROGRESS_VALUE] / [COMPLICATION.GOAL_PROGRESS_TARGET_VALUE], 0, 1) : 0)" />
                         <Stroke color="#E8EBF7" thickness="2.2" cap="ROUND" />
                     </Arc>
                 </PartDraw>
@@ -1180,7 +1364,7 @@
                     <Image resource="[COMPLICATION.MONOCHROMATIC_IMAGE]" />
                 </PartImage>
                 <PartText x="0" y="0" width="450" height="450">
-                    <TextCircular centerX="225" centerY="225" width="426" height="426" startAngle="154" endAngle="106" direction="COUNTER_CLOCKWISE" align="CENTER" ellipsis="TRUE">
+                    <TextCircular centerX="225" centerY="225" width="426" height="426" startAngle="154" endAngle="106" direction="COUNTER_CLOCKWISE" align="START" ellipsis="TRUE">
                         <Font family="oxanium_medium" size="14.5" color="#8187A3">
                             <Upper>
                                 <Template>%s <Parameter expression="[COMPLICATION.TITLE]" /></Template>
@@ -1192,14 +1376,14 @@
                     </TextCircular>
                 </PartText>
                 <PartDraw x="0" y="0" width="450" height="450">
-                    <Arc centerX="225" centerY="225" width="439" height="439" startAngle="161" endAngle="109" direction="COUNTER_CLOCKWISE">
+                    <Arc centerX="225" centerY="225" width="439" height="439" startAngle="109" endAngle="161" direction="CLOCKWISE">
                         <Stroke color="#2A2E40" thickness="2.2" cap="ROUND" />
                     </Arc>
                 </PartDraw>
                 <PartDraw x="0" y="0" width="450" height="450">
                     <Transform target="alpha" value="([COMPLICATION.RANGED_VALUE_MAX] &gt; [COMPLICATION.RANGED_VALUE_MIN] ? clamp(([COMPLICATION.RANGED_VALUE_VALUE] - [COMPLICATION.RANGED_VALUE_MIN]) / ([COMPLICATION.RANGED_VALUE_MAX] - [COMPLICATION.RANGED_VALUE_MIN]), 0, 1) : 0) &gt; 0 ? 255 : 0" />
-                    <Arc centerX="225" centerY="225" width="439" height="439" startAngle="161" endAngle="161" direction="COUNTER_CLOCKWISE">
-                        <Transform target="endAngle" value="161 - 52 * ([COMPLICATION.RANGED_VALUE_MAX] &gt; [COMPLICATION.RANGED_VALUE_MIN] ? clamp(([COMPLICATION.RANGED_VALUE_VALUE] - [COMPLICATION.RANGED_VALUE_MIN]) / ([COMPLICATION.RANGED_VALUE_MAX] - [COMPLICATION.RANGED_VALUE_MIN]), 0, 1) : 0)" />
+                    <Arc centerX="225" centerY="225" width="439" height="439" startAngle="161" endAngle="161" direction="CLOCKWISE">
+                        <Transform target="startAngle" value="161 - 52 * ([COMPLICATION.RANGED_VALUE_MAX] &gt; [COMPLICATION.RANGED_VALUE_MIN] ? clamp(([COMPLICATION.RANGED_VALUE_VALUE] - [COMPLICATION.RANGED_VALUE_MIN]) / ([COMPLICATION.RANGED_VALUE_MAX] - [COMPLICATION.RANGED_VALUE_MIN]), 0, 1) : 0)" />
                         <Stroke color="#E8EBF7" thickness="2.2" cap="ROUND" />
                     </Arc>
                 </PartDraw>
@@ -1209,7 +1393,7 @@
                     <Image resource="[COMPLICATION.MONOCHROMATIC_IMAGE]" />
                 </PartImage>
                 <PartText x="0" y="0" width="450" height="450">
-                    <TextCircular centerX="225" centerY="225" width="426" height="426" startAngle="154" endAngle="106" direction="COUNTER_CLOCKWISE" align="CENTER" ellipsis="TRUE">
+                    <TextCircular centerX="225" centerY="225" width="426" height="426" startAngle="154" endAngle="106" direction="COUNTER_CLOCKWISE" align="START" ellipsis="TRUE">
                         <Font family="oxanium_medium" size="14.5" color="#8187A3">
                             <Upper>
                                 <Template>%s <Parameter expression="[COMPLICATION.TITLE]" /></Template>
@@ -1223,7 +1407,7 @@
             </Complication>
             <Complication type="EMPTY">
                 <PartText x="0" y="0" width="450" height="450">
-                    <TextCircular centerX="225" centerY="225" width="426" height="426" startAngle="154" endAngle="106" direction="COUNTER_CLOCKWISE" align="CENTER" ellipsis="TRUE">
+                    <TextCircular centerX="225" centerY="225" width="426" height="426" startAngle="154" endAngle="106" direction="COUNTER_CLOCKWISE" align="START" ellipsis="TRUE">
                         <Font family="oxanium_bold" size="14.5" color="#8187A3">—</Font>
                     </TextCircular>
                 </PartText>
@@ -1231,14 +1415,14 @@
         </ComplicationSlot>
         <ComplicationSlot slotId="30" name="rim_sw" displayName="rim_sw_slot" x="0" y="0" width="450" height="450" supportedTypes="GOAL_PROGRESS RANGED_VALUE SHORT_TEXT EMPTY" isCustomizable="TRUE">
             <Variant mode="AMBIENT" target="alpha" value="0" duration="0" />
-            <BoundingArc centerX="225" centerY="225" width="418" height="418" thickness="24" startAngle="196" endAngle="254" direction="CLOCKWISE" />
+            <BoundingArc centerX="225" centerY="225" width="442" height="442" thickness="24" startAngle="196" endAngle="254" direction="CLOCKWISE" />
             <DefaultProviderPolicy primaryProvider="com.samsung.android.wear.shealth/com.samsung.android.wear.shealth.complications.steps.StepsComplicationProviderService" primaryProviderType="GOAL_PROGRESS" defaultSystemProvider="STEP_COUNT" defaultSystemProviderType="RANGED_VALUE" />
             <Complication type="GOAL_PROGRESS">
                 <PartImage x="23" y="287" width="16" height="16" pivotX="0.5" pivotY="0.5" angle="430" tintColor="#8187A3">
                     <Image resource="[COMPLICATION.MONOCHROMATIC_IMAGE]" />
                 </PartImage>
                 <PartText x="0" y="0" width="450" height="450">
-                    <TextCircular centerX="225" centerY="225" width="426" height="426" startAngle="244" endAngle="196" direction="COUNTER_CLOCKWISE" align="CENTER" ellipsis="TRUE">
+                    <TextCircular centerX="225" centerY="225" width="426" height="426" startAngle="244" endAngle="196" direction="COUNTER_CLOCKWISE" align="START" ellipsis="TRUE">
                         <Font family="oxanium_medium" size="14.5" color="#8187A3">
                             <Upper>
                                 <Template>%s <Parameter expression="[COMPLICATION.TITLE]" /></Template>
@@ -1250,14 +1434,14 @@
                     </TextCircular>
                 </PartText>
                 <PartDraw x="0" y="0" width="450" height="450">
-                    <Arc centerX="225" centerY="225" width="439" height="439" startAngle="251" endAngle="199" direction="COUNTER_CLOCKWISE">
+                    <Arc centerX="225" centerY="225" width="439" height="439" startAngle="199" endAngle="251" direction="CLOCKWISE">
                         <Stroke color="#2A2E40" thickness="2.2" cap="ROUND" />
                     </Arc>
                 </PartDraw>
                 <PartDraw x="0" y="0" width="450" height="450">
                     <Transform target="alpha" value="([COMPLICATION.GOAL_PROGRESS_TARGET_VALUE] &gt; 0 ? clamp([COMPLICATION.GOAL_PROGRESS_VALUE] / [COMPLICATION.GOAL_PROGRESS_TARGET_VALUE], 0, 1) : 0) &gt; 0 ? 255 : 0" />
-                    <Arc centerX="225" centerY="225" width="439" height="439" startAngle="251" endAngle="251" direction="COUNTER_CLOCKWISE">
-                        <Transform target="endAngle" value="251 - 52 * ([COMPLICATION.GOAL_PROGRESS_TARGET_VALUE] &gt; 0 ? clamp([COMPLICATION.GOAL_PROGRESS_VALUE] / [COMPLICATION.GOAL_PROGRESS_TARGET_VALUE], 0, 1) : 0)" />
+                    <Arc centerX="225" centerY="225" width="439" height="439" startAngle="251" endAngle="251" direction="CLOCKWISE">
+                        <Transform target="startAngle" value="251 - 52 * ([COMPLICATION.GOAL_PROGRESS_TARGET_VALUE] &gt; 0 ? clamp([COMPLICATION.GOAL_PROGRESS_VALUE] / [COMPLICATION.GOAL_PROGRESS_TARGET_VALUE], 0, 1) : 0)" />
                         <Stroke color="#E8EBF7" thickness="2.2" cap="ROUND" />
                     </Arc>
                 </PartDraw>
@@ -1267,7 +1451,7 @@
                     <Image resource="[COMPLICATION.MONOCHROMATIC_IMAGE]" />
                 </PartImage>
                 <PartText x="0" y="0" width="450" height="450">
-                    <TextCircular centerX="225" centerY="225" width="426" height="426" startAngle="244" endAngle="196" direction="COUNTER_CLOCKWISE" align="CENTER" ellipsis="TRUE">
+                    <TextCircular centerX="225" centerY="225" width="426" height="426" startAngle="244" endAngle="196" direction="COUNTER_CLOCKWISE" align="START" ellipsis="TRUE">
                         <Font family="oxanium_medium" size="14.5" color="#8187A3">
                             <Upper>
                                 <Template>%s <Parameter expression="[COMPLICATION.TITLE]" /></Template>
@@ -1279,14 +1463,14 @@
                     </TextCircular>
                 </PartText>
                 <PartDraw x="0" y="0" width="450" height="450">
-                    <Arc centerX="225" centerY="225" width="439" height="439" startAngle="251" endAngle="199" direction="COUNTER_CLOCKWISE">
+                    <Arc centerX="225" centerY="225" width="439" height="439" startAngle="199" endAngle="251" direction="CLOCKWISE">
                         <Stroke color="#2A2E40" thickness="2.2" cap="ROUND" />
                     </Arc>
                 </PartDraw>
                 <PartDraw x="0" y="0" width="450" height="450">
                     <Transform target="alpha" value="([COMPLICATION.RANGED_VALUE_MAX] &gt; [COMPLICATION.RANGED_VALUE_MIN] ? clamp(([COMPLICATION.RANGED_VALUE_VALUE] - [COMPLICATION.RANGED_VALUE_MIN]) / ([COMPLICATION.RANGED_VALUE_MAX] - [COMPLICATION.RANGED_VALUE_MIN]), 0, 1) : 0) &gt; 0 ? 255 : 0" />
-                    <Arc centerX="225" centerY="225" width="439" height="439" startAngle="251" endAngle="251" direction="COUNTER_CLOCKWISE">
-                        <Transform target="endAngle" value="251 - 52 * ([COMPLICATION.RANGED_VALUE_MAX] &gt; [COMPLICATION.RANGED_VALUE_MIN] ? clamp(([COMPLICATION.RANGED_VALUE_VALUE] - [COMPLICATION.RANGED_VALUE_MIN]) / ([COMPLICATION.RANGED_VALUE_MAX] - [COMPLICATION.RANGED_VALUE_MIN]), 0, 1) : 0)" />
+                    <Arc centerX="225" centerY="225" width="439" height="439" startAngle="251" endAngle="251" direction="CLOCKWISE">
+                        <Transform target="startAngle" value="251 - 52 * ([COMPLICATION.RANGED_VALUE_MAX] &gt; [COMPLICATION.RANGED_VALUE_MIN] ? clamp(([COMPLICATION.RANGED_VALUE_VALUE] - [COMPLICATION.RANGED_VALUE_MIN]) / ([COMPLICATION.RANGED_VALUE_MAX] - [COMPLICATION.RANGED_VALUE_MIN]), 0, 1) : 0)" />
                         <Stroke color="#E8EBF7" thickness="2.2" cap="ROUND" />
                     </Arc>
                 </PartDraw>
@@ -1296,7 +1480,7 @@
                     <Image resource="[COMPLICATION.MONOCHROMATIC_IMAGE]" />
                 </PartImage>
                 <PartText x="0" y="0" width="450" height="450">
-                    <TextCircular centerX="225" centerY="225" width="426" height="426" startAngle="244" endAngle="196" direction="COUNTER_CLOCKWISE" align="CENTER" ellipsis="TRUE">
+                    <TextCircular centerX="225" centerY="225" width="426" height="426" startAngle="244" endAngle="196" direction="COUNTER_CLOCKWISE" align="START" ellipsis="TRUE">
                         <Font family="oxanium_medium" size="14.5" color="#8187A3">
                             <Upper>
                                 <Template>%s <Parameter expression="[COMPLICATION.TITLE]" /></Template>
@@ -1310,7 +1494,7 @@
             </Complication>
             <Complication type="EMPTY">
                 <PartText x="0" y="0" width="450" height="450">
-                    <TextCircular centerX="225" centerY="225" width="426" height="426" startAngle="244" endAngle="196" direction="COUNTER_CLOCKWISE" align="CENTER" ellipsis="TRUE">
+                    <TextCircular centerX="225" centerY="225" width="426" height="426" startAngle="244" endAngle="196" direction="COUNTER_CLOCKWISE" align="START" ellipsis="TRUE">
                         <Font family="oxanium_bold" size="14.5" color="#8187A3">—</Font>
                     </TextCircular>
                 </PartText>
@@ -1318,14 +1502,14 @@
         </ComplicationSlot>
         <ComplicationSlot slotId="40" name="rim_nw" displayName="rim_nw_slot" x="0" y="0" width="450" height="450" supportedTypes="GOAL_PROGRESS RANGED_VALUE SHORT_TEXT EMPTY" isCustomizable="TRUE">
             <Variant mode="AMBIENT" target="alpha" value="0" duration="0" />
-            <BoundingArc centerX="225" centerY="225" width="418" height="418" thickness="24" startAngle="286" endAngle="344" direction="CLOCKWISE" />
+            <BoundingArc centerX="225" centerY="225" width="442" height="442" thickness="24" startAngle="286" endAngle="344" direction="CLOCKWISE" />
             <DefaultProviderPolicy primaryProvider="com.bobbfwed.emberphase.health/com.bobbfwed.emberphase.health.watch.MinutesDataSource" primaryProviderType="GOAL_PROGRESS" defaultSystemProvider="EMPTY" defaultSystemProviderType="EMPTY" />
             <Complication type="GOAL_PROGRESS">
                 <PartImage x="23" y="147" width="16" height="16" pivotX="0.5" pivotY="0.5" angle="290" tintColor="#8187A3">
                     <Image resource="[COMPLICATION.MONOCHROMATIC_IMAGE]" />
                 </PartImage>
                 <PartText x="0" y="0" width="450" height="450">
-                    <TextCircular centerX="225" centerY="225" width="402" height="402" startAngle="296" endAngle="344" direction="CLOCKWISE" align="CENTER" ellipsis="TRUE">
+                    <TextCircular centerX="225" centerY="225" width="402" height="402" startAngle="296" endAngle="344" direction="CLOCKWISE" align="START" ellipsis="TRUE">
                         <Font family="oxanium_medium" size="14.5" color="#8187A3">
                             <Upper>
                                 <Template>%s <Parameter expression="[COMPLICATION.TITLE]" /></Template>
@@ -1354,7 +1538,7 @@
                     <Image resource="[COMPLICATION.MONOCHROMATIC_IMAGE]" />
                 </PartImage>
                 <PartText x="0" y="0" width="450" height="450">
-                    <TextCircular centerX="225" centerY="225" width="402" height="402" startAngle="296" endAngle="344" direction="CLOCKWISE" align="CENTER" ellipsis="TRUE">
+                    <TextCircular centerX="225" centerY="225" width="402" height="402" startAngle="296" endAngle="344" direction="CLOCKWISE" align="START" ellipsis="TRUE">
                         <Font family="oxanium_medium" size="14.5" color="#8187A3">
                             <Upper>
                                 <Template>%s <Parameter expression="[COMPLICATION.TITLE]" /></Template>
@@ -1383,7 +1567,7 @@
                     <Image resource="[COMPLICATION.MONOCHROMATIC_IMAGE]" />
                 </PartImage>
                 <PartText x="0" y="0" width="450" height="450">
-                    <TextCircular centerX="225" centerY="225" width="402" height="402" startAngle="296" endAngle="344" direction="CLOCKWISE" align="CENTER" ellipsis="TRUE">
+                    <TextCircular centerX="225" centerY="225" width="402" height="402" startAngle="296" endAngle="344" direction="CLOCKWISE" align="START" ellipsis="TRUE">
                         <Font family="oxanium_medium" size="14.5" color="#8187A3">
                             <Upper>
                                 <Template>%s <Parameter expression="[COMPLICATION.TITLE]" /></Template>
@@ -1397,7 +1581,7 @@
             </Complication>
             <Complication type="EMPTY">
                 <PartText x="0" y="0" width="450" height="450">
-                    <TextCircular centerX="225" centerY="225" width="402" height="402" startAngle="296" endAngle="344" direction="CLOCKWISE" align="CENTER" ellipsis="TRUE">
+                    <TextCircular centerX="225" centerY="225" width="402" height="402" startAngle="296" endAngle="344" direction="CLOCKWISE" align="START" ellipsis="TRUE">
                         <Font family="oxanium_bold" size="14.5" color="#8187A3">—</Font>
                     </TextCircular>
                 </PartText>

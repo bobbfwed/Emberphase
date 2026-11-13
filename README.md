@@ -1,19 +1,75 @@
-# Emberphase
+# Apsis
 
-An open-source watch face for **Wear OS 6 (Android API 36) and later**, written
-in native Watch Face Format 4. Its resource-only APK contains no executable app
-code. Wear OS scales the circular 450-unit layout to the watch display.
+Apsis is an open-source watch face for **Wear OS 6 (Android API 36) and later**
+with no hands. A ring of minutes sits off-centre inside a fixed circle and
+touches it at exactly one point. That point is the hour.
 
-> **Redesign in progress.** The previous mechanical dial and all of its artwork,
-> previews and artwork scripts have been removed. The new face is specified in
-> [docs/design.md](docs/design.md). Until it is built, the `watchface` module
-> has no `watchface.xml` and does not build; the health companion modules are
-> unaffected.
+It is the current face of the Emberphase project, written in native Watch Face
+Format 4. Its resource-only APK contains no executable app code. Wear OS scales
+the circular 450-unit layout to the watch display.
 
-The optional **Emberphase Health** phone/watch companion supplies active
-minutes, activity calories, a power-saving signal and a tap trigger to the
-face. See [companion setup](docs/health-companion.md),
-[data sources](docs/data-sources.md) and
+![Illustrative Apsis preview](docs/previews/normal.png)
+
+## Reading the time
+
+* **Hour.** The white contact mark is where the minute ring touches the fixed
+  circle. It travels around the dial once every 12 hours. The glowing crescent
+  is thickest directly opposite.
+* **Minute.** The satellite bead circles the minute ring once an hour and
+  carries the minute as a number. The ring's ticks travel with it.
+* **Seconds.** A small moonlet orbits the satellite once a minute. It is
+  optional.
+
+## Features
+
+* **Forecast hour marks.** The bars around the dial are the weather for the
+  next eight hours, each standing at the hour it describes. Height is
+  temperature between today's low and high, colour runs cold to warm, and a dot
+  marks rain, snow, sleet or thunderstorms.
+* **Foresight.** Tap the centre and the dial fast-forwards through the next
+  eight hours while the centre reads out each hour's temperature and
+  conditions, then returns to now. Requires the Emberphase Health watch
+  companion.
+* **Core.** Current temperature, high and low, a conditions glyph and the date,
+  inside a battery ring that turns amber at 20% and red at 10%. It can show
+  digital time instead.
+* **Four rim complications.** Curved slots for any data source, with a progress
+  line when the source has a goal or range. The defaults are steps, active
+  minutes, activity calories and sunrise / sunset.
+* **Three colour themes:** Ion, Solar and Glacier.
+* **Always-on.** Two hairline circles, the contact mark, the satellite with its
+  minute number, and the date.
+
+The face is drawn as vectors that turn once a minute, plus the moonlet once a
+second. Nothing animates continuously. The moonlet hides at 15% battery and in
+power saving, and Foresight is disabled at 15%. Battery-life measurements are
+still pending.
+
+More previews: [Solar](docs/previews/afternoon-solar.png),
+[Glacier](docs/previews/evening-glacier.png),
+[always-on](docs/previews/ambient.png) and
+[low battery](docs/previews/low-battery.png). These are drawings with sample
+data, not device screenshots. The [design document](docs/design.md) has the
+geometry and an [interactive browser mockup](docs/design/apsis-mockup.html).
+
+## Compatibility and current limitations
+
+The project requires Wear OS 6 / API 36 or later and targets the **Samsung
+Galaxy Watch6 Classic SM-R950**. See the
+[device test checklist](docs/device-acceptance.md) for what has and has not
+been verified.
+
+* Hourly forecast depends on the watch's weather source. Hours without data
+  show a plain tick, and Foresight reads only the hours that exist.
+* Active minutes and activity calories use the optional **Emberphase Health**
+  phone/watch companion, because the tested Samsung Health watch app does not
+  expose them as numeric complications. Without it those slots show a dash.
+  See [companion setup](docs/health-companion.md).
+* Foresight and the power-saving cutoff also use the watch companion. Without
+  it the face works, the centre tap does nothing, and the moonlet ignores
+  power saving.
+
+For the technical findings, see [data sources](docs/data-sources.md) and
 [Samsung provider availability](docs/device-providers.md).
 
 ## Build from source
@@ -51,8 +107,10 @@ Run the SDK-native build:
 powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\scripts\Build-WatchFace.ps1
 ```
 
-This validates the WFF schema, compiles the resources, debug-signs the APK, checks memory limits, and verifies that the APK
-contains no DEX code. The output is **`artifacts/emberphase-debug.apk`**.
+This runs the layout checks, validates the WFF schema, compiles the resources,
+debug-signs the APK, checks memory limits, and verifies that the APK contains
+no DEX code. The output is **`artifacts/apsis-debug.apk`**. The layout checks
+need Node.js and are skipped with a warning without it.
 
 Alternatively, open the repository in Android Studio or use the Gradle wrapper:
 
@@ -96,12 +154,71 @@ on the watch. The install command requires an explicit device address or serial.
 To install an APK you already built, use:
 
 ```powershell
-& "$env:ANDROID_HOME\platform-tools\adb.exe" -s WATCH_IP:DEBUG_PORT install -r .\artifacts\emberphase-debug.apk
+& "$env:ANDROID_HOME\platform-tools\adb.exe" -s WATCH_IP:DEBUG_PORT install -r .\artifacts\apsis-debug.apk
 ```
 
-Long-press the current watch face, choose **Add watch face**, and select the
-face. Give watch-face forks their own application IDs so installing one does
-not replace another.
+Long-press the current watch face, choose **Add watch face**, and select
+**Apsis**. Its package ID is `com.bobbfwed.emberphase.apsis`, so it installs
+alongside other Emberphase faces. Give watch-face forks their own application
+IDs so installing one does not replace another.
+
+Foresight, the power-saving cutoff, active minutes and activity calories need
+watch companion 0.1.9 or later, which lists this face as an allowed client.
+
+## Customize
+
+Open the face's editor on the watch.
+
+| Setting | Options |
+| --- | --- |
+| Color | Ion, Solar, Glacier |
+| Core | Weather, Digital time |
+| Seconds moonlet | On, off |
+| Forecast hour marks | On, off |
+
+The four rim slots are selected by tapping them in the editor. Each accepts
+goal, ranged, short-text or empty data. The slot shows the provider's icon and
+title when it supplies them, then its value. Goal and ranged data also fill the
+progress line. The face displays provider values and does not calculate
+activity totals.
+
+For active minutes and calories, install and connect the companion, then choose
+**Emberphase · Active minutes** and **Emberphase · Active calories**. New face
+instances prefer these providers when installed.
+
+## Modify and validate
+
+The layout is generated. Edit the generator, not the XML.
+
+| File | Purpose |
+| --- | --- |
+| `scripts/New-WatchFace.mjs` | Generates `watchface/src/main/res/raw/watchface.xml`: layout, expressions, settings and complications |
+| `scripts/lib/apsis-geometry.mjs` | Radii, slot positions and themes shared by the generator, previews and checks |
+| `scripts/New-Preview.mjs` | Draws the picker image and `docs/previews` with headless Edge or Chrome |
+| `scripts/test-watchface.mjs` | Expression, geometry and resource checks |
+| `watchface/src/main/res/values/strings.xml` | Face and editor labels |
+
+With Node.js installed:
+
+```powershell
+node .\scripts\New-WatchFace.mjs
+node .\scripts\test-watchface.mjs
+node .\scripts\New-Preview.mjs
+```
+
+The checks evaluate the face's expressions for Foresight timing and midnight
+wrap, hour and minute angles, forecast bar scaling and colour, battery and rim
+progress, and confirm the ring geometry, slot bounds, labels and fonts. They
+fail when `watchface.xml` is out of date with the generator. The build also
+runs Google's WFF validator and memory checker with 10 MiB active and 4 MiB
+ambient limits. None of this emulates the Wear OS renderer, so use the
+[device test checklist](docs/device-acceptance.md) for visual changes.
+
+To inspect complication provider declarations on a connected watch:
+
+```powershell
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\scripts\Inspect-WatchProviders.ps1 -Serial WATCH_IP:DEBUG_PORT
+```
 
 ## Contribute
 
@@ -117,6 +234,8 @@ complication provider when relevant.
 
 ## License
 
-Emberphase is licensed under the [MIT License](LICENSE). You may use, modify,
-and redistribute it, including commercially, with the required copyright and
-license notices retained.
+Apsis and the Emberphase companion are licensed under the
+[MIT License](LICENSE). You may use, modify, and redistribute them, including
+commercially, with the required copyright and license notices retained. The
+bundled Oxanium typeface is under the
+[SIL Open Font License](docs/licenses/Oxanium-OFL.txt).

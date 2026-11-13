@@ -70,13 +70,13 @@ test('expression syntax rules', () => {
 });
 test('sources, references and configuration ids resolve', () => {
   const known = new Set(['HOUR_0_11_MINUTE', 'HOUR_0_11', 'HOUR_0_23', 'MINUTE', 'MINUTE_Z', 'SECOND', 'DAY', 'DAY_OF_WEEK', 'UTC_TIMESTAMP',
-    'IS_24_HOUR_MODE', 'AMPM_STRING_ENG', 'BATTERY_PERCENT', 'WEATHER.IS_AVAILABLE', 'WEATHER.IS_ERROR', 'WEATHER.CONDITION', 'WEATHER.IS_DAY',
+    'IS_24_HOUR_MODE', 'AMPM_STATE', 'BATTERY_PERCENT', 'WEATHER.IS_AVAILABLE', 'WEATHER.IS_ERROR', 'WEATHER.CONDITION', 'WEATHER.IS_DAY',
     'WEATHER.TEMPERATURE', 'WEATHER.DAY_TEMPERATURE_HIGH', 'WEATHER.DAY_TEMPERATURE_LOW',
     'COMPLICATION.TITLE', 'COMPLICATION.TEXT', 'COMPLICATION.MONOCHROMATIC_IMAGE', 'COMPLICATION.GOAL_PROGRESS_VALUE',
     'COMPLICATION.GOAL_PROGRESS_TARGET_VALUE', 'COMPLICATION.RANGED_VALUE_VALUE', 'COMPLICATION.RANGED_VALUE_MIN', 'COMPLICATION.RANGED_VALUE_MAX']);
   const references = new Set([...face.matchAll(/<Reference name="([^"]+)"/g)].map(m => m[1]));
   assert.deepEqual([...references].sort(), ['fore_idx', 'fore_off', 'fore_progress', 'fore_start', 'power_saving']);
-  const configs = new Set([...face.matchAll(/<(?:Color|List|Boolean)Configuration id="([^"]+)" displayName/g)].map(m => m[1]));
+  const configs = new Set([...face.matchAll(/<(?:List|Boolean)Configuration id="([^"]+)" displayName/g)].map(m => m[1]));
   for (const m of face.matchAll(/\[([A-Z][A-Za-z0-9_.]*)\]/g)) {
     const name = m[1];
     if (name.startsWith('REFERENCE.')) assert.ok(references.has(name.slice(10)), `Undefined reference ${name}`);
@@ -233,7 +233,7 @@ test('Foresight readout', () => {
 test('rim progress', () => {
   for (const slot of G.RIM_SLOTS) {
     const at = face.indexOf(`slotId="${slot.id}"`), body = face.slice(at, face.indexOf('</ComplicationSlot>', at));
-    const ends = [...body.matchAll(/<Transform target="endAngle" value="([^"]*)"/g)].map(m => unescape(m[1]));
+    const ends = [...body.matchAll(/<Transform target="(?:start|end)Angle" value="([^"]*)"/g)].map(m => unescape(m[1]));
     assert.equal(ends.length, 2);
     const top = G.isTop(slot.angle), h = G.RIM_PROGRESS_HALF, sign = top ? 1 : -1, start = slot.angle - sign * h;
     const goal = (v, t) => evaluate(ends[0], { 'COMPLICATION.GOAL_PROGRESS_VALUE': v, 'COMPLICATION.GOAL_PROGRESS_TARGET_VALUE': t });

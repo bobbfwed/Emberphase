@@ -64,16 +64,19 @@ public abstract class ActivityDataSource extends ComplicationDataSourceService {
         ComplicationText description = new PlainComplicationText.Builder(label).build();
         PendingIntent tap = PendingIntent.getActivity(this, 0, new Intent(this, HealthActivity.class),
                 PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
+        ComplicationText title = new PlainComplicationText.Builder(isMinutes() ? "MIN" : "KCAL").build();
+        MonochromaticImage icon = new MonochromaticImage.Builder(android.graphics.drawable.Icon.createWithResource(
+                this, com.bobbfwed.emberphase.health.common.R.drawable.ic_emberphase_health)).build();
         if (type == ComplicationType.GOAL_PROGRESS && metric.hasProgress()) {
             GoalProgressComplicationData.Builder builder = new GoalProgressComplicationData.Builder(
                     metric.value.floatValue(), metric.goal.floatValue(), description).setText(text)
-                    .setTitle(new PlainComplicationText.Builder(isMinutes() ? "MIN" : "KCAL").build()).setTapAction(tap);
+                    .setTitle(title).setMonochromaticImage(icon).setTapAction(tap);
             if (validity != null) builder.setValidTimeRange(validity);
             return builder.build();
         }
         if (type == ComplicationType.SHORT_TEXT) {
             ShortTextComplicationData.Builder builder = new ShortTextComplicationData.Builder(text, description)
-                    .setTitle(new PlainComplicationText.Builder(isMinutes() ? "MIN" : "KCAL").build()).setTapAction(tap);
+                    .setTitle(title).setMonochromaticImage(icon).setTapAction(tap);
             if (validity != null) builder.setValidTimeRange(validity);
             return builder.build();
         }

@@ -9,7 +9,6 @@ import * as G from './lib/apsis-geometry.mjs';
 const { C, RF, RM, D, pt } = G;
 const FM = 'oxanium_medium', FB = 'oxanium_bold';
 const INK = '#E8EBF7', DIM = '#8187A3', FAINT = '#7B8099', TRACK = '#2A2E40';
-const ACCENT = '[CONFIGURATION.accent.3]';
 
 // ---- XML helpers -----------------------------------------------------------
 const esc = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
@@ -49,6 +48,10 @@ const when = (expr, yes, no) => el('Condition', {},
   el('Compare', { expression: 'test' }, yes),
   no ? el('Default', {}, no) : null);
 const q = s => `"${s}"`;
+// One copy of an element per colour theme. Gradients and strokes need plain
+// hex colours: the runtime ignores a configuration colour list in a gradient.
+const themed = (name, attrs, make) => group(name, attrs, el('ListConfiguration', { id: 'theme' },
+  ...G.THEMES.map(t => el('ListOption', { id: t.id }, group(`${name}_${t.id}`, attrs, make(t))))));
 
 // ---- Expressions -----------------------------------------------------------
 const OFF = '[REFERENCE.fore_off]';
@@ -134,9 +137,9 @@ function minuteRing() {
   const top = R - RM; // satellite centre y, at 12 o'clock on the ring
   const trail = [];
   for (let i = 0; i < 8; i++) {
-    trail.push(draw({ ...HOLDER, alpha: Math.round(255 * (i + 1) / 8 * 0.9) },
+    trail.push(colour => draw({ ...HOLDER, alpha: Math.round(255 * (i + 1) / 8 * 0.9) },
       el('Arc', { centerX: R, centerY: R, width: 2 * RM, height: 2 * RM, startAngle: 290 + i * 8.75, endAngle: 290 + (i + 1) * 8.75 + 0.6, direction: 'CLOCKWISE' },
-        stroke(ACCENT, 4, 'BUTT'))));
+        stroke(colour, 4, 'BUTT'))));
   }
   const moonlet = el('BooleanConfiguration', { id: 'seconds' }, el('BooleanOption', { id: 'TRUE' },
     when(`[BATTERY_PERCENT] > 15 && [REFERENCE.power_saving] == 0 && ${OFF} == 0`,
@@ -146,12 +149,14 @@ function minuteRing() {
   const satellite = group('satellite', { ...HOLDER, ...PIVOT },
     transform('angle', MINUTE_ANGLE),
     transform('alpha', `255 - 204 * clamp(${OFF}, 0, 1)`),
-    group('trail', HOLDER, ambientOff(), ...trail),
-    draw({ ...HOLDER, alpha: 40 }, ambientOff(), circle(R, top, 14, fill(ACCENT))),
-    draw({ ...HOLDER, alpha: 70 }, ambientOff(), circle(R, top, 10, fill(ACCENT))),
-    draw(HOLDER, circle(R, top, 6.5, fill(ACCENT))),
-    group('seconds_setting', HOLDER, moonlet),
-    label(box(R, R - G.TAG_R, 36, 22), FB, 17, ACCENT, template('%s', '[MINUTE_Z]'), {}, PIVOT, transform('angle', `0 - (${MINUTE_ANGLE})`)));
+    themed('satellite_body', HOLDER, t => [
+      group(`trail_${t.id}`, HOLDER, ambientOff(), ...trail.map(make => make(t.sat))),
+      draw({ ...HOLDER, alpha: 40 }, ambientOff(), circle(R, top, 14, fill(t.sat))),
+      draw({ ...HOLDER, alpha: 70 }, ambientOff(), circle(R, top, 10, fill(t.sat))),
+      draw(HOLDER, circle(R, top, 6.5, fill(t.sat))),
+      label(box(R, R - G.TAG_R, 36, 22), FB, 17, t.sat, template('%s', '[MINUTE_Z]'), {}, PIVOT, transform('angle', `0 - (${MINUTE_ANGLE})`)),
+    ]),
+    group('seconds_setting', HOLDER, moonlet));
   return group('minute_ring', { x: C - R, y: C - D - R, width: 300, height: 300, ...PIVOT },
     transform('angle', `0 - (${HOUR_ANGLE})`),
     draw(HOLDER, el('Variant', { mode: 'AMBIENT', target: 'alpha', value: '150', duration: '0' }),
@@ -164,10 +169,8 @@ function minuteRing() {
 function hourFrame() {
   return group('hour_frame', { ...FULL, ...PIVOT },
     transform('angle', HOUR_ANGLE),
-    // The gradient runs 36 units past the crescent so its last stop, which
-    // holds the satellite colour, is never reached.
-    draw(FULL, ambientOff(), circle(C, C, RF, el('Fill', { color: '#6A4DFF' },
-      el('LinearGradient', { startX: C, startY: C - RF, endX: C, endY: C + RF + 36, colors: '[CONFIGURATION.accent]', positions: '0 0.5 0.9 1' })))),
+    themed('crescent', FULL, t => draw(FULL, ambientOff(), circle(C, C, RF, el('Fill', { color: '#' + t.lune[1].slice(3) },
+      el('LinearGradient', { startX: C, startY: C - RF, endX: C, endY: C + RF, colors: t.lune.join(' '), positions: '0 0.55 1' }))))),
     draw(FULL, circle(C, C - D, RM, fill('#000000'))),
     minuteRing(),
     draw({ ...FULL, ...PIVOT, angle: 355.5 }, arc(RF, 0, 9, 'CLOCKWISE', stroke('#FFFFFF', 6, 'ROUND'))));
@@ -253,7 +256,7 @@ function core() {
   const ambientDate = group('core_ambient_date', { ...FULL, alpha: 0 },
     el('Variant', { mode: 'AMBIENT', target: 'alpha', value: '255', duration: '0' }), centredDate());
 
-  const ampm = `[IS_24_HOUR_MODE] ? ${q('')} : [AMPM_STRING_ENG]`;
+  const ampm = `[IS_24_HOUR_MODE] ? ${q('')} : ([AMPM_STATE] == 0 ? ${q('AM')} : ${q('PM')})`;
   const timeMode = group('core_time', FULL,
     centredDate(),
     el('DigitalClock', BIG, el('TimeText', { format: 'h:mm', hourFormat: 'SYNC_TO_DEVICE', align: 'CENTER', x: 0, y: 0, width: BIG.width, height: BIG.height },
@@ -270,7 +273,7 @@ function core() {
   const foreTemp = byHour(i => `(${hourField(i, 'IS_AVAILABLE')} ? numberFormat(${q('0')}, ${hourField(i, 'TEMPERATURE')}) : ${q('—')})`, q('—'));
   const foreName = byHour(i => `(${hourField(i, 'IS_AVAILABLE')} ? ${hourField(i, 'CONDITION_NAME')} : ${q('')})`, q(''));
   const foresight = [
-    label(LINE1, FM, 13, ACCENT, template('+%sH · %s%s', `numberFormat(${q('0')}, ${IDX})`, hourText, hourSuffix)),
+    label(LINE1, FM, 13, INK, template('+%sH · %s%s', `numberFormat(${q('0')}, ${IDX})`, hourText, hourSuffix)),
     label(BIG, FB, 44, '#F3F5FF', template('%s°', foreTemp), { isAutoSize: 'TRUE' }),
     label(LINE3, FM, 12, '#9AA0BB', template('%s', foreName), { isAutoSize: 'TRUE' }),
   ];
@@ -296,24 +299,30 @@ function rimSlot(slot) {
     ? { width: 2 * G.RIM_TEXT_TOP, height: 2 * G.RIM_TEXT_TOP, startAngle: a - 19, endAngle: a + 29, direction: 'CLOCKWISE' }
     : { width: 2 * G.RIM_TEXT_BOTTOM, height: 2 * G.RIM_TEXT_BOTTOM, startAngle: a + 19, endAngle: a - 29, direction: 'COUNTER_CLOCKWISE' };
   const curved = (...fonts) => el('PartText', FULL,
-    el('TextCircular', { centerX: C, centerY: C, ...textArc, align: 'CENTER', ellipsis: 'TRUE' }, ...fonts));
+    el('TextCircular', { centerX: C, centerY: C, ...textArc, align: 'START', ellipsis: 'TRUE' }, ...fonts));
   const title = () => el('Font', { family: FM, size: 14.5, color: DIM }, el('Upper', {}, template('%s ', '[COMPLICATION.TITLE]')));
   const value = expr => el('Font', { family: FB, size: 14.5, color: INK }, template('%s', expr));
   const ip = pt(206, lead);
   const icon = () => el('PartImage', { ...box(ip[0], ip[1], 16, 16), ...PIVOT, angle: top ? lead : lead + 180, tintColor: DIM },
     el('Image', { resource: '[COMPLICATION.MONOCHROMATIC_IMAGE]' }));
-  const h = G.RIM_PROGRESS_HALF, start = top ? a - h : a + h, dir = top ? 'CLOCKWISE' : 'COUNTER_CLOCKWISE', sign = top ? '+' : '-';
+  // Arcs are always clockwise: the runtime draws nothing for a counter-clockwise
+  // arc whose start is greater than its end. The lower slots fill from their
+  // right-hand end instead, so progress still follows the reading direction.
+  const h = G.RIM_PROGRESS_HALF;
   const progress = f => [
-    draw(FULL, arc(G.RIM_PROGRESS_R, start, top ? a + h : a - h, dir, stroke(TRACK, 2.2, 'ROUND'))),
+    draw(FULL, arc(G.RIM_PROGRESS_R, a - h, a + h, 'CLOCKWISE', stroke(TRACK, 2.2, 'ROUND'))),
     draw(FULL, transform('alpha', `(${f}) > 0 ? 255 : 0`),
-      arc(G.RIM_PROGRESS_R, start, start, dir, transform('endAngle', `${start} ${sign} ${2 * h} * (${f})`), stroke(INK, 2.2, 'ROUND'))),
+      top
+        ? arc(G.RIM_PROGRESS_R, a - h, a - h, 'CLOCKWISE', transform('endAngle', `${a - h} + ${2 * h} * (${f})`), stroke(INK, 2.2, 'ROUND'))
+        : arc(G.RIM_PROGRESS_R, a + h, a + h, 'CLOCKWISE', transform('startAngle', `${a + h} - ${2 * h} * (${f})`), stroke(INK, 2.2, 'ROUND'))),
   ];
   const GV = '[COMPLICATION.GOAL_PROGRESS_VALUE]', GT = '[COMPLICATION.GOAL_PROGRESS_TARGET_VALUE]';
   const RV = '[COMPLICATION.RANGED_VALUE_VALUE]', RMIN = '[COMPLICATION.RANGED_VALUE_MIN]', RMAX = '[COMPLICATION.RANGED_VALUE_MAX]';
   const grouped = q('#,##0');
   return el('ComplicationSlot', { slotId: slot.id, name: slot.key, displayName: `${slot.key}_slot`, ...FULL, supportedTypes: 'GOAL_PROGRESS RANGED_VALUE SHORT_TEXT EMPTY', isCustomizable: 'TRUE' },
     ambientOff(),
-    el('BoundingArc', { centerX: C, centerY: C, width: 2 * G.RIM_MID, height: 2 * G.RIM_MID, thickness: G.RIM_THICKNESS, startAngle: a - G.RIM_HALF, endAngle: a + G.RIM_HALF, direction: 'CLOCKWISE' }),
+    // The runtime measures the band inward from this outer diameter.
+    el('BoundingArc', { centerX: C, centerY: C, width: 2 * G.RIM_MID + G.RIM_THICKNESS, height: 2 * G.RIM_MID + G.RIM_THICKNESS, thickness: G.RIM_THICKNESS, startAngle: a - G.RIM_HALF, endAngle: a + G.RIM_HALF, direction: 'CLOCKWISE' }),
     el('DefaultProviderPolicy', PROVIDERS[slot.id]),
     el('Complication', { type: 'GOAL_PROGRESS' }, icon(), curved(title(), value(`numberFormat(${grouped}, ${GV})`)),
       progress(`${GT} > 0 ? clamp(${GV} / ${GT}, 0, 1) : 0`)),
@@ -354,8 +363,8 @@ const scene = el('Scene', { backgroundColor: '#000000' },
     '[COMPLICATION.RANGED_VALUE_VALUE] > 0 ? 1 : 0'));
 
 const config = el('UserConfigurations', {},
-  el('ColorConfiguration', { id: 'accent', displayName: 'accent_setting', defaultValue: '0' },
-    ...G.THEMES.map(t => el('ColorOption', { id: t.id, displayName: t.key, colors: t.colors.join(' ') }))),
+  el('ListConfiguration', { id: 'theme', displayName: 'theme_setting', defaultValue: '0' },
+    ...G.THEMES.map(t => el('ListOption', { id: t.id, displayName: t.key }))),
   el('ListConfiguration', { id: 'core', displayName: 'core_setting', defaultValue: '0' },
     el('ListOption', { id: '0', displayName: 'core_weather' }),
     el('ListOption', { id: '1', displayName: 'core_time' })),

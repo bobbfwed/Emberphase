@@ -2,10 +2,10 @@
 <!-- Samsung formats editor labels: never use a literal percent sign here. -->
 <resources>
     <string name="watch_face_name">Apsis</string>
-    <string name="accent_setting">Color</string>
-    <string name="accent_ion">Ion</string>
-    <string name="accent_solar">Solar</string>
-    <string name="accent_glacier">Glacier</string>
+    <string name="theme_setting">Color</string>
+    <string name="theme_ion">Ion</string>
+    <string name="theme_solar">Solar</string>
+    <string name="theme_glacier">Glacier</string>
     <string name="core_setting">Core</string>
     <string name="core_weather">Weather</string>
     <string name="core_time">Digital time</string>
