@@ -41,7 +41,7 @@ export function svg({ hour = 10, minute = 8, second = 32, theme = 0, ambient = f
       const len = G.BAR_MIN + G.BAR_SPAN * k, a = pt(G.BAR_R0, ang), b = pt(G.BAR_R0 + len, ang);
       const col = G.barColor(k).map(Math.round).join(',');
       o.push(`<g opacity="${f(1 - i * 0.085)}"><line x1="${f(a[0])}" y1="${f(a[1])}" x2="${f(b[0])}" y2="${f(b[1])}" stroke="rgb(${col})" stroke-width="5" stroke-linecap="round"/>`);
-      if (G.WET.includes(SAMPLE.cond[i])) { const d = pt(G.BAR_R0 + len + 6.5, ang); o.push(`<circle cx="${f(d[0])}" cy="${f(d[1])}" r="2" fill="#4FD8FF"/>`); }
+      if (G.WET.includes(SAMPLE.cond[i])) { const d = pt(G.BAR_R0 + len + G.DOT_GAP, ang); o.push(`<circle cx="${f(d[0])}" cy="${f(d[1])}" r="2" fill="#4FD8FF"/>`); }
       o.push('</g>');
     });
     for (const [n, a] of [['12', 0], ['3', 90], ['6', 180], ['9', 270]]) { const p = pt(G.NUMERAL_R, a); o.push(`<text x="${f(p[0])}" y="${f(p[1] + 5.5)}" text-anchor="middle" ${FONT} font-size="16" font-weight="500" fill="#7B8099">${n}</text>`); }

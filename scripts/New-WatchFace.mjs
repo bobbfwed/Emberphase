@@ -98,8 +98,8 @@ function corona() {
           transform('endY', `${top} - ${G.BAR_SPAN} * ${k}`),
           stroke('#ECF0FF', 5, 'ROUND', transform('color', colour)))),
         when(G.WET.map(c => `${cond} == ${c}`).join(' || '),
-          draw(FULL, el('Ellipse', { x: C - 2, y: top - 8.5, width: 4, height: 4 },
-            transform('y', `${top - 8.5} - ${G.BAR_SPAN} * ${k}`), fill('#4FD8FF')))),
+          draw(FULL, el('Ellipse', { x: C - G.DOT_R, y: top - G.DOT_GAP - G.DOT_R, width: 2 * G.DOT_R, height: 2 * G.DOT_R },
+            transform('y', `${top - G.DOT_GAP - G.DOT_R} - ${G.BAR_SPAN} * ${k}`), fill('#4FD8FF')))),
       ])));
   }
   return group('corona_setting', FULL, ambientOff(),

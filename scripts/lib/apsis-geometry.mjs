@@ -11,7 +11,8 @@ export const MOON_R = 11;             // seconds moonlet orbit radius
 export const BATTERY_R = 60;          // battery ring radius around the core
 export const CORE_TAP_R = 54;         // Foresight tap target radius
 export const TICK_R0 = 164, TICK_R1 = 168;
-export const BAR_R0 = 171, BAR_MIN = 6, BAR_SPAN = 16;
+export const BAR_R0 = 171, BAR_MIN = 5, BAR_SPAN = 13;
+export const DOT_GAP = 6, DOT_R = 2;  // precipitation dot above a bar
 export const FORECAST_HOURS = 8;
 export const RIM_MID = 209, RIM_THICKNESS = 24, RIM_HALF = 29;
 export const RIM_TEXT_TOP = 201, RIM_TEXT_BOTTOM = 213, RIM_PROGRESS_R = 219.5, RIM_PROGRESS_HALF = 26;

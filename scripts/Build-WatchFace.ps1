@@ -19,6 +19,13 @@ function Check-Exit([string]$operation) {
     if ($LASTEXITCODE -ne 0) { throw "$operation failed with exit code $LASTEXITCODE." }
 }
 & (Join-Path $PSScriptRoot 'Get-WffTools.ps1')
+# watchface.xml is generated. The checks fail when it is stale.
+if (Get-Command node -ErrorAction SilentlyContinue) {
+    & node (Join-Path $PSScriptRoot 'test-watchface.mjs')
+    Check-Exit 'Layout checks'
+} else {
+    Write-Warning 'Node.js was not found: skipping the layout checks in scripts/test-watchface.mjs.'
+}
 $validatorLog = Join-Path $buildRoot 'validation.log'
 # Version 1.7 can exit zero on schema failures: check its report as well.
 $savedErrorPreference = $ErrorActionPreference
