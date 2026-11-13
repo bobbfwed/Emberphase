@@ -5,7 +5,8 @@ later**, hand-written in native Watch Face Format 4, with optional Samsung
 Health companion apps.
 
 > **Redesign in progress.** The previous mechanical-style dial has been removed.
-> The new design and build plan are in [docs/DESIGN.md](docs/DESIGN.md). Until
+> The new design, **Meniscus**, and its build plan are in [docs/DESIGN.md](docs/DESIGN.md),
+> with an interactive mockup in `docs/design/meniscus-concept.html`. Until
 > it is built, the face module contains a plain placeholder clock.
 
 ## Compatibility

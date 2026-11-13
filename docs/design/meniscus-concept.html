@@ -1,0 +1,665 @@
+<title>Meniscus</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<style>
+/* Layout: instrument bench. The live face sits beside its control strip; the
+   spec reads below as a single column of plates. Dark-only by choice: the
+   subject is an OLED watch face. */
+:root {
+  color-scheme: dark;
+  --bench: #090C10;
+  --plate: #10151B;
+  --plate-edge: #1E2731;
+  --ink: #DCE3EA;
+  --ink-muted: #8794A1;
+  --accent: #62F5E4;
+  --accent-deep: #1238B8;
+  --font-display: "Unbounded", "Segoe UI", system-ui, sans-serif;
+  --font-body: "IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, "Cascadia Mono", Consolas, monospace;
+  --step--1: 0.8125rem;
+  --step-0: 1rem;
+  --step-1: 1.25rem;
+  --step-2: 1.75rem;
+  --step-4: clamp(2.4rem, 6vw, 3.6rem);
+}
+* { box-sizing: border-box; }
+html { background: var(--bench); }
+body {
+  background: var(--bench);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: var(--step-0);
+  line-height: 1.55;
+  padding-block: 32px 64px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+.wrap { max-width: 1120px; margin: 0 auto; display: grid; gap: 48px; }
+header { display: grid; gap: 10px; }
+.eyebrow { font-family: var(--font-mono); font-size: var(--step--1); letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-muted); margin: 0; }
+h1 { font-family: var(--font-display); font-weight: 700; font-size: var(--step-4); letter-spacing: -0.02em; line-height: 1; margin: 0; color: var(--ink); }
+h1 .wl { color: var(--accent); }
+.lede { max-width: 64ch; font-size: var(--step-1); color: var(--ink); margin: 0; text-wrap: pretty; }
+h2 { font-family: var(--font-display); font-weight: 500; font-size: var(--step-2); margin: 0; text-wrap: balance; letter-spacing: -0.01em; }
+h3 { font-size: var(--step-0); font-weight: 600; margin: 0; }
+p { margin: 0; }
+.bench { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: 32px; align-items: start; }
+@media (max-width: 860px) { .bench { grid-template-columns: 1fr; } }
+.stage { display: grid; gap: 12px; justify-items: center; }
+#face { width: 100%; max-width: 540px; aspect-ratio: 1; touch-action: none; cursor: grab; user-select: none; }
+#face:active { cursor: grabbing; }
+.hint { font-size: var(--step--1); color: var(--ink-muted); text-align: center; max-width: 46ch; }
+.controls { background: var(--plate); border: 1px solid var(--plate-edge); border-radius: 14px; padding: 20px; display: grid; gap: 18px; }
+.ctl { display: grid; gap: 6px; }
+.ctl > label, .ctl > .lbl { font-family: var(--font-mono); font-size: 0.75rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-muted); display: flex; justify-content: space-between; gap: 8px; }
+.ctl output { color: var(--ink); font-variant-numeric: tabular-nums; letter-spacing: 0.02em; text-transform: none; }
+.row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+input[type=range] { width: 100%; accent-color: var(--accent); }
+select, button { font: inherit; font-size: 0.9rem; color: var(--ink); background: #0B1015; border: 1px solid var(--plate-edge); border-radius: 8px; padding: 7px 10px; }
+select { width: 100%; }
+button { cursor: pointer; }
+button:hover { border-color: var(--accent); }
+button:focus-visible, select:focus-visible, input:focus-visible, .seg label:has(input:focus-visible), .swatch:has(input:focus-visible) { outline: 2px solid var(--accent); outline-offset: 2px; }
+.seg { display: flex; border: 1px solid var(--plate-edge); border-radius: 8px; overflow: hidden; }
+.seg label { flex: 1; text-align: center; padding: 7px 6px; font-size: 0.85rem; cursor: pointer; color: var(--ink-muted); }
+.seg label:has(input:checked) { background: #18212A; color: var(--ink); box-shadow: inset 0 -2px 0 var(--accent); }
+.seg input, .swatch input { position: absolute; opacity: 0; pointer-events: none; }
+.swatches { display: flex; gap: 10px; flex-wrap: wrap; }
+.swatch { display: flex; align-items: center; gap: 8px; cursor: pointer; font-size: 0.85rem; color: var(--ink-muted); padding: 4px 10px 4px 4px; border: 1px solid var(--plate-edge); border-radius: 999px; }
+.swatch i { width: 22px; height: 22px; border-radius: 50%; display: block; }
+.swatch:has(input:checked) { color: var(--ink); border-color: var(--ink-muted); }
+.check { display: flex; gap: 8px; align-items: center; font-size: 0.9rem; color: var(--ink); text-transform: none; letter-spacing: 0; font-family: var(--font-body); }
+.check input { accent-color: var(--accent); }
+.note { font-size: var(--step--1); color: var(--ink-muted); }
+.note.warn { color: #FFB08A; }
+section { display: grid; gap: 18px; }
+.novel { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 320px), 1fr)); gap: 14px; }
+.novel article { background: var(--plate); border: 1px solid var(--plate-edge); border-radius: 12px; padding: 16px 18px; display: grid; gap: 6px; align-content: start; }
+.novel article p { color: var(--ink-muted); font-size: 0.95rem; }
+.tbl { overflow-x: auto; border: 1px solid var(--plate-edge); border-radius: 12px; }
+table { border-collapse: collapse; width: 100%; min-width: 620px; font-size: 0.92rem; }
+th, td { text-align: left; padding: 10px 14px; border-bottom: 1px solid var(--plate-edge); vertical-align: top; }
+th { font-family: var(--font-mono); font-weight: 500; font-size: 0.75rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-muted); background: #0C1116; }
+tr:last-child td { border-bottom: 0; }
+td code, p code, li code { font-family: var(--font-mono); font-size: 0.85em; color: var(--ink); background: #0C1116; padding: 1px 5px; border-radius: 4px; }
+.tag { font-family: var(--font-mono); font-size: 0.72rem; letter-spacing: 0.06em; padding: 2px 8px; border-radius: 999px; border: 1px solid var(--plate-edge); white-space: nowrap; }
+.tag.in { color: var(--accent); border-color: color-mix(in srgb, var(--accent) 45%, transparent); }
+.tag.cx { color: #E9C46A; border-color: #E9C46A66; }
+ol.plan { margin: 0; padding: 0; list-style: none; counter-reset: ph; display: grid; gap: 12px; }
+ol.plan li { counter-increment: ph; display: grid; grid-template-columns: 44px 1fr; gap: 14px; background: var(--plate); border: 1px solid var(--plate-edge); border-radius: 12px; padding: 14px 16px; }
+ol.plan li::before { content: counter(ph); font-family: var(--font-display); font-weight: 700; font-size: 1.4rem; color: var(--accent); line-height: 1.2; }
+ol.plan li.risk { border-color: color-mix(in srgb, var(--accent) 50%, var(--plate-edge)); }
+ol.plan p { color: var(--ink-muted); font-size: 0.95rem; }
+.two { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 340px), 1fr)); gap: 24px; }
+ul.plain { margin: 0; padding-left: 1.1em; display: grid; gap: 8px; color: var(--ink-muted); }
+ul.plain strong { color: var(--ink); font-weight: 600; }
+.foot { font-size: var(--step--1); color: var(--ink-muted); }
+@media (prefers-reduced-motion: reduce) { * { scroll-behavior: auto; } }
+</style>
+
+<div class="wrap">
+  <header>
+    <p class="eyebrow">Emberphase · Wear OS watch face proposal</p>
+    <h1>Menis<span class="wl">cus</span></h1>
+    <p class="lede">A sealed glass core of luminous fluid that always knows which way is down. The time sits in the fluid and breaks at the waterline. The rim of the dial shows the next twelve hours of weather at the hours they will happen.</p>
+  </header>
+
+  <div class="bench">
+    <div class="stage">
+      <svg id="face" viewBox="-22 -22 494 494" role="img" aria-label="Meniscus watch face concept, rendered live"></svg>
+      <p class="hint">Drag the watch sideways to roll your wrist. Click the core to make the fluid slosh. All data is sample data.</p>
+    </div>
+
+    <form class="controls" id="controls" autocomplete="off">
+      <div class="ctl">
+        <span class="lbl">Watch state</span>
+        <div class="seg" role="radiogroup" aria-label="Watch state">
+          <label><input type="radio" name="mode" id="mode-active" value="active" checked>Active</label>
+          <label><input type="radio" name="mode" id="mode-saver" value="saver">Power saving</label>
+          <label><input type="radio" name="mode" id="mode-aod" value="aod">Always-on</label>
+        </div>
+        <p class="note warn" id="lowNote" hidden>Battery at 20 percent or less: tilt, parallax, seconds and slosh are off.</p>
+      </div>
+      <div class="ctl">
+        <label for="roll">Wrist roll <output id="rollOut">0°</output></label>
+        <input type="range" id="roll" min="-45" max="45" value="14" step="1">
+        <div class="row"><button type="button" id="rock">Rock wrist</button><button type="button" id="slosh">Tap core (slosh)</button></div>
+      </div>
+      <div class="ctl">
+        <label for="time">Time <output id="timeOut">--:--</output></label>
+        <input type="range" id="time" min="0" max="1439" value="622" step="1">
+        <div class="row">
+          <label class="check"><input type="checkbox" id="live" checked> Live time</label>
+          <label class="check"><input type="checkbox" id="h24"> 24-hour</label>
+          <label class="check"><input type="checkbox" id="secs" checked> Seconds spark</label>
+        </div>
+      </div>
+      <div class="ctl">
+        <label for="feed">Core fluid shows</label>
+        <select id="feed">
+          <option value="battery">Battery</option>
+          <option value="day">Day remaining</option>
+          <option value="steps">Steps pod progress</option>
+        </select>
+      </div>
+      <div class="ctl">
+        <label for="batt">Battery <output id="battOut">68%</output></label>
+        <input type="range" id="batt" min="5" max="100" value="68" step="1">
+      </div>
+      <div class="ctl">
+        <label for="notif">Unread notifications <output id="notifOut">3</output></label>
+        <input type="range" id="notif" min="0" max="9" value="3" step="1">
+      </div>
+      <div class="ctl">
+        <label for="wx">Forecast</label>
+        <select id="wx">
+          <option value="showers">Showers this afternoon</option>
+          <option value="clear">Clear and warm</option>
+          <option value="snow">Snow tonight</option>
+          <option value="none">Weather unavailable</option>
+        </select>
+      </div>
+      <div class="ctl">
+        <span class="lbl">Fluid colour</span>
+        <div class="swatches" role="radiogroup" aria-label="Fluid colour">
+          <label class="swatch"><input type="radio" name="theme" id="th-plasma" value="plasma" checked><i style="background:linear-gradient(#62F5E4,#1238B8)"></i>Plasma</label>
+          <label class="swatch"><input type="radio" name="theme" id="th-ion" value="ion"><i style="background:linear-gradient(#E0A6FF,#5A10B8)"></i>Ion</label>
+          <label class="swatch"><input type="radio" name="theme" id="th-ember" value="ember"><i style="background:linear-gradient(#FFD07A,#C9300F)"></i>Ember</label>
+          <label class="swatch"><input type="radio" name="theme" id="th-chloro" value="chloro"><i style="background:linear-gradient(#D6FF6E,#08876A)"></i>Chlorophyll</label>
+        </div>
+      </div>
+    </form>
+  </div>
+
+  <section>
+    <h2>What has not been on a watch before</h2>
+    <div class="novel">
+      <article><h3>Gravity-true fluid core</h3><p>The accelerometer drives the waterline, so the fluid stays level as you roll your wrist. Its level is the battery by default, or the time left in the day, or any pod's goal progress.</p></article>
+      <article><h3>Waterline numerals</h3><p>Digits glow on dark glass above the surface and turn dark against the lit fluid below it. The submerged half shifts slightly, like a straw breaking in a glass of water.</p></article>
+      <article><h3>Chronocast ring</h3><p>Each clock hour on the rim carries that hour's forecast: temperature as terrain depth, conditions as colour and texture, daylight and night as a horizon band. The hour cursor walks into the forecast.</p></article>
+      <article><h3>Notification bubbles</h3><p>Unread notifications rise as bubbles in the fluid, with a small count beside them. No bubbles means nothing is waiting.</p></article>
+      <article><h3>Slosh</h3><p>Tap the core and the fluid swings and settles over about three seconds. The watch companion supplies the tap; nothing runs in the background.</p></article>
+      <article><h3>Charged conduits</h3><p>Each pod docks to the core through a short conduit. When the pod reaches a real goal, its conduit lights up, as if it were feeding the core.</p></article>
+    </div>
+  </section>
+
+  <section>
+    <h2>Where each piece of data comes from</h2>
+    <div class="tbl">
+      <table>
+        <thead><tr><th>On the face</th><th>Source</th><th>Kind</th></tr></thead>
+        <tbody>
+          <tr><td>Time, seconds, date</td><td>Watch clock</td><td><span class="tag in">built in</span></td></tr>
+          <tr><td>Core fluid level</td><td>Battery, day remaining, or a pod's progress (chosen in the editor)</td><td><span class="tag in">built in</span></td></tr>
+          <tr><td>Wrist roll</td><td>Accelerometer, while awake and when motion is allowed</td><td><span class="tag in">built in</span></td></tr>
+          <tr><td>Chronocast ring, weather line</td><td>Native weather: current conditions, high and low, 11 hourly forecasts, daylight, UV</td><td><span class="tag in">built in</span></td></tr>
+          <tr><td>Bubbles</td><td>Unread notification count</td><td><span class="tag in">built in</span></td></tr>
+          <tr><td>Pod at 10 o'clock</td><td>Default: Samsung Health steps, falling back to system steps</td><td><span class="tag cx">complication</span></td></tr>
+          <tr><td>Pods at 2 and 4 o'clock</td><td>Default: active minutes and active calories from the Emberphase Health companion</td><td><span class="tag cx">complication</span></td></tr>
+          <tr><td>Pod at 8 o'clock</td><td>Default: heart rate</td><td><span class="tag cx">complication</span></td></tr>
+          <tr><td>Event bar</td><td>Default: next calendar event; accepts any long or short text</td><td><span class="tag cx">complication</span></td></tr>
+          <tr><td>Slosh, power saving</td><td>Fixed watch-companion providers, no editor selection</td><td><span class="tag">companion</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section>
+    <h2>Behaviour by state</h2>
+    <div class="tbl">
+      <table>
+        <thead><tr><th>State</th><th>What changes</th></tr></thead>
+        <tbody>
+          <tr><td>Active</td><td>Everything shown. Gravity tilt, depth parallax and seconds each have an editor switch.</td></tr>
+          <tr><td>Power saving, or battery at 20 percent or less</td><td>Accelerometer, parallax, seconds and slosh stop. The surface sits level relative to the watch.</td></tr>
+          <tr><td>Battery under 20 percent with the battery fluid</td><td>The fluid turns ember-red in every theme.</td></tr>
+          <tr><td>Always-on</td><td>Black screen. Core outline, outline numerals, a waterline hairline, twelve ring dots, the hour cursor and the date. No fill, pods, weather or sensors.</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section>
+    <h2>Build plan</h2>
+    <ol class="plan">
+      <li><div><h3>Foundation</h3><p>New name and app ID so it installs beside the mechanical face. Editor settings and slots. One geometry file with glyph paths and layout constants, shared by the asset generator, the browser preview and the tests. Numeral PNGs rasterized from it.</p></div></li>
+      <li class="risk"><div><h3>Core spike, on the watch first</h3><p>Glass, masked fluid, battery level, waterline numerals with the blend-mode inversion and refraction offset, and accelerometer tilt. This carries the most risk, so it is installed and checked on the Watch6 Classic before anything is built on top of it.</p></div></li>
+      <li><div><h3>Chronocast ring</h3><p>Hour sectors, temperature terrain, condition colours and textures, day/night band, labels, UV marks, cursor, and the no-data fallbacks. Confirm how many forecast hours Samsung's firmware provides.</p></div></li>
+      <li><div><h3>Pods, conduits, date, weather line, event bar</h3><p>Every complication type, the unavailable states, goal-lit conduits, and non-overlapping editor selection areas.</p></div></li>
+      <li><div><h3>Bubbles, seconds spark, depth parallax</h3><p>Bubble count and its rise animation, the rim spark with its tail, and Gyro offsets for the glass highlight and pods.</p></div></li>
+      <li><div><h3>Slosh</h3><p>Rename the companion's tap provider to Core tap, shorten its window, allow the new face ID, bump the companion versions, then add the damped wave to the face.</p></div></li>
+      <li><div><h3>Always-on, low battery, themes</h3><p>The outline scene, the power and battery gates, the ember-red warning fluid, and the four fluid colours.</p></div></li>
+      <li><div><h3>Tests, previews, docs</h3><p>Expression tests for level, tilt, forecast mapping across midnight and 12/24 hours, gating, slot order and selection bounds. Picker preview rendered from the browser preview. README and device checklist, then a final run on the watch.</p></div></li>
+    </ol>
+  </section>
+
+  <section class="two">
+    <div style="display:grid;gap:12px">
+      <h2>Checked on the watch</h2>
+      <ul class="plain">
+        <li><strong>Masks and blend modes</strong> inside a rotating group: correctness and frame cost.</li>
+        <li><strong>Accelerometer</strong> update rate, jitter and battery cost. If it costs too much, gravity tilt becomes opt-in.</li>
+        <li><strong>Forecast depth:</strong> how many hourly entries the firmware supplies.</li>
+        <li><strong>Always-on offload</strong> with outline numerals.</li>
+        <li><strong>Legibility</strong> exactly at the waterline, at low levels, in sunlight.</li>
+      </ul>
+    </div>
+    <div style="display:grid;gap:12px">
+      <h2>Defaults to confirm</h2>
+      <ul class="plain">
+        <li><strong>Name and ID:</strong> Meniscus, <code>com.bobbfwed.emberphase.meniscus</code>, installed alongside the mechanical face.</li>
+        <li><strong>Default fluid:</strong> Battery, in Plasma.</li>
+        <li><strong>Pod defaults:</strong> steps, active minutes, active calories, heart rate.</li>
+        <li><strong>Small text</strong> in IBM Plex Mono (open font licence), bundled with the face.</li>
+      </ul>
+    </div>
+  </section>
+
+  <p class="foot">Concept mockup in the browser. Proportions use the face's 450-unit canvas; the watch renders it with native Watch Face Format, so final type and glow will differ slightly. Full specification: docs/DESIGN.md.</p>
+</div>
+
+<script>
+(() => {
+  const NS = 'http://www.w3.org/2000/svg';
+  const C = 225, CORE = 110, RIM = 116;
+  const THEMES = {
+    plasma: { hi: '#62F5E4', mid: '#2BA8F0', lo: '#1238B8', lit: '#D8FFFB', ink: '#03121A' },
+    ion:    { hi: '#E0A6FF', mid: '#A94DF5', lo: '#5A10B8', lit: '#F3E3FF', ink: '#14041F' },
+    ember:  { hi: '#FFD07A', mid: '#FF8A2E', lo: '#C9300F', lit: '#FFF0D9', ink: '#1F0802' },
+    chloro: { hi: '#D6FF6E', mid: '#6EE07A', lo: '#08876A', lit: '#F0FFE0', ink: '#041A10' }
+  };
+  const WARN = { hi: '#FFA27A', mid: '#FF5233', lo: '#8E140A', lit: '#FFE3D6', ink: '#200503' };
+  // Monoline numerals, stroke centerlines in a 44 x 76 box.
+  const GLYPH = {
+    '0': 'M14,0 H30 A14,14 0 0 1 44,14 V62 A14,14 0 0 1 30,76 H14 A14,14 0 0 1 0,62 V14 A14,14 0 0 1 14,0 Z',
+    '1': 'M8,14 L24,0 V76',
+    '2': 'M0,14 A14,14 0 0 1 14,0 H30 A14,14 0 0 1 44,14 V24 A14,14 0 0 1 30,38 H14 A14,14 0 0 0 0,52 V76 H44',
+    '3': 'M0,0 H44 L20,32 H30 A14,14 0 0 1 44,46 V62 A14,14 0 0 1 30,76 H14 A14,14 0 0 1 0,62',
+    '4': 'M32,76 V0 L0,50 H44',
+    '5': 'M44,0 H2 V34 H30 A14,14 0 0 1 44,48 V62 A14,14 0 0 1 30,76 H0',
+    '6': 'M36,0 H14 A14,14 0 0 0 0,14 V62 A14,14 0 0 0 14,76 H30 A14,14 0 0 0 44,62 V50 A14,14 0 0 0 30,36 H0',
+    '7': 'M0,0 H44 V8 L18,76 M14,40 H36',
+    '8': 'M14,0 H30 A12,12 0 0 1 42,12 V24 A12,12 0 0 1 30,36 H14 A12,12 0 0 1 2,24 V12 A12,12 0 0 1 14,0 Z M14,36 H30 A14,14 0 0 1 44,50 V62 A14,14 0 0 1 30,76 H14 A14,14 0 0 1 0,62 V50 A14,14 0 0 1 14,36 Z',
+    '9': 'M8,76 H30 A14,14 0 0 0 44,62 V14 A14,14 0 0 0 30,0 H14 A14,14 0 0 0 0,14 V26 A14,14 0 0 0 14,40 H44'
+  };
+  const GW = 44, GH = 76, GAP = 12, HOURS_TOP = 140, MIN_TOP = 236;
+  const POD_ANGLES = [300, 60, 120, 240];
+  const PODS = [
+    { label: 'STEPS', value: '7,412', sub: '/ 8,000', p: 0.93 },
+    { label: 'MIN', value: '38', sub: '/ 60', p: 0.63 },
+    { label: 'KCAL', value: '512', sub: '/ 500', p: 1.02 },
+    { label: 'BPM', value: '64', sub: 'heart', p: null }
+  ];
+  const COND = { 1: 'clear', 8: 'clear', 14: 'partly', 2: 'cloud', 3: 'cloud', 13: 'cloud', 4: 'rain', 6: 'rain', 10: 'rain', 12: 'rain', 5: 'snow', 7: 'snow', 11: 'snow', 9: 'storm', 15: 'wind' };
+  const CLEAR_NIGHT = '#AFC0EE';
+  const FAMILY_COLOR = { clear: '#F3D9A0', partly: '#C8D3E0', cloud: '#7E8CA3', rain: '#45C8FF', snow: '#E6F3FF', storm: '#B184FF', wind: '#4FD1B5' };
+
+  const $ = (id) => document.getElementById(id);
+  const svg = $('face');
+  const state = {
+    mode: 'active', rollTarget: 14, roll: 14, live: true, minutes: 622, h24: false, secs: true,
+    feed: 'battery', batt: 68, notif: 3, wx: 'showers', theme: 'plasma',
+    sloshStart: -1, rockStart: -1, bubbleStart: -1
+  };
+
+  const el = (name, attrs = {}, parent) => {
+    const n = document.createElementNS(NS, name);
+    for (const k in attrs) n.setAttribute(k, attrs[k]);
+    if (parent) parent.appendChild(n);
+    return n;
+  };
+  const rad = (d) => d * Math.PI / 180;
+  const pt = (r, a, cx = C, cy = C) => [cx + r * Math.sin(rad(a)), cy - r * Math.cos(rad(a))];
+  const f = (n) => n.toFixed(2);
+  const arc = (r, a0, a1, cx = C, cy = C) => {
+    const [x0, y0] = pt(r, a0, cx, cy), [x1, y1] = pt(r, a1, cx, cy);
+    return `M${f(x0)},${f(y0)} A${r},${r} 0 ${a1 - a0 > 180 ? 1 : 0} 1 ${f(x1)},${f(y1)}`;
+  };
+  const sector = (r0, r1, a0, a1) => {
+    const [ax, ay] = pt(r1, a0), [bx, by] = pt(r1, a1), [cx2, cy2] = pt(r0, a1), [dx, dy] = pt(r0, a0);
+    const lg = a1 - a0 > 180 ? 1 : 0;
+    return `M${f(ax)},${f(ay)} A${r1},${r1} 0 ${lg} 1 ${f(bx)},${f(by)} L${f(cx2)},${f(cy2)} A${r0},${r0} 0 ${lg} 0 ${f(dx)},${f(dy)} Z`;
+  };
+  const text = (parent, x, y, str, attrs = {}) => {
+    const t = el('text', Object.assign({ x, y, 'font-family': 'IBM Plex Mono, ui-monospace, monospace', 'text-anchor': 'middle' }, attrs), parent);
+    t.textContent = str;
+    return t;
+  };
+
+  // Sample forecast generator: hour h is an absolute hour from midnight today.
+  function weatherAt(h) {
+    const hod = ((h % 24) + 24) % 24;
+    const day = hod >= 7 && hod < 17;
+    const diurnal = Math.cos((hod - 15) / 24 * 2 * Math.PI);
+    let t, cond;
+    if (state.wx === 'clear') { t = 22 + 7 * diurnal; cond = day ? 8 : 1; }
+    else if (state.wx === 'snow') {
+      t = -1 + 3 * diurnal;
+      cond = hod >= 19 || hod < 2 ? (hod === 21 || hod === 22 ? 5 : 7) : hod >= 15 ? 2 : (day ? 14 : 2);
+    } else {
+      t = 12 + 5 * diurnal;
+      cond = hod === 13 ? 12 : hod >= 14 && hod <= 16 ? (hod === 15 ? 9 : 6) : hod === 17 ? 12 : hod >= 18 && hod <= 20 ? 2 : day ? 14 : 1;
+    }
+    const sunny = COND[cond] === 'clear' ? 1 : COND[cond] === 'partly' ? 0.6 : 0.25;
+    const uv = day ? Math.round(Math.max(0, 8 * Math.cos((hod - 13) / 5 * Math.PI / 2)) * sunny) : 0;
+    return { t: Math.round(t), cond, day, uv };
+  }
+
+  function now() {
+    const d = new Date();
+    if (state.live) {
+      state.minutes = d.getHours() * 60 + d.getMinutes();
+      return { min: state.minutes, sec: d.getSeconds() + d.getMilliseconds() / 1000, date: d };
+    }
+    return { min: state.minutes, sec: (Date.now() / 1000) % 60, date: d };
+  }
+
+  function motionAllowed() { return state.mode === 'active' && state.batt > 20; }
+
+  function palette() { return state.feed === 'battery' && state.batt < 20 ? WARN : THEMES[state.theme]; }
+
+  function feedLevel(daySec) {
+    if (state.feed === 'day') return { level: 1 - daySec / 86400, tag: 'DAY' };
+    if (state.feed === 'steps') return { level: Math.min(PODS[0].p, 1), tag: 'STEPS' };
+    return { level: state.batt / 100, tag: 'BATT' };
+  }
+
+  function drawDigits(parent, str, top, attrs) {
+    const width = str.length * GW + (str.length - 1) * GAP;
+    let x = C - width / 2;
+    for (const ch of str) {
+      el('path', Object.assign({ d: GLYPH[ch], transform: `translate(${f(x)},${top})`, fill: 'none', 'stroke-linecap': 'square', 'stroke-linejoin': 'round' }, attrs), parent);
+      x += GW + GAP;
+    }
+  }
+
+  function timeStrings(min) {
+    const h = Math.floor(min / 60), m = min % 60;
+    const hh = state.h24 ? String(h).padStart(2, '0') : String(h % 12 === 0 ? 12 : h % 12);
+    return { hh, mm: String(m).padStart(2, '0') };
+  }
+
+  function condIcon(parent, family, day, x, y, color) {
+    const g = el('g', { transform: `translate(${x},${y})`, fill: 'none', stroke: color, 'stroke-width': 1.4, 'stroke-linecap': 'round' }, parent);
+    const cloud = () => el('path', { d: 'M-7,3 H6 A4,4 0 0 0 5,-5 A5.5,5.5 0 0 0 -5,-4 A3.6,3.6 0 0 0 -7,3 Z' }, g);
+    if (family === 'clear') {
+      if (day) { el('circle', { r: 3.6 }, g); for (let i = 0; i < 8; i++) { const [a, b] = pt(5.6, i * 45, 0, 0), [c, d] = pt(7.6, i * 45, 0, 0); el('line', { x1: a, y1: b, x2: c, y2: d }, g); } }
+      else el('path', { d: 'M2,-6 A6.5,6.5 0 1 0 6,3 A5,5 0 0 1 2,-6 Z' }, g);
+    } else {
+      cloud();
+      if (family === 'rain' || family === 'storm') for (const dx of [-4, 0, 4]) el('line', { x1: dx, y1: 6, x2: dx - 1.5, y2: 9.5 }, g);
+      if (family === 'snow') for (const dx of [-4, 0, 4]) el('circle', { cx: dx, cy: 8, r: 0.9, fill: color }, g);
+    }
+  }
+
+  function render() {
+    const t = now();
+    const P = palette();
+    document.documentElement.style.setProperty('--accent', THEMES[state.theme].hi);
+    svg.replaceChildren();
+    const defs = el('defs', {}, svg);
+    el('circle', { cx: C, cy: C, r: 225 }, el('clipPath', { id: 'screen' }, defs));
+    el('circle', { cx: C, cy: C, r: CORE }, el('clipPath', { id: 'coreClip' }, defs));
+    const glow = el('filter', { id: 'glow', x: '-50%', y: '-50%', width: '200%', height: '200%' }, defs);
+    el('feGaussianBlur', { stdDeviation: 2.2, result: 'b' }, glow);
+    const fm = el('feMerge', {}, glow); el('feMergeNode', { in: 'b' }, fm); el('feMergeNode', { in: 'SourceGraphic' }, fm);
+    const rimG = el('linearGradient', { id: 'rimG', x1: 0, y1: 0, x2: 1, y2: 1 }, defs);
+    [['0', '#8E9BA6'], ['0.45', '#1A2027'], ['0.7', '#3B4752'], ['1', '#9FB0BC']].forEach(([o, c]) => el('stop', { offset: o, 'stop-color': c }, rimG));
+
+    // Case
+    el('circle', { cx: C, cy: C, r: 236, fill: '#0B0E12', stroke: '#1C232B', 'stroke-width': 14 }, svg);
+    for (let i = 0; i < 60; i++) { const [a, b] = pt(239, i * 6), [c, d] = pt(243, i * 6); el('line', { x1: a, y1: b, x2: c, y2: d, stroke: '#2A333C', 'stroke-width': i % 5 ? 0.8 : 1.6 }, svg); }
+
+    const screen = el('g', { 'clip-path': 'url(#screen)' }, svg);
+    el('rect', { x: 0, y: 0, width: 450, height: 450, fill: '#000' }, screen);
+
+    const daySec = t.min * 60 + t.sec;
+    const { level: rawLevel, tag } = feedLevel(daySec);
+    const H24 = t.min / 60;
+    const cursorA = ((H24 % 12)) * 30;
+
+    if (state.mode === 'aod') { renderAmbient(screen, t, rawLevel, cursorA, defs); return; }
+
+    // ---------- Chronocast ring ----------
+    const ring = el('g', {}, screen);
+    const h0 = Math.floor(H24);
+    const hours = [];
+    for (let k = 0; k < 12; k++) hours.push(k === 0 ? weatherAt(H24) : weatherAt(h0 + k));
+    let lo = Infinity, hi = -Infinity;
+    for (let h = 0; h < 24; h++) { const w = weatherAt(h); lo = Math.min(lo, w.t); hi = Math.max(hi, w.t); }
+    const wxOn = state.wx !== 'none';
+    el('circle', { cx: C, cy: C, r: 205, fill: 'none', stroke: '#0A0F14', 'stroke-width': 34 }, ring);
+    for (let k = 0; k < 12; k++) {
+      const a0 = ((h0 + k) % 12) * 30 + 0.6, a1 = a0 + 28.8;
+      const parts = k === 0 ? [[a0, Math.max(a0, cursorA), 0.22], [Math.max(a0, cursorA), a1, 1]] : [[a0, a1, 1]];
+      for (const [s0, s1, op] of parts) {
+        if (s1 - s0 < 0.2) continue;
+        const g = el('g', { opacity: op }, ring);
+        if (!wxOn) { el('path', { d: sector(190, 196, s0, s1), fill: '#18212A' }, g); continue; }
+        const w = hours[k], fam = COND[w.cond] || 'cloud', col = fam === 'clear' && !w.day ? CLEAR_NIGHT : FAMILY_COLOR[fam];
+        const depth = 4 + 20 * Math.min(1, Math.max(0, (w.t - lo) / Math.max(1, hi - lo)));
+        el('path', { d: sector(216, 220, s0, s1), fill: w.day ? '#E9C46A' : '#3346A0', opacity: w.day ? 0.55 : 0.8 }, g);
+        el('path', { d: sector(190, 190 + depth, s0, s1), fill: col, opacity: 0.26 }, g);
+        el('path', { d: arc(190 + depth, s0, s1), fill: 'none', stroke: col, 'stroke-width': 1.8, opacity: 0.95 }, g);
+        if (fam === 'rain' || fam === 'storm') for (let i = 1; i < 5; i++) { const a = s0 + (s1 - s0) * i / 5; const [x1, y1] = pt(192, a), [x2, y2] = pt(199, a - 1.2); el('line', { x1, y1, x2, y2, stroke: col, 'stroke-width': 1.2, 'stroke-linecap': 'round' }, g); }
+        if (fam === 'snow') for (let i = 1; i < 5; i++) { const [x, y] = pt(195 + (i % 2) * 3, s0 + (s1 - s0) * i / 5); el('circle', { cx: x, cy: y, r: 1.2, fill: col }, g); }
+        if (w.uv >= 6) { const [x, y] = pt(186, (s0 + s1) / 2); el('circle', { cx: x, cy: y, r: 1.6, fill: '#C38BFF' }, g); }
+      }
+      if (wxOn && (k === 3 || k === 6 || k === 9)) {
+        const [x, y] = pt(204, a0 + 14.4);
+        text(ring, x, y + 3.5, `${hours[k].t}°`, { 'font-size': 10, 'font-weight': 600, fill: '#F2F6FA', stroke: '#000', 'stroke-width': 3, 'paint-order': 'stroke' });
+      }
+    }
+    for (const a of [0, 90, 180, 270]) { const [x1, y1] = pt(181, a), [x2, y2] = pt(185, a); el('line', { x1, y1, x2, y2, stroke: '#46525E', 'stroke-width': 1.4 }, ring); }
+    // Hour cursor
+    const cur = el('g', { filter: 'url(#glow)' }, ring);
+    { const [x1, y1] = pt(182, cursorA), [x2, y2] = pt(226, cursorA); el('line', { x1, y1, x2, y2, stroke: '#FFFFFF', 'stroke-width': 2.6, 'stroke-linecap': 'round' }, cur);
+      const [ax, ay] = pt(176, cursorA), [bx, by] = pt(183, cursorA - 2.4), [cx2, cy2] = pt(183, cursorA + 2.4);
+      el('path', { d: `M${f(ax)},${f(ay)} L${f(bx)},${f(by)} L${f(cx2)},${f(cy2)} Z`, fill: '#FFFFFF' }, cur); }
+
+    // ---------- Pods and conduits ----------
+    const par = motionAllowed() ? state.roll * 0.05 : 0;
+    const podLayer = el('g', { transform: `translate(${f(par)},0)` }, screen);
+    POD_ANGLES.forEach((a, i) => {
+      const pod = PODS[i];
+      const [px, py] = pt(154, a);
+      const done = pod.p !== null && pod.p >= 1;
+      const [c1x, c1y] = pt(RIM, a), [c2x, c2y] = pt(125, a);
+      el('line', { x1: c1x, y1: c1y, x2: c2x, y2: c2y, stroke: '#151D25', 'stroke-width': 7, 'stroke-linecap': 'butt' }, podLayer);
+      el('line', { x1: c1x, y1: c1y, x2: c2x, y2: c2y, stroke: done ? P.hi : '#2A3540', 'stroke-width': 1.8, filter: done ? 'url(#glow)' : null }, podLayer);
+      el('circle', { cx: px, cy: py, r: 30, fill: '#05080B', stroke: '#1A232C', 'stroke-width': 1 }, podLayer);
+      const gapDir = (a + 180) % 360, start = gapDir + 30;
+      el('path', { d: arc(26, start, start + 300, px, py), fill: 'none', stroke: '#18212A', 'stroke-width': 3 }, podLayer);
+      if (pod.p !== null) el('path', { d: arc(26, start, start + 300 * Math.min(1, pod.p), px, py), fill: 'none', stroke: P.hi, 'stroke-width': 3, 'stroke-linecap': 'butt' }, podLayer);
+      text(podLayer, px, py - 9, pod.label, { 'font-size': 7, 'letter-spacing': 1.2, fill: '#7F8B97' });
+      text(podLayer, px, py + 6, pod.value, { 'font-size': 14, 'font-weight': 600, fill: '#EEF3F7' });
+      text(podLayer, px, py + 17, pod.sub, { 'font-size': 7, fill: '#6E7A86' });
+    });
+
+    // ---------- Date (top) ----------
+    const d = t.date;
+    text(screen, C, 68, d.toLocaleDateString('en-US', { weekday: 'long' }).toUpperCase(), { 'font-size': 9, 'letter-spacing': 3, fill: '#8A96A2' });
+    text(screen, C, 96, `${d.getDate()} ${d.toLocaleDateString('en-US', { month: 'short' }).toUpperCase()}`, { 'font-size': 21, 'font-weight': 500, 'letter-spacing': 1.5, fill: '#EEF3F7' });
+
+    // ---------- Weather line and event bar (bottom) ----------
+    if (wxOn) {
+      const cw = hours[0], fam = COND[cw.cond];
+      condIcon(screen, fam, cw.day, C - 46, 352, FAMILY_COLOR[fam]);
+      text(screen, C - 18, 357, `${cw.t}°`, { 'font-size': 14, 'font-weight': 600, fill: '#EEF3F7' });
+      text(screen, C + 30, 356.5, `↑${hi}° ↓${lo}°`, { 'font-size': 9, fill: '#8A96A2' });
+    } else text(screen, C, 356, 'WEATHER  --°', { 'font-size': 9, 'letter-spacing': 1.5, fill: '#5E6A76' });
+    el('rect', { x: 142, y: 370, width: 166, height: 22, rx: 11, fill: '#070B0F', stroke: '#1E2832' }, screen);
+    text(screen, C, 384.5, '15:30  Design review', { 'font-size': 9, fill: '#C9D2DA' });
+
+    // ---------- Core ----------
+    el('circle', { cx: C, cy: C, r: RIM, fill: '#04090D' }, screen);
+    const core = el('g', { 'clip-path': 'url(#coreClip)' }, screen);
+    const ig = el('radialGradient', { id: 'glassG', cx: 0.4, cy: 0.35, r: 0.75 }, defs);
+    el('stop', { offset: 0, 'stop-color': '#0C1820' }, ig); el('stop', { offset: 1, 'stop-color': '#03070A' }, ig);
+    el('circle', { cx: C, cy: C, r: CORE, fill: 'url(#glassG)' }, core);
+
+    const { hh, mm } = timeStrings(t.min);
+    const lit = el('g', { stroke: P.lit, 'stroke-width': 7, opacity: 0.92 }, core);
+    drawDigits(lit, hh, HOURS_TOP, {}); drawDigits(lit, mm, MIN_TOP, {});
+
+    // Surface angle and level, including slosh
+    let angle = motionAllowed() ? state.roll : 0;
+    let bob = 0;
+    const nowMs = performance.now();
+    if (state.sloshStart >= 0) {
+      const s = (nowMs - state.sloshStart) / 1000;
+      if (s > 3.2 || !motionAllowed()) state.sloshStart = -1;
+      else { angle += 24 * Math.exp(-1.25 * s) * Math.sin(2 * Math.PI * 1.1 * s); bob = 4 * Math.exp(-1.6 * s) * Math.sin(2 * Math.PI * 2.2 * s); }
+    }
+    const level = Math.min(1, Math.max(0, rawLevel));
+    const sy = C + CORE - level * 2 * CORE + bob;
+    const rot = `rotate(${f(angle)} ${C} ${C})`;
+
+    const fluidClip = el('clipPath', { id: 'fluidClip' }, defs);
+    el('rect', { x: -200, y: f(sy), width: 850, height: 700, transform: rot }, fluidClip);
+
+    const fluid = el('g', { transform: rot }, core);
+    const fg = el('linearGradient', { id: 'fluidG', gradientUnits: 'userSpaceOnUse', x1: 0, y1: f(sy), x2: 0, y2: f(sy + 200) }, defs);
+    [[0, P.hi, 0.95], [0.35, P.mid, 0.92], [1, P.lo, 0.9]].forEach(([o, c, a]) => el('stop', { offset: o, 'stop-color': c, 'stop-opacity': a }, fg));
+    el('rect', { x: -200, y: f(sy), width: 850, height: 700, fill: 'url(#fluidG)' }, fluid);
+    for (const dy of [14, 31, 55]) el('path', { d: `M60,${f(sy + dy)} q40,-3 80,0 t80,0 t80,0 t80,0`, fill: 'none', stroke: '#FFFFFF', 'stroke-opacity': 0.07, 'stroke-width': 1.2 }, fluid);
+
+    // Submerged numerals: inverted ink, refraction offset
+    const sub = el('g', { 'clip-path': 'url(#fluidClip)' }, core);
+    const subG = el('g', { stroke: P.ink, 'stroke-width': 7, transform: `translate(2.5,1.5) translate(${C},${C}) scale(1.03) translate(${-C},${-C})` }, sub);
+    drawDigits(subG, hh, HOURS_TOP, {}); drawDigits(subG, mm, MIN_TOP, {});
+
+    // Meniscus line, level tag and bubbles live in the fluid's frame
+    const surf = el('g', { transform: rot }, core);
+    const dd = sy - C;
+    if (Math.abs(dd) < CORE - 2) {
+      const half = Math.sqrt(CORE * CORE - dd * dd), x0 = C - half, x1 = C + half;
+      el('path', { d: `M${f(x0)},${f(sy - 6)} Q${f(x0 + 1.5)},${f(sy)} ${f(x0 + 11)},${f(sy)} H${f(x1 - 11)} Q${f(x1 - 1.5)},${f(sy)} ${f(x1)},${f(sy - 6)}`, fill: 'none', stroke: '#FFFFFF', 'stroke-width': 1.6, opacity: 0.95, filter: 'url(#glow)' }, surf);
+      if (CORE + C - sy > 16) text(surf, x1 - 30, sy + 12, `${tag} ${Math.round(level * 100)}%`, { 'font-size': 7.5, 'font-weight': 600, 'letter-spacing': 0.6, fill: P.ink, 'text-anchor': 'end' });
+    }
+    const n = Math.min(state.notif, 6);
+    if (n > 0 && sy < C + CORE - 14) {
+      const bottom = C + CORE - 24, room = Math.max(8, bottom - sy - 10), step = Math.min(13, room / n);
+      let rise = 0;
+      if (state.bubbleStart >= 0) { const s = (nowMs - state.bubbleStart) / 900; if (s >= 1) state.bubbleStart = -1; else rise = (1 - (1 - (1 - s) ** 3)) * 40; }
+      const bubbles = el('g', { 'clip-path': 'url(#fluidClip)' }, core);
+      const bg = el('g', { transform: rot }, bubbles);
+      let topY = bottom;
+      for (let i = 0; i < n; i++) {
+        const by = bottom - i * step + rise * (1 + i * 0.25), bx = C - 42 + Math.sin(i * 1.7) * 5, r = 2.4 + (i % 3) * 0.8;
+        el('circle', { cx: f(bx), cy: f(by), r, fill: '#FFFFFF', 'fill-opacity': 0.25, stroke: '#FFFFFF', 'stroke-opacity': 0.9, 'stroke-width': 0.9 }, bg);
+        topY = by;
+      }
+      text(bg, C - 29, topY + 2.5, state.notif > 6 ? '6+' : String(state.notif), { 'font-size': 8, 'font-weight': 600, fill: P.ink, 'text-anchor': 'start' });
+    }
+
+    // Glass rim, ticks, highlight, seconds spark
+    for (let i = 0; i < 60; i++) { const [a, b] = pt(CORE - 2.5, i * 6), [c, d2] = pt(CORE, i * 6); el('line', { x1: a, y1: b, x2: c, y2: d2, stroke: '#FFFFFF', 'stroke-opacity': i % 5 ? 0.1 : 0.22, 'stroke-width': 0.8 }, screen); }
+    el('circle', { cx: C, cy: C, r: 114.5, fill: 'none', stroke: 'url(#rimG)', 'stroke-width': 3.4 }, screen);
+    el('path', { d: arc(101, 292, 334), fill: 'none', stroke: '#FFFFFF', 'stroke-opacity': 0.14, 'stroke-width': 4, 'stroke-linecap': 'round', transform: `translate(${f(-par * 1.6)},${f(Math.abs(par) * 0.4)})` }, screen);
+    if (state.secs && motionAllowed() && state.batt > 15) {
+      const sa = Math.floor(t.sec) * 6;
+      for (let i = 1; i <= 8; i++) el('path', { d: arc(RIM, sa - i * 3, sa - (i - 1) * 3), fill: 'none', stroke: P.hi, 'stroke-opacity': (0.6 * (1 - i / 9)).toFixed(2), 'stroke-width': 2 }, screen);
+      const [sx, sy2] = pt(RIM, sa);
+      el('circle', { cx: sx, cy: sy2, r: 2.6, fill: '#FFFFFF', filter: 'url(#glow)' }, screen);
+    }
+  }
+
+  function renderAmbient(screen, t, rawLevel, cursorA) {
+    const P = THEMES[state.theme];
+    for (let i = 0; i < 12; i++) { const [x, y] = pt(214, i * 30); el('circle', { cx: x, cy: y, r: i % 3 ? 1.3 : 2, fill: '#56616C' }, screen); }
+    const [x1, y1] = pt(198, cursorA), [x2, y2] = pt(224, cursorA);
+    el('line', { x1, y1, x2, y2, stroke: P.hi, 'stroke-opacity': 0.85, 'stroke-width': 2, 'stroke-linecap': 'round' }, screen);
+    const d = t.date;
+    text(screen, C, 96, `${d.toLocaleDateString('en-US', { weekday: 'short' }).toUpperCase()} ${d.getDate()}`, { 'font-size': 14, 'letter-spacing': 2, fill: '#7A8692' });
+    el('circle', { cx: C, cy: C, r: RIM, fill: 'none', stroke: '#2E3944', 'stroke-width': 1.2 }, screen);
+    const level = Math.min(1, Math.max(0, rawLevel)), sy = C + CORE - level * 2 * CORE;
+    const defs = svg.querySelector('defs');
+    el('rect', { x: 0, y: 0, width: 450, height: f(sy) }, el('clipPath', { id: 'aboveClip' }, defs));
+    el('rect', { x: 0, y: f(sy), width: 450, height: 450 }, el('clipPath', { id: 'belowClip' }, defs));
+    const { hh, mm } = timeStrings(t.min);
+    for (const [clip, op] of [['aboveClip', 0.9], ['belowClip', 0.42]]) {
+      const g = el('g', { 'clip-path': `url(#${clip})`, opacity: op }, screen);
+      const o = el('g', { stroke: P.lit, 'stroke-width': 7 }, g); drawDigits(o, hh, HOURS_TOP, {}); drawDigits(o, mm, MIN_TOP, {});
+      const k = el('g', { stroke: '#000', 'stroke-width': 4.4 }, g); drawDigits(k, hh, HOURS_TOP, {}); drawDigits(k, mm, MIN_TOP, {});
+    }
+    const dd = sy - C;
+    if (Math.abs(dd) < CORE) { const half = Math.sqrt(CORE * CORE - dd * dd); el('line', { x1: C - half, y1: sy, x2: C + half, y2: sy, stroke: P.hi, 'stroke-opacity': 0.7, 'stroke-width': 1 }, screen); }
+  }
+
+  // ---------- Controls ----------
+  const fmtTime = (m) => `${String(Math.floor(m / 60)).padStart(2, '0')}:${String(m % 60).padStart(2, '0')}`;
+  function syncOutputs() {
+    $('rollOut').textContent = `${state.rollTarget > 0 ? '+' : ''}${state.rollTarget}°`;
+    $('battOut').textContent = `${state.batt}%`;
+    $('notifOut').textContent = String(state.notif);
+    $('timeOut').textContent = fmtTime(state.minutes);
+    $('lowNote').hidden = !(state.batt <= 20 && state.mode !== 'aod');
+    if (state.live) $('time').value = state.minutes;
+  }
+  const controls = $('controls');
+  controls.addEventListener('submit', (e) => e.preventDefault());
+  controls.addEventListener('input', (e) => {
+    const id = e.target.id;
+    if (e.target.name === 'mode') state.mode = e.target.value;
+    else if (e.target.name === 'theme') state.theme = e.target.value;
+    else if (id === 'roll') state.rollTarget = +e.target.value;
+    else if (id === 'time') { state.minutes = +e.target.value; state.live = false; $('live').checked = false; }
+    else if (id === 'live') state.live = e.target.checked;
+    else if (id === 'h24') state.h24 = e.target.checked;
+    else if (id === 'secs') state.secs = e.target.checked;
+    else if (id === 'feed') state.feed = e.target.value;
+    else if (id === 'batt') state.batt = +e.target.value;
+    else if (id === 'wx') state.wx = e.target.value;
+    else if (id === 'notif') { const v = +e.target.value; if (v > state.notif) state.bubbleStart = performance.now(); state.notif = v; }
+    syncOutputs(); kick();
+  });
+  $('slosh').addEventListener('click', () => { if (motionAllowed()) { state.sloshStart = performance.now(); kick(); } });
+  $('rock').addEventListener('click', () => { if (motionAllowed()) { state.rockStart = performance.now(); kick(); } });
+
+  // Drag to roll, click core to slosh
+  let drag = null;
+  svg.addEventListener('pointerdown', (e) => { drag = { x: e.clientX, start: state.rollTarget, moved: false }; svg.setPointerCapture(e.pointerId); });
+  svg.addEventListener('pointermove', (e) => {
+    if (!drag) return;
+    const dx = e.clientX - drag.x;
+    if (Math.abs(dx) > 4) drag.moved = true;
+    if (drag.moved) { state.rollTarget = Math.round(Math.max(-45, Math.min(45, drag.start + dx * 0.3))); $('roll').value = state.rollTarget; syncOutputs(); kick(); }
+  });
+  svg.addEventListener('pointerup', (e) => {
+    if (drag && !drag.moved) {
+      const r = svg.getBoundingClientRect(), s = 494 / r.width;
+      const x = (e.clientX - r.left) * s - 22, y = (e.clientY - r.top) * s - 22;
+      if (Math.hypot(x - C, y - C) <= RIM && motionAllowed()) { state.sloshStart = performance.now(); kick(); }
+    }
+    drag = null;
+  });
+
+  // Animation loop runs only while something is moving; a 1 s timer keeps the clock current.
+  let raf = 0;
+  function frame() {
+    raf = 0;
+    const nowMs = performance.now();
+    let busy = false;
+    if (state.rockStart >= 0) {
+      const s = (nowMs - state.rockStart) / 1000;
+      if (s > 4) { state.rockStart = -1; state.rollTarget = +$('roll').value; }
+      else { state.rollTarget = Math.round(32 * Math.sin(2 * Math.PI * 0.5 * s)); busy = true; }
+    }
+    const diff = state.rollTarget - state.roll;
+    state.roll += diff * 0.18;
+    if (Math.abs(diff) > 0.05) busy = true; else state.roll = state.rollTarget;
+    if (state.sloshStart >= 0 || state.bubbleStart >= 0) busy = true;
+    render();
+    if (busy) raf = requestAnimationFrame(frame);
+  }
+  function kick() { if (!raf) raf = requestAnimationFrame(frame); }
+  setInterval(() => { if (state.live) syncOutputs(); kick(); }, 1000);
+  syncOutputs();
+  render();
+  setTimeout(() => { state.sloshStart = performance.now(); kick(); }, 600);
+})();
+</script>
