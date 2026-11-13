@@ -110,45 +110,15 @@ Sources: [WFF weather availability and staleness](https://developer.android.com/
 
 ## Battery policy
 
-The watch-face APK has no executable application code, networking permission, location polling, heart
-rate sampling, alarms, or wake locks. Native clock hands and provider/system
-updates drive the face. Mechanical seconds default on, with a native 130 ms
-overshoot-and-return tick once per second. They can be disabled in the editor
-and disappear at 15% battery or less. The overshoot itself, and the balance
-step, also stop when Overshoot and balance motion is off, at 20% battery or
-below (the first low-battery lamp), or while Android power saving is on. The
-second hand and the still balance remain until the 15% cutoff. Power saving is
-a fixed watch-companion value with no periodic refresh. The companion reads
-Android power-save mode and the watch's low-power settings, and publishes a
-change when one of those changes. The slot sits on the dial so the runtime
-keeps it active. Date drums and the mechanical
-disc use date fields rather than millisecond expressions. The moon calculation
-uses UTC year, day-of-year, and AM/PM, so its time inputs change only twice daily.
-It estimates the phase from a known new moon and the mean synodic month, with no
-moon API or native moon-phase source. See [moon calculation](moon-phase.md) for
-accuracy limits. Ambient mode displays orange hour/minute hands, the selected weekday,
-month, and date, a battery slider with threshold lamps, and the same hour
-numerals as the active face (1, 2, 3, 4, 6, 8, 9, 10, 11, and 12) at the same
-positions and sizes. Those numerals and the hour ticks use the date orange
-`#d94c20`. The always-on date uses that face's live-row box. The
-ambient scene has no seconds, weather, moon, activity tracks,
-or adjacent calendar entries. Samsung display offload was observed active.
-Actual battery life must be measured on the watch.
+The watch-face APK has no executable application code, networking permission,
+location polling, heart rate sampling, alarms, or wake locks. Native clock
+sources and provider/system updates drive the face.
 
-The optional hidden balance uses `-[SECOND] * 36`. The toothed rim alternates
-its pale and dark treatments every 36 degrees, wide enough to fill the
-31-degree clear opening. The openings are 180 degrees apart and 180/36 is odd,
-so one shows the pale rim while the other shows the dark rim. Each second turns
-one slice counterclockwise, swapping the openings, including across the minute.
-Native WFF animation spends
-the whole 200 ms on that visible travel, at 15 fps, then holds for the rest of
-the second. One
-148-by-148 image moves behind the static dial's two apertures; no animated GIF
-is packaged in the APK. There is no millisecond source, continuous animation,
-or additional service. The balance has an independent editor toggle, is hidden
-in ambient, and is omitted at 15% battery or below. While the sweep runs it
-keeps that same step instead of a separate rocking motion. Its movement uses WFF's
-[Transform Animation](https://developer.android.com/reference/wear-os/wff/common/transform/animation).
+Power saving is a fixed watch-companion value with no periodic refresh. The
+companion reads Android power-save mode and the watch's low-power settings, and
+publishes a change when one of those changes. Its slot must sit on the dial,
+inside the circle, so the runtime keeps it active: a corner slot is clipped and
+never activates.
 
 The optional companion schedules phone-side work about every 60 minutes, with a
 15-minute flex window, using WorkManager (Android may delay it further). That
@@ -158,15 +128,18 @@ cache. Raising the watch does not ask the phone for a new reading while that
 cache is still fresh. A stale cache can request one at most every 15 minutes.
 Explicit Sync bypasses that gap and the low-battery wait. Sleep, theater, and
 power-saving modes are system states. The watch companion reports Android
-power saving only when that mode changes. The face adds no timer for sleep or
-theater mode, and
-ambient already hides seconds, the balance, moon, weather, and activity.
-Cached totals expire after three hours or at local midnight. An
-explicit unavailable-data timeline entry replaces expired totals even without
-a subsequent push. See [overnight sync setup](health-companion.md).
+power saving only when that mode changes. Cached totals expire after three
+hours or at local midnight. An explicit unavailable-data timeline entry
+replaces expired totals even without a subsequent push. See
+[overnight sync setup](health-companion.md).
 
-The center-hub sweep adds one fixed, watch-local complication with no periodic
-updates. A tap supplies a timestamp for six seconds; WFF renders the movement
-and the timeline then returns to idle. The millisecond source is confined to
-that temporary branch, gated at 15% battery. There are no new phone health
-queries or sensor subscriptions. See [mechanical sweep](mechanical-sweep.md).
+## Tap trigger
+
+The watch companion's `SweepDataSource` is a fixed, watch-local complication
+with no periodic updates. A tap supplies a timestamp for six seconds through a
+short complication timeline, which then returns to idle. The timestamp is
+milliseconds within the UTC day, plus one, so zero means idle; the provider
+uses the reserved range 0–86,400,000, which a face checks before consuming the
+value. A face derives a 0–1 progress value from it and may use a millisecond
+source only inside that temporary branch. There are no phone health queries or
+sensor subscriptions.

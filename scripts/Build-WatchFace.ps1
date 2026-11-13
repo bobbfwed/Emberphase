@@ -31,7 +31,6 @@ $validation = Get-Content -LiteralPath $validatorLog -Raw
 Write-Host $validation
 if ($validation -match 'FAILED|SEVERE|NOT valid' -or $validation -notmatch 'SUCCESS|is valid') { throw "WFF validation failed; see $validatorLog" }
 
-& (Join-Path $PSScriptRoot 'New-Previews.ps1')
 $aapt2 = Join-Path $buildTools 'aapt2.exe'
 & $aapt2 compile --dir (Join-Path $sourceRoot 'res') -o (Join-Path $buildRoot 'resources.zip')
 Check-Exit 'Resource compilation'

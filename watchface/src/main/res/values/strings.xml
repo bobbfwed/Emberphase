@@ -1,17 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="watch_face_name">Emberphase</string>
-    <string name="left_inset">Left inset</string>
-    <string name="native_weather">Weather · current / high / conditions</string>
-    <string name="custom_complication">Custom complication</string>
-    <string name="left_slot">Left inset · custom data</string>
-    <string name="steps_slot">Steps · choose a steps provider</string>
-    <string name="minutes_slot">Active minutes · choose an activity provider</string>
-    <string name="calories_slot">Active calories · choose an activity provider</string>
-    <string name="seconds_hand">Mechanical seconds · off at 15 percent or less</string>
-    <string name="balance_mechanism">Hidden balance · off at 15 percent or less</string>
-    <string name="samsung_steps_target">Samsung Health steps target</string>
-    <string name="sweep_slot">Center hub · mechanical sweep</string>
-    <string name="motion_detail">Overshoot and balance motion</string>
-    <string name="power_saving_slot">Power saving state</string>
 </resources>

@@ -104,7 +104,7 @@ requests are limited to one every 15 minutes. Wear OS requests each activity
 provider about every 60 minutes as a recovery path when pushes stop; those
 requests read the local cache. There is no foreground service, sensor sampling,
 exact alarm, or new watch-face timer. Sleep, theater, and watch power saving
-remain system display states. Ambient already omits seconds, the balance, moon,
+remain system display states. Ambient mode omits
 weather, and activity.
 
 Only dated totals and goals travel through Google's paired-device Data Layer.
