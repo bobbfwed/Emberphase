@@ -36,7 +36,10 @@ export const REFRACTION = { dx: 3, dy: 2, scale: 1.03 };
 // Surface: linear level inside the fluid circle.
 export const surfaceY = (level) => CORE_BOTTOM - level * 2 * CORE;
 export const TILT_LIMIT = 40;
-export const TILT_SIGN = -1;              // calibrate on the watch
+// ACCELEROMETER_ANGLE_X is positive when 3 o'clock rolls down (verified on the
+// Wear OS 6 emulator); the surface then rises toward 3 o'clock (negative angle).
+export const TILT_SIGN = -1;
+export const TILT_STEP = 2;
 export const SLOSH = { seconds: 3.2, angle: 24, angleDecay: 1.25, angleHz: 1.1, bob: 4, bobDecay: 1.6, bobHz: 2.2 };
 
 // Data pods at 10, 2, 4 and 8 o'clock (slot order 0..3).

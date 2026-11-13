@@ -1,5 +1,8 @@
 [CmdletBinding()]
-param([switch]$Install, [string]$Serial)
+# -Fake builds a debug APK with sample weather, notifications and system pod
+# providers (for emulators); the committed watchface.xml is restored afterwards.
+# -Diag adds an on-screen sensor and carrier readout to a -Fake build.
+param([switch]$Install, [string]$Serial, [switch]$Fake, [switch]$Diag)
 $ErrorActionPreference = 'Stop'
 $projectRoot = Split-Path -Parent $PSScriptRoot
 $sdkRoot = $env:ANDROID_HOME
@@ -24,6 +27,11 @@ function Check-Exit([string]$operation) {
 Check-Exit 'Generated watchface.xml freshness check'
 & node (Join-Path $PSScriptRoot 'test-meniscus.mjs')
 Check-Exit 'Meniscus expression and layout tests'
+if ($Fake) {
+    $fakeArgs = @('--fake') + $(if ($Diag) { @('--diag') } else { @() })
+    & node (Join-Path $PSScriptRoot 'meniscus\build-face.mjs') @fakeArgs
+    Check-Exit 'Fake-data face generation'
+}
 $validatorLog = Join-Path $buildRoot 'validation.log'
 # Version 1.7 can exit zero on schema failures: check its report as well.
 $savedErrorPreference = $ErrorActionPreference
@@ -37,7 +45,14 @@ Write-Host $validation
 if ($validation -match 'FAILED|SEVERE|NOT valid' -or $validation -notmatch 'SUCCESS|is valid') { throw "WFF validation failed; see $validatorLog" }
 
 $aapt2 = Join-Path $buildTools 'aapt2.exe'
-& $aapt2 compile --dir (Join-Path $sourceRoot 'res') -o (Join-Path $buildRoot 'resources.zip')
+$compileExit = 0
+try {
+    & $aapt2 compile --dir (Join-Path $sourceRoot 'res') -o (Join-Path $buildRoot 'resources.zip')
+    $compileExit = $LASTEXITCODE
+} finally {
+    if ($Fake) { & node (Join-Path $PSScriptRoot 'meniscus\build-face.mjs') | Out-Null }
+}
+$LASTEXITCODE = $compileExit
 Check-Exit 'Resource compilation'
 
 # Keep the AGP manifest namespace-free; aapt2's standalone path needs package.
@@ -60,7 +75,7 @@ if (-not (Test-Path -LiteralPath $keyPath)) {
     & (Join-Path $javaRoot 'bin\keytool.exe') -genkeypair -keystore $keyPath -storepass android -keypass android -alias androiddebugkey -dname 'CN=Android Debug,O=Android,C=US' -keyalg RSA -keysize 2048 -validity 10000
     Check-Exit 'Debug signing key creation'
 }
-$apkPath = Join-Path $artifactRoot 'meniscus-debug.apk'
+$apkPath = Join-Path $artifactRoot ($(if ($Fake) { 'meniscus-fake-debug.apk' } else { 'meniscus-debug.apk' }))
 $signerJar = Join-Path $buildTools 'lib\apksigner.jar'
 & $java -jar $signerJar sign --ks $keyPath --ks-key-alias androiddebugkey --ks-pass pass:android --key-pass pass:android --out $apkPath (Join-Path $buildRoot 'aligned.apk')
 Check-Exit 'APK signing'

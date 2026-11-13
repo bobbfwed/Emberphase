@@ -83,6 +83,22 @@ key and register the phone app's package and release SHA-256 with Samsung.
    **Emberphase · Active calories**. Save the face. Existing selections persist
    across face updates, so changing default providers does not replace them.
 
+## Watch-only providers
+
+The watch app also hosts three fixed providers that need no phone, permission
+or network:
+
+* **Emberphase · Core tap** (0.1.9) lets Meniscus slosh its fluid. A tap on the
+  core records the time and publishes it in a short timeline (3.5 seconds,
+  rounded up to a whole second) that returns to idle on its own. Taps at
+  15 percent battery or less, or while a slosh is running, are ignored.
+* **Emberphase · Mechanical sweep** is unchanged for the mechanical face
+  (six-second window). Both tap providers share `TapTiming`.
+* **Emberphase · Power saving** publishes 1 while Android power saving or the
+  watch's low-power mode is on, and only when that changes.
+
+Every provider lists the mechanical face and Meniscus in `SAFE_WATCH_FACES`.
+
 ## Data, cadence, and stopping
 
 The phone reads today's ungrouped `TOTAL_ACTIVE_TIME` (whole minutes) and

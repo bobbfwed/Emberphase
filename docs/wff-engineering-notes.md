@@ -25,6 +25,43 @@ Watch6 Classic SM-R950, Wear OS 6 / API 36, WFF version 4.
 * Samsung display offload was active in always-on mode. Keep ambient scenes
   sparse and avoid large lit areas.
 
+## Learned building Meniscus (Wear OS 6 emulator, WFF runtime)
+
+* **A gradient cannot take its colours from a colour setting.**
+  `colors="[CONFIGURATION.fluid]"` passes the schema but renders the plain
+  fill colour. Instead, draw white shapes and tint each with
+  `tintColor="[CONFIGURATION.fluid.n]"`; stacked tinted layers with
+  white-to-transparent gradients give a themed multi-colour gradient.
+* **Configuration options take exactly one child.** Wrap several elements in
+  a `Group` inside `ListOption` / `BooleanOption`.
+* A `Template` needs at least one `Parameter`; put static text directly in the
+  `Font` element.
+* **Carrier groups work.** An empty `Group` whose `angle` is transformed and
+  exported with `Reference` carries any number (including values near 86.4
+  million) to the rest of the scene, and reads its `defaultValue` while its
+  branch is not shown. References to carriers inside a `Condition`, a
+  configuration option or a `Complication` all resolve.
+* **Sensor subscriptions follow configuration branches, not conditions.** The
+  runtime held the accelerometer (about 15 Hz) whenever an accelerometer
+  expression sat in an active configuration branch, even inside a `Condition`
+  that was false. Turning the configuration option off released it, and the
+  runtime releases it in always-on. Gate sensors with editor options; a
+  battery `Condition` only stops the motion.
+* `ACCELEROMETER_ANGLE_X` is positive when 3 o'clock rolls down. On the
+  emulator, values arrived a few seconds after `adb emu sensor set`.
+* Battery changes from `dumpsys battery set level` reached the face after a
+  delay of several seconds; do not judge from the first screenshot.
+* A complication tap action on a fixed, non-customizable slot works: the
+  runtime logs `Launch::onTap complication: COMPLICATION.<slot>`.
+* `adb shell am broadcast -a com.google.android.wearable.app.DEBUG_SURFACE
+  --es operation set-watchface --es watchFaceId <package>` activates a WFF face.
+  Reactivate after reinstalling. Simulated charging shows a full-screen
+  charging overlay: `dumpsys battery set ac 0`, `usb 0`, `status 3`.
+* The companion's power-saving listener only runs while its process is alive;
+  on a fresh emulator install open the companion once.
+* Emulators from other sessions may be running. Address every `adb` command
+  by serial and confirm it with `adb -s <serial> emu avd name`.
+
 ## Data sources on the SM-R950
 
 * Native WFF `STEP_COUNT` / `STEP_GOAL` / `STEP_PERCENT` returned **zero** in a

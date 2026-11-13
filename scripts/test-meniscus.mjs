@@ -80,6 +80,9 @@ test('tilt is clamped and signed', () => {
   assert.equal(wff(X.TILT, { ACCELEROMETER_ANGLE_X: 90 }), G.TILT_SIGN * G.TILT_LIMIT);
   assert.equal(wff(X.TILT, { ACCELEROMETER_ANGLE_X: -90 }), -G.TILT_SIGN * G.TILT_LIMIT);
   assert.equal(wff(X.TILT, { ACCELEROMETER_ANGLE_X: -10 }), -10 * G.TILT_SIGN);
+  // Quantized: small noise around a value does not change the result.
+  assert.equal(wff(X.TILT, { ACCELEROMETER_ANGLE_X: 10.4 }), wff(X.TILT, { ACCELEROMETER_ANGLE_X: 9.7 }));
+  assert.equal(Math.abs(wff(X.TILT, { ACCELEROMETER_ANGLE_X: 13.3 })) % G.TILT_STEP, 0);
   assert.equal(wff(X.TILT, { ACCELEROMETER_ANGLE_X: 0 }) + 0, 0);
 });
 test('motion gates at 20 percent and in power saving', () => {
@@ -204,6 +207,8 @@ test('notification bubbles stay inside the core and hide when read', () => {
       if (sy <= 185) assert.ok(y > sy, 'below the surface when there is room');
     }
   }
+  assert.equal(wff(X.BUBBLES_VISIBLE, R({ sy: 185 })), 255);
+  assert.equal(wff(X.BUBBLES_VISIBLE, R({ sy: G.CORE_BOTTOM - 20 })), 0, 'hidden when the fluid is shallow');
   assert.equal(wff(X.BUBBLE_LABEL, { UNREAD_NOTIFICATION_COUNT: 9 }), '6+');
   assert.equal(wff(X.BUBBLE_LABEL, { UNREAD_NOTIFICATION_COUNT: 2 }), 2);
 });

@@ -13,9 +13,9 @@
     <string name="feed_pod_2">Goal of the 2 o\'clock pod</string>
     <string name="feed_pod_4">Goal of the 4 o\'clock pod</string>
     <string name="feed_pod_8">Goal of the 8 o\'clock pod</string>
-    <string name="gravity_tilt">Gravity tilt · off at 20 percent or less</string>
+    <string name="gravity_tilt">Gravity tilt</string>
     <string name="depth_parallax">Glass parallax</string>
-    <string name="seconds_spark">Seconds spark · off at 20 percent or less</string>
+    <string name="seconds_spark">Seconds spark</string>
     <string name="samsung_steps_target">Samsung Health steps target</string>
     <string name="pod_10">Pod at 10 o\'clock</string>
     <string name="pod_2">Pod at 2 o\'clock</string>

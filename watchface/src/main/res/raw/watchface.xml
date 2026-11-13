@@ -144,7 +144,7 @@
 </Expressions>
 <Compare expression="c">
 <Group name="carrier_tilt_14" x="0" y="0" width="1" height="1">
-<Transform target="angle" value="clamp(-1 * [ACCELEROMETER_ANGLE_X], -40, 40)">
+<Transform target="angle" value="round(clamp(-1 * [ACCELEROMETER_ANGLE_X], -40, 40) / 2) * 2">
 <Animation interpolation="EASE_OUT" duration="0.25" fps="30"/>
 </Transform>
 <Reference name="tilt" source="angle" defaultValue="0"/>
@@ -1282,17 +1282,40 @@
 </Expression>
 </Expressions>
 <Compare expression="c">
-<PartDraw name="fluid_warn" x="0" y="0" width="450" height="450" pivotX="0.5" pivotY="0.5">
+<Group name="fluid_warn" x="0" y="0" width="450" height="450">
+<PartDraw name="fluid_warn_0" x="0" y="0" width="450" height="450" pivotX="0.5" pivotY="0.5" tintColor="#FF8E140A">
+<Transform target="angle" value="[REFERENCE.ang]"/>
+<Rectangle x="0" y="225" width="450" height="450">
+<Transform target="y" value="[REFERENCE.sy]"/>
+<Fill color="#FFFFFFFF"/>
+</Rectangle>
+</PartDraw>
+<PartDraw name="fluid_warn_1" x="0" y="0" width="450" height="450" pivotX="0.5" pivotY="0.5" tintColor="#FFFF5233">
 <Transform target="angle" value="[REFERENCE.ang]"/>
 <Rectangle x="0" y="225" width="450" height="450">
 <Transform target="y" value="[REFERENCE.sy]"/>
 <Fill color="#FFFFFFFF">
-<LinearGradient startX="0" startY="225" endX="0" endY="425" colors="#FFFFA27A #FFFF5233 #FF8E140A" positions="0 0.35 1">
+<LinearGradient startX="0" startY="225" endX="0" endY="425" colors="#FFFFFFFF #00FFFFFF" positions="0 1">
 <Transform target="startY" value="[REFERENCE.sy]"/>
 <Transform target="endY" value="[REFERENCE.sy] + 200"/>
 </LinearGradient>
 </Fill>
 </Rectangle>
+</PartDraw>
+<PartDraw name="fluid_warn_2" x="0" y="0" width="450" height="450" pivotX="0.5" pivotY="0.5" tintColor="#FFFFA27A">
+<Transform target="angle" value="[REFERENCE.ang]"/>
+<Rectangle x="0" y="225" width="450" height="450">
+<Transform target="y" value="[REFERENCE.sy]"/>
+<Fill color="#FFFFFFFF">
+<LinearGradient startX="0" startY="225" endX="0" endY="365" colors="#FFFFFFFF #00FFFFFF" positions="0 1">
+<Transform target="startY" value="[REFERENCE.sy]"/>
+<Transform target="endY" value="[REFERENCE.sy] + 140"/>
+</LinearGradient>
+</Fill>
+</Rectangle>
+</PartDraw>
+<PartDraw name="fluid_warn_waves" x="0" y="0" width="450" height="450" pivotX="0.5" pivotY="0.5">
+<Transform target="angle" value="[REFERENCE.ang]"/>
 <Line startX="0" startY="225" endX="450" endY="225">
 <Stroke color="#14FFFFFF" thickness="1.2"/>
 <Transform target="startY" value="[REFERENCE.sy] + 16"/>
@@ -1304,19 +1327,43 @@
 <Transform target="endY" value="[REFERENCE.sy] + 34"/>
 </Line>
 </PartDraw>
+</Group>
 </Compare>
 <Default>
-<PartDraw name="fluid" x="0" y="0" width="450" height="450" pivotX="0.5" pivotY="0.5">
+<Group name="fluid" x="0" y="0" width="450" height="450">
+<PartDraw name="fluid_0" x="0" y="0" width="450" height="450" pivotX="0.5" pivotY="0.5" tintColor="[CONFIGURATION.fluid.2]">
+<Transform target="angle" value="[REFERENCE.ang]"/>
+<Rectangle x="0" y="225" width="450" height="450">
+<Transform target="y" value="[REFERENCE.sy]"/>
+<Fill color="#FFFFFFFF"/>
+</Rectangle>
+</PartDraw>
+<PartDraw name="fluid_1" x="0" y="0" width="450" height="450" pivotX="0.5" pivotY="0.5" tintColor="[CONFIGURATION.fluid.1]">
 <Transform target="angle" value="[REFERENCE.ang]"/>
 <Rectangle x="0" y="225" width="450" height="450">
 <Transform target="y" value="[REFERENCE.sy]"/>
 <Fill color="#FFFFFFFF">
-<LinearGradient startX="0" startY="225" endX="0" endY="425" colors="[CONFIGURATION.fluid]" positions="0 0.35 1">
+<LinearGradient startX="0" startY="225" endX="0" endY="425" colors="#FFFFFFFF #00FFFFFF" positions="0 1">
 <Transform target="startY" value="[REFERENCE.sy]"/>
 <Transform target="endY" value="[REFERENCE.sy] + 200"/>
 </LinearGradient>
 </Fill>
 </Rectangle>
+</PartDraw>
+<PartDraw name="fluid_2" x="0" y="0" width="450" height="450" pivotX="0.5" pivotY="0.5" tintColor="[CONFIGURATION.fluid.0]">
+<Transform target="angle" value="[REFERENCE.ang]"/>
+<Rectangle x="0" y="225" width="450" height="450">
+<Transform target="y" value="[REFERENCE.sy]"/>
+<Fill color="#FFFFFFFF">
+<LinearGradient startX="0" startY="225" endX="0" endY="365" colors="#FFFFFFFF #00FFFFFF" positions="0 1">
+<Transform target="startY" value="[REFERENCE.sy]"/>
+<Transform target="endY" value="[REFERENCE.sy] + 140"/>
+</LinearGradient>
+</Fill>
+</Rectangle>
+</PartDraw>
+<PartDraw name="fluid_waves" x="0" y="0" width="450" height="450" pivotX="0.5" pivotY="0.5">
+<Transform target="angle" value="[REFERENCE.ang]"/>
 <Line startX="0" startY="225" endX="450" endY="225">
 <Stroke color="#14FFFFFF" thickness="1.2"/>
 <Transform target="startY" value="[REFERENCE.sy] + 16"/>
@@ -1328,6 +1375,7 @@
 <Transform target="endY" value="[REFERENCE.sy] + 34"/>
 </Line>
 </PartDraw>
+</Group>
 </Default>
 </Condition>
 <Group name="submerged" x="0" y="0" width="450" height="450">
@@ -1350,6 +1398,7 @@
 </DigitalClock>
 <Group name="bubbles" x="0" y="0" width="450" height="450" pivotX="0.5" pivotY="0.5">
 <Transform target="angle" value="[REFERENCE.ang]"/>
+<Transform target="alpha" value="[REFERENCE.sy] &lt; 285 ? 255 : 0"/>
 <PartDraw name="bubble_set" x="0" y="0" width="450" height="450">
 <Ellipse x="180.6" y="351" width="4.8" height="4.8">
 <Fill color="#46FFFFFF"/>

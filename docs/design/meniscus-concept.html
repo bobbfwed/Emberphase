@@ -461,7 +461,8 @@ ul.plain strong { color: var(--ink); font-weight: 600; }
       }
       if (wxOn && (k === 3 || k === 6 || k === 9)) {
         const [x, y] = pt(204, a0 + 14.4);
-        text(ring, x, y + 3.5, `${hours[k].t}°`, { 'font-size': 10, 'font-weight': 600, fill: '#F2F6FA', stroke: '#000', 'stroke-width': 3, 'paint-order': 'stroke' });
+        el('rect', { x: f(x - 20), y: f(y - 9), width: 40, height: 18, rx: 9, fill: '#000', 'fill-opacity': 0.78 }, ring);
+        text(ring, x, y + 4.5, `${hours[k].t}°`, { 'font-size': 13, 'font-weight': 600, fill: '#F2F6FA' });
       }
     }
     for (const a of [0, 90, 180, 270]) { const [x1, y1] = pt(181, a), [x2, y2] = pt(185, a); el('line', { x1, y1, x2, y2, stroke: '#46525E', 'stroke-width': 1.4 }, ring); }
@@ -481,29 +482,29 @@ ul.plain strong { color: var(--ink); font-weight: 600; }
       const [c1x, c1y] = pt(RIM, a), [c2x, c2y] = pt(125, a);
       el('line', { x1: c1x, y1: c1y, x2: c2x, y2: c2y, stroke: '#151D25', 'stroke-width': 7, 'stroke-linecap': 'butt' }, podLayer);
       el('line', { x1: c1x, y1: c1y, x2: c2x, y2: c2y, stroke: done ? P.hi : '#2A3540', 'stroke-width': 1.8, filter: done ? 'url(#glow)' : null }, podLayer);
-      el('circle', { cx: px, cy: py, r: 30, fill: '#05080B', stroke: '#1A232C', 'stroke-width': 1 }, podLayer);
+      el('circle', { cx: px, cy: py, r: 32, fill: '#05080B', stroke: '#1A232C', 'stroke-width': 1 }, podLayer);
       const gapDir = (a + 180) % 360, start = gapDir + 30;
-      el('path', { d: arc(26, start, start + 300, px, py), fill: 'none', stroke: '#18212A', 'stroke-width': 3 }, podLayer);
-      if (pod.p !== null) el('path', { d: arc(26, start, start + 300 * Math.min(1, pod.p), px, py), fill: 'none', stroke: P.hi, 'stroke-width': 3, 'stroke-linecap': 'butt' }, podLayer);
-      text(podLayer, px, py - 9, pod.label, { 'font-size': 7, 'letter-spacing': 1.2, fill: '#7F8B97' });
-      text(podLayer, px, py + 6, pod.value, { 'font-size': 14, 'font-weight': 600, fill: '#EEF3F7' });
-      text(podLayer, px, py + 17, pod.sub, { 'font-size': 7, fill: '#6E7A86' });
+      el('path', { d: arc(27, start, start + 300, px, py), fill: 'none', stroke: '#18212A', 'stroke-width': 3 }, podLayer);
+      if (pod.p !== null) el('path', { d: arc(27, start, start + 300 * Math.min(1, pod.p), px, py), fill: 'none', stroke: P.hi, 'stroke-width': 3, 'stroke-linecap': 'butt' }, podLayer);
+      text(podLayer, px, py - 10, pod.label, { 'font-size': 9, 'letter-spacing': 0.8, fill: '#7F8B97' });
+      text(podLayer, px, py + 6, pod.value, { 'font-size': 15, 'font-weight': 600, fill: '#EEF3F7' });
+      text(podLayer, px, py + 19, pod.sub, { 'font-size': 9, fill: '#6E7A86' });
     });
 
     // ---------- Date (top) ----------
     const d = t.date;
-    text(screen, C, 68, d.toLocaleDateString('en-US', { weekday: 'long' }).toUpperCase(), { 'font-size': 9, 'letter-spacing': 3, fill: '#8A96A2' });
-    text(screen, C, 96, `${d.getDate()} ${d.toLocaleDateString('en-US', { month: 'short' }).toUpperCase()}`, { 'font-size': 21, 'font-weight': 500, 'letter-spacing': 1.5, fill: '#EEF3F7' });
+    text(screen, C, 64, d.toLocaleDateString('en-US', { weekday: 'long' }).toUpperCase(), { 'font-size': 13, 'letter-spacing': 3, fill: '#8A96A2' });
+    text(screen, C, 96, `${d.getDate()} ${d.toLocaleDateString('en-US', { month: 'short' }).toUpperCase()}`, { 'font-size': 26, 'font-weight': 600, 'letter-spacing': 1.3, fill: '#EEF3F7' });
 
     // ---------- Weather line and event bar (bottom) ----------
     if (wxOn) {
       const cw = hours[0], fam = COND[cw.cond];
-      condIcon(screen, fam, cw.day, C - 46, 352, FAMILY_COLOR[fam]);
-      text(screen, C - 18, 357, `${cw.t}°`, { 'font-size': 14, 'font-weight': 600, fill: '#EEF3F7' });
-      text(screen, C + 30, 356.5, `↑${hi}° ↓${lo}°`, { 'font-size': 9, fill: '#8A96A2' });
-    } else text(screen, C, 356, 'WEATHER  --°', { 'font-size': 9, 'letter-spacing': 1.5, fill: '#5E6A76' });
-    el('rect', { x: 142, y: 370, width: 166, height: 22, rx: 11, fill: '#070B0F', stroke: '#1E2832' }, screen);
-    text(screen, C, 384.5, '15:30  Design review', { 'font-size': 9, fill: '#C9D2DA' });
+      condIcon(screen, fam, cw.day, C - 62, 356, FAMILY_COLOR[fam]);
+      text(screen, C - 46, 363, `${cw.t}°`, { 'text-anchor': 'start', 'font-size': 21, 'font-weight': 600, fill: '#EEF3F7' });
+      text(screen, C + 14, 361, `H${hi}° L${lo}°`, { 'text-anchor': 'start', 'font-size': 12, fill: '#8A96A2' });
+    } else text(screen, C, 360, 'WEATHER --°', { 'font-size': 13, 'letter-spacing': 1.5, fill: '#5E6A76' });
+    el('rect', { x: 145, y: 370, width: 160, height: 24, rx: 12, fill: '#070B0F', stroke: '#1E2832' }, screen);
+    text(screen, C, 386.5, '15:30 Design review', { 'font-size': 13, fill: '#C9D2DA' });
 
     // ---------- Core ----------
     el('circle', { cx: C, cy: C, r: RIM, fill: '#04090D' }, screen);
@@ -549,7 +550,7 @@ ul.plain strong { color: var(--ink); font-weight: 600; }
     if (Math.abs(dd) < CORE - 2) {
       const half = Math.sqrt(CORE * CORE - dd * dd), x0 = C - half, x1 = C + half;
       el('path', { d: `M${f(x0)},${f(sy - 6)} Q${f(x0 + 1.5)},${f(sy)} ${f(x0 + 11)},${f(sy)} H${f(x1 - 11)} Q${f(x1 - 1.5)},${f(sy)} ${f(x1)},${f(sy - 6)}`, fill: 'none', stroke: '#FFFFFF', 'stroke-width': 1.6, opacity: 0.95, filter: 'url(#glow)' }, surf);
-      if (CORE + C - sy > 16) text(surf, x1 - 30, sy + 12, `${tag} ${Math.round(level * 100)}%`, { 'font-size': 7.5, 'font-weight': 600, 'letter-spacing': 0.6, fill: P.ink, 'text-anchor': 'end' });
+      if (CORE + C - sy > 16) text(surf, x1 - 28, sy + 15, `${tag} ${Math.round(level * 100)}%`, { 'font-size': 11, 'font-weight': 600, 'letter-spacing': 0.5, fill: P.ink, 'text-anchor': 'end' });
     }
     const n = Math.min(state.notif, 6);
     if (n > 0 && sy < C + CORE - 14) {
@@ -564,7 +565,7 @@ ul.plain strong { color: var(--ink); font-weight: 600; }
         el('circle', { cx: f(bx), cy: f(by), r, fill: '#FFFFFF', 'fill-opacity': 0.25, stroke: '#FFFFFF', 'stroke-opacity': 0.9, 'stroke-width': 0.9 }, bg);
         topY = by;
       }
-      text(bg, C - 29, topY + 2.5, state.notif > 6 ? '6+' : String(state.notif), { 'font-size': 8, 'font-weight': 600, fill: P.ink, 'text-anchor': 'start' });
+      text(bg, C - 29, topY + 2.5, state.notif > 6 ? '6+' : String(state.notif), { 'font-size': 11, 'font-weight': 600, fill: P.ink, 'text-anchor': 'start' });
     }
 
     // Glass rim, ticks, highlight, seconds spark

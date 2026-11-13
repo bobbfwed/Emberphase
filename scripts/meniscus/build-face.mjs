@@ -200,15 +200,29 @@ function digits(name, font, tint, dx = 0, dy = 0, extra = {}) {
 const coreMask = () => draw('core_mask', { renderMode: 'MASK' }, circle(G.C, G.C, G.CORE, fill('#FFFFFFFF')));
 const rotated = [T('angle', X.ref('ang'))];
 
-function fluidDraw(name, colors) {
+// The fluid is three stacked layers: a deep base, then the mid and bright
+// tones fading out with depth. Each layer is white, tinted by one colour of
+// the selected theme ([CONFIGURATION.fluid.n]); a gradient cannot take its
+// colours from a colour setting on the runtime.
+const FLUID_LAYERS = [
+  { tone: 2, fade: null },
+  { tone: 1, fade: G.FLUID_GRADIENT_DEPTH },
+  { tone: 0, fade: G.FLUID_GRADIENT_DEPTH * G.FLUID_STOPS[1] * 2 }
+];
+function fluidRect(sy, fade) {
+  const paint = fade === null ? fill('#FFFFFFFF')
+    : el('Fill', { color: '#FFFFFFFF' }, el('LinearGradient', {
+      startX: 0, startY: G.C, endX: 0, endY: G.C + fade, colors: '#FFFFFFFF #00FFFFFF', positions: '0 1'
+    }, T('startY', sy), T('endY', `${sy} + ${fade}`)));
+  return el('Rectangle', { x: 0, y: G.C, width: G.CANVAS, height: G.CANVAS }, T('y', sy), paint);
+}
+function fluidDraw(name, tints) {
   const sy = X.ref('sy');
-  return draw(name, { pivotX: 0.5, pivotY: 0.5 }, ...rotated,
-    el('Rectangle', { x: 0, y: G.C, width: G.CANVAS, height: G.CANVAS }, T('y', sy),
-      el('Fill', { color: '#FFFFFFFF' }, el('LinearGradient', {
-        startX: 0, startY: G.C, endX: 0, endY: G.C + G.FLUID_GRADIENT_DEPTH, colors, positions: G.FLUID_STOPS.join(' ')
-      }, T('startY', sy), T('endY', `${sy} + ${G.FLUID_GRADIENT_DEPTH}`)))),
-    ...[16, 34].map((d) => el('Line', { startX: 0, startY: G.C, endX: G.CANVAS, endY: G.C },
-      stroke('#14FFFFFF', 1.2), T('startY', `${sy} + ${d}`), T('endY', `${sy} + ${d}`))));
+  return group(name, {},
+    ...FLUID_LAYERS.map((l, i) => draw(`${name}_${i}`, { pivotX: 0.5, pivotY: 0.5, tintColor: tints[l.tone] }, ...rotated, fluidRect(sy, l.fade))),
+    draw(`${name}_waves`, { pivotX: 0.5, pivotY: 0.5 }, ...rotated,
+      ...[16, 34].map((d) => el('Line', { startX: 0, startY: G.C, endX: G.CANVAS, endY: G.C },
+        stroke('#14FFFFFF', 1.2), T('startY', `${sy} + ${d}`), T('endY', `${sy} + ${d}`)))));
 }
 
 function surface() {
@@ -239,7 +253,7 @@ function bubbles() {
       T('y', X.bubbleY(i), { interpolation: 'EASE_OUT', duration: 0.9, fps: 30 })));
   }
   const topY = `${X.BUBBLE_BOTTOM} - (${X.BUBBLE_COUNT} - 1) * ${X.BUBBLE_STEP} - 9`;
-  return group('bubbles', { pivotX: 0.5, pivotY: 0.5 }, ...rotated,
+  return group('bubbles', { pivotX: 0.5, pivotY: 0.5 }, ...rotated, T('alpha', X.BUBBLES_VISIBLE),
     draw('bubble_set', {}, ...ellipses),
     text('bubble_count', [G.C - 30, 0, 28, 16], {
       family: SEMIBOLD, size: 11, color: G.INK.replace('#', '#FF'), align: 'START', template: '%s', params: [X.BUBBLE_LABEL],
@@ -256,8 +270,8 @@ function core() {
     draw('glass', {}, circle(G.C, G.C, G.CORE, el('Fill', { color: '#FF03070A' },
       el('RadialGradient', { centerX: 200, centerY: 188, radius: 165, colors: '#FF0C1820 #FF03070A', positions: '0 1' })))),
     ...digits('digits_lit', 'numerals', G.LIT.replace('#', '#FF')),
-    condition(X.WARN_FLUID, fluidDraw('fluid_warn', G.WARN.map((c) => c.replace('#', '#FF')).join(' ')),
-      fluidDraw('fluid', '[CONFIGURATION.fluid]')),
+    condition(X.WARN_FLUID, fluidDraw('fluid_warn', G.WARN.map((c) => c.replace('#', '#FF'))),
+      fluidDraw('fluid', [0, 1, 2].map((n) => `[CONFIGURATION.fluid.${n}]`))),
     group('submerged', {}, submergedMask,
       ...digits('digits_ink', 'numerals', G.INK.replace('#', '#FF'), G.REFRACTION.dx, G.REFRACTION.dy,
         { scaleX: G.REFRACTION.scale, scaleY: G.REFRACTION.scale }),
@@ -441,8 +455,44 @@ export function buildFace() {
     xml.replace(/></g, '>\n<') + '\n';
 }
 
+// Debug only (--fake): replaces weather and notification sources with fixed
+// sample values and points the pods at system providers, so an emulator
+// without weather or health data can render every part of the face.
+// Never commit a --fake build; --check rejects it.
+function fakeData(xml, diagnostics = false) {
+  const conds = [14, 12, 6, 9, 6, 2, 2, 1, 1, 1, 13, 1];
+  const temps = [13, 14, 15, 16, 15, 13, 11, 10, 9, 8, 8, 7];
+  const days = [1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0];
+  const uv = [3, 6, 2, 1, 0, 0, 0, 0, 0, 0, 0, 0];
+  let out = xml;
+  for (let k = 11; k >= 1; k--) {
+    const p = `WEATHER.HOURS.${k}`;
+    out = out.split(`[${p}.IS_AVAILABLE]`).join(k <= 9 ? '1' : '0').split(`[${p}.TEMPERATURE]`).join(String(temps[k]))
+      .split(`[${p}.CONDITION]`).join(String(conds[k])).split(`[${p}.IS_DAY]`).join(String(days[k])).split(`[${p}.UV_INDEX]`).join(String(uv[k]));
+  }
+  const now = { IS_AVAILABLE: 1, IS_ERROR: 0, TEMPERATURE: temps[0], CONDITION: conds[0], IS_DAY: days[0], UV_INDEX: uv[0], DAY_TEMPERATURE_LOW: 7, DAY_TEMPERATURE_HIGH: 17 };
+  for (const [key, v] of Object.entries(now)) out = out.split(`[WEATHER.${key}]`).join(String(v));
+  out = out.split('[UNREAD_NOTIFICATION_COUNT]').join('3');
+  if (!diagnostics) return out;
+  // On-screen diagnostics for sensors and carriers (--diag). Reads the
+  // accelerometer outside its gate, so it keeps the sensor active.
+  const diag = text('debug_readout', [100, 404, 250, 16], { size: 11, color: '#FFFF4FD8', template: 'ax %s x %s tilt %s tap %s',
+    params: ['round([ACCELEROMETER_ANGLE_X])', 'round([ACCELEROMETER_X] * 10) / 10', 'round([REFERENCE.tilt])', 'round([REFERENCE.tap])'] });
+  return out.replace('</Scene>', `${diag}\n</Scene>`);
+}
+function fakePods(xml) {
+  let out = xml;
+  const pods =[['STEP_COUNT', 'RANGED_VALUE'], ['WATCH_BATTERY', 'RANGED_VALUE'], ['DAY_OF_WEEK', 'SHORT_TEXT'], ['HEART_RATE', 'SHORT_TEXT']];
+  let i = 0;
+  out = out.replace(/<DefaultProviderPolicy [^>]*primaryProvider="[^"]*(?:Steps|Minutes|Calories)[^"]*"[^>]*\/>|<DefaultProviderPolicy defaultSystemProvider="HEART_RATE"[^>]*\/>/g, () => {
+    const [p, t] = pods[i++];
+    return `<DefaultProviderPolicy defaultSystemProvider="${p}" defaultSystemProviderType="${t}"/>`;
+  });
+  return out;
+}
+
 if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
-  const xml = buildFace();
+  const xml = process.argv.includes('--fake') ? fakePods(fakeData(buildFace(), process.argv.includes('--diag'))) : buildFace();
   if (process.argv.includes('--check')) {
     const current = fs.existsSync(target) ? fs.readFileSync(target, 'utf8').replace(/\r\n/g, '\n') : '';
     if (current !== xml) { console.error('watchface.xml is stale: run node scripts/meniscus/build-face.mjs'); process.exit(1); }

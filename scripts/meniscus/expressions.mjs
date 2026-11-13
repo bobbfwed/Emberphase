@@ -23,7 +23,9 @@ export const KIND_LABEL = `${ref('kind')} == 1 ? "BATT" : (${ref('kind')} == 2 ?
 export const WARN_FLUID = `${ref('kind')} == 1 && [BATTERY_PERCENT] < 20`;
 
 // ---- Tilt and slosh ----
-export const TILT = `clamp(${G.TILT_SIGN} * [ACCELEROMETER_ANGLE_X], ${-G.TILT_LIMIT}, ${G.TILT_LIMIT})`;
+// Quantized to TILT_STEP degrees so sensor noise does not redraw the face on
+// every sample; the carrier's short animation smooths the steps.
+export const TILT = `round(clamp(${G.TILT_SIGN} * [ACCELEROMETER_ANGLE_X], ${-G.TILT_LIMIT}, ${G.TILT_LIMIT}) / ${G.TILT_STEP}) * ${G.TILT_STEP}`;
 // Milliseconds within the UTC day now, minus the tap stamp (stamp = ms + 1).
 const DAY_MS = 86400000;
 export const ELAPSED = `((([SECONDS_IN_DAY] * 1000 + [MILLISECOND] - [TIMEZONE_OFFSET_MINUTES_DST] * 60000 - (${ref('tap')} - 1)) % ${DAY_MS}) + ${2 * DAY_MS}) % ${DAY_MS} / 1000`;
@@ -44,7 +46,9 @@ export const BUBBLE_STEP = `clamp(clamp(${BUBBLE_BOTTOM} - ${ref('sy')} - 10, 8,
 export const bubbleRadius = (i) => 2.4 + (i % 3) * 0.8;
 export const bubbleX = (i) => G.C - 42 + Math.sin(i * 1.7) * 5;
 export const bubbleY = (i) => `${BUBBLE_COUNT} > ${i} ? ${BUBBLE_BOTTOM} - ${i} * ${BUBBLE_STEP} - ${n(bubbleRadius(i))} : ${BUBBLE_BOTTOM + 40}`;
-export const BUBBLE_LABEL = `[UNREAD_NOTIFICATION_COUNT] > ${BUBBLES} ? "6+" : [UNREAD_NOTIFICATION_COUNT]`;
+// Bubbles need about 50 units of fluid; below that they would crowd the level tag.
+export const BUBBLES_VISIBLE = `${ref('sy')} < ${G.CORE_BOTTOM - 50} ? 255 : 0`;
+export const BUBBLE_LABEL =`[UNREAD_NOTIFICATION_COUNT] > ${BUBBLES} ? "6+" : [UNREAD_NOTIFICATION_COUNT]`;
 
 // ---- Chronocast ring ----
 export const sectorStart = (k) => `((([HOUR_0_11] + ${k}) % 12) * 30 + ${G.RING.sectorGap / 2})`;
