@@ -104,8 +104,7 @@ requests are limited to one every 15 minutes. Wear OS requests each activity
 provider about every 60 minutes as a recovery path when pushes stop; those
 requests read the local cache. There is no foreground service, sensor sampling,
 exact alarm, or new watch-face timer. Sleep, theater, and watch power saving
-remain system display states. Ambient already omits seconds, the balance, moon,
-weather, and activity.
+remain system display states.
 
 Only dated totals and goals travel through Google's paired-device Data Layer.
 The watch caches them in private storage, excluded from backup and device
@@ -117,7 +116,7 @@ to Wear OS through the complication's validity range. Version 0.1.0 left expired
 values visible on the tested Samsung renderer despite that range. Version 0.1.1
 also sends an explicit `NO_DATA` timeline entry beginning at expiry (or an
 earlier watch-local midnight), so the renderer has a scheduled replacement even
-without another phone push. Expired totals become dashes and empty tracks;
+without another phone push. Expired totals show as no data;
 they are not represented as a measured zero. See Android's
 [complication timeline API](https://developer.android.com/reference/androidx/wear/watchface/complications/datasource/ComplicationDataTimeline).
 

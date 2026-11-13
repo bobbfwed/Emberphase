@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <lint>
     <!-- Android's code-reference scanner cannot follow WFF's unprefixed names
-         or its renderer-discovered entry points. The WFF validator and the
-         resource contract checks in scripts/test-watchface.mjs cover these. -->
+         or its renderer-discovered entry points. The WFF validator covers them. -->
     <issue id="UnusedResources">
         <ignore path="src/main/res/raw/watchface.xml" />
         <ignore path="src/main/res/xml/watch_face_info.xml" />
