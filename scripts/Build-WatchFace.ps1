@@ -19,6 +19,11 @@ function Check-Exit([string]$operation) {
     if ($LASTEXITCODE -ne 0) { throw "$operation failed with exit code $LASTEXITCODE." }
 }
 & (Join-Path $PSScriptRoot 'Get-WffTools.ps1')
+# watchface.xml is generated; fail if it no longer matches its generator.
+& node (Join-Path $PSScriptRoot 'meniscus\build-face.mjs') --check
+Check-Exit 'Generated watchface.xml freshness check'
+& node (Join-Path $PSScriptRoot 'test-meniscus.mjs')
+Check-Exit 'Meniscus expression and layout tests'
 $validatorLog = Join-Path $buildRoot 'validation.log'
 # Version 1.7 can exit zero on schema failures: check its report as well.
 $savedErrorPreference = $ErrorActionPreference
@@ -37,10 +42,10 @@ Check-Exit 'Resource compilation'
 
 # Keep the AGP manifest namespace-free; aapt2's standalone path needs package.
 [xml]$manifest = Get-Content -LiteralPath (Join-Path $sourceRoot 'AndroidManifest.xml') -Raw
-$manifest.manifest.SetAttribute('package','com.bobbfwed.emberphase.mechanical')
+$manifest.manifest.SetAttribute('package','com.bobbfwed.emberphase.meniscus')
 $manifestPath = Join-Path $buildRoot 'AndroidManifest.xml'
 $manifest.Save($manifestPath)
-& $aapt2 link -o (Join-Path $buildRoot 'unsigned.apk') --manifest $manifestPath -I (Join-Path $sdkRoot 'platforms\android-36\android.jar') --min-sdk-version 36 --target-sdk-version 36 --version-code 33 --version-name '0.5.16' --auto-add-overlay -R (Join-Path $buildRoot 'resources.zip')
+& $aapt2 link -o (Join-Path $buildRoot 'unsigned.apk') --manifest $manifestPath -I (Join-Path $sdkRoot 'platforms\android-36\android.jar') --min-sdk-version 36 --target-sdk-version 36 --version-code 1 --version-name '0.1.0' --auto-add-overlay -R (Join-Path $buildRoot 'resources.zip')
 Check-Exit 'APK linking'
 & (Join-Path $buildTools 'zipalign.exe') -f -p 4 (Join-Path $buildRoot 'unsigned.apk') (Join-Path $buildRoot 'aligned.apk')
 Check-Exit 'APK alignment'
@@ -55,7 +60,7 @@ if (-not (Test-Path -LiteralPath $keyPath)) {
     & (Join-Path $javaRoot 'bin\keytool.exe') -genkeypair -keystore $keyPath -storepass android -keypass android -alias androiddebugkey -dname 'CN=Android Debug,O=Android,C=US' -keyalg RSA -keysize 2048 -validity 10000
     Check-Exit 'Debug signing key creation'
 }
-$apkPath = Join-Path $artifactRoot 'emberphase-debug.apk'
+$apkPath = Join-Path $artifactRoot 'meniscus-debug.apk'
 $signerJar = Join-Path $buildTools 'lib\apksigner.jar'
 & $java -jar $signerJar sign --ks $keyPath --ks-key-alias androiddebugkey --ks-pass pass:android --key-pass pass:android --out $apkPath (Join-Path $buildRoot 'aligned.apk')
 Check-Exit 'APK signing'

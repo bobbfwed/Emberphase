@@ -7,12 +7,12 @@ android {
     compileSdk = 36
     buildToolsVersion = "36.0.0"
     defaultConfig {
-        // Keep the mechanical face installed alongside forks such as PARALLAX.
-        applicationId = "com.bobbfwed.emberphase.mechanical"
+        // Meniscus installs alongside the mechanical face and other forks.
+        applicationId = "com.bobbfwed.emberphase.meniscus"
         minSdk = 36
         targetSdk = 36
-        versionCode = 33
-        versionName = "0.5.16"
+        versionCode = 1
+        versionName = "0.1.0"
     }
     buildTypes {
         // AGP emits resource R classes even without source code. R8 removes

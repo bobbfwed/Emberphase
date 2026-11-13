@@ -1,4 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="watch_face_name">Emberphase</string>
+    <string name="watch_face_name">Meniscus</string>
+    <string name="fluid_color">Fluid colour</string>
+    <string name="theme_plasma">Plasma</string>
+    <string name="theme_ion">Ion</string>
+    <string name="theme_ember">Ember</string>
+    <string name="theme_chlorophyll">Chlorophyll</string>
+    <string name="core_fluid">Core fluid shows</string>
+    <string name="feed_battery">Battery</string>
+    <string name="feed_day">Day remaining</string>
+    <string name="feed_pod_10">Goal of the 10 o\'clock pod</string>
+    <string name="feed_pod_2">Goal of the 2 o\'clock pod</string>
+    <string name="feed_pod_4">Goal of the 4 o\'clock pod</string>
+    <string name="feed_pod_8">Goal of the 8 o\'clock pod</string>
+    <string name="gravity_tilt">Gravity tilt · off at 20 percent or less</string>
+    <string name="depth_parallax">Glass parallax</string>
+    <string name="seconds_spark">Seconds spark · off at 20 percent or less</string>
+    <string name="samsung_steps_target">Samsung Health steps target</string>
+    <string name="pod_10">Pod at 10 o\'clock</string>
+    <string name="pod_2">Pod at 2 o\'clock</string>
+    <string name="pod_4">Pod at 4 o\'clock</string>
+    <string name="pod_8">Pod at 8 o\'clock</string>
+    <string name="event_bar">Event bar</string>
 </resources>

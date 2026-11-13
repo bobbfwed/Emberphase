@@ -299,11 +299,22 @@ ul.plain strong { color: var(--ink); font-weight: 600; }
 
   const $ = (id) => document.getElementById(id);
   const svg = $('face');
+  // ?shot=1 renders only the face at 450 x 450 with fixed sample data, for the
+  // watch picker preview (scripts/New-MeniscusAssets.ps1).
+  const SHOT = new URLSearchParams(location.search).has('shot');
   const state = {
-    mode: 'active', rollTarget: 14, roll: 14, live: true, minutes: 622, h24: false, secs: true,
-    feed: 'battery', batt: 68, notif: 3, wx: 'showers', theme: 'plasma',
+    mode: 'active', rollTarget: 14, roll: 14, live: !SHOT, minutes: SHOT ? 608 : 622, h24: false, secs: true,
+    feed: 'battery', batt: 68, notif: SHOT ? 2 : 3, wx: 'showers', theme: 'plasma',
     sloshStart: -1, rockStart: -1, bubbleStart: -1
   };
+  if (SHOT) {
+    state.roll = state.rollTarget = 9;
+    document.body.prepend(svg);
+    document.querySelector('.wrap').hidden = true;
+    document.body.style.cssText = 'margin:0;padding:0;background:#000';
+    svg.setAttribute('viewBox', '0 0 450 450');
+    svg.style.cssText = 'width:450px;height:450px;max-width:none;display:block';
+  }
 
   const el = (name, attrs = {}, parent) => {
     const n = document.createElementNS(NS, name);
@@ -354,7 +365,7 @@ ul.plain strong { color: var(--ink); font-weight: 600; }
       state.minutes = d.getHours() * 60 + d.getMinutes();
       return { min: state.minutes, sec: d.getSeconds() + d.getMilliseconds() / 1000, date: d };
     }
-    return { min: state.minutes, sec: (Date.now() / 1000) % 60, date: d };
+    return { min: state.minutes, sec: SHOT ? 32 : (Date.now() / 1000) % 60, date: d };
   }
 
   function motionAllowed() { return state.mode === 'active' && state.batt > 20; }
@@ -658,6 +669,7 @@ ul.plain strong { color: var(--ink); font-weight: 600; }
   }
   function kick() { if (!raf) raf = requestAnimationFrame(frame); }
   setInterval(() => { if (state.live) syncOutputs(); kick(); }, 1000);
+  if (SHOT) { render(); return; }
   syncOutputs();
   render();
   setTimeout(() => { state.sloshStart = performance.now(); kick(); }, 600);
