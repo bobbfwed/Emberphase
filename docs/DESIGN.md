@@ -1,6 +1,6 @@
 # Meniscus: design and build plan
 
-Status: **built (face 0.1.4, watch companion 0.1.13, phone companion 0.1.5).** Rendering, slosh, tilt,
+Status: **built (face 0.1.5, watch companion 0.1.13, phone companion 0.1.5).** Rendering, slosh, tilt,
 always-on, low battery, power saving and the editor were checked on the Wear OS 6
 emulator with sample data; the physical-watch checks in
 [device-acceptance.md](device-acceptance.md) are pending. The interactive concept
@@ -61,7 +61,8 @@ up when a goal is met, and a tap on the core makes the fluid slosh.
   progress of a chosen pod (shared by WFF 4 `Reference`, so no extra
   complication subscription).
 * **Tilt.** Group angle `clamp(±[ACCELEROMETER_ANGLE_X], -40, 40)`, sign to be
-  calibrated on the watch. A short `Transform` animation smooths sensor jitter.
+  calibrated on the watch. The angle is quantized to 2° and applied directly (no `Transform`
+  animation; see Implementation notes).
   Holding the watch face-up or tilted toward you gives a level surface; only
   rolling the wrist turns it.
 * **Surface.** A bright meniscus line across the chord, with small upward curls
@@ -130,7 +131,7 @@ count. None of these needs a complication.
 The number of notifications on the watch is drawn as up to six bubbles near the bottom of the
 fluid, with a small count left of the top bubble, clear of the digits (`6+` above
 six). When the
-count changes, the bubbles rise into place with one short animation. Zero
+count changes, the bubbles move straight to their new places. Zero
 shows no bubbles.
 
 The count is the larger of two sources. The watch companion's **Notifications**
@@ -253,6 +254,9 @@ check, the Node tests that exist by then, and a commit.
   forecast hour), animated a `Gyro` highlight and used the default 1-second
   ambient `Variant` transition. 0.1.1 reads 40 weather sources (hourly
   availability comes from condition 0), has no `Gyro`, and switches always-on
-  instantly. A test keeps those limits.
+  instantly. The crashes continued, and the animated tilt sometimes froze at
+  one angle until the bezel was turned, so 0.1.5 also drops every `Transform`
+  animation (fluid level, tilt, bubbles, seconds spark). A test keeps all
+  of those limits.
 * The fake-data build (`Build-WatchFace.ps1 -Fake`) exists only for emulator
   testing.

@@ -63,8 +63,8 @@ changed in `scripts/meniscus/geometry.mjs`, then a regenerate and reinstall.
 21. The event bar shows the next calendar event.
 22. With notification access granted (README), the bubbles match the number of
     notifications watch apps have posted (`6+` above six), and an unread
-    forwarded phone notification shows at least one bubble. New bubbles rise
-    into place.
+    forwarded phone notification shows at least one bubble. New bubbles appear
+    in place.
 23. The weekday and date are correct and fit.
 
 ## Always-on and power

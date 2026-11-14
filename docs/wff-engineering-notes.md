@@ -21,7 +21,12 @@ Watch6 Classic SM-R950, Wear OS 6 / API 36, WFF version 4.
 * Native `Tick` on a second hand: 80 ms / strength 0.2 was imperceptible on the
   wrist; 130 to 180 ms / strength 0.5 is visible.
 * A `Transform` with a child `Animation` animates when its evaluated value
-  changes. That is the cheap way to get motion without millisecond sources.
+  changes. **Avoid it on Samsung runtime 4.0.00.16:** Meniscus's animated
+  transforms kept updating while the face was paused (`onAnimationUpdated in
+  non-resume state`) just before every `ConcurrentModificationException`
+  crash, and its animated tilt stuck at one angle while the clock kept
+  running. Turning the bezel brought it back. Meniscus 0.1.5 has no
+  `Animation` at all.
 * Samsung display offload was active in always-on mode. Keep ambient scenes
   sparse and avoid large lit areas.
 

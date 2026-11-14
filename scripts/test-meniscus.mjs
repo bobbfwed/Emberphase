@@ -267,10 +267,12 @@ test('sensors and millisecond sources stay inside their gates', () => {
 });
 test('scene stays within what Samsung runtime 4.0.00.16 survives', () => {
   // The runtime crashed (ConcurrentModificationException) at screen-state
-  // changes with 63 weather sources, a Gyro transform and 1 s Variants.
+  // changes with 63 weather sources, a Gyro transform and 1 s Variants, and
+  // its Transform animations stalled the tilt and kept crashing it.
   const weather = new Set(xml.match(/\[WEATHER\.[A-Z0-9_.]+\]/g));
   assert.ok(weather.size <= 40, `${weather.size} weather sources`);
   assert.ok(!xml.includes('<Gyro'), 'Gyro transform');
+  assert.ok(!xml.includes('<Animation'), 'Transform animation');
   for (const m of xml.matchAll(/<Variant [^>]*>/g)) assert.match(m[0], /duration="0"/, m[0]);
 });
 test('complication slots keep their order and do not overlap', () => {

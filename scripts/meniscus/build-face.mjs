@@ -61,10 +61,13 @@ function carriers() {
   ].map(([level, kind], i) => el('ListOption', { id: String(i) }, one([carrier(`lv${i}`, level), carrier(`kd${i}`, kind)])));
   return [
     el('ListConfiguration', { id: 'feed' }, ...feedOptions),
-    carrier('lvl', X.LEVEL, { interpolation: 'EASE_OUT', duration: 0.6 }),
+    // No Transform animations anywhere: on Samsung runtime 4.0.00.16 they kept
+    // updating while the face was paused, which stalled the tilt and crashed
+    // the runtime at screen-state changes.
+    carrier('lvl', X.LEVEL),
     carrier('kind', X.KIND),
     boolOption('tilt', condition(X.MOTION_OK,
-      carrier('tilt', X.TILT, { interpolation: 'EASE_OUT', duration: 0.25, fps: 30 }))),
+      carrier('tilt', X.TILT))),
     condition(X.SLOSH_ACTIVE, [carrier('sloshA', X.SLOSH_ANGLE), carrier('sloshB', X.SLOSH_BOB)]),
     carrier('ang', X.ANGLE),
     carrier('sy', X.SURFACE_Y)
@@ -254,7 +257,7 @@ function bubbles() {
     const r = X.bubbleRadius(i), x = X.bubbleX(i);
     ellipses.push(el('Ellipse', { x: x - r, y: X.BUBBLE_BOTTOM + 40, width: 2 * r, height: 2 * r },
       fill('#46FFFFFF'), stroke('#E6FFFFFF', 0.9),
-      T('y', X.bubbleY(i), { interpolation: 'EASE_OUT', duration: 0.9, fps: 30 })));
+      T('y', X.bubbleY(i))));
   }
   return group('bubbles', { pivotX: 0.5, pivotY: 0.5 }, ...rotated, T('alpha', X.BUBBLES_VISIBLE),
     draw('bubble_set', {}, ...ellipses),
@@ -304,7 +307,7 @@ function glassRim() {
     highlight,
     boolOption('secs', condition(X.SECONDS_OK,
       draw('seconds_spark', { pivotX: 0.5, pivotY: 0.5 },
-        T('angle', '[SECOND] * 6', { interpolation: 'EASE_OUT', duration: 0.15, fps: 30, angleDirection: 'CLOCKWISE' }),
+        T('angle', '[SECOND] * 6'),
         ...spark,
         circle(G.C, G.C - G.RIM, 5, fill('#40FFFFFF')),
         circle(G.C, G.C - G.RIM, 2.6, fill('#FFFFFFFF')))))

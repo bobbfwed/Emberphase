@@ -124,9 +124,7 @@
 </ListOption>
 </ListConfiguration>
 <Group name="carrier_lvl_12" x="0" y="0" width="1" height="1">
-<Transform target="angle" value="clamp([REFERENCE.lv0] + [REFERENCE.lv1] + [REFERENCE.lv2] + [REFERENCE.lv3] + [REFERENCE.lv4] + [REFERENCE.lv5], 0, 1)">
-<Animation interpolation="EASE_OUT" duration="0.6"/>
-</Transform>
+<Transform target="angle" value="clamp([REFERENCE.lv0] + [REFERENCE.lv1] + [REFERENCE.lv2] + [REFERENCE.lv3] + [REFERENCE.lv4] + [REFERENCE.lv5], 0, 1)"/>
 <Reference name="lvl" source="angle" defaultValue="0"/>
 </Group>
 <Group name="carrier_kind_13" x="0" y="0" width="1" height="1">
@@ -143,9 +141,7 @@
 </Expressions>
 <Compare expression="c">
 <Group name="carrier_tilt_14" x="0" y="0" width="1" height="1">
-<Transform target="angle" value="round(clamp(-1 * [ACCELEROMETER_ANGLE_X], -40, 40) / 2) * 2">
-<Animation interpolation="EASE_OUT" duration="0.25" fps="30"/>
-</Transform>
+<Transform target="angle" value="round(clamp(-1 * [ACCELEROMETER_ANGLE_X], -40, 40) / 2) * 2"/>
 <Reference name="tilt" source="angle" defaultValue="0"/>
 </Group>
 </Compare>
@@ -1318,44 +1314,32 @@
 <Ellipse x="180.6" y="351" width="4.8" height="4.8">
 <Fill color="#46FFFFFF"/>
 <Stroke color="#E6FFFFFF" thickness="0.9"/>
-<Transform target="y" value="clamp(([REFERENCE.nsrc] &gt; 0.5 &amp;&amp; [REFERENCE.ncount] &gt; [UNREAD_NOTIFICATION_COUNT] ? [REFERENCE.ncount] : [UNREAD_NOTIFICATION_COUNT]), 0, 6) &gt; 0 ? 311 - 0 * clamp(clamp(311 - [REFERENCE.sy] - 10, 8, 300) / (clamp(([REFERENCE.nsrc] &gt; 0.5 &amp;&amp; [REFERENCE.ncount] &gt; [UNREAD_NOTIFICATION_COUNT] ? [REFERENCE.ncount] : [UNREAD_NOTIFICATION_COUNT]), 0, 6) &gt; 0 ? clamp(([REFERENCE.nsrc] &gt; 0.5 &amp;&amp; [REFERENCE.ncount] &gt; [UNREAD_NOTIFICATION_COUNT] ? [REFERENCE.ncount] : [UNREAD_NOTIFICATION_COUNT]), 0, 6) : 1), 4, 13) - 2.4 : 351">
-<Animation interpolation="EASE_OUT" duration="0.9" fps="30"/>
-</Transform>
+<Transform target="y" value="clamp(([REFERENCE.nsrc] &gt; 0.5 &amp;&amp; [REFERENCE.ncount] &gt; [UNREAD_NOTIFICATION_COUNT] ? [REFERENCE.ncount] : [UNREAD_NOTIFICATION_COUNT]), 0, 6) &gt; 0 ? 311 - 0 * clamp(clamp(311 - [REFERENCE.sy] - 10, 8, 300) / (clamp(([REFERENCE.nsrc] &gt; 0.5 &amp;&amp; [REFERENCE.ncount] &gt; [UNREAD_NOTIFICATION_COUNT] ? [REFERENCE.ncount] : [UNREAD_NOTIFICATION_COUNT]), 0, 6) &gt; 0 ? clamp(([REFERENCE.nsrc] &gt; 0.5 &amp;&amp; [REFERENCE.ncount] &gt; [UNREAD_NOTIFICATION_COUNT] ? [REFERENCE.ncount] : [UNREAD_NOTIFICATION_COUNT]), 0, 6) : 1), 4, 13) - 2.4 : 351"/>
 </Ellipse>
 <Ellipse x="184.758" y="351" width="6.4" height="6.4">
 <Fill color="#46FFFFFF"/>
 <Stroke color="#E6FFFFFF" thickness="0.9"/>
-<Transform target="y" value="clamp(([REFERENCE.nsrc] &gt; 0.5 &amp;&amp; [REFERENCE.ncount] &gt; [UNREAD_NOTIFICATION_COUNT] ? [REFERENCE.ncount] : [UNREAD_NOTIFICATION_COUNT]), 0, 6) &gt; 1 ? 311 - 1 * clamp(clamp(311 - [REFERENCE.sy] - 10, 8, 300) / (clamp(([REFERENCE.nsrc] &gt; 0.5 &amp;&amp; [REFERENCE.ncount] &gt; [UNREAD_NOTIFICATION_COUNT] ? [REFERENCE.ncount] : [UNREAD_NOTIFICATION_COUNT]), 0, 6) &gt; 0 ? clamp(([REFERENCE.nsrc] &gt; 0.5 &amp;&amp; [REFERENCE.ncount] &gt; [UNREAD_NOTIFICATION_COUNT] ? [REFERENCE.ncount] : [UNREAD_NOTIFICATION_COUNT]), 0, 6) : 1), 4, 13) - 3.2 : 351">
-<Animation interpolation="EASE_OUT" duration="0.9" fps="30"/>
-</Transform>
+<Transform target="y" value="clamp(([REFERENCE.nsrc] &gt; 0.5 &amp;&amp; [REFERENCE.ncount] &gt; [UNREAD_NOTIFICATION_COUNT] ? [REFERENCE.ncount] : [UNREAD_NOTIFICATION_COUNT]), 0, 6) &gt; 1 ? 311 - 1 * clamp(clamp(311 - [REFERENCE.sy] - 10, 8, 300) / (clamp(([REFERENCE.nsrc] &gt; 0.5 &amp;&amp; [REFERENCE.ncount] &gt; [UNREAD_NOTIFICATION_COUNT] ? [REFERENCE.ncount] : [UNREAD_NOTIFICATION_COUNT]), 0, 6) &gt; 0 ? clamp(([REFERENCE.nsrc] &gt; 0.5 &amp;&amp; [REFERENCE.ncount] &gt; [UNREAD_NOTIFICATION_COUNT] ? [REFERENCE.ncount] : [UNREAD_NOTIFICATION_COUNT]), 0, 6) : 1), 4, 13) - 3.2 : 351"/>
 </Ellipse>
 <Ellipse x="177.722" y="351" width="8" height="8">
 <Fill color="#46FFFFFF"/>
 <Stroke color="#E6FFFFFF" thickness="0.9"/>
-<Transform target="y" value="clamp(([REFERENCE.nsrc] &gt; 0.5 &amp;&amp; [REFERENCE.ncount] &gt; [UNREAD_NOTIFICATION_COUNT] ? [REFERENCE.ncount] : [UNREAD_NOTIFICATION_COUNT]), 0, 6) &gt; 2 ? 311 - 2 * clamp(clamp(311 - [REFERENCE.sy] - 10, 8, 300) / (clamp(([REFERENCE.nsrc] &gt; 0.5 &amp;&amp; [REFERENCE.ncount] &gt; [UNREAD_NOTIFICATION_COUNT] ? [REFERENCE.ncount] : [UNREAD_NOTIFICATION_COUNT]), 0, 6) &gt; 0 ? clamp(([REFERENCE.nsrc] &gt; 0.5 &amp;&amp; [REFERENCE.ncount] &gt; [UNREAD_NOTIFICATION_COUNT] ? [REFERENCE.ncount] : [UNREAD_NOTIFICATION_COUNT]), 0, 6) : 1), 4, 13) - 4 : 351">
-<Animation interpolation="EASE_OUT" duration="0.9" fps="30"/>
-</Transform>
+<Transform target="y" value="clamp(([REFERENCE.nsrc] &gt; 0.5 &amp;&amp; [REFERENCE.ncount] &gt; [UNREAD_NOTIFICATION_COUNT] ? [REFERENCE.ncount] : [UNREAD_NOTIFICATION_COUNT]), 0, 6) &gt; 2 ? 311 - 2 * clamp(clamp(311 - [REFERENCE.sy] - 10, 8, 300) / (clamp(([REFERENCE.nsrc] &gt; 0.5 &amp;&amp; [REFERENCE.ncount] &gt; [UNREAD_NOTIFICATION_COUNT] ? [REFERENCE.ncount] : [UNREAD_NOTIFICATION_COUNT]), 0, 6) &gt; 0 ? clamp(([REFERENCE.nsrc] &gt; 0.5 &amp;&amp; [REFERENCE.ncount] &gt; [UNREAD_NOTIFICATION_COUNT] ? [REFERENCE.ncount] : [UNREAD_NOTIFICATION_COUNT]), 0, 6) : 1), 4, 13) - 4 : 351"/>
 </Ellipse>
 <Ellipse x="175.971" y="351" width="4.8" height="4.8">
 <Fill color="#46FFFFFF"/>
 <Stroke color="#E6FFFFFF" thickness="0.9"/>
-<Transform target="y" value="clamp(([REFERENCE.nsrc] &gt; 0.5 &amp;&amp; [REFERENCE.ncount] &gt; [UNREAD_NOTIFICATION_COUNT] ? [REFERENCE.ncount] : [UNREAD_NOTIFICATION_COUNT]), 0, 6) &gt; 3 ? 311 - 3 * clamp(clamp(311 - [REFERENCE.sy] - 10, 8, 300) / (clamp(([REFERENCE.nsrc] &gt; 0.5 &amp;&amp; [REFERENCE.ncount] &gt; [UNREAD_NOTIFICATION_COUNT] ? [REFERENCE.ncount] : [UNREAD_NOTIFICATION_COUNT]), 0, 6) &gt; 0 ? clamp(([REFERENCE.nsrc] &gt; 0.5 &amp;&amp; [REFERENCE.ncount] &gt; [UNREAD_NOTIFICATION_COUNT] ? [REFERENCE.ncount] : [UNREAD_NOTIFICATION_COUNT]), 0, 6) : 1), 4, 13) - 2.4 : 351">
-<Animation interpolation="EASE_OUT" duration="0.9" fps="30"/>
-</Transform>
+<Transform target="y" value="clamp(([REFERENCE.nsrc] &gt; 0.5 &amp;&amp; [REFERENCE.ncount] &gt; [UNREAD_NOTIFICATION_COUNT] ? [REFERENCE.ncount] : [UNREAD_NOTIFICATION_COUNT]), 0, 6) &gt; 3 ? 311 - 3 * clamp(clamp(311 - [REFERENCE.sy] - 10, 8, 300) / (clamp(([REFERENCE.nsrc] &gt; 0.5 &amp;&amp; [REFERENCE.ncount] &gt; [UNREAD_NOTIFICATION_COUNT] ? [REFERENCE.ncount] : [UNREAD_NOTIFICATION_COUNT]), 0, 6) &gt; 0 ? clamp(([REFERENCE.nsrc] &gt; 0.5 &amp;&amp; [REFERENCE.ncount] &gt; [UNREAD_NOTIFICATION_COUNT] ? [REFERENCE.ncount] : [UNREAD_NOTIFICATION_COUNT]), 0, 6) : 1), 4, 13) - 2.4 : 351"/>
 </Ellipse>
 <Ellipse x="182.271" y="351" width="6.4" height="6.4">
 <Fill color="#46FFFFFF"/>
 <Stroke color="#E6FFFFFF" thickness="0.9"/>
-<Transform target="y" value="clamp(([REFERENCE.nsrc] &gt; 0.5 &amp;&amp; [REFERENCE.ncount] &gt; [UNREAD_NOTIFICATION_COUNT] ? [REFERENCE.ncount] : [UNREAD_NOTIFICATION_COUNT]), 0, 6) &gt; 4 ? 311 - 4 * clamp(clamp(311 - [REFERENCE.sy] - 10, 8, 300) / (clamp(([REFERENCE.nsrc] &gt; 0.5 &amp;&amp; [REFERENCE.ncount] &gt; [UNREAD_NOTIFICATION_COUNT] ? [REFERENCE.ncount] : [UNREAD_NOTIFICATION_COUNT]), 0, 6) &gt; 0 ? clamp(([REFERENCE.nsrc] &gt; 0.5 &amp;&amp; [REFERENCE.ncount] &gt; [UNREAD_NOTIFICATION_COUNT] ? [REFERENCE.ncount] : [UNREAD_NOTIFICATION_COUNT]), 0, 6) : 1), 4, 13) - 3.2 : 351">
-<Animation interpolation="EASE_OUT" duration="0.9" fps="30"/>
-</Transform>
+<Transform target="y" value="clamp(([REFERENCE.nsrc] &gt; 0.5 &amp;&amp; [REFERENCE.ncount] &gt; [UNREAD_NOTIFICATION_COUNT] ? [REFERENCE.ncount] : [UNREAD_NOTIFICATION_COUNT]), 0, 6) &gt; 4 ? 311 - 4 * clamp(clamp(311 - [REFERENCE.sy] - 10, 8, 300) / (clamp(([REFERENCE.nsrc] &gt; 0.5 &amp;&amp; [REFERENCE.ncount] &gt; [UNREAD_NOTIFICATION_COUNT] ? [REFERENCE.ncount] : [UNREAD_NOTIFICATION_COUNT]), 0, 6) &gt; 0 ? clamp(([REFERENCE.nsrc] &gt; 0.5 &amp;&amp; [REFERENCE.ncount] &gt; [UNREAD_NOTIFICATION_COUNT] ? [REFERENCE.ncount] : [UNREAD_NOTIFICATION_COUNT]), 0, 6) : 1), 4, 13) - 3.2 : 351"/>
 </Ellipse>
 <Ellipse x="182.992" y="351" width="8" height="8">
 <Fill color="#46FFFFFF"/>
 <Stroke color="#E6FFFFFF" thickness="0.9"/>
-<Transform target="y" value="clamp(([REFERENCE.nsrc] &gt; 0.5 &amp;&amp; [REFERENCE.ncount] &gt; [UNREAD_NOTIFICATION_COUNT] ? [REFERENCE.ncount] : [UNREAD_NOTIFICATION_COUNT]), 0, 6) &gt; 5 ? 311 - 5 * clamp(clamp(311 - [REFERENCE.sy] - 10, 8, 300) / (clamp(([REFERENCE.nsrc] &gt; 0.5 &amp;&amp; [REFERENCE.ncount] &gt; [UNREAD_NOTIFICATION_COUNT] ? [REFERENCE.ncount] : [UNREAD_NOTIFICATION_COUNT]), 0, 6) &gt; 0 ? clamp(([REFERENCE.nsrc] &gt; 0.5 &amp;&amp; [REFERENCE.ncount] &gt; [UNREAD_NOTIFICATION_COUNT] ? [REFERENCE.ncount] : [UNREAD_NOTIFICATION_COUNT]), 0, 6) : 1), 4, 13) - 4 : 351">
-<Animation interpolation="EASE_OUT" duration="0.9" fps="30"/>
-</Transform>
+<Transform target="y" value="clamp(([REFERENCE.nsrc] &gt; 0.5 &amp;&amp; [REFERENCE.ncount] &gt; [UNREAD_NOTIFICATION_COUNT] ? [REFERENCE.ncount] : [UNREAD_NOTIFICATION_COUNT]), 0, 6) &gt; 5 ? 311 - 5 * clamp(clamp(311 - [REFERENCE.sy] - 10, 8, 300) / (clamp(([REFERENCE.nsrc] &gt; 0.5 &amp;&amp; [REFERENCE.ncount] &gt; [UNREAD_NOTIFICATION_COUNT] ? [REFERENCE.ncount] : [UNREAD_NOTIFICATION_COUNT]), 0, 6) &gt; 0 ? clamp(([REFERENCE.nsrc] &gt; 0.5 &amp;&amp; [REFERENCE.ncount] &gt; [UNREAD_NOTIFICATION_COUNT] ? [REFERENCE.ncount] : [UNREAD_NOTIFICATION_COUNT]), 0, 6) : 1), 4, 13) - 4 : 351"/>
 </Ellipse>
 </PartDraw>
 <PartText name="bubble_count" x="144" y="0" width="28" height="16">
@@ -1628,9 +1612,7 @@
 </Expressions>
 <Compare expression="c">
 <PartDraw name="seconds_spark" x="0" y="0" width="450" height="450" pivotX="0.5" pivotY="0.5">
-<Transform target="angle" value="[SECOND] * 6">
-<Animation interpolation="EASE_OUT" duration="0.15" fps="30" angleDirection="CLOCKWISE"/>
-</Transform>
+<Transform target="angle" value="[SECOND] * 6"/>
 <Arc centerX="225" centerY="225" width="232" height="232" startAngle="-3" endAngle="0">
 <Stroke color="#88FFFFFF" thickness="2"/>
 </Arc>
