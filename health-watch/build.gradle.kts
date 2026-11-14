@@ -8,8 +8,8 @@ android {
         applicationId = "com.bobbfwed.emberphase.health"
         minSdk = 36
         targetSdk = 36
-        versionCode = 2012
-        versionName = "0.1.11"
+        versionCode = 2013
+        versionName = "0.1.12"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
     compileOptions {

@@ -132,7 +132,8 @@ count changes, the bubbles rise into place with one short animation. Zero
 shows no bubbles.
 
 The count comes from the watch companion's **Notifications** provider on fixed
-slot 7 (it needs notification access). Samsung reports
+slot 7: the phone's notifications (counted by the phone app, which sends only
+the number) plus the watch's own. Both need notification access. Samsung reports
 `UNREAD_NOTIFICATION_COUNT` only as 0 or 1, and Wear OS clears it once the
 list is opened, so it is used only as a fallback when the companion publishes
 no data.
