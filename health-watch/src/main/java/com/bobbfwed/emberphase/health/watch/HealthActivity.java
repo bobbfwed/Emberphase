@@ -40,8 +40,8 @@ public final class HealthActivity extends Activity {
         TextView notifications = new TextView(this);
         notifications.setTextSize(15);
         notifications.setText(NotificationCount.accessGranted(this)
-                ? "Watch notification count: on."
-                : "Watch notification count: off. Phone notifications are counted by the phone app; allow notification access there.");
+                ? "Notification count: on."
+                : "Notification count: off. Allow notification access for Emberphase Health so faces can show all notifications, not only unread.");
         content.addView(notifications);
         setContentView(scroll);
         PhoneRefresh.loadCache(this);

@@ -1,6 +1,6 @@
 # Meniscus: design and build plan
 
-Status: **built (face 0.1.3, watch companion 0.1.12, phone companion 0.1.4).** Rendering, slosh, tilt,
+Status: **built (face 0.1.4, watch companion 0.1.13, phone companion 0.1.5).** Rendering, slosh, tilt,
 always-on, low battery, power saving and the editor were checked on the Wear OS 6
 emulator with sample data; the physical-watch checks in
 [device-acceptance.md](device-acceptance.md) are pending. The interactive concept
@@ -133,12 +133,14 @@ six). When the
 count changes, the bubbles rise into place with one short animation. Zero
 shows no bubbles.
 
-The count comes from the watch companion's **Notifications** provider on fixed
-slot 7: the phone's notifications (counted by the phone app, which sends only
-the number) plus the watch's own. Both need notification access. Samsung reports
-`UNREAD_NOTIFICATION_COUNT` only as 0 or 1, and Wear OS clears it once the
-list is opened, so it is used only as a fallback when the companion publishes
-no data.
+The count is the larger of two sources. The watch companion's **Notifications**
+provider on fixed slot 7 counts notifications that watch apps post (it needs
+notification access). Forwarded phone notifications live in Wear OS's private
+stream, so for them the face uses `UNREAD_NOTIFICATION_COUNT`, which Samsung
+reports only as 0 or 1 and clears once the list is opened. Counting on the
+phone was tried (phone companion 0.1.4) and dropped: Galaxy Wearable forwards
+only the apps you choose, and that choice is private, so the phone counted
+notifications the watch never showed.
 
 ### Slosh
 

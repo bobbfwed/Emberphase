@@ -30,9 +30,9 @@ in [docs/DESIGN.md](docs/DESIGN.md).
   progress arcs. A pod's conduit to the core lights up when a real goal is
   reached. Defaults: steps, active minutes, active calories, heart rate.
 * **Event bar** for the next calendar event or any text complication.
-* **Notification bubbles** rise in the fluid, one per notification on your
-  phone and watch (needs the companions with notification access; otherwise
-  one bubble means something is unread).
+* **Notification bubbles** rise in the fluid: one per notification that watch
+  apps have posted (needs the watch companion with notification access), and
+  at least one while a forwarded phone notification is unread.
 * **Slosh.** Tap the core and the fluid swings and settles over about three
   seconds (needs the Emberphase Health watch companion).
 * **Seconds spark** with a fading tail on the glass rim.
@@ -159,22 +159,18 @@ Install the updated **watch companion** too (see
 calories, the core tap for the slosh, the power-saving signal and the
 notification count.
 
-The notification count needs notification access on both devices. Phone
-notifications reach the watch only through Wear OS's private notification list,
-so the phone app counts its own and sends just the number to the watch:
+The notification count needs notification access, and the watch has no screen
+to grant it. With the watch connected over ADB, run:
 
-* **Phone:** open Emberphase Health and tap **Notification count on the
-  watch**, then allow access.
-* **Watch** (for notifications from watch apps): the watch has no screen for
-  this, so with the watch connected over ADB run
+```powershell
+adb shell cmd notification allow_listener com.bobbfwed.emberphase.health/com.bobbfwed.emberphase.health.watch.NotificationCountListener
+```
 
-  ```powershell
-  adb shell cmd notification allow_listener com.bobbfwed.emberphase.health/com.bobbfwed.emberphase.health.watch.NotificationCountListener
-  ```
-
-The companions only count notifications (ignoring ongoing ones such as media
-or workouts); they never read or send contents. Without access, the bubbles
-fall back to Samsung's unread flag, which is only 0 or 1.
+The companion only counts notifications; it never reads their contents.
+Phone notifications forwarded to the watch cannot be counted: Wear OS keeps
+them private, and counting on the phone over-counts apps Galaxy Wearable does
+not forward. For those the face uses Samsung's unread flag, which is only 0 or
+1, so they show as one bubble until you open the notification list.
 
 ## Customize the face
 

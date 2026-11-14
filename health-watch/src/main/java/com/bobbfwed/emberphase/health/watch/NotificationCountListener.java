@@ -16,6 +16,6 @@ public final class NotificationCountListener extends NotificationListenerService
         } catch (SecurityException | IllegalStateException notConnected) {
             return;
         }
-        if (active != null) NotificationCount.setLocal(this, NotificationCount.local(active, getPackageName()));
+        if (active != null) NotificationCount.publish(this, NotificationCount.total(active, getPackageName()));
     }
 }

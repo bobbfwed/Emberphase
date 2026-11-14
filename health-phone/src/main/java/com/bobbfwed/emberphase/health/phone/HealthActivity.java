@@ -12,7 +12,6 @@ import java.util.concurrent.Executors;
 
 public final class HealthActivity extends Activity {
     private TextView status;
-    private TextView notificationStatus;
     private final android.content.SharedPreferences.OnSharedPreferenceChangeListener changes = (prefs, key) -> runOnUiThread(this::refresh);
     @Override public void onCreate(Bundle state) {
         super.onCreate(state);
@@ -33,18 +32,6 @@ public final class HealthActivity extends Activity {
         });
         button(content, "Samsung SDK setup documentation", () -> startActivity(new Intent(Intent.ACTION_VIEW,
                 Uri.parse("https://developer.samsung.com/health/data/process.html"))));
-        notificationStatus = new TextView(this);
-        notificationStatus.setPadding(0, 24, 0, 0);
-        content.addView(notificationStatus);
-        button(content, "Notification count on the watch", () -> {
-            Intent list = new Intent(android.provider.Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS);
-            if (android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.R) { startActivity(list); return; }
-            Intent detail = new Intent(android.provider.Settings.ACTION_NOTIFICATION_LISTENER_DETAIL_SETTINGS)
-                    .putExtra(android.provider.Settings.EXTRA_NOTIFICATION_LISTENER_COMPONENT_NAME,
-                            new android.content.ComponentName(this, PhoneNotificationCounter.class).flattenToString());
-            try { startActivity(detail); }
-            catch (android.content.ActivityNotFoundException missing) { startActivity(list); }
-        });
         TextView instructions = new TextView(this);
         instructions.setText("\nOn the watch, edit Emberphase → Complications. Tap the MIN number and choose Emberphase · Active minutes. Tap CAL and choose Emberphase · Active calories.\n\nThis local developer build requires Samsung's SDK testing setup. Public distribution requires Samsung partner registration.");
         content.addView(instructions);
@@ -67,9 +54,6 @@ public final class HealthActivity extends Activity {
                 + HealthSync.prefs(this).getString("status", "Connect to grant Samsung Health read permission.")
                 + (synced == 0 ? "" : "\nLast sync: " + DateFormat.getDateTimeInstance().format(new Date(synced)))
                 + (checked == 0 ? "" : "\nLast check: " + DateFormat.getDateTimeInstance().format(new Date(checked))));
-        notificationStatus.setText(PhoneNotificationCounter.accessGranted(this)
-                ? "Notification count: on. The watch face shows how many notifications this phone has. Only the number is sent, never their contents."
-                : "Notification count: off. Allow notification access so the watch face can show how many notifications you have. Only the number is sent, never their contents.");
     }
     private void connect() {
         try {

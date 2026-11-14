@@ -44,10 +44,13 @@ export const SURFACE_VISIBLE = `${ref('lvl')} > 0.005 && ${ref('lvl')} < 0.995`;
 // ---- Notification bubbles ----
 export const BUBBLES = 6;
 export const BUBBLE_BOTTOM = G.CORE_BOTTOM - 24;
-// Total notifications from the companion (slot 7). Samsung reports
-// UNREAD_NOTIFICATION_COUNT only as 0 or 1, so it is just the fallback when the
-// companion has no notification access (its carriers then read 0).
-export const NOTIFICATIONS = `(${ref('nsrc')} > 0.5 ? ${ref('ncount')} : [UNREAD_NOTIFICATION_COUNT])`;
+// Notifications on the watch from the companion (slot 7), or Samsung's unread
+// flag (only ever 0 or 1), whichever is larger. The companion sees only
+// notifications watch apps create; forwarded phone notifications live in Wear
+// OS's private stream, so the flag keeps at least one bubble for those. Without
+// notification access the slot's carriers read 0 and only the flag remains.
+const UNREAD = '[UNREAD_NOTIFICATION_COUNT]';
+export const NOTIFICATIONS = `(${ref('nsrc')} > 0.5 && ${ref('ncount')} > ${UNREAD} ? ${ref('ncount')} : ${UNREAD})`;
 export const BUBBLE_COUNT = `clamp(${NOTIFICATIONS}, 0, ${BUBBLES})`;
 export const BUBBLE_STEP = `clamp(clamp(${BUBBLE_BOTTOM} - ${ref('sy')} - 10, 8, 300) / (${BUBBLE_COUNT} > 0 ? ${BUBBLE_COUNT} : 1), 4, 13)`;
 export const bubbleRadius = (i) => 2.4 + (i % 3) * 0.8;

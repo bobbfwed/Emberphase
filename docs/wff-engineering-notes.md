@@ -78,12 +78,15 @@ Watch6 Classic SM-R950, Wear OS 6 / API 36, WFF version 4.
   always-on switch instantly.
 * **`UNREAD_NOTIFICATION_COUNT` is only 0 or 1 on this watch** (77 runtime
   updates, never above 1, with four notifications present). For a real count
-  use the companion's notification-listener provider. Phone notifications are
-  not visible to a watch app at all: Wear OS keeps bridged notifications in
-  Google Wear Services' private stream, so a listener on the watch sees only
-  watch-local ones. Count on the phone and send the number. Wear OS has no
+  use the companion's notification-listener provider. Wear OS has no
   notification-access screen; grant it with `adb shell cmd notification
   allow_listener <component>`.
+* **A watch app cannot count forwarded phone notifications.** Wear OS keeps
+  them in Google Wear Services' private stream; a listener on the watch sees
+  only notifications watch apps post. Counting on the phone instead (tried in
+  phone companion 0.1.4) over-counted badly: Galaxy Wearable forwards only the
+  apps the user selects, that setting is private, and YouTube, Photos and
+  weather notifications the watch never received showed as "6+".
 * Treat `WEATHER.HOURS.n.CONDITION == 0` as "no forecast for that hour"
   instead of reading `HOURS.n.IS_AVAILABLE`.
 * **System auto-rotate is on by default** on this firmware

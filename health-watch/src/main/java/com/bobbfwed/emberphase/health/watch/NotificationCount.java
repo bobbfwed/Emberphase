@@ -1,34 +1,39 @@
 package com.bobbfwed.emberphase.health.watch;
 
+import android.app.Notification;
 import android.app.NotificationManager;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.service.notification.StatusBarNotification;
-import com.bobbfwed.emberphase.health.common.NotificationTotals;
 import androidx.wear.watchface.complications.datasource.ComplicationDataSourceUpdateRequester;
 
 /**
- * Total notifications for the face: the watch's own plus the phone's count.
- * Samsung reports UNREAD_NOTIFICATION_COUNT only as 0 or 1, and phone
- * notifications live in Wear OS's private stream, so the phone companion
- * counts its own and sends the number over the Data Layer.
+ * Total notifications on the watch. Samsung reports UNREAD_NOTIFICATION_COUNT
+ * as 0 or 1, and Wear OS marks everything read once the list is opened, so a
+ * face that wants the real number gets it from here.
  */
 final class NotificationCount {
     static final String PREFS = "notification_count";
-    static final String LOCAL = "local";
-    static final String PHONE = "phone";
+    static final String COUNT = "count";
     static final String DELIVERED = "delivered";
+    static final int MAX = 99;
+    private static final int NOT_COUNTED = Notification.FLAG_ONGOING_EVENT
+            | Notification.FLAG_FOREGROUND_SERVICE | Notification.FLAG_GROUP_SUMMARY;
 
     private NotificationCount() { }
 
-    static int local(StatusBarNotification[] active, String ownPackage) {
+    /** Counts what a person would dismiss: not ongoing, not a group header, not ours. */
+    static boolean counts(int flags, boolean clearable, boolean own) {
+        return clearable && !own && (flags & NOT_COUNTED) == 0;
+    }
+
+    static int total(StatusBarNotification[] active, String ownPackage) {
         int total = 0;
         for (StatusBarNotification sbn : active) {
-            if (NotificationTotals.counts(sbn.getNotification().flags, sbn.isClearable(),
-                    ownPackage.equals(sbn.getPackageName()))) total++;
+            if (counts(sbn.getNotification().flags, sbn.isClearable(), ownPackage.equals(sbn.getPackageName()))) total++;
         }
-        return total;
+        return Math.min(total, MAX);
     }
 
     static boolean accessGranted(Context context) {
@@ -37,33 +42,11 @@ final class NotificationCount {
                 new ComponentName(context, NotificationCountListener.class));
     }
 
-    static SharedPreferences prefs(Context context) { return context.getSharedPreferences(PREFS, Context.MODE_PRIVATE); }
-
-    /** Data exists once either side can count. */
-    static boolean available(Context context) { return accessGranted(context) || prefs(context).contains(PHONE); }
-
-    static int total(SharedPreferences prefs) {
-        return NotificationTotals.cap(prefs.getInt(LOCAL, 0) + prefs.getInt(PHONE, 0));
-    }
-
-    static void setLocal(Context context, int count) {
-        prefs(context).edit().putInt(LOCAL, count).apply();
-        requestIfChanged(context);
-    }
-
-    /** null clears the phone's count (access revoked or sharing stopped). */
-    static void setPhone(Context context, Integer count) {
-        SharedPreferences.Editor edit = prefs(context).edit();
-        if (count == null) edit.remove(PHONE); else edit.putInt(PHONE, count);
-        edit.apply();
-        requestIfChanged(context);
-    }
-
-    private static void requestIfChanged(Context context) {
-        SharedPreferences prefs = prefs(context);
-        boolean available = available(context);
-        boolean delivered = prefs.contains(DELIVERED);
-        if (available == delivered && (!available || prefs.getInt(DELIVERED, -1) == total(prefs))) return;
+    /** Stores the count and asks the face to reread it only when it changed. */
+    static void publish(Context context, int count) {
+        SharedPreferences prefs = context.getSharedPreferences(PREFS, Context.MODE_PRIVATE);
+        prefs.edit().putInt(COUNT, count).apply();
+        if (prefs.contains(DELIVERED) && prefs.getInt(DELIVERED, -1) == count) return;
         ComplicationDataSourceUpdateRequester.create(context,
                 new ComponentName(context, NotificationCountDataSource.class)).requestUpdateAll();
     }

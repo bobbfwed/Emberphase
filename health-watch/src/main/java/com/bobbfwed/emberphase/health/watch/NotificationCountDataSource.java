@@ -2,15 +2,14 @@ package com.bobbfwed.emberphase.health.watch;
 
 import androidx.wear.watchface.complications.data.*;
 import androidx.wear.watchface.complications.datasource.*;
-import com.bobbfwed.emberphase.health.common.NotificationTotals;
 
 /**
- * Publishes the total notification count (watch plus phone). With neither
- * side able to count it publishes no data, so a face can fall back to its own unread source.
+ * Publishes the total notification count. Without notification access it
+ * publishes no data, so a face can fall back to its own unread source.
  */
 public final class NotificationCountDataSource extends ComplicationDataSourceService {
     private RangedValueComplicationData data(int count) {
-        return new RangedValueComplicationData.Builder(count, 0, NotificationTotals.MAX,
+        return new RangedValueComplicationData.Builder(count, 0, NotificationCount.MAX,
                 new PlainComplicationText.Builder("Notifications").build())
                 .setText(new PlainComplicationText.Builder(String.valueOf(count)).build())
                 .build();
@@ -18,13 +17,12 @@ public final class NotificationCountDataSource extends ComplicationDataSourceSer
 
     @Override public void onComplicationRequest(ComplicationRequest request, ComplicationRequestListener listener) {
         try {
-            var prefs = NotificationCount.prefs(this);
-            if (!NotificationCount.available(this)) {
+            if (!NotificationCount.accessGranted(this)) {
                 listener.onComplicationData(new NoDataComplicationData());
-                prefs.edit().remove(NotificationCount.DELIVERED).apply();
                 return;
             }
-            int count = NotificationCount.total(prefs);
+            var prefs = getSharedPreferences(NotificationCount.PREFS, MODE_PRIVATE);
+            int count = prefs.getInt(NotificationCount.COUNT, 0);
             listener.onComplicationData(data(count));
             prefs.edit().putInt(NotificationCount.DELIVERED, count).apply();
         } catch (android.os.RemoteException disconnected) {

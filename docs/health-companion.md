@@ -96,23 +96,18 @@ or network:
   (six-second window). Both tap providers share `TapTiming`.
 * **Emberphase · Power saving** publishes 1 while Android power saving or the
   watch's low-power mode is on, and only when that changes.
-* **Emberphase · Notifications** (0.1.11, phone count since 0.1.12) publishes
-  how many notifications are on the phone and the watch, for Meniscus's
-  bubbles. Phone notifications reach the watch only through Wear OS's private
-  stream, which apps cannot read, so phone app 0.1.4 runs its own
-  notification listener and writes just the count to the Data Layer item
-  `/emberphase/notifications/v1` when it changes; revoking access deletes the
-  item. The watch adds it to its own count. Samsung reports the face's own
+* **Emberphase · Notifications** (0.1.11) publishes how many notifications are
+  on the watch, for Meniscus's bubbles. Samsung reports the face's own
   `UNREAD_NOTIFICATION_COUNT` only as 0 or 1, and Wear OS marks everything read
   once the list is opened. A `NotificationListenerService` recounts on every
   post and removal, skipping ongoing, foreground-service and group-summary
   notifications, and asks the face to refresh only when the number changes. It
-  never reads notification contents. Grant phone access from the phone app's
-  **Notification count on the watch** button. The watch has no screen for it;
-  grant watch access over ADB:
+  never reads notification contents. It needs notification access, which the
+  watch has no screen for; grant it over ADB:
   `adb shell cmd notification allow_listener com.bobbfwed.emberphase.health/com.bobbfwed.emberphase.health.watch.NotificationCountListener`.
-  With neither side allowed, the provider publishes no data and the face falls back to
-  the unread flag.
+  Without access the provider publishes no data. Forwarded phone
+  notifications are not visible to it (see the engineering notes), so
+  Meniscus also reads the unread flag and shows whichever is larger.
 
 Every provider lists all the Emberphase faces (`com.bobbfwed.emberphase`, `.mechanical`,
 `.apsis` and `.meniscus`) in `SAFE_WATCH_FACES`, so one companion serves each

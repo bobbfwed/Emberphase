@@ -221,10 +221,12 @@ test('notification bubbles stay inside the core and hide when read', () => {
   assert.equal(wff(X.BUBBLES_VISIBLE, R({ sy: G.CORE_BOTTOM - 20 })), 0, 'hidden when the fluid is shallow');
   assert.equal(wff(X.BUBBLE_LABEL, { UNREAD_NOTIFICATION_COUNT: 9, ...noCompanion }), '6+');
   assert.equal(wff(X.BUBBLE_LABEL, { UNREAD_NOTIFICATION_COUNT: 2, ...noCompanion }), 2);
-  // The companion's total wins over Samsung's 0-or-1 unread flag.
+  // The watch's own count, or the 0-or-1 unread flag for forwarded phone
+  // notifications, whichever is larger.
   const total = (n) => ({ UNREAD_NOTIFICATION_COUNT: 1, ...R({ nsrc: 1, ncount: n }) });
   assert.equal(wff(X.BUBBLE_COUNT, total(4)), 4);
-  assert.equal(wff(X.BUBBLE_COUNT, total(0)), 0);
+  assert.equal(wff(X.BUBBLE_COUNT, total(0)), 1, 'unread forwarded notification');
+  assert.equal(wff(X.BUBBLE_COUNT, { UNREAD_NOTIFICATION_COUNT: 0, ...R({ nsrc: 1, ncount: 0 }) }), 0);
   assert.equal(wff(X.BUBBLE_LABEL, total(11)), '6+');
   assert.equal(wff(X.BUBBLE_COUNT, { UNREAD_NOTIFICATION_COUNT: 1, ...noCompanion }), 1);
 });
