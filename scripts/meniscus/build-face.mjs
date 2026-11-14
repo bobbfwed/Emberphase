@@ -50,7 +50,9 @@ function text(name, box, { family = MEDIUM, size, color = '#FFFFFFFF', align = '
     el('Text', { align, ellipsis: ellipsis ? 'TRUE' : 'FALSE' },
       el('Font', { family, size, color, letterSpacing: spacing }, upper ? el('Upper', {}, tpl) : tpl)));
 }
-const ambientHide = el('Variant', { mode: 'AMBIENT', target: 'alpha', value: 0 });
+// duration 0: the default 1 s always-on transition animates every Variant at
+// each screen-state change, the moment Samsung's runtime is least stable.
+const ambientHide = el('Variant', { mode: 'AMBIENT', target: 'alpha', value: 0, duration: 0 });
 
 // ------------------------------------------------------------------ Carriers
 function carriers() {
@@ -88,10 +90,7 @@ function chronocast() {
         stroke('#00000000', 1.8, {}, T('color', X.familyColor(s, 242))),
         ...angles, T('width', `${2 * R.terrainBase} + 2 * ${depth}`), T('height', `${2 * R.terrainBase} + 2 * ${depth}`)),
       ring(R.textureRadius, 0.6, 29.4, stroke('#00000000', 7, { dashIntervals: '1.2 4.6' }, T('color', X.rainColor(s))), ...angles),
-      ring(R.textureRadius + 1, 0.6, 29.4, stroke('#00000000', 2.4, { dashIntervals: '0.1 5', cap: 'ROUND' }, T('color', X.snowColor(s))), ...angles),
-      el('Arc', { centerX: G.C, centerY: G.C, width: 2 * R.uvRadius, height: 2 * R.uvRadius, startAngle: 14, endAngle: 16 },
-        stroke('#00000000', 3, { cap: 'ROUND' }, T('color', X.uvColor(s))),
-        T('startAngle', `${a0} + 13.4`), T('endAngle', `${a0} + 15.4`))));
+      ring(R.textureRadius + 1, 0.6, 29.4, stroke('#00000000', 2.4, { dashIntervals: '0.1 5', cap: 'ROUND' }, T('color', X.snowColor(s))), ...angles)));
     if (R.labelHours.includes(k)) {
       const w = 40, h = 18;
       const pos = [T('x', X.labelX(k, w)), T('y', X.labelY(k, h)), T('alpha', `${s.avail} ? 255 : 0`)];
@@ -286,9 +285,8 @@ function glassRim() {
     ticks.push(el('Line', { startX: x1, startY: y1, endX: x2, endY: y2 }, stroke(i % 5 ? '#1AFFFFFF' : '#38FFFFFF', 0.8)));
   }
   const rimR = G.RIM - 1.5;
-  const highlight = (gyro) => draw('glass_highlight', {},
-    gyro ? el('Gyro', { x: 'clamp([ACCELEROMETER_ANGLE_X], -30, 30) * -0.2', y: 'clamp([ACCELEROMETER_ANGLE_Y], -30, 30) * -0.2' }) : null,
-    ring(101, 292, 334, stroke('#24FFFFFF', 4, { cap: 'ROUND' })));
+  // Static: a Gyro transform here was animating at every Samsung runtime crash.
+  const highlight = draw('glass_highlight', {}, ring(101, 292, 334, stroke('#24FFFFFF', 4, { cap: 'ROUND' })));
   const spark = [];
   // Fading tail behind the spark, 3 degrees per segment.
   for (let i = 1; i <= 8; i++) {
@@ -299,9 +297,7 @@ function glassRim() {
     draw('glass_ticks', {}, ...ticks),
     draw('glass_rim', {}, circle(G.C, G.C, rimR, stroke('#FF8E9BA6', 3.4, {},
       el('LinearGradient', { startX: G.C - rimR, startY: G.C - rimR, endX: G.C + rimR, endY: G.C + rimR, colors: '#FF8E9BA6 #FF1A2027 #FF3B4752 #FF9FB0BC', positions: '0 0.45 0.7 1' })))),
-    el('BooleanConfiguration', { id: 'parallax' },
-      el('BooleanOption', { id: 'TRUE' }, one([condition(X.MOTION_OK, highlight(true), highlight(false))])),
-      el('BooleanOption', { id: 'FALSE' }, one([highlight(false)]))),
+    highlight,
     boolOption('secs', condition(X.SECONDS_OK,
       draw('seconds_spark', { pivotX: 0.5, pivotY: 0.5 },
         T('angle', '[SECOND] * 6', { interpolation: 'EASE_OUT', duration: 0.15, fps: 30, angleDirection: 'CLOCKWISE' }),
@@ -318,7 +314,7 @@ function ambient() {
   const sy = `${G.CORE_BOTTOM} - ${2 * G.CORE} * ${X.ref('lvl')}`;
   const half = `sqrt(clamp(${G.CORE * G.CORE} - pow(${sy} - ${G.C}, 2), 0, ${G.CORE * G.CORE}))`;
   const outline = (name, alpha) => digits(name, 'numerals_outline', G.LIT.replace('#', '#FF'), 0, 0, { alpha });
-  return group('ambient', { alpha: 0 }, el('Variant', { mode: 'AMBIENT', target: 'alpha', value: 255 }),
+  return group('ambient', { alpha: 0 }, el('Variant', { mode: 'AMBIENT', target: 'alpha', value: 255, duration: 0 }),
     draw('amb_dots', {}, ...dots),
     draw('amb_cursor', { pivotX: 0.5, pivotY: 0.5, alpha: 220 }, T('angle', X.CURSOR),
       el('Line', { startX: G.C, startY: 2, endX: G.C, endY: 28 }, stroke('[CONFIGURATION.fluid.0]', 2.2, { cap: 'ROUND' }))),
@@ -439,7 +435,6 @@ export function buildFace() {
     el('ListConfiguration', { id: 'feed', displayName: 'core_fluid', defaultValue: '0' },
       ...['feed_battery', 'feed_day', 'feed_pod_10', 'feed_pod_2', 'feed_pod_4', 'feed_pod_8'].map((s, i) => el('ListOption', { id: String(i), displayName: s }))),
     el('BooleanConfiguration', { id: 'tilt', displayName: 'gravity_tilt', defaultValue: 'TRUE' }),
-    el('BooleanConfiguration', { id: 'parallax', displayName: 'depth_parallax', defaultValue: 'TRUE' }),
     el('BooleanConfiguration', { id: 'secs', displayName: 'seconds_spark', defaultValue: 'TRUE' }),
     el('BooleanConfiguration', { id: 'samsungSteps', displayName: 'samsung_steps_target', defaultValue: 'TRUE' }));
   const active = group('active', {}, ambientHide,
@@ -463,14 +458,14 @@ function fakeData(xml, diagnostics = false) {
   const conds = [14, 12, 6, 9, 6, 2, 2, 1, 1, 1, 13, 1];
   const temps = [13, 14, 15, 16, 15, 13, 11, 10, 9, 8, 8, 7];
   const days = [1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0];
-  const uv = [3, 6, 2, 1, 0, 0, 0, 0, 0, 0, 0, 0];
   let out = xml;
   for (let k = 11; k >= 1; k--) {
     const p = `WEATHER.HOURS.${k}`;
-    out = out.split(`[${p}.IS_AVAILABLE]`).join(k <= 9 ? '1' : '0').split(`[${p}.TEMPERATURE]`).join(String(temps[k]))
-      .split(`[${p}.CONDITION]`).join(String(conds[k])).split(`[${p}.IS_DAY]`).join(String(days[k])).split(`[${p}.UV_INDEX]`).join(String(uv[k]));
+    // Hours 10 and 11 have no forecast (condition 0).
+    out = out.split(`[${p}.TEMPERATURE]`).join(String(temps[k]))
+      .split(`[${p}.CONDITION]`).join(String(k <= 9 ? conds[k] : 0)).split(`[${p}.IS_DAY]`).join(String(days[k]));
   }
-  const now = { IS_AVAILABLE: 1, IS_ERROR: 0, TEMPERATURE: temps[0], CONDITION: conds[0], IS_DAY: days[0], UV_INDEX: uv[0], DAY_TEMPERATURE_LOW: 7, DAY_TEMPERATURE_HIGH: 17 };
+  const now = { IS_AVAILABLE: 1, IS_ERROR: 0, TEMPERATURE: temps[0], CONDITION: conds[0], IS_DAY: days[0], DAY_TEMPERATURE_LOW: 7, DAY_TEMPERATURE_HIGH: 17 };
   for (const [key, v] of Object.entries(now)) out = out.split(`[WEATHER.${key}]`).join(String(v));
   out = out.split('[UNREAD_NOTIFICATION_COUNT]').join('3');
   if (!diagnostics) return out;

@@ -57,12 +57,15 @@ export const CURSOR = `[HOUR_0_11_MINUTE] * 30`;
 export function hourSource(k) {
   if (k === 0) return {
     avail: `[WEATHER.IS_AVAILABLE]`, temp: `[WEATHER.TEMPERATURE]`, cond: `[WEATHER.CONDITION]`,
-    day: `[WEATHER.IS_DAY]`, uv: `[WEATHER.UV_INDEX]`
+    day: `[WEATHER.IS_DAY]`
   };
+  // An hour without forecast reads condition 0 (unknown). Testing that
+  // instead of HOURS.n.IS_AVAILABLE keeps the weather subscription small:
+  // Samsung's runtime 4.0.00.16 races while registering weather sources.
   const p = `WEATHER.HOURS.${k}`;
   return {
-    avail: `([WEATHER.IS_AVAILABLE] && [${p}.IS_AVAILABLE])`, temp: `[${p}.TEMPERATURE]`,
-    cond: `[${p}.CONDITION]`, day: `[${p}.IS_DAY]`, uv: `[${p}.UV_INDEX]`
+    avail: `([WEATHER.IS_AVAILABLE] && [${p}.CONDITION] > 0)`, temp: `[${p}.TEMPERATURE]`,
+    cond: `[${p}.CONDITION]`, day: `[${p}.IS_DAY]`
   };
 }
 const LO = `[WEATHER.DAY_TEMPERATURE_LOW]`, HI = `[WEATHER.DAY_TEMPERATURE_HIGH]`;
@@ -85,7 +88,6 @@ export const bandColor = (s) =>
 export const placeholderColor = (s) => `(${s.avail} ? colorArgb(0, 0, 0, 0) : colorArgb(255, 26, 35, 44))`;
 export const rainColor = (s) => `(${s.avail} && (${isRain(s.cond)} || ${isStorm(s.cond)}) ? ${rgb(230, G.FAMILY_RGB.rain)} : colorArgb(0, 0, 0, 0))`;
 export const snowColor = (s) => `(${s.avail} && ${isSnow(s.cond)} ? ${rgb(240, G.FAMILY_RGB.snow)} : colorArgb(0, 0, 0, 0))`;
-export const uvColor = (s) => `(${s.avail} && ${s.uv} >= 6 ? colorArgb(255, 195, 139, 255) : colorArgb(0, 0, 0, 0))`;
 export const labelX = (k, w) => `${G.C} + ${G.RING.labelRadius} * sin(rad(${sectorStart(k)} + ${15 - G.RING.sectorGap / 2})) - ${w / 2}`;
 export const labelY = (k, h) => `${G.C} - ${G.RING.labelRadius} * cos(rad(${sectorStart(k)} + ${15 - G.RING.sectorGap / 2})) - ${h / 2}`;
 

@@ -62,6 +62,29 @@ Watch6 Classic SM-R950, Wear OS 6 / API 36, WFF version 4.
 * Emulators from other sessions may be running. Address every `adb` command
   by serial and confirm it with `adb -s <serial> emu avd name`.
 
+## Learned on the Galaxy Watch6 Classic with Meniscus
+
+* **Samsung's WFF runtime (com.samsung.wear.watchface.runtime 4.0.00.16) can
+  crash with `ConcurrentModificationException`** in its data flush at screen
+  state changes (wake, sleep, always-on). Its weather provider logged the same
+  exception while registering sources on a worker thread. After a few crashes
+  Android delays restarting the runtime by 30 to 90 minutes, and the watch
+  keeps showing the always-on image while awake. It never reproduced on the
+  emulator or with the watch lying still; it did on the wrist. Keep weather
+  sources few (Meniscus 0.1.0 had 63), avoid `Gyro`, and give every
+  ambient `Variant` `duration="0"`. Check `adb logcat` for
+  `FATAL EXCEPTION` in `com.samsung.wear.watchface.runtime`.
+* `Variant` defaults to a 1-second transition; `duration="0"` makes
+  always-on switch instantly.
+* Treat `WEATHER.HOURS.n.CONDITION == 0` as "no forecast for that hour"
+  instead of reading `HOURS.n.IS_AVAILABLE`.
+* **System auto-rotate is on by default** on this firmware
+  (`settings get system accelerometer_rotation` returned 1, the factory
+  default), so the whole screen, watch face included, turned in 90° steps
+  when the wrist was held sideways. It is a device setting, not something a
+  face can request or block: `adb shell settings put system
+  accelerometer_rotation 0`.
+
 ## Data sources on the SM-R950
 
 * Native WFF `STEP_COUNT` / `STEP_GOAL` / `STEP_PERCENT` returned **zero** in a

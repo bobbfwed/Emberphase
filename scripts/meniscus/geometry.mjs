@@ -53,7 +53,6 @@ export const RING = {
   bandRadius: 218, bandThickness: 4,
   textureRadius: 196,
   labelRadius: 204, labelHours: [3, 6, 9],
-  uvRadius: 185,
   sectorGap: 1.2,
   cursorInner: 180, cursorOuter: 224
 };

@@ -19,7 +19,6 @@
 <ListOption id="5" displayName="feed_pod_8"/>
 </ListConfiguration>
 <BooleanConfiguration id="tilt" displayName="gravity_tilt" defaultValue="TRUE"/>
-<BooleanConfiguration id="parallax" displayName="depth_parallax" defaultValue="TRUE"/>
 <BooleanConfiguration id="secs" displayName="seconds_spark" defaultValue="TRUE"/>
 <BooleanConfiguration id="samsungSteps" displayName="samsung_steps_target" defaultValue="TRUE"/>
 </UserConfigurations>
@@ -179,7 +178,7 @@
 <Reference name="sy" source="angle" defaultValue="0"/>
 </Group>
 <Group name="active" x="0" y="0" width="450" height="450">
-<Variant mode="AMBIENT" target="alpha" value="0"/>
+<Variant mode="AMBIENT" target="alpha" value="0" duration="0"/>
 <PartDraw name="ring_bed" x="0" y="0" width="450" height="450">
 <Ellipse x="20" y="20" width="410" height="410">
 <Stroke color="#FF0A0F14" thickness="34"/>
@@ -233,32 +232,25 @@
 <Transform target="startAngle" value="((([HOUR_0_11] + 0) % 12) * 30 + 0.6)"/>
 <Transform target="endAngle" value="((([HOUR_0_11] + 0) % 12) * 30 + 29.4)"/>
 </Arc>
-<Arc centerX="225" centerY="225" width="370" height="370" startAngle="14" endAngle="16">
-<Stroke color="#00000000" thickness="3" cap="ROUND">
-<Transform target="color" value="([WEATHER.IS_AVAILABLE] &amp;&amp; [WEATHER.UV_INDEX] &gt;= 6 ? colorArgb(255, 195, 139, 255) : colorArgb(0, 0, 0, 0))"/>
-</Stroke>
-<Transform target="startAngle" value="((([HOUR_0_11] + 0) % 12) * 30 + 0.6) + 13.4"/>
-<Transform target="endAngle" value="((([HOUR_0_11] + 0) % 12) * 30 + 0.6) + 15.4"/>
-</Arc>
 </PartDraw>
 <PartDraw name="ring_hour_1" x="0" y="0" width="450" height="450">
 <Arc centerX="225" centerY="225" width="386" height="386" startAngle="0.6" endAngle="29.4">
 <Stroke color="#00000000" thickness="6">
-<Transform target="color" value="(([WEATHER.IS_AVAILABLE] &amp;&amp; [WEATHER.HOURS.1.IS_AVAILABLE]) ? colorArgb(0, 0, 0, 0) : colorArgb(255, 26, 35, 44))"/>
+<Transform target="color" value="(([WEATHER.IS_AVAILABLE] &amp;&amp; [WEATHER.HOURS.1.CONDITION] &gt; 0) ? colorArgb(0, 0, 0, 0) : colorArgb(255, 26, 35, 44))"/>
 </Stroke>
 <Transform target="startAngle" value="((([HOUR_0_11] + 1) % 12) * 30 + 0.6)"/>
 <Transform target="endAngle" value="((([HOUR_0_11] + 1) % 12) * 30 + 29.4)"/>
 </Arc>
 <Arc centerX="225" centerY="225" width="436" height="436" startAngle="0.6" endAngle="29.4">
 <Stroke color="#00000000" thickness="4">
-<Transform target="color" value="(([WEATHER.IS_AVAILABLE] &amp;&amp; [WEATHER.HOURS.1.IS_AVAILABLE]) ? ([WEATHER.HOURS.1.IS_DAY] ? colorArgb(140, 233, 196, 106) : colorArgb(204, 51, 70, 160)) : colorArgb(0, 0, 0, 0))"/>
+<Transform target="color" value="(([WEATHER.IS_AVAILABLE] &amp;&amp; [WEATHER.HOURS.1.CONDITION] &gt; 0) ? ([WEATHER.HOURS.1.IS_DAY] ? colorArgb(140, 233, 196, 106) : colorArgb(204, 51, 70, 160)) : colorArgb(0, 0, 0, 0))"/>
 </Stroke>
 <Transform target="startAngle" value="((([HOUR_0_11] + 1) % 12) * 30 + 0.6)"/>
 <Transform target="endAngle" value="((([HOUR_0_11] + 1) % 12) * 30 + 29.4)"/>
 </Arc>
 <Arc centerX="225" centerY="225" width="388" height="388" startAngle="0.6" endAngle="29.4">
 <Stroke color="#00000000" thickness="8">
-<Transform target="color" value="(([WEATHER.IS_AVAILABLE] &amp;&amp; [WEATHER.HOURS.1.IS_AVAILABLE]) ? (([WEATHER.HOURS.1.CONDITION] == 4 || [WEATHER.HOURS.1.CONDITION] == 6 || [WEATHER.HOURS.1.CONDITION] == 10 || [WEATHER.HOURS.1.CONDITION] == 12) ? colorArgb(66, 69, 200, 255) : (([WEATHER.HOURS.1.CONDITION] == 5 || [WEATHER.HOURS.1.CONDITION] == 7 || [WEATHER.HOURS.1.CONDITION] == 11) ? colorArgb(66, 230, 243, 255) : ([WEATHER.HOURS.1.CONDITION] == 9 ? colorArgb(66, 177, 132, 255) : (([WEATHER.HOURS.1.CONDITION] == 1 || [WEATHER.HOURS.1.CONDITION] == 8) ? ([WEATHER.HOURS.1.IS_DAY] ? colorArgb(66, 243, 217, 160) : colorArgb(66, 175, 192, 238)) : ([WEATHER.HOURS.1.CONDITION] == 14 ? colorArgb(66, 200, 211, 224) : (([WEATHER.HOURS.1.CONDITION] == 2 || [WEATHER.HOURS.1.CONDITION] == 3 || [WEATHER.HOURS.1.CONDITION] == 13) ? colorArgb(66, 126, 140, 163) : ([WEATHER.HOURS.1.CONDITION] == 15 ? colorArgb(66, 79, 209, 181) : colorArgb(66, 70, 82, 94)))))))) : colorArgb(0, 0, 0, 0))"/>
+<Transform target="color" value="(([WEATHER.IS_AVAILABLE] &amp;&amp; [WEATHER.HOURS.1.CONDITION] &gt; 0) ? (([WEATHER.HOURS.1.CONDITION] == 4 || [WEATHER.HOURS.1.CONDITION] == 6 || [WEATHER.HOURS.1.CONDITION] == 10 || [WEATHER.HOURS.1.CONDITION] == 12) ? colorArgb(66, 69, 200, 255) : (([WEATHER.HOURS.1.CONDITION] == 5 || [WEATHER.HOURS.1.CONDITION] == 7 || [WEATHER.HOURS.1.CONDITION] == 11) ? colorArgb(66, 230, 243, 255) : ([WEATHER.HOURS.1.CONDITION] == 9 ? colorArgb(66, 177, 132, 255) : (([WEATHER.HOURS.1.CONDITION] == 1 || [WEATHER.HOURS.1.CONDITION] == 8) ? ([WEATHER.HOURS.1.IS_DAY] ? colorArgb(66, 243, 217, 160) : colorArgb(66, 175, 192, 238)) : ([WEATHER.HOURS.1.CONDITION] == 14 ? colorArgb(66, 200, 211, 224) : (([WEATHER.HOURS.1.CONDITION] == 2 || [WEATHER.HOURS.1.CONDITION] == 3 || [WEATHER.HOURS.1.CONDITION] == 13) ? colorArgb(66, 126, 140, 163) : ([WEATHER.HOURS.1.CONDITION] == 15 ? colorArgb(66, 79, 209, 181) : colorArgb(66, 70, 82, 94)))))))) : colorArgb(0, 0, 0, 0))"/>
 <Transform target="thickness" value="(4 + 20 * clamp(([WEATHER.HOURS.1.TEMPERATURE] - [WEATHER.DAY_TEMPERATURE_LOW]) / ([WEATHER.DAY_TEMPERATURE_HIGH] - [WEATHER.DAY_TEMPERATURE_LOW] &gt; 1 ? [WEATHER.DAY_TEMPERATURE_HIGH] - [WEATHER.DAY_TEMPERATURE_LOW] : 1), 0, 1))"/>
 </Stroke>
 <Transform target="startAngle" value="((([HOUR_0_11] + 1) % 12) * 30 + 0.6)"/>
@@ -268,7 +260,7 @@
 </Arc>
 <Arc centerX="225" centerY="225" width="396" height="396" startAngle="0.6" endAngle="29.4">
 <Stroke color="#00000000" thickness="1.8">
-<Transform target="color" value="(([WEATHER.IS_AVAILABLE] &amp;&amp; [WEATHER.HOURS.1.IS_AVAILABLE]) ? (([WEATHER.HOURS.1.CONDITION] == 4 || [WEATHER.HOURS.1.CONDITION] == 6 || [WEATHER.HOURS.1.CONDITION] == 10 || [WEATHER.HOURS.1.CONDITION] == 12) ? colorArgb(242, 69, 200, 255) : (([WEATHER.HOURS.1.CONDITION] == 5 || [WEATHER.HOURS.1.CONDITION] == 7 || [WEATHER.HOURS.1.CONDITION] == 11) ? colorArgb(242, 230, 243, 255) : ([WEATHER.HOURS.1.CONDITION] == 9 ? colorArgb(242, 177, 132, 255) : (([WEATHER.HOURS.1.CONDITION] == 1 || [WEATHER.HOURS.1.CONDITION] == 8) ? ([WEATHER.HOURS.1.IS_DAY] ? colorArgb(242, 243, 217, 160) : colorArgb(242, 175, 192, 238)) : ([WEATHER.HOURS.1.CONDITION] == 14 ? colorArgb(242, 200, 211, 224) : (([WEATHER.HOURS.1.CONDITION] == 2 || [WEATHER.HOURS.1.CONDITION] == 3 || [WEATHER.HOURS.1.CONDITION] == 13) ? colorArgb(242, 126, 140, 163) : ([WEATHER.HOURS.1.CONDITION] == 15 ? colorArgb(242, 79, 209, 181) : colorArgb(242, 70, 82, 94)))))))) : colorArgb(0, 0, 0, 0))"/>
+<Transform target="color" value="(([WEATHER.IS_AVAILABLE] &amp;&amp; [WEATHER.HOURS.1.CONDITION] &gt; 0) ? (([WEATHER.HOURS.1.CONDITION] == 4 || [WEATHER.HOURS.1.CONDITION] == 6 || [WEATHER.HOURS.1.CONDITION] == 10 || [WEATHER.HOURS.1.CONDITION] == 12) ? colorArgb(242, 69, 200, 255) : (([WEATHER.HOURS.1.CONDITION] == 5 || [WEATHER.HOURS.1.CONDITION] == 7 || [WEATHER.HOURS.1.CONDITION] == 11) ? colorArgb(242, 230, 243, 255) : ([WEATHER.HOURS.1.CONDITION] == 9 ? colorArgb(242, 177, 132, 255) : (([WEATHER.HOURS.1.CONDITION] == 1 || [WEATHER.HOURS.1.CONDITION] == 8) ? ([WEATHER.HOURS.1.IS_DAY] ? colorArgb(242, 243, 217, 160) : colorArgb(242, 175, 192, 238)) : ([WEATHER.HOURS.1.CONDITION] == 14 ? colorArgb(242, 200, 211, 224) : (([WEATHER.HOURS.1.CONDITION] == 2 || [WEATHER.HOURS.1.CONDITION] == 3 || [WEATHER.HOURS.1.CONDITION] == 13) ? colorArgb(242, 126, 140, 163) : ([WEATHER.HOURS.1.CONDITION] == 15 ? colorArgb(242, 79, 209, 181) : colorArgb(242, 70, 82, 94)))))))) : colorArgb(0, 0, 0, 0))"/>
 </Stroke>
 <Transform target="startAngle" value="((([HOUR_0_11] + 1) % 12) * 30 + 0.6)"/>
 <Transform target="endAngle" value="((([HOUR_0_11] + 1) % 12) * 30 + 29.4)"/>
@@ -277,44 +269,37 @@
 </Arc>
 <Arc centerX="225" centerY="225" width="392" height="392" startAngle="0.6" endAngle="29.4">
 <Stroke color="#00000000" thickness="7" dashIntervals="1.2 4.6">
-<Transform target="color" value="(([WEATHER.IS_AVAILABLE] &amp;&amp; [WEATHER.HOURS.1.IS_AVAILABLE]) &amp;&amp; (([WEATHER.HOURS.1.CONDITION] == 4 || [WEATHER.HOURS.1.CONDITION] == 6 || [WEATHER.HOURS.1.CONDITION] == 10 || [WEATHER.HOURS.1.CONDITION] == 12) || [WEATHER.HOURS.1.CONDITION] == 9) ? colorArgb(230, 69, 200, 255) : colorArgb(0, 0, 0, 0))"/>
+<Transform target="color" value="(([WEATHER.IS_AVAILABLE] &amp;&amp; [WEATHER.HOURS.1.CONDITION] &gt; 0) &amp;&amp; (([WEATHER.HOURS.1.CONDITION] == 4 || [WEATHER.HOURS.1.CONDITION] == 6 || [WEATHER.HOURS.1.CONDITION] == 10 || [WEATHER.HOURS.1.CONDITION] == 12) || [WEATHER.HOURS.1.CONDITION] == 9) ? colorArgb(230, 69, 200, 255) : colorArgb(0, 0, 0, 0))"/>
 </Stroke>
 <Transform target="startAngle" value="((([HOUR_0_11] + 1) % 12) * 30 + 0.6)"/>
 <Transform target="endAngle" value="((([HOUR_0_11] + 1) % 12) * 30 + 29.4)"/>
 </Arc>
 <Arc centerX="225" centerY="225" width="394" height="394" startAngle="0.6" endAngle="29.4">
 <Stroke color="#00000000" thickness="2.4" dashIntervals="0.1 5" cap="ROUND">
-<Transform target="color" value="(([WEATHER.IS_AVAILABLE] &amp;&amp; [WEATHER.HOURS.1.IS_AVAILABLE]) &amp;&amp; ([WEATHER.HOURS.1.CONDITION] == 5 || [WEATHER.HOURS.1.CONDITION] == 7 || [WEATHER.HOURS.1.CONDITION] == 11) ? colorArgb(240, 230, 243, 255) : colorArgb(0, 0, 0, 0))"/>
+<Transform target="color" value="(([WEATHER.IS_AVAILABLE] &amp;&amp; [WEATHER.HOURS.1.CONDITION] &gt; 0) &amp;&amp; ([WEATHER.HOURS.1.CONDITION] == 5 || [WEATHER.HOURS.1.CONDITION] == 7 || [WEATHER.HOURS.1.CONDITION] == 11) ? colorArgb(240, 230, 243, 255) : colorArgb(0, 0, 0, 0))"/>
 </Stroke>
 <Transform target="startAngle" value="((([HOUR_0_11] + 1) % 12) * 30 + 0.6)"/>
 <Transform target="endAngle" value="((([HOUR_0_11] + 1) % 12) * 30 + 29.4)"/>
-</Arc>
-<Arc centerX="225" centerY="225" width="370" height="370" startAngle="14" endAngle="16">
-<Stroke color="#00000000" thickness="3" cap="ROUND">
-<Transform target="color" value="(([WEATHER.IS_AVAILABLE] &amp;&amp; [WEATHER.HOURS.1.IS_AVAILABLE]) &amp;&amp; [WEATHER.HOURS.1.UV_INDEX] &gt;= 6 ? colorArgb(255, 195, 139, 255) : colorArgb(0, 0, 0, 0))"/>
-</Stroke>
-<Transform target="startAngle" value="((([HOUR_0_11] + 1) % 12) * 30 + 0.6) + 13.4"/>
-<Transform target="endAngle" value="((([HOUR_0_11] + 1) % 12) * 30 + 0.6) + 15.4"/>
 </Arc>
 </PartDraw>
 <PartDraw name="ring_hour_2" x="0" y="0" width="450" height="450">
 <Arc centerX="225" centerY="225" width="386" height="386" startAngle="0.6" endAngle="29.4">
 <Stroke color="#00000000" thickness="6">
-<Transform target="color" value="(([WEATHER.IS_AVAILABLE] &amp;&amp; [WEATHER.HOURS.2.IS_AVAILABLE]) ? colorArgb(0, 0, 0, 0) : colorArgb(255, 26, 35, 44))"/>
+<Transform target="color" value="(([WEATHER.IS_AVAILABLE] &amp;&amp; [WEATHER.HOURS.2.CONDITION] &gt; 0) ? colorArgb(0, 0, 0, 0) : colorArgb(255, 26, 35, 44))"/>
 </Stroke>
 <Transform target="startAngle" value="((([HOUR_0_11] + 2) % 12) * 30 + 0.6)"/>
 <Transform target="endAngle" value="((([HOUR_0_11] + 2) % 12) * 30 + 29.4)"/>
 </Arc>
 <Arc centerX="225" centerY="225" width="436" height="436" startAngle="0.6" endAngle="29.4">
 <Stroke color="#00000000" thickness="4">
-<Transform target="color" value="(([WEATHER.IS_AVAILABLE] &amp;&amp; [WEATHER.HOURS.2.IS_AVAILABLE]) ? ([WEATHER.HOURS.2.IS_DAY] ? colorArgb(140, 233, 196, 106) : colorArgb(204, 51, 70, 160)) : colorArgb(0, 0, 0, 0))"/>
+<Transform target="color" value="(([WEATHER.IS_AVAILABLE] &amp;&amp; [WEATHER.HOURS.2.CONDITION] &gt; 0) ? ([WEATHER.HOURS.2.IS_DAY] ? colorArgb(140, 233, 196, 106) : colorArgb(204, 51, 70, 160)) : colorArgb(0, 0, 0, 0))"/>
 </Stroke>
 <Transform target="startAngle" value="((([HOUR_0_11] + 2) % 12) * 30 + 0.6)"/>
 <Transform target="endAngle" value="((([HOUR_0_11] + 2) % 12) * 30 + 29.4)"/>
 </Arc>
 <Arc centerX="225" centerY="225" width="388" height="388" startAngle="0.6" endAngle="29.4">
 <Stroke color="#00000000" thickness="8">
-<Transform target="color" value="(([WEATHER.IS_AVAILABLE] &amp;&amp; [WEATHER.HOURS.2.IS_AVAILABLE]) ? (([WEATHER.HOURS.2.CONDITION] == 4 || [WEATHER.HOURS.2.CONDITION] == 6 || [WEATHER.HOURS.2.CONDITION] == 10 || [WEATHER.HOURS.2.CONDITION] == 12) ? colorArgb(66, 69, 200, 255) : (([WEATHER.HOURS.2.CONDITION] == 5 || [WEATHER.HOURS.2.CONDITION] == 7 || [WEATHER.HOURS.2.CONDITION] == 11) ? colorArgb(66, 230, 243, 255) : ([WEATHER.HOURS.2.CONDITION] == 9 ? colorArgb(66, 177, 132, 255) : (([WEATHER.HOURS.2.CONDITION] == 1 || [WEATHER.HOURS.2.CONDITION] == 8) ? ([WEATHER.HOURS.2.IS_DAY] ? colorArgb(66, 243, 217, 160) : colorArgb(66, 175, 192, 238)) : ([WEATHER.HOURS.2.CONDITION] == 14 ? colorArgb(66, 200, 211, 224) : (([WEATHER.HOURS.2.CONDITION] == 2 || [WEATHER.HOURS.2.CONDITION] == 3 || [WEATHER.HOURS.2.CONDITION] == 13) ? colorArgb(66, 126, 140, 163) : ([WEATHER.HOURS.2.CONDITION] == 15 ? colorArgb(66, 79, 209, 181) : colorArgb(66, 70, 82, 94)))))))) : colorArgb(0, 0, 0, 0))"/>
+<Transform target="color" value="(([WEATHER.IS_AVAILABLE] &amp;&amp; [WEATHER.HOURS.2.CONDITION] &gt; 0) ? (([WEATHER.HOURS.2.CONDITION] == 4 || [WEATHER.HOURS.2.CONDITION] == 6 || [WEATHER.HOURS.2.CONDITION] == 10 || [WEATHER.HOURS.2.CONDITION] == 12) ? colorArgb(66, 69, 200, 255) : (([WEATHER.HOURS.2.CONDITION] == 5 || [WEATHER.HOURS.2.CONDITION] == 7 || [WEATHER.HOURS.2.CONDITION] == 11) ? colorArgb(66, 230, 243, 255) : ([WEATHER.HOURS.2.CONDITION] == 9 ? colorArgb(66, 177, 132, 255) : (([WEATHER.HOURS.2.CONDITION] == 1 || [WEATHER.HOURS.2.CONDITION] == 8) ? ([WEATHER.HOURS.2.IS_DAY] ? colorArgb(66, 243, 217, 160) : colorArgb(66, 175, 192, 238)) : ([WEATHER.HOURS.2.CONDITION] == 14 ? colorArgb(66, 200, 211, 224) : (([WEATHER.HOURS.2.CONDITION] == 2 || [WEATHER.HOURS.2.CONDITION] == 3 || [WEATHER.HOURS.2.CONDITION] == 13) ? colorArgb(66, 126, 140, 163) : ([WEATHER.HOURS.2.CONDITION] == 15 ? colorArgb(66, 79, 209, 181) : colorArgb(66, 70, 82, 94)))))))) : colorArgb(0, 0, 0, 0))"/>
 <Transform target="thickness" value="(4 + 20 * clamp(([WEATHER.HOURS.2.TEMPERATURE] - [WEATHER.DAY_TEMPERATURE_LOW]) / ([WEATHER.DAY_TEMPERATURE_HIGH] - [WEATHER.DAY_TEMPERATURE_LOW] &gt; 1 ? [WEATHER.DAY_TEMPERATURE_HIGH] - [WEATHER.DAY_TEMPERATURE_LOW] : 1), 0, 1))"/>
 </Stroke>
 <Transform target="startAngle" value="((([HOUR_0_11] + 2) % 12) * 30 + 0.6)"/>
@@ -324,7 +309,7 @@
 </Arc>
 <Arc centerX="225" centerY="225" width="396" height="396" startAngle="0.6" endAngle="29.4">
 <Stroke color="#00000000" thickness="1.8">
-<Transform target="color" value="(([WEATHER.IS_AVAILABLE] &amp;&amp; [WEATHER.HOURS.2.IS_AVAILABLE]) ? (([WEATHER.HOURS.2.CONDITION] == 4 || [WEATHER.HOURS.2.CONDITION] == 6 || [WEATHER.HOURS.2.CONDITION] == 10 || [WEATHER.HOURS.2.CONDITION] == 12) ? colorArgb(242, 69, 200, 255) : (([WEATHER.HOURS.2.CONDITION] == 5 || [WEATHER.HOURS.2.CONDITION] == 7 || [WEATHER.HOURS.2.CONDITION] == 11) ? colorArgb(242, 230, 243, 255) : ([WEATHER.HOURS.2.CONDITION] == 9 ? colorArgb(242, 177, 132, 255) : (([WEATHER.HOURS.2.CONDITION] == 1 || [WEATHER.HOURS.2.CONDITION] == 8) ? ([WEATHER.HOURS.2.IS_DAY] ? colorArgb(242, 243, 217, 160) : colorArgb(242, 175, 192, 238)) : ([WEATHER.HOURS.2.CONDITION] == 14 ? colorArgb(242, 200, 211, 224) : (([WEATHER.HOURS.2.CONDITION] == 2 || [WEATHER.HOURS.2.CONDITION] == 3 || [WEATHER.HOURS.2.CONDITION] == 13) ? colorArgb(242, 126, 140, 163) : ([WEATHER.HOURS.2.CONDITION] == 15 ? colorArgb(242, 79, 209, 181) : colorArgb(242, 70, 82, 94)))))))) : colorArgb(0, 0, 0, 0))"/>
+<Transform target="color" value="(([WEATHER.IS_AVAILABLE] &amp;&amp; [WEATHER.HOURS.2.CONDITION] &gt; 0) ? (([WEATHER.HOURS.2.CONDITION] == 4 || [WEATHER.HOURS.2.CONDITION] == 6 || [WEATHER.HOURS.2.CONDITION] == 10 || [WEATHER.HOURS.2.CONDITION] == 12) ? colorArgb(242, 69, 200, 255) : (([WEATHER.HOURS.2.CONDITION] == 5 || [WEATHER.HOURS.2.CONDITION] == 7 || [WEATHER.HOURS.2.CONDITION] == 11) ? colorArgb(242, 230, 243, 255) : ([WEATHER.HOURS.2.CONDITION] == 9 ? colorArgb(242, 177, 132, 255) : (([WEATHER.HOURS.2.CONDITION] == 1 || [WEATHER.HOURS.2.CONDITION] == 8) ? ([WEATHER.HOURS.2.IS_DAY] ? colorArgb(242, 243, 217, 160) : colorArgb(242, 175, 192, 238)) : ([WEATHER.HOURS.2.CONDITION] == 14 ? colorArgb(242, 200, 211, 224) : (([WEATHER.HOURS.2.CONDITION] == 2 || [WEATHER.HOURS.2.CONDITION] == 3 || [WEATHER.HOURS.2.CONDITION] == 13) ? colorArgb(242, 126, 140, 163) : ([WEATHER.HOURS.2.CONDITION] == 15 ? colorArgb(242, 79, 209, 181) : colorArgb(242, 70, 82, 94)))))))) : colorArgb(0, 0, 0, 0))"/>
 </Stroke>
 <Transform target="startAngle" value="((([HOUR_0_11] + 2) % 12) * 30 + 0.6)"/>
 <Transform target="endAngle" value="((([HOUR_0_11] + 2) % 12) * 30 + 29.4)"/>
@@ -333,44 +318,37 @@
 </Arc>
 <Arc centerX="225" centerY="225" width="392" height="392" startAngle="0.6" endAngle="29.4">
 <Stroke color="#00000000" thickness="7" dashIntervals="1.2 4.6">
-<Transform target="color" value="(([WEATHER.IS_AVAILABLE] &amp;&amp; [WEATHER.HOURS.2.IS_AVAILABLE]) &amp;&amp; (([WEATHER.HOURS.2.CONDITION] == 4 || [WEATHER.HOURS.2.CONDITION] == 6 || [WEATHER.HOURS.2.CONDITION] == 10 || [WEATHER.HOURS.2.CONDITION] == 12) || [WEATHER.HOURS.2.CONDITION] == 9) ? colorArgb(230, 69, 200, 255) : colorArgb(0, 0, 0, 0))"/>
+<Transform target="color" value="(([WEATHER.IS_AVAILABLE] &amp;&amp; [WEATHER.HOURS.2.CONDITION] &gt; 0) &amp;&amp; (([WEATHER.HOURS.2.CONDITION] == 4 || [WEATHER.HOURS.2.CONDITION] == 6 || [WEATHER.HOURS.2.CONDITION] == 10 || [WEATHER.HOURS.2.CONDITION] == 12) || [WEATHER.HOURS.2.CONDITION] == 9) ? colorArgb(230, 69, 200, 255) : colorArgb(0, 0, 0, 0))"/>
 </Stroke>
 <Transform target="startAngle" value="((([HOUR_0_11] + 2) % 12) * 30 + 0.6)"/>
 <Transform target="endAngle" value="((([HOUR_0_11] + 2) % 12) * 30 + 29.4)"/>
 </Arc>
 <Arc centerX="225" centerY="225" width="394" height="394" startAngle="0.6" endAngle="29.4">
 <Stroke color="#00000000" thickness="2.4" dashIntervals="0.1 5" cap="ROUND">
-<Transform target="color" value="(([WEATHER.IS_AVAILABLE] &amp;&amp; [WEATHER.HOURS.2.IS_AVAILABLE]) &amp;&amp; ([WEATHER.HOURS.2.CONDITION] == 5 || [WEATHER.HOURS.2.CONDITION] == 7 || [WEATHER.HOURS.2.CONDITION] == 11) ? colorArgb(240, 230, 243, 255) : colorArgb(0, 0, 0, 0))"/>
+<Transform target="color" value="(([WEATHER.IS_AVAILABLE] &amp;&amp; [WEATHER.HOURS.2.CONDITION] &gt; 0) &amp;&amp; ([WEATHER.HOURS.2.CONDITION] == 5 || [WEATHER.HOURS.2.CONDITION] == 7 || [WEATHER.HOURS.2.CONDITION] == 11) ? colorArgb(240, 230, 243, 255) : colorArgb(0, 0, 0, 0))"/>
 </Stroke>
 <Transform target="startAngle" value="((([HOUR_0_11] + 2) % 12) * 30 + 0.6)"/>
 <Transform target="endAngle" value="((([HOUR_0_11] + 2) % 12) * 30 + 29.4)"/>
-</Arc>
-<Arc centerX="225" centerY="225" width="370" height="370" startAngle="14" endAngle="16">
-<Stroke color="#00000000" thickness="3" cap="ROUND">
-<Transform target="color" value="(([WEATHER.IS_AVAILABLE] &amp;&amp; [WEATHER.HOURS.2.IS_AVAILABLE]) &amp;&amp; [WEATHER.HOURS.2.UV_INDEX] &gt;= 6 ? colorArgb(255, 195, 139, 255) : colorArgb(0, 0, 0, 0))"/>
-</Stroke>
-<Transform target="startAngle" value="((([HOUR_0_11] + 2) % 12) * 30 + 0.6) + 13.4"/>
-<Transform target="endAngle" value="((([HOUR_0_11] + 2) % 12) * 30 + 0.6) + 15.4"/>
 </Arc>
 </PartDraw>
 <PartDraw name="ring_hour_3" x="0" y="0" width="450" height="450">
 <Arc centerX="225" centerY="225" width="386" height="386" startAngle="0.6" endAngle="29.4">
 <Stroke color="#00000000" thickness="6">
-<Transform target="color" value="(([WEATHER.IS_AVAILABLE] &amp;&amp; [WEATHER.HOURS.3.IS_AVAILABLE]) ? colorArgb(0, 0, 0, 0) : colorArgb(255, 26, 35, 44))"/>
+<Transform target="color" value="(([WEATHER.IS_AVAILABLE] &amp;&amp; [WEATHER.HOURS.3.CONDITION] &gt; 0) ? colorArgb(0, 0, 0, 0) : colorArgb(255, 26, 35, 44))"/>
 </Stroke>
 <Transform target="startAngle" value="((([HOUR_0_11] + 3) % 12) * 30 + 0.6)"/>
 <Transform target="endAngle" value="((([HOUR_0_11] + 3) % 12) * 30 + 29.4)"/>
 </Arc>
 <Arc centerX="225" centerY="225" width="436" height="436" startAngle="0.6" endAngle="29.4">
 <Stroke color="#00000000" thickness="4">
-<Transform target="color" value="(([WEATHER.IS_AVAILABLE] &amp;&amp; [WEATHER.HOURS.3.IS_AVAILABLE]) ? ([WEATHER.HOURS.3.IS_DAY] ? colorArgb(140, 233, 196, 106) : colorArgb(204, 51, 70, 160)) : colorArgb(0, 0, 0, 0))"/>
+<Transform target="color" value="(([WEATHER.IS_AVAILABLE] &amp;&amp; [WEATHER.HOURS.3.CONDITION] &gt; 0) ? ([WEATHER.HOURS.3.IS_DAY] ? colorArgb(140, 233, 196, 106) : colorArgb(204, 51, 70, 160)) : colorArgb(0, 0, 0, 0))"/>
 </Stroke>
 <Transform target="startAngle" value="((([HOUR_0_11] + 3) % 12) * 30 + 0.6)"/>
 <Transform target="endAngle" value="((([HOUR_0_11] + 3) % 12) * 30 + 29.4)"/>
 </Arc>
 <Arc centerX="225" centerY="225" width="388" height="388" startAngle="0.6" endAngle="29.4">
 <Stroke color="#00000000" thickness="8">
-<Transform target="color" value="(([WEATHER.IS_AVAILABLE] &amp;&amp; [WEATHER.HOURS.3.IS_AVAILABLE]) ? (([WEATHER.HOURS.3.CONDITION] == 4 || [WEATHER.HOURS.3.CONDITION] == 6 || [WEATHER.HOURS.3.CONDITION] == 10 || [WEATHER.HOURS.3.CONDITION] == 12) ? colorArgb(66, 69, 200, 255) : (([WEATHER.HOURS.3.CONDITION] == 5 || [WEATHER.HOURS.3.CONDITION] == 7 || [WEATHER.HOURS.3.CONDITION] == 11) ? colorArgb(66, 230, 243, 255) : ([WEATHER.HOURS.3.CONDITION] == 9 ? colorArgb(66, 177, 132, 255) : (([WEATHER.HOURS.3.CONDITION] == 1 || [WEATHER.HOURS.3.CONDITION] == 8) ? ([WEATHER.HOURS.3.IS_DAY] ? colorArgb(66, 243, 217, 160) : colorArgb(66, 175, 192, 238)) : ([WEATHER.HOURS.3.CONDITION] == 14 ? colorArgb(66, 200, 211, 224) : (([WEATHER.HOURS.3.CONDITION] == 2 || [WEATHER.HOURS.3.CONDITION] == 3 || [WEATHER.HOURS.3.CONDITION] == 13) ? colorArgb(66, 126, 140, 163) : ([WEATHER.HOURS.3.CONDITION] == 15 ? colorArgb(66, 79, 209, 181) : colorArgb(66, 70, 82, 94)))))))) : colorArgb(0, 0, 0, 0))"/>
+<Transform target="color" value="(([WEATHER.IS_AVAILABLE] &amp;&amp; [WEATHER.HOURS.3.CONDITION] &gt; 0) ? (([WEATHER.HOURS.3.CONDITION] == 4 || [WEATHER.HOURS.3.CONDITION] == 6 || [WEATHER.HOURS.3.CONDITION] == 10 || [WEATHER.HOURS.3.CONDITION] == 12) ? colorArgb(66, 69, 200, 255) : (([WEATHER.HOURS.3.CONDITION] == 5 || [WEATHER.HOURS.3.CONDITION] == 7 || [WEATHER.HOURS.3.CONDITION] == 11) ? colorArgb(66, 230, 243, 255) : ([WEATHER.HOURS.3.CONDITION] == 9 ? colorArgb(66, 177, 132, 255) : (([WEATHER.HOURS.3.CONDITION] == 1 || [WEATHER.HOURS.3.CONDITION] == 8) ? ([WEATHER.HOURS.3.IS_DAY] ? colorArgb(66, 243, 217, 160) : colorArgb(66, 175, 192, 238)) : ([WEATHER.HOURS.3.CONDITION] == 14 ? colorArgb(66, 200, 211, 224) : (([WEATHER.HOURS.3.CONDITION] == 2 || [WEATHER.HOURS.3.CONDITION] == 3 || [WEATHER.HOURS.3.CONDITION] == 13) ? colorArgb(66, 126, 140, 163) : ([WEATHER.HOURS.3.CONDITION] == 15 ? colorArgb(66, 79, 209, 181) : colorArgb(66, 70, 82, 94)))))))) : colorArgb(0, 0, 0, 0))"/>
 <Transform target="thickness" value="(4 + 20 * clamp(([WEATHER.HOURS.3.TEMPERATURE] - [WEATHER.DAY_TEMPERATURE_LOW]) / ([WEATHER.DAY_TEMPERATURE_HIGH] - [WEATHER.DAY_TEMPERATURE_LOW] &gt; 1 ? [WEATHER.DAY_TEMPERATURE_HIGH] - [WEATHER.DAY_TEMPERATURE_LOW] : 1), 0, 1))"/>
 </Stroke>
 <Transform target="startAngle" value="((([HOUR_0_11] + 3) % 12) * 30 + 0.6)"/>
@@ -380,7 +358,7 @@
 </Arc>
 <Arc centerX="225" centerY="225" width="396" height="396" startAngle="0.6" endAngle="29.4">
 <Stroke color="#00000000" thickness="1.8">
-<Transform target="color" value="(([WEATHER.IS_AVAILABLE] &amp;&amp; [WEATHER.HOURS.3.IS_AVAILABLE]) ? (([WEATHER.HOURS.3.CONDITION] == 4 || [WEATHER.HOURS.3.CONDITION] == 6 || [WEATHER.HOURS.3.CONDITION] == 10 || [WEATHER.HOURS.3.CONDITION] == 12) ? colorArgb(242, 69, 200, 255) : (([WEATHER.HOURS.3.CONDITION] == 5 || [WEATHER.HOURS.3.CONDITION] == 7 || [WEATHER.HOURS.3.CONDITION] == 11) ? colorArgb(242, 230, 243, 255) : ([WEATHER.HOURS.3.CONDITION] == 9 ? colorArgb(242, 177, 132, 255) : (([WEATHER.HOURS.3.CONDITION] == 1 || [WEATHER.HOURS.3.CONDITION] == 8) ? ([WEATHER.HOURS.3.IS_DAY] ? colorArgb(242, 243, 217, 160) : colorArgb(242, 175, 192, 238)) : ([WEATHER.HOURS.3.CONDITION] == 14 ? colorArgb(242, 200, 211, 224) : (([WEATHER.HOURS.3.CONDITION] == 2 || [WEATHER.HOURS.3.CONDITION] == 3 || [WEATHER.HOURS.3.CONDITION] == 13) ? colorArgb(242, 126, 140, 163) : ([WEATHER.HOURS.3.CONDITION] == 15 ? colorArgb(242, 79, 209, 181) : colorArgb(242, 70, 82, 94)))))))) : colorArgb(0, 0, 0, 0))"/>
+<Transform target="color" value="(([WEATHER.IS_AVAILABLE] &amp;&amp; [WEATHER.HOURS.3.CONDITION] &gt; 0) ? (([WEATHER.HOURS.3.CONDITION] == 4 || [WEATHER.HOURS.3.CONDITION] == 6 || [WEATHER.HOURS.3.CONDITION] == 10 || [WEATHER.HOURS.3.CONDITION] == 12) ? colorArgb(242, 69, 200, 255) : (([WEATHER.HOURS.3.CONDITION] == 5 || [WEATHER.HOURS.3.CONDITION] == 7 || [WEATHER.HOURS.3.CONDITION] == 11) ? colorArgb(242, 230, 243, 255) : ([WEATHER.HOURS.3.CONDITION] == 9 ? colorArgb(242, 177, 132, 255) : (([WEATHER.HOURS.3.CONDITION] == 1 || [WEATHER.HOURS.3.CONDITION] == 8) ? ([WEATHER.HOURS.3.IS_DAY] ? colorArgb(242, 243, 217, 160) : colorArgb(242, 175, 192, 238)) : ([WEATHER.HOURS.3.CONDITION] == 14 ? colorArgb(242, 200, 211, 224) : (([WEATHER.HOURS.3.CONDITION] == 2 || [WEATHER.HOURS.3.CONDITION] == 3 || [WEATHER.HOURS.3.CONDITION] == 13) ? colorArgb(242, 126, 140, 163) : ([WEATHER.HOURS.3.CONDITION] == 15 ? colorArgb(242, 79, 209, 181) : colorArgb(242, 70, 82, 94)))))))) : colorArgb(0, 0, 0, 0))"/>
 </Stroke>
 <Transform target="startAngle" value="((([HOUR_0_11] + 3) % 12) * 30 + 0.6)"/>
 <Transform target="endAngle" value="((([HOUR_0_11] + 3) % 12) * 30 + 29.4)"/>
@@ -389,30 +367,23 @@
 </Arc>
 <Arc centerX="225" centerY="225" width="392" height="392" startAngle="0.6" endAngle="29.4">
 <Stroke color="#00000000" thickness="7" dashIntervals="1.2 4.6">
-<Transform target="color" value="(([WEATHER.IS_AVAILABLE] &amp;&amp; [WEATHER.HOURS.3.IS_AVAILABLE]) &amp;&amp; (([WEATHER.HOURS.3.CONDITION] == 4 || [WEATHER.HOURS.3.CONDITION] == 6 || [WEATHER.HOURS.3.CONDITION] == 10 || [WEATHER.HOURS.3.CONDITION] == 12) || [WEATHER.HOURS.3.CONDITION] == 9) ? colorArgb(230, 69, 200, 255) : colorArgb(0, 0, 0, 0))"/>
+<Transform target="color" value="(([WEATHER.IS_AVAILABLE] &amp;&amp; [WEATHER.HOURS.3.CONDITION] &gt; 0) &amp;&amp; (([WEATHER.HOURS.3.CONDITION] == 4 || [WEATHER.HOURS.3.CONDITION] == 6 || [WEATHER.HOURS.3.CONDITION] == 10 || [WEATHER.HOURS.3.CONDITION] == 12) || [WEATHER.HOURS.3.CONDITION] == 9) ? colorArgb(230, 69, 200, 255) : colorArgb(0, 0, 0, 0))"/>
 </Stroke>
 <Transform target="startAngle" value="((([HOUR_0_11] + 3) % 12) * 30 + 0.6)"/>
 <Transform target="endAngle" value="((([HOUR_0_11] + 3) % 12) * 30 + 29.4)"/>
 </Arc>
 <Arc centerX="225" centerY="225" width="394" height="394" startAngle="0.6" endAngle="29.4">
 <Stroke color="#00000000" thickness="2.4" dashIntervals="0.1 5" cap="ROUND">
-<Transform target="color" value="(([WEATHER.IS_AVAILABLE] &amp;&amp; [WEATHER.HOURS.3.IS_AVAILABLE]) &amp;&amp; ([WEATHER.HOURS.3.CONDITION] == 5 || [WEATHER.HOURS.3.CONDITION] == 7 || [WEATHER.HOURS.3.CONDITION] == 11) ? colorArgb(240, 230, 243, 255) : colorArgb(0, 0, 0, 0))"/>
+<Transform target="color" value="(([WEATHER.IS_AVAILABLE] &amp;&amp; [WEATHER.HOURS.3.CONDITION] &gt; 0) &amp;&amp; ([WEATHER.HOURS.3.CONDITION] == 5 || [WEATHER.HOURS.3.CONDITION] == 7 || [WEATHER.HOURS.3.CONDITION] == 11) ? colorArgb(240, 230, 243, 255) : colorArgb(0, 0, 0, 0))"/>
 </Stroke>
 <Transform target="startAngle" value="((([HOUR_0_11] + 3) % 12) * 30 + 0.6)"/>
 <Transform target="endAngle" value="((([HOUR_0_11] + 3) % 12) * 30 + 29.4)"/>
-</Arc>
-<Arc centerX="225" centerY="225" width="370" height="370" startAngle="14" endAngle="16">
-<Stroke color="#00000000" thickness="3" cap="ROUND">
-<Transform target="color" value="(([WEATHER.IS_AVAILABLE] &amp;&amp; [WEATHER.HOURS.3.IS_AVAILABLE]) &amp;&amp; [WEATHER.HOURS.3.UV_INDEX] &gt;= 6 ? colorArgb(255, 195, 139, 255) : colorArgb(0, 0, 0, 0))"/>
-</Stroke>
-<Transform target="startAngle" value="((([HOUR_0_11] + 3) % 12) * 30 + 0.6) + 13.4"/>
-<Transform target="endAngle" value="((([HOUR_0_11] + 3) % 12) * 30 + 0.6) + 15.4"/>
 </Arc>
 </PartDraw>
 <PartDraw name="ring_label_bg_3" x="0" y="0" width="40" height="18">
 <Transform target="x" value="225 + 204 * sin(rad(((([HOUR_0_11] + 3) % 12) * 30 + 0.6) + 14.4)) - 20"/>
 <Transform target="y" value="225 - 204 * cos(rad(((([HOUR_0_11] + 3) % 12) * 30 + 0.6) + 14.4)) - 9"/>
-<Transform target="alpha" value="([WEATHER.IS_AVAILABLE] &amp;&amp; [WEATHER.HOURS.3.IS_AVAILABLE]) ? 255 : 0"/>
+<Transform target="alpha" value="([WEATHER.IS_AVAILABLE] &amp;&amp; [WEATHER.HOURS.3.CONDITION] &gt; 0) ? 255 : 0"/>
 <RoundRectangle x="0" y="0" width="40" height="18" cornerRadiusX="9" cornerRadiusY="9">
 <Fill color="#C8000000"/>
 </RoundRectangle>
@@ -420,7 +391,7 @@
 <PartText name="ring_label_3" x="0" y="0" width="40" height="18">
 <Transform target="x" value="225 + 204 * sin(rad(((([HOUR_0_11] + 3) % 12) * 30 + 0.6) + 14.4)) - 20"/>
 <Transform target="y" value="225 - 204 * cos(rad(((([HOUR_0_11] + 3) % 12) * 30 + 0.6) + 14.4)) - 9"/>
-<Transform target="alpha" value="([WEATHER.IS_AVAILABLE] &amp;&amp; [WEATHER.HOURS.3.IS_AVAILABLE]) ? 255 : 0"/>
+<Transform target="alpha" value="([WEATHER.IS_AVAILABLE] &amp;&amp; [WEATHER.HOURS.3.CONDITION] &gt; 0) ? 255 : 0"/>
 <Text align="CENTER" ellipsis="TRUE">
 <Font family="plex_mono_semibold" size="13" color="#FFFFFFFF">
 <Template>%s°<Parameter expression="[WEATHER.HOURS.3.TEMPERATURE]"/>
@@ -431,21 +402,21 @@
 <PartDraw name="ring_hour_4" x="0" y="0" width="450" height="450">
 <Arc centerX="225" centerY="225" width="386" height="386" startAngle="0.6" endAngle="29.4">
 <Stroke color="#00000000" thickness="6">
-<Transform target="color" value="(([WEATHER.IS_AVAILABLE] &amp;&amp; [WEATHER.HOURS.4.IS_AVAILABLE]) ? colorArgb(0, 0, 0, 0) : colorArgb(255, 26, 35, 44))"/>
+<Transform target="color" value="(([WEATHER.IS_AVAILABLE] &amp;&amp; [WEATHER.HOURS.4.CONDITION] &gt; 0) ? colorArgb(0, 0, 0, 0) : colorArgb(255, 26, 35, 44))"/>
 </Stroke>
 <Transform target="startAngle" value="((([HOUR_0_11] + 4) % 12) * 30 + 0.6)"/>
 <Transform target="endAngle" value="((([HOUR_0_11] + 4) % 12) * 30 + 29.4)"/>
 </Arc>
 <Arc centerX="225" centerY="225" width="436" height="436" startAngle="0.6" endAngle="29.4">
 <Stroke color="#00000000" thickness="4">
-<Transform target="color" value="(([WEATHER.IS_AVAILABLE] &amp;&amp; [WEATHER.HOURS.4.IS_AVAILABLE]) ? ([WEATHER.HOURS.4.IS_DAY] ? colorArgb(140, 233, 196, 106) : colorArgb(204, 51, 70, 160)) : colorArgb(0, 0, 0, 0))"/>
+<Transform target="color" value="(([WEATHER.IS_AVAILABLE] &amp;&amp; [WEATHER.HOURS.4.CONDITION] &gt; 0) ? ([WEATHER.HOURS.4.IS_DAY] ? colorArgb(140, 233, 196, 106) : colorArgb(204, 51, 70, 160)) : colorArgb(0, 0, 0, 0))"/>
 </Stroke>
 <Transform target="startAngle" value="((([HOUR_0_11] + 4) % 12) * 30 + 0.6)"/>
 <Transform target="endAngle" value="((([HOUR_0_11] + 4) % 12) * 30 + 29.4)"/>
 </Arc>
 <Arc centerX="225" centerY="225" width="388" height="388" startAngle="0.6" endAngle="29.4">
 <Stroke color="#00000000" thickness="8">
-<Transform target="color" value="(([WEATHER.IS_AVAILABLE] &amp;&amp; [WEATHER.HOURS.4.IS_AVAILABLE]) ? (([WEATHER.HOURS.4.CONDITION] == 4 || [WEATHER.HOURS.4.CONDITION] == 6 || [WEATHER.HOURS.4.CONDITION] == 10 || [WEATHER.HOURS.4.CONDITION] == 12) ? colorArgb(66, 69, 200, 255) : (([WEATHER.HOURS.4.CONDITION] == 5 || [WEATHER.HOURS.4.CONDITION] == 7 || [WEATHER.HOURS.4.CONDITION] == 11) ? colorArgb(66, 230, 243, 255) : ([WEATHER.HOURS.4.CONDITION] == 9 ? colorArgb(66, 177, 132, 255) : (([WEATHER.HOURS.4.CONDITION] == 1 || [WEATHER.HOURS.4.CONDITION] == 8) ? ([WEATHER.HOURS.4.IS_DAY] ? colorArgb(66, 243, 217, 160) : colorArgb(66, 175, 192, 238)) : ([WEATHER.HOURS.4.CONDITION] == 14 ? colorArgb(66, 200, 211, 224) : (([WEATHER.HOURS.4.CONDITION] == 2 || [WEATHER.HOURS.4.CONDITION] == 3 || [WEATHER.HOURS.4.CONDITION] == 13) ? colorArgb(66, 126, 140, 163) : ([WEATHER.HOURS.4.CONDITION] == 15 ? colorArgb(66, 79, 209, 181) : colorArgb(66, 70, 82, 94)))))))) : colorArgb(0, 0, 0, 0))"/>
+<Transform target="color" value="(([WEATHER.IS_AVAILABLE] &amp;&amp; [WEATHER.HOURS.4.CONDITION] &gt; 0) ? (([WEATHER.HOURS.4.CONDITION] == 4 || [WEATHER.HOURS.4.CONDITION] == 6 || [WEATHER.HOURS.4.CONDITION] == 10 || [WEATHER.HOURS.4.CONDITION] == 12) ? colorArgb(66, 69, 200, 255) : (([WEATHER.HOURS.4.CONDITION] == 5 || [WEATHER.HOURS.4.CONDITION] == 7 || [WEATHER.HOURS.4.CONDITION] == 11) ? colorArgb(66, 230, 243, 255) : ([WEATHER.HOURS.4.CONDITION] == 9 ? colorArgb(66, 177, 132, 255) : (([WEATHER.HOURS.4.CONDITION] == 1 || [WEATHER.HOURS.4.CONDITION] == 8) ? ([WEATHER.HOURS.4.IS_DAY] ? colorArgb(66, 243, 217, 160) : colorArgb(66, 175, 192, 238)) : ([WEATHER.HOURS.4.CONDITION] == 14 ? colorArgb(66, 200, 211, 224) : (([WEATHER.HOURS.4.CONDITION] == 2 || [WEATHER.HOURS.4.CONDITION] == 3 || [WEATHER.HOURS.4.CONDITION] == 13) ? colorArgb(66, 126, 140, 163) : ([WEATHER.HOURS.4.CONDITION] == 15 ? colorArgb(66, 79, 209, 181) : colorArgb(66, 70, 82, 94)))))))) : colorArgb(0, 0, 0, 0))"/>
 <Transform target="thickness" value="(4 + 20 * clamp(([WEATHER.HOURS.4.TEMPERATURE] - [WEATHER.DAY_TEMPERATURE_LOW]) / ([WEATHER.DAY_TEMPERATURE_HIGH] - [WEATHER.DAY_TEMPERATURE_LOW] &gt; 1 ? [WEATHER.DAY_TEMPERATURE_HIGH] - [WEATHER.DAY_TEMPERATURE_LOW] : 1), 0, 1))"/>
 </Stroke>
 <Transform target="startAngle" value="((([HOUR_0_11] + 4) % 12) * 30 + 0.6)"/>
@@ -455,7 +426,7 @@
 </Arc>
 <Arc centerX="225" centerY="225" width="396" height="396" startAngle="0.6" endAngle="29.4">
 <Stroke color="#00000000" thickness="1.8">
-<Transform target="color" value="(([WEATHER.IS_AVAILABLE] &amp;&amp; [WEATHER.HOURS.4.IS_AVAILABLE]) ? (([WEATHER.HOURS.4.CONDITION] == 4 || [WEATHER.HOURS.4.CONDITION] == 6 || [WEATHER.HOURS.4.CONDITION] == 10 || [WEATHER.HOURS.4.CONDITION] == 12) ? colorArgb(242, 69, 200, 255) : (([WEATHER.HOURS.4.CONDITION] == 5 || [WEATHER.HOURS.4.CONDITION] == 7 || [WEATHER.HOURS.4.CONDITION] == 11) ? colorArgb(242, 230, 243, 255) : ([WEATHER.HOURS.4.CONDITION] == 9 ? colorArgb(242, 177, 132, 255) : (([WEATHER.HOURS.4.CONDITION] == 1 || [WEATHER.HOURS.4.CONDITION] == 8) ? ([WEATHER.HOURS.4.IS_DAY] ? colorArgb(242, 243, 217, 160) : colorArgb(242, 175, 192, 238)) : ([WEATHER.HOURS.4.CONDITION] == 14 ? colorArgb(242, 200, 211, 224) : (([WEATHER.HOURS.4.CONDITION] == 2 || [WEATHER.HOURS.4.CONDITION] == 3 || [WEATHER.HOURS.4.CONDITION] == 13) ? colorArgb(242, 126, 140, 163) : ([WEATHER.HOURS.4.CONDITION] == 15 ? colorArgb(242, 79, 209, 181) : colorArgb(242, 70, 82, 94)))))))) : colorArgb(0, 0, 0, 0))"/>
+<Transform target="color" value="(([WEATHER.IS_AVAILABLE] &amp;&amp; [WEATHER.HOURS.4.CONDITION] &gt; 0) ? (([WEATHER.HOURS.4.CONDITION] == 4 || [WEATHER.HOURS.4.CONDITION] == 6 || [WEATHER.HOURS.4.CONDITION] == 10 || [WEATHER.HOURS.4.CONDITION] == 12) ? colorArgb(242, 69, 200, 255) : (([WEATHER.HOURS.4.CONDITION] == 5 || [WEATHER.HOURS.4.CONDITION] == 7 || [WEATHER.HOURS.4.CONDITION] == 11) ? colorArgb(242, 230, 243, 255) : ([WEATHER.HOURS.4.CONDITION] == 9 ? colorArgb(242, 177, 132, 255) : (([WEATHER.HOURS.4.CONDITION] == 1 || [WEATHER.HOURS.4.CONDITION] == 8) ? ([WEATHER.HOURS.4.IS_DAY] ? colorArgb(242, 243, 217, 160) : colorArgb(242, 175, 192, 238)) : ([WEATHER.HOURS.4.CONDITION] == 14 ? colorArgb(242, 200, 211, 224) : (([WEATHER.HOURS.4.CONDITION] == 2 || [WEATHER.HOURS.4.CONDITION] == 3 || [WEATHER.HOURS.4.CONDITION] == 13) ? colorArgb(242, 126, 140, 163) : ([WEATHER.HOURS.4.CONDITION] == 15 ? colorArgb(242, 79, 209, 181) : colorArgb(242, 70, 82, 94)))))))) : colorArgb(0, 0, 0, 0))"/>
 </Stroke>
 <Transform target="startAngle" value="((([HOUR_0_11] + 4) % 12) * 30 + 0.6)"/>
 <Transform target="endAngle" value="((([HOUR_0_11] + 4) % 12) * 30 + 29.4)"/>
@@ -464,44 +435,37 @@
 </Arc>
 <Arc centerX="225" centerY="225" width="392" height="392" startAngle="0.6" endAngle="29.4">
 <Stroke color="#00000000" thickness="7" dashIntervals="1.2 4.6">
-<Transform target="color" value="(([WEATHER.IS_AVAILABLE] &amp;&amp; [WEATHER.HOURS.4.IS_AVAILABLE]) &amp;&amp; (([WEATHER.HOURS.4.CONDITION] == 4 || [WEATHER.HOURS.4.CONDITION] == 6 || [WEATHER.HOURS.4.CONDITION] == 10 || [WEATHER.HOURS.4.CONDITION] == 12) || [WEATHER.HOURS.4.CONDITION] == 9) ? colorArgb(230, 69, 200, 255) : colorArgb(0, 0, 0, 0))"/>
+<Transform target="color" value="(([WEATHER.IS_AVAILABLE] &amp;&amp; [WEATHER.HOURS.4.CONDITION] &gt; 0) &amp;&amp; (([WEATHER.HOURS.4.CONDITION] == 4 || [WEATHER.HOURS.4.CONDITION] == 6 || [WEATHER.HOURS.4.CONDITION] == 10 || [WEATHER.HOURS.4.CONDITION] == 12) || [WEATHER.HOURS.4.CONDITION] == 9) ? colorArgb(230, 69, 200, 255) : colorArgb(0, 0, 0, 0))"/>
 </Stroke>
 <Transform target="startAngle" value="((([HOUR_0_11] + 4) % 12) * 30 + 0.6)"/>
 <Transform target="endAngle" value="((([HOUR_0_11] + 4) % 12) * 30 + 29.4)"/>
 </Arc>
 <Arc centerX="225" centerY="225" width="394" height="394" startAngle="0.6" endAngle="29.4">
 <Stroke color="#00000000" thickness="2.4" dashIntervals="0.1 5" cap="ROUND">
-<Transform target="color" value="(([WEATHER.IS_AVAILABLE] &amp;&amp; [WEATHER.HOURS.4.IS_AVAILABLE]) &amp;&amp; ([WEATHER.HOURS.4.CONDITION] == 5 || [WEATHER.HOURS.4.CONDITION] == 7 || [WEATHER.HOURS.4.CONDITION] == 11) ? colorArgb(240, 230, 243, 255) : colorArgb(0, 0, 0, 0))"/>
+<Transform target="color" value="(([WEATHER.IS_AVAILABLE] &amp;&amp; [WEATHER.HOURS.4.CONDITION] &gt; 0) &amp;&amp; ([WEATHER.HOURS.4.CONDITION] == 5 || [WEATHER.HOURS.4.CONDITION] == 7 || [WEATHER.HOURS.4.CONDITION] == 11) ? colorArgb(240, 230, 243, 255) : colorArgb(0, 0, 0, 0))"/>
 </Stroke>
 <Transform target="startAngle" value="((([HOUR_0_11] + 4) % 12) * 30 + 0.6)"/>
 <Transform target="endAngle" value="((([HOUR_0_11] + 4) % 12) * 30 + 29.4)"/>
-</Arc>
-<Arc centerX="225" centerY="225" width="370" height="370" startAngle="14" endAngle="16">
-<Stroke color="#00000000" thickness="3" cap="ROUND">
-<Transform target="color" value="(([WEATHER.IS_AVAILABLE] &amp;&amp; [WEATHER.HOURS.4.IS_AVAILABLE]) &amp;&amp; [WEATHER.HOURS.4.UV_INDEX] &gt;= 6 ? colorArgb(255, 195, 139, 255) : colorArgb(0, 0, 0, 0))"/>
-</Stroke>
-<Transform target="startAngle" value="((([HOUR_0_11] + 4) % 12) * 30 + 0.6) + 13.4"/>
-<Transform target="endAngle" value="((([HOUR_0_11] + 4) % 12) * 30 + 0.6) + 15.4"/>
 </Arc>
 </PartDraw>
 <PartDraw name="ring_hour_5" x="0" y="0" width="450" height="450">
 <Arc centerX="225" centerY="225" width="386" height="386" startAngle="0.6" endAngle="29.4">
 <Stroke color="#00000000" thickness="6">
-<Transform target="color" value="(([WEATHER.IS_AVAILABLE] &amp;&amp; [WEATHER.HOURS.5.IS_AVAILABLE]) ? colorArgb(0, 0, 0, 0) : colorArgb(255, 26, 35, 44))"/>
+<Transform target="color" value="(([WEATHER.IS_AVAILABLE] &amp;&amp; [WEATHER.HOURS.5.CONDITION] &gt; 0) ? colorArgb(0, 0, 0, 0) : colorArgb(255, 26, 35, 44))"/>
 </Stroke>
 <Transform target="startAngle" value="((([HOUR_0_11] + 5) % 12) * 30 + 0.6)"/>
 <Transform target="endAngle" value="((([HOUR_0_11] + 5) % 12) * 30 + 29.4)"/>
 </Arc>
 <Arc centerX="225" centerY="225" width="436" height="436" startAngle="0.6" endAngle="29.4">
 <Stroke color="#00000000" thickness="4">
-<Transform target="color" value="(([WEATHER.IS_AVAILABLE] &amp;&amp; [WEATHER.HOURS.5.IS_AVAILABLE]) ? ([WEATHER.HOURS.5.IS_DAY] ? colorArgb(140, 233, 196, 106) : colorArgb(204, 51, 70, 160)) : colorArgb(0, 0, 0, 0))"/>
+<Transform target="color" value="(([WEATHER.IS_AVAILABLE] &amp;&amp; [WEATHER.HOURS.5.CONDITION] &gt; 0) ? ([WEATHER.HOURS.5.IS_DAY] ? colorArgb(140, 233, 196, 106) : colorArgb(204, 51, 70, 160)) : colorArgb(0, 0, 0, 0))"/>
 </Stroke>
 <Transform target="startAngle" value="((([HOUR_0_11] + 5) % 12) * 30 + 0.6)"/>
 <Transform target="endAngle" value="((([HOUR_0_11] + 5) % 12) * 30 + 29.4)"/>
 </Arc>
 <Arc centerX="225" centerY="225" width="388" height="388" startAngle="0.6" endAngle="29.4">
 <Stroke color="#00000000" thickness="8">
-<Transform target="color" value="(([WEATHER.IS_AVAILABLE] &amp;&amp; [WEATHER.HOURS.5.IS_AVAILABLE]) ? (([WEATHER.HOURS.5.CONDITION] == 4 || [WEATHER.HOURS.5.CONDITION] == 6 || [WEATHER.HOURS.5.CONDITION] == 10 || [WEATHER.HOURS.5.CONDITION] == 12) ? colorArgb(66, 69, 200, 255) : (([WEATHER.HOURS.5.CONDITION] == 5 || [WEATHER.HOURS.5.CONDITION] == 7 || [WEATHER.HOURS.5.CONDITION] == 11) ? colorArgb(66, 230, 243, 255) : ([WEATHER.HOURS.5.CONDITION] == 9 ? colorArgb(66, 177, 132, 255) : (([WEATHER.HOURS.5.CONDITION] == 1 || [WEATHER.HOURS.5.CONDITION] == 8) ? ([WEATHER.HOURS.5.IS_DAY] ? colorArgb(66, 243, 217, 160) : colorArgb(66, 175, 192, 238)) : ([WEATHER.HOURS.5.CONDITION] == 14 ? colorArgb(66, 200, 211, 224) : (([WEATHER.HOURS.5.CONDITION] == 2 || [WEATHER.HOURS.5.CONDITION] == 3 || [WEATHER.HOURS.5.CONDITION] == 13) ? colorArgb(66, 126, 140, 163) : ([WEATHER.HOURS.5.CONDITION] == 15 ? colorArgb(66, 79, 209, 181) : colorArgb(66, 70, 82, 94)))))))) : colorArgb(0, 0, 0, 0))"/>
+<Transform target="color" value="(([WEATHER.IS_AVAILABLE] &amp;&amp; [WEATHER.HOURS.5.CONDITION] &gt; 0) ? (([WEATHER.HOURS.5.CONDITION] == 4 || [WEATHER.HOURS.5.CONDITION] == 6 || [WEATHER.HOURS.5.CONDITION] == 10 || [WEATHER.HOURS.5.CONDITION] == 12) ? colorArgb(66, 69, 200, 255) : (([WEATHER.HOURS.5.CONDITION] == 5 || [WEATHER.HOURS.5.CONDITION] == 7 || [WEATHER.HOURS.5.CONDITION] == 11) ? colorArgb(66, 230, 243, 255) : ([WEATHER.HOURS.5.CONDITION] == 9 ? colorArgb(66, 177, 132, 255) : (([WEATHER.HOURS.5.CONDITION] == 1 || [WEATHER.HOURS.5.CONDITION] == 8) ? ([WEATHER.HOURS.5.IS_DAY] ? colorArgb(66, 243, 217, 160) : colorArgb(66, 175, 192, 238)) : ([WEATHER.HOURS.5.CONDITION] == 14 ? colorArgb(66, 200, 211, 224) : (([WEATHER.HOURS.5.CONDITION] == 2 || [WEATHER.HOURS.5.CONDITION] == 3 || [WEATHER.HOURS.5.CONDITION] == 13) ? colorArgb(66, 126, 140, 163) : ([WEATHER.HOURS.5.CONDITION] == 15 ? colorArgb(66, 79, 209, 181) : colorArgb(66, 70, 82, 94)))))))) : colorArgb(0, 0, 0, 0))"/>
 <Transform target="thickness" value="(4 + 20 * clamp(([WEATHER.HOURS.5.TEMPERATURE] - [WEATHER.DAY_TEMPERATURE_LOW]) / ([WEATHER.DAY_TEMPERATURE_HIGH] - [WEATHER.DAY_TEMPERATURE_LOW] &gt; 1 ? [WEATHER.DAY_TEMPERATURE_HIGH] - [WEATHER.DAY_TEMPERATURE_LOW] : 1), 0, 1))"/>
 </Stroke>
 <Transform target="startAngle" value="((([HOUR_0_11] + 5) % 12) * 30 + 0.6)"/>
@@ -511,7 +475,7 @@
 </Arc>
 <Arc centerX="225" centerY="225" width="396" height="396" startAngle="0.6" endAngle="29.4">
 <Stroke color="#00000000" thickness="1.8">
-<Transform target="color" value="(([WEATHER.IS_AVAILABLE] &amp;&amp; [WEATHER.HOURS.5.IS_AVAILABLE]) ? (([WEATHER.HOURS.5.CONDITION] == 4 || [WEATHER.HOURS.5.CONDITION] == 6 || [WEATHER.HOURS.5.CONDITION] == 10 || [WEATHER.HOURS.5.CONDITION] == 12) ? colorArgb(242, 69, 200, 255) : (([WEATHER.HOURS.5.CONDITION] == 5 || [WEATHER.HOURS.5.CONDITION] == 7 || [WEATHER.HOURS.5.CONDITION] == 11) ? colorArgb(242, 230, 243, 255) : ([WEATHER.HOURS.5.CONDITION] == 9 ? colorArgb(242, 177, 132, 255) : (([WEATHER.HOURS.5.CONDITION] == 1 || [WEATHER.HOURS.5.CONDITION] == 8) ? ([WEATHER.HOURS.5.IS_DAY] ? colorArgb(242, 243, 217, 160) : colorArgb(242, 175, 192, 238)) : ([WEATHER.HOURS.5.CONDITION] == 14 ? colorArgb(242, 200, 211, 224) : (([WEATHER.HOURS.5.CONDITION] == 2 || [WEATHER.HOURS.5.CONDITION] == 3 || [WEATHER.HOURS.5.CONDITION] == 13) ? colorArgb(242, 126, 140, 163) : ([WEATHER.HOURS.5.CONDITION] == 15 ? colorArgb(242, 79, 209, 181) : colorArgb(242, 70, 82, 94)))))))) : colorArgb(0, 0, 0, 0))"/>
+<Transform target="color" value="(([WEATHER.IS_AVAILABLE] &amp;&amp; [WEATHER.HOURS.5.CONDITION] &gt; 0) ? (([WEATHER.HOURS.5.CONDITION] == 4 || [WEATHER.HOURS.5.CONDITION] == 6 || [WEATHER.HOURS.5.CONDITION] == 10 || [WEATHER.HOURS.5.CONDITION] == 12) ? colorArgb(242, 69, 200, 255) : (([WEATHER.HOURS.5.CONDITION] == 5 || [WEATHER.HOURS.5.CONDITION] == 7 || [WEATHER.HOURS.5.CONDITION] == 11) ? colorArgb(242, 230, 243, 255) : ([WEATHER.HOURS.5.CONDITION] == 9 ? colorArgb(242, 177, 132, 255) : (([WEATHER.HOURS.5.CONDITION] == 1 || [WEATHER.HOURS.5.CONDITION] == 8) ? ([WEATHER.HOURS.5.IS_DAY] ? colorArgb(242, 243, 217, 160) : colorArgb(242, 175, 192, 238)) : ([WEATHER.HOURS.5.CONDITION] == 14 ? colorArgb(242, 200, 211, 224) : (([WEATHER.HOURS.5.CONDITION] == 2 || [WEATHER.HOURS.5.CONDITION] == 3 || [WEATHER.HOURS.5.CONDITION] == 13) ? colorArgb(242, 126, 140, 163) : ([WEATHER.HOURS.5.CONDITION] == 15 ? colorArgb(242, 79, 209, 181) : colorArgb(242, 70, 82, 94)))))))) : colorArgb(0, 0, 0, 0))"/>
 </Stroke>
 <Transform target="startAngle" value="((([HOUR_0_11] + 5) % 12) * 30 + 0.6)"/>
 <Transform target="endAngle" value="((([HOUR_0_11] + 5) % 12) * 30 + 29.4)"/>
@@ -520,44 +484,37 @@
 </Arc>
 <Arc centerX="225" centerY="225" width="392" height="392" startAngle="0.6" endAngle="29.4">
 <Stroke color="#00000000" thickness="7" dashIntervals="1.2 4.6">
-<Transform target="color" value="(([WEATHER.IS_AVAILABLE] &amp;&amp; [WEATHER.HOURS.5.IS_AVAILABLE]) &amp;&amp; (([WEATHER.HOURS.5.CONDITION] == 4 || [WEATHER.HOURS.5.CONDITION] == 6 || [WEATHER.HOURS.5.CONDITION] == 10 || [WEATHER.HOURS.5.CONDITION] == 12) || [WEATHER.HOURS.5.CONDITION] == 9) ? colorArgb(230, 69, 200, 255) : colorArgb(0, 0, 0, 0))"/>
+<Transform target="color" value="(([WEATHER.IS_AVAILABLE] &amp;&amp; [WEATHER.HOURS.5.CONDITION] &gt; 0) &amp;&amp; (([WEATHER.HOURS.5.CONDITION] == 4 || [WEATHER.HOURS.5.CONDITION] == 6 || [WEATHER.HOURS.5.CONDITION] == 10 || [WEATHER.HOURS.5.CONDITION] == 12) || [WEATHER.HOURS.5.CONDITION] == 9) ? colorArgb(230, 69, 200, 255) : colorArgb(0, 0, 0, 0))"/>
 </Stroke>
 <Transform target="startAngle" value="((([HOUR_0_11] + 5) % 12) * 30 + 0.6)"/>
 <Transform target="endAngle" value="((([HOUR_0_11] + 5) % 12) * 30 + 29.4)"/>
 </Arc>
 <Arc centerX="225" centerY="225" width="394" height="394" startAngle="0.6" endAngle="29.4">
 <Stroke color="#00000000" thickness="2.4" dashIntervals="0.1 5" cap="ROUND">
-<Transform target="color" value="(([WEATHER.IS_AVAILABLE] &amp;&amp; [WEATHER.HOURS.5.IS_AVAILABLE]) &amp;&amp; ([WEATHER.HOURS.5.CONDITION] == 5 || [WEATHER.HOURS.5.CONDITION] == 7 || [WEATHER.HOURS.5.CONDITION] == 11) ? colorArgb(240, 230, 243, 255) : colorArgb(0, 0, 0, 0))"/>
+<Transform target="color" value="(([WEATHER.IS_AVAILABLE] &amp;&amp; [WEATHER.HOURS.5.CONDITION] &gt; 0) &amp;&amp; ([WEATHER.HOURS.5.CONDITION] == 5 || [WEATHER.HOURS.5.CONDITION] == 7 || [WEATHER.HOURS.5.CONDITION] == 11) ? colorArgb(240, 230, 243, 255) : colorArgb(0, 0, 0, 0))"/>
 </Stroke>
 <Transform target="startAngle" value="((([HOUR_0_11] + 5) % 12) * 30 + 0.6)"/>
 <Transform target="endAngle" value="((([HOUR_0_11] + 5) % 12) * 30 + 29.4)"/>
-</Arc>
-<Arc centerX="225" centerY="225" width="370" height="370" startAngle="14" endAngle="16">
-<Stroke color="#00000000" thickness="3" cap="ROUND">
-<Transform target="color" value="(([WEATHER.IS_AVAILABLE] &amp;&amp; [WEATHER.HOURS.5.IS_AVAILABLE]) &amp;&amp; [WEATHER.HOURS.5.UV_INDEX] &gt;= 6 ? colorArgb(255, 195, 139, 255) : colorArgb(0, 0, 0, 0))"/>
-</Stroke>
-<Transform target="startAngle" value="((([HOUR_0_11] + 5) % 12) * 30 + 0.6) + 13.4"/>
-<Transform target="endAngle" value="((([HOUR_0_11] + 5) % 12) * 30 + 0.6) + 15.4"/>
 </Arc>
 </PartDraw>
 <PartDraw name="ring_hour_6" x="0" y="0" width="450" height="450">
 <Arc centerX="225" centerY="225" width="386" height="386" startAngle="0.6" endAngle="29.4">
 <Stroke color="#00000000" thickness="6">
-<Transform target="color" value="(([WEATHER.IS_AVAILABLE] &amp;&amp; [WEATHER.HOURS.6.IS_AVAILABLE]) ? colorArgb(0, 0, 0, 0) : colorArgb(255, 26, 35, 44))"/>
+<Transform target="color" value="(([WEATHER.IS_AVAILABLE] &amp;&amp; [WEATHER.HOURS.6.CONDITION] &gt; 0) ? colorArgb(0, 0, 0, 0) : colorArgb(255, 26, 35, 44))"/>
 </Stroke>
 <Transform target="startAngle" value="((([HOUR_0_11] + 6) % 12) * 30 + 0.6)"/>
 <Transform target="endAngle" value="((([HOUR_0_11] + 6) % 12) * 30 + 29.4)"/>
 </Arc>
 <Arc centerX="225" centerY="225" width="436" height="436" startAngle="0.6" endAngle="29.4">
 <Stroke color="#00000000" thickness="4">
-<Transform target="color" value="(([WEATHER.IS_AVAILABLE] &amp;&amp; [WEATHER.HOURS.6.IS_AVAILABLE]) ? ([WEATHER.HOURS.6.IS_DAY] ? colorArgb(140, 233, 196, 106) : colorArgb(204, 51, 70, 160)) : colorArgb(0, 0, 0, 0))"/>
+<Transform target="color" value="(([WEATHER.IS_AVAILABLE] &amp;&amp; [WEATHER.HOURS.6.CONDITION] &gt; 0) ? ([WEATHER.HOURS.6.IS_DAY] ? colorArgb(140, 233, 196, 106) : colorArgb(204, 51, 70, 160)) : colorArgb(0, 0, 0, 0))"/>
 </Stroke>
 <Transform target="startAngle" value="((([HOUR_0_11] + 6) % 12) * 30 + 0.6)"/>
 <Transform target="endAngle" value="((([HOUR_0_11] + 6) % 12) * 30 + 29.4)"/>
 </Arc>
 <Arc centerX="225" centerY="225" width="388" height="388" startAngle="0.6" endAngle="29.4">
 <Stroke color="#00000000" thickness="8">
-<Transform target="color" value="(([WEATHER.IS_AVAILABLE] &amp;&amp; [WEATHER.HOURS.6.IS_AVAILABLE]) ? (([WEATHER.HOURS.6.CONDITION] == 4 || [WEATHER.HOURS.6.CONDITION] == 6 || [WEATHER.HOURS.6.CONDITION] == 10 || [WEATHER.HOURS.6.CONDITION] == 12) ? colorArgb(66, 69, 200, 255) : (([WEATHER.HOURS.6.CONDITION] == 5 || [WEATHER.HOURS.6.CONDITION] == 7 || [WEATHER.HOURS.6.CONDITION] == 11) ? colorArgb(66, 230, 243, 255) : ([WEATHER.HOURS.6.CONDITION] == 9 ? colorArgb(66, 177, 132, 255) : (([WEATHER.HOURS.6.CONDITION] == 1 || [WEATHER.HOURS.6.CONDITION] == 8) ? ([WEATHER.HOURS.6.IS_DAY] ? colorArgb(66, 243, 217, 160) : colorArgb(66, 175, 192, 238)) : ([WEATHER.HOURS.6.CONDITION] == 14 ? colorArgb(66, 200, 211, 224) : (([WEATHER.HOURS.6.CONDITION] == 2 || [WEATHER.HOURS.6.CONDITION] == 3 || [WEATHER.HOURS.6.CONDITION] == 13) ? colorArgb(66, 126, 140, 163) : ([WEATHER.HOURS.6.CONDITION] == 15 ? colorArgb(66, 79, 209, 181) : colorArgb(66, 70, 82, 94)))))))) : colorArgb(0, 0, 0, 0))"/>
+<Transform target="color" value="(([WEATHER.IS_AVAILABLE] &amp;&amp; [WEATHER.HOURS.6.CONDITION] &gt; 0) ? (([WEATHER.HOURS.6.CONDITION] == 4 || [WEATHER.HOURS.6.CONDITION] == 6 || [WEATHER.HOURS.6.CONDITION] == 10 || [WEATHER.HOURS.6.CONDITION] == 12) ? colorArgb(66, 69, 200, 255) : (([WEATHER.HOURS.6.CONDITION] == 5 || [WEATHER.HOURS.6.CONDITION] == 7 || [WEATHER.HOURS.6.CONDITION] == 11) ? colorArgb(66, 230, 243, 255) : ([WEATHER.HOURS.6.CONDITION] == 9 ? colorArgb(66, 177, 132, 255) : (([WEATHER.HOURS.6.CONDITION] == 1 || [WEATHER.HOURS.6.CONDITION] == 8) ? ([WEATHER.HOURS.6.IS_DAY] ? colorArgb(66, 243, 217, 160) : colorArgb(66, 175, 192, 238)) : ([WEATHER.HOURS.6.CONDITION] == 14 ? colorArgb(66, 200, 211, 224) : (([WEATHER.HOURS.6.CONDITION] == 2 || [WEATHER.HOURS.6.CONDITION] == 3 || [WEATHER.HOURS.6.CONDITION] == 13) ? colorArgb(66, 126, 140, 163) : ([WEATHER.HOURS.6.CONDITION] == 15 ? colorArgb(66, 79, 209, 181) : colorArgb(66, 70, 82, 94)))))))) : colorArgb(0, 0, 0, 0))"/>
 <Transform target="thickness" value="(4 + 20 * clamp(([WEATHER.HOURS.6.TEMPERATURE] - [WEATHER.DAY_TEMPERATURE_LOW]) / ([WEATHER.DAY_TEMPERATURE_HIGH] - [WEATHER.DAY_TEMPERATURE_LOW] &gt; 1 ? [WEATHER.DAY_TEMPERATURE_HIGH] - [WEATHER.DAY_TEMPERATURE_LOW] : 1), 0, 1))"/>
 </Stroke>
 <Transform target="startAngle" value="((([HOUR_0_11] + 6) % 12) * 30 + 0.6)"/>
@@ -567,7 +524,7 @@
 </Arc>
 <Arc centerX="225" centerY="225" width="396" height="396" startAngle="0.6" endAngle="29.4">
 <Stroke color="#00000000" thickness="1.8">
-<Transform target="color" value="(([WEATHER.IS_AVAILABLE] &amp;&amp; [WEATHER.HOURS.6.IS_AVAILABLE]) ? (([WEATHER.HOURS.6.CONDITION] == 4 || [WEATHER.HOURS.6.CONDITION] == 6 || [WEATHER.HOURS.6.CONDITION] == 10 || [WEATHER.HOURS.6.CONDITION] == 12) ? colorArgb(242, 69, 200, 255) : (([WEATHER.HOURS.6.CONDITION] == 5 || [WEATHER.HOURS.6.CONDITION] == 7 || [WEATHER.HOURS.6.CONDITION] == 11) ? colorArgb(242, 230, 243, 255) : ([WEATHER.HOURS.6.CONDITION] == 9 ? colorArgb(242, 177, 132, 255) : (([WEATHER.HOURS.6.CONDITION] == 1 || [WEATHER.HOURS.6.CONDITION] == 8) ? ([WEATHER.HOURS.6.IS_DAY] ? colorArgb(242, 243, 217, 160) : colorArgb(242, 175, 192, 238)) : ([WEATHER.HOURS.6.CONDITION] == 14 ? colorArgb(242, 200, 211, 224) : (([WEATHER.HOURS.6.CONDITION] == 2 || [WEATHER.HOURS.6.CONDITION] == 3 || [WEATHER.HOURS.6.CONDITION] == 13) ? colorArgb(242, 126, 140, 163) : ([WEATHER.HOURS.6.CONDITION] == 15 ? colorArgb(242, 79, 209, 181) : colorArgb(242, 70, 82, 94)))))))) : colorArgb(0, 0, 0, 0))"/>
+<Transform target="color" value="(([WEATHER.IS_AVAILABLE] &amp;&amp; [WEATHER.HOURS.6.CONDITION] &gt; 0) ? (([WEATHER.HOURS.6.CONDITION] == 4 || [WEATHER.HOURS.6.CONDITION] == 6 || [WEATHER.HOURS.6.CONDITION] == 10 || [WEATHER.HOURS.6.CONDITION] == 12) ? colorArgb(242, 69, 200, 255) : (([WEATHER.HOURS.6.CONDITION] == 5 || [WEATHER.HOURS.6.CONDITION] == 7 || [WEATHER.HOURS.6.CONDITION] == 11) ? colorArgb(242, 230, 243, 255) : ([WEATHER.HOURS.6.CONDITION] == 9 ? colorArgb(242, 177, 132, 255) : (([WEATHER.HOURS.6.CONDITION] == 1 || [WEATHER.HOURS.6.CONDITION] == 8) ? ([WEATHER.HOURS.6.IS_DAY] ? colorArgb(242, 243, 217, 160) : colorArgb(242, 175, 192, 238)) : ([WEATHER.HOURS.6.CONDITION] == 14 ? colorArgb(242, 200, 211, 224) : (([WEATHER.HOURS.6.CONDITION] == 2 || [WEATHER.HOURS.6.CONDITION] == 3 || [WEATHER.HOURS.6.CONDITION] == 13) ? colorArgb(242, 126, 140, 163) : ([WEATHER.HOURS.6.CONDITION] == 15 ? colorArgb(242, 79, 209, 181) : colorArgb(242, 70, 82, 94)))))))) : colorArgb(0, 0, 0, 0))"/>
 </Stroke>
 <Transform target="startAngle" value="((([HOUR_0_11] + 6) % 12) * 30 + 0.6)"/>
 <Transform target="endAngle" value="((([HOUR_0_11] + 6) % 12) * 30 + 29.4)"/>
@@ -576,30 +533,23 @@
 </Arc>
 <Arc centerX="225" centerY="225" width="392" height="392" startAngle="0.6" endAngle="29.4">
 <Stroke color="#00000000" thickness="7" dashIntervals="1.2 4.6">
-<Transform target="color" value="(([WEATHER.IS_AVAILABLE] &amp;&amp; [WEATHER.HOURS.6.IS_AVAILABLE]) &amp;&amp; (([WEATHER.HOURS.6.CONDITION] == 4 || [WEATHER.HOURS.6.CONDITION] == 6 || [WEATHER.HOURS.6.CONDITION] == 10 || [WEATHER.HOURS.6.CONDITION] == 12) || [WEATHER.HOURS.6.CONDITION] == 9) ? colorArgb(230, 69, 200, 255) : colorArgb(0, 0, 0, 0))"/>
+<Transform target="color" value="(([WEATHER.IS_AVAILABLE] &amp;&amp; [WEATHER.HOURS.6.CONDITION] &gt; 0) &amp;&amp; (([WEATHER.HOURS.6.CONDITION] == 4 || [WEATHER.HOURS.6.CONDITION] == 6 || [WEATHER.HOURS.6.CONDITION] == 10 || [WEATHER.HOURS.6.CONDITION] == 12) || [WEATHER.HOURS.6.CONDITION] == 9) ? colorArgb(230, 69, 200, 255) : colorArgb(0, 0, 0, 0))"/>
 </Stroke>
 <Transform target="startAngle" value="((([HOUR_0_11] + 6) % 12) * 30 + 0.6)"/>
 <Transform target="endAngle" value="((([HOUR_0_11] + 6) % 12) * 30 + 29.4)"/>
 </Arc>
 <Arc centerX="225" centerY="225" width="394" height="394" startAngle="0.6" endAngle="29.4">
 <Stroke color="#00000000" thickness="2.4" dashIntervals="0.1 5" cap="ROUND">
-<Transform target="color" value="(([WEATHER.IS_AVAILABLE] &amp;&amp; [WEATHER.HOURS.6.IS_AVAILABLE]) &amp;&amp; ([WEATHER.HOURS.6.CONDITION] == 5 || [WEATHER.HOURS.6.CONDITION] == 7 || [WEATHER.HOURS.6.CONDITION] == 11) ? colorArgb(240, 230, 243, 255) : colorArgb(0, 0, 0, 0))"/>
+<Transform target="color" value="(([WEATHER.IS_AVAILABLE] &amp;&amp; [WEATHER.HOURS.6.CONDITION] &gt; 0) &amp;&amp; ([WEATHER.HOURS.6.CONDITION] == 5 || [WEATHER.HOURS.6.CONDITION] == 7 || [WEATHER.HOURS.6.CONDITION] == 11) ? colorArgb(240, 230, 243, 255) : colorArgb(0, 0, 0, 0))"/>
 </Stroke>
 <Transform target="startAngle" value="((([HOUR_0_11] + 6) % 12) * 30 + 0.6)"/>
 <Transform target="endAngle" value="((([HOUR_0_11] + 6) % 12) * 30 + 29.4)"/>
-</Arc>
-<Arc centerX="225" centerY="225" width="370" height="370" startAngle="14" endAngle="16">
-<Stroke color="#00000000" thickness="3" cap="ROUND">
-<Transform target="color" value="(([WEATHER.IS_AVAILABLE] &amp;&amp; [WEATHER.HOURS.6.IS_AVAILABLE]) &amp;&amp; [WEATHER.HOURS.6.UV_INDEX] &gt;= 6 ? colorArgb(255, 195, 139, 255) : colorArgb(0, 0, 0, 0))"/>
-</Stroke>
-<Transform target="startAngle" value="((([HOUR_0_11] + 6) % 12) * 30 + 0.6) + 13.4"/>
-<Transform target="endAngle" value="((([HOUR_0_11] + 6) % 12) * 30 + 0.6) + 15.4"/>
 </Arc>
 </PartDraw>
 <PartDraw name="ring_label_bg_6" x="0" y="0" width="40" height="18">
 <Transform target="x" value="225 + 204 * sin(rad(((([HOUR_0_11] + 6) % 12) * 30 + 0.6) + 14.4)) - 20"/>
 <Transform target="y" value="225 - 204 * cos(rad(((([HOUR_0_11] + 6) % 12) * 30 + 0.6) + 14.4)) - 9"/>
-<Transform target="alpha" value="([WEATHER.IS_AVAILABLE] &amp;&amp; [WEATHER.HOURS.6.IS_AVAILABLE]) ? 255 : 0"/>
+<Transform target="alpha" value="([WEATHER.IS_AVAILABLE] &amp;&amp; [WEATHER.HOURS.6.CONDITION] &gt; 0) ? 255 : 0"/>
 <RoundRectangle x="0" y="0" width="40" height="18" cornerRadiusX="9" cornerRadiusY="9">
 <Fill color="#C8000000"/>
 </RoundRectangle>
@@ -607,7 +557,7 @@
 <PartText name="ring_label_6" x="0" y="0" width="40" height="18">
 <Transform target="x" value="225 + 204 * sin(rad(((([HOUR_0_11] + 6) % 12) * 30 + 0.6) + 14.4)) - 20"/>
 <Transform target="y" value="225 - 204 * cos(rad(((([HOUR_0_11] + 6) % 12) * 30 + 0.6) + 14.4)) - 9"/>
-<Transform target="alpha" value="([WEATHER.IS_AVAILABLE] &amp;&amp; [WEATHER.HOURS.6.IS_AVAILABLE]) ? 255 : 0"/>
+<Transform target="alpha" value="([WEATHER.IS_AVAILABLE] &amp;&amp; [WEATHER.HOURS.6.CONDITION] &gt; 0) ? 255 : 0"/>
 <Text align="CENTER" ellipsis="TRUE">
 <Font family="plex_mono_semibold" size="13" color="#FFFFFFFF">
 <Template>%s°<Parameter expression="[WEATHER.HOURS.6.TEMPERATURE]"/>
@@ -618,21 +568,21 @@
 <PartDraw name="ring_hour_7" x="0" y="0" width="450" height="450">
 <Arc centerX="225" centerY="225" width="386" height="386" startAngle="0.6" endAngle="29.4">
 <Stroke color="#00000000" thickness="6">
-<Transform target="color" value="(([WEATHER.IS_AVAILABLE] &amp;&amp; [WEATHER.HOURS.7.IS_AVAILABLE]) ? colorArgb(0, 0, 0, 0) : colorArgb(255, 26, 35, 44))"/>
+<Transform target="color" value="(([WEATHER.IS_AVAILABLE] &amp;&amp; [WEATHER.HOURS.7.CONDITION] &gt; 0) ? colorArgb(0, 0, 0, 0) : colorArgb(255, 26, 35, 44))"/>
 </Stroke>
 <Transform target="startAngle" value="((([HOUR_0_11] + 7) % 12) * 30 + 0.6)"/>
 <Transform target="endAngle" value="((([HOUR_0_11] + 7) % 12) * 30 + 29.4)"/>
 </Arc>
 <Arc centerX="225" centerY="225" width="436" height="436" startAngle="0.6" endAngle="29.4">
 <Stroke color="#00000000" thickness="4">
-<Transform target="color" value="(([WEATHER.IS_AVAILABLE] &amp;&amp; [WEATHER.HOURS.7.IS_AVAILABLE]) ? ([WEATHER.HOURS.7.IS_DAY] ? colorArgb(140, 233, 196, 106) : colorArgb(204, 51, 70, 160)) : colorArgb(0, 0, 0, 0))"/>
+<Transform target="color" value="(([WEATHER.IS_AVAILABLE] &amp;&amp; [WEATHER.HOURS.7.CONDITION] &gt; 0) ? ([WEATHER.HOURS.7.IS_DAY] ? colorArgb(140, 233, 196, 106) : colorArgb(204, 51, 70, 160)) : colorArgb(0, 0, 0, 0))"/>
 </Stroke>
 <Transform target="startAngle" value="((([HOUR_0_11] + 7) % 12) * 30 + 0.6)"/>
 <Transform target="endAngle" value="((([HOUR_0_11] + 7) % 12) * 30 + 29.4)"/>
 </Arc>
 <Arc centerX="225" centerY="225" width="388" height="388" startAngle="0.6" endAngle="29.4">
 <Stroke color="#00000000" thickness="8">
-<Transform target="color" value="(([WEATHER.IS_AVAILABLE] &amp;&amp; [WEATHER.HOURS.7.IS_AVAILABLE]) ? (([WEATHER.HOURS.7.CONDITION] == 4 || [WEATHER.HOURS.7.CONDITION] == 6 || [WEATHER.HOURS.7.CONDITION] == 10 || [WEATHER.HOURS.7.CONDITION] == 12) ? colorArgb(66, 69, 200, 255) : (([WEATHER.HOURS.7.CONDITION] == 5 || [WEATHER.HOURS.7.CONDITION] == 7 || [WEATHER.HOURS.7.CONDITION] == 11) ? colorArgb(66, 230, 243, 255) : ([WEATHER.HOURS.7.CONDITION] == 9 ? colorArgb(66, 177, 132, 255) : (([WEATHER.HOURS.7.CONDITION] == 1 || [WEATHER.HOURS.7.CONDITION] == 8) ? ([WEATHER.HOURS.7.IS_DAY] ? colorArgb(66, 243, 217, 160) : colorArgb(66, 175, 192, 238)) : ([WEATHER.HOURS.7.CONDITION] == 14 ? colorArgb(66, 200, 211, 224) : (([WEATHER.HOURS.7.CONDITION] == 2 || [WEATHER.HOURS.7.CONDITION] == 3 || [WEATHER.HOURS.7.CONDITION] == 13) ? colorArgb(66, 126, 140, 163) : ([WEATHER.HOURS.7.CONDITION] == 15 ? colorArgb(66, 79, 209, 181) : colorArgb(66, 70, 82, 94)))))))) : colorArgb(0, 0, 0, 0))"/>
+<Transform target="color" value="(([WEATHER.IS_AVAILABLE] &amp;&amp; [WEATHER.HOURS.7.CONDITION] &gt; 0) ? (([WEATHER.HOURS.7.CONDITION] == 4 || [WEATHER.HOURS.7.CONDITION] == 6 || [WEATHER.HOURS.7.CONDITION] == 10 || [WEATHER.HOURS.7.CONDITION] == 12) ? colorArgb(66, 69, 200, 255) : (([WEATHER.HOURS.7.CONDITION] == 5 || [WEATHER.HOURS.7.CONDITION] == 7 || [WEATHER.HOURS.7.CONDITION] == 11) ? colorArgb(66, 230, 243, 255) : ([WEATHER.HOURS.7.CONDITION] == 9 ? colorArgb(66, 177, 132, 255) : (([WEATHER.HOURS.7.CONDITION] == 1 || [WEATHER.HOURS.7.CONDITION] == 8) ? ([WEATHER.HOURS.7.IS_DAY] ? colorArgb(66, 243, 217, 160) : colorArgb(66, 175, 192, 238)) : ([WEATHER.HOURS.7.CONDITION] == 14 ? colorArgb(66, 200, 211, 224) : (([WEATHER.HOURS.7.CONDITION] == 2 || [WEATHER.HOURS.7.CONDITION] == 3 || [WEATHER.HOURS.7.CONDITION] == 13) ? colorArgb(66, 126, 140, 163) : ([WEATHER.HOURS.7.CONDITION] == 15 ? colorArgb(66, 79, 209, 181) : colorArgb(66, 70, 82, 94)))))))) : colorArgb(0, 0, 0, 0))"/>
 <Transform target="thickness" value="(4 + 20 * clamp(([WEATHER.HOURS.7.TEMPERATURE] - [WEATHER.DAY_TEMPERATURE_LOW]) / ([WEATHER.DAY_TEMPERATURE_HIGH] - [WEATHER.DAY_TEMPERATURE_LOW] &gt; 1 ? [WEATHER.DAY_TEMPERATURE_HIGH] - [WEATHER.DAY_TEMPERATURE_LOW] : 1), 0, 1))"/>
 </Stroke>
 <Transform target="startAngle" value="((([HOUR_0_11] + 7) % 12) * 30 + 0.6)"/>
@@ -642,7 +592,7 @@
 </Arc>
 <Arc centerX="225" centerY="225" width="396" height="396" startAngle="0.6" endAngle="29.4">
 <Stroke color="#00000000" thickness="1.8">
-<Transform target="color" value="(([WEATHER.IS_AVAILABLE] &amp;&amp; [WEATHER.HOURS.7.IS_AVAILABLE]) ? (([WEATHER.HOURS.7.CONDITION] == 4 || [WEATHER.HOURS.7.CONDITION] == 6 || [WEATHER.HOURS.7.CONDITION] == 10 || [WEATHER.HOURS.7.CONDITION] == 12) ? colorArgb(242, 69, 200, 255) : (([WEATHER.HOURS.7.CONDITION] == 5 || [WEATHER.HOURS.7.CONDITION] == 7 || [WEATHER.HOURS.7.CONDITION] == 11) ? colorArgb(242, 230, 243, 255) : ([WEATHER.HOURS.7.CONDITION] == 9 ? colorArgb(242, 177, 132, 255) : (([WEATHER.HOURS.7.CONDITION] == 1 || [WEATHER.HOURS.7.CONDITION] == 8) ? ([WEATHER.HOURS.7.IS_DAY] ? colorArgb(242, 243, 217, 160) : colorArgb(242, 175, 192, 238)) : ([WEATHER.HOURS.7.CONDITION] == 14 ? colorArgb(242, 200, 211, 224) : (([WEATHER.HOURS.7.CONDITION] == 2 || [WEATHER.HOURS.7.CONDITION] == 3 || [WEATHER.HOURS.7.CONDITION] == 13) ? colorArgb(242, 126, 140, 163) : ([WEATHER.HOURS.7.CONDITION] == 15 ? colorArgb(242, 79, 209, 181) : colorArgb(242, 70, 82, 94)))))))) : colorArgb(0, 0, 0, 0))"/>
+<Transform target="color" value="(([WEATHER.IS_AVAILABLE] &amp;&amp; [WEATHER.HOURS.7.CONDITION] &gt; 0) ? (([WEATHER.HOURS.7.CONDITION] == 4 || [WEATHER.HOURS.7.CONDITION] == 6 || [WEATHER.HOURS.7.CONDITION] == 10 || [WEATHER.HOURS.7.CONDITION] == 12) ? colorArgb(242, 69, 200, 255) : (([WEATHER.HOURS.7.CONDITION] == 5 || [WEATHER.HOURS.7.CONDITION] == 7 || [WEATHER.HOURS.7.CONDITION] == 11) ? colorArgb(242, 230, 243, 255) : ([WEATHER.HOURS.7.CONDITION] == 9 ? colorArgb(242, 177, 132, 255) : (([WEATHER.HOURS.7.CONDITION] == 1 || [WEATHER.HOURS.7.CONDITION] == 8) ? ([WEATHER.HOURS.7.IS_DAY] ? colorArgb(242, 243, 217, 160) : colorArgb(242, 175, 192, 238)) : ([WEATHER.HOURS.7.CONDITION] == 14 ? colorArgb(242, 200, 211, 224) : (([WEATHER.HOURS.7.CONDITION] == 2 || [WEATHER.HOURS.7.CONDITION] == 3 || [WEATHER.HOURS.7.CONDITION] == 13) ? colorArgb(242, 126, 140, 163) : ([WEATHER.HOURS.7.CONDITION] == 15 ? colorArgb(242, 79, 209, 181) : colorArgb(242, 70, 82, 94)))))))) : colorArgb(0, 0, 0, 0))"/>
 </Stroke>
 <Transform target="startAngle" value="((([HOUR_0_11] + 7) % 12) * 30 + 0.6)"/>
 <Transform target="endAngle" value="((([HOUR_0_11] + 7) % 12) * 30 + 29.4)"/>
@@ -651,44 +601,37 @@
 </Arc>
 <Arc centerX="225" centerY="225" width="392" height="392" startAngle="0.6" endAngle="29.4">
 <Stroke color="#00000000" thickness="7" dashIntervals="1.2 4.6">
-<Transform target="color" value="(([WEATHER.IS_AVAILABLE] &amp;&amp; [WEATHER.HOURS.7.IS_AVAILABLE]) &amp;&amp; (([WEATHER.HOURS.7.CONDITION] == 4 || [WEATHER.HOURS.7.CONDITION] == 6 || [WEATHER.HOURS.7.CONDITION] == 10 || [WEATHER.HOURS.7.CONDITION] == 12) || [WEATHER.HOURS.7.CONDITION] == 9) ? colorArgb(230, 69, 200, 255) : colorArgb(0, 0, 0, 0))"/>
+<Transform target="color" value="(([WEATHER.IS_AVAILABLE] &amp;&amp; [WEATHER.HOURS.7.CONDITION] &gt; 0) &amp;&amp; (([WEATHER.HOURS.7.CONDITION] == 4 || [WEATHER.HOURS.7.CONDITION] == 6 || [WEATHER.HOURS.7.CONDITION] == 10 || [WEATHER.HOURS.7.CONDITION] == 12) || [WEATHER.HOURS.7.CONDITION] == 9) ? colorArgb(230, 69, 200, 255) : colorArgb(0, 0, 0, 0))"/>
 </Stroke>
 <Transform target="startAngle" value="((([HOUR_0_11] + 7) % 12) * 30 + 0.6)"/>
 <Transform target="endAngle" value="((([HOUR_0_11] + 7) % 12) * 30 + 29.4)"/>
 </Arc>
 <Arc centerX="225" centerY="225" width="394" height="394" startAngle="0.6" endAngle="29.4">
 <Stroke color="#00000000" thickness="2.4" dashIntervals="0.1 5" cap="ROUND">
-<Transform target="color" value="(([WEATHER.IS_AVAILABLE] &amp;&amp; [WEATHER.HOURS.7.IS_AVAILABLE]) &amp;&amp; ([WEATHER.HOURS.7.CONDITION] == 5 || [WEATHER.HOURS.7.CONDITION] == 7 || [WEATHER.HOURS.7.CONDITION] == 11) ? colorArgb(240, 230, 243, 255) : colorArgb(0, 0, 0, 0))"/>
+<Transform target="color" value="(([WEATHER.IS_AVAILABLE] &amp;&amp; [WEATHER.HOURS.7.CONDITION] &gt; 0) &amp;&amp; ([WEATHER.HOURS.7.CONDITION] == 5 || [WEATHER.HOURS.7.CONDITION] == 7 || [WEATHER.HOURS.7.CONDITION] == 11) ? colorArgb(240, 230, 243, 255) : colorArgb(0, 0, 0, 0))"/>
 </Stroke>
 <Transform target="startAngle" value="((([HOUR_0_11] + 7) % 12) * 30 + 0.6)"/>
 <Transform target="endAngle" value="((([HOUR_0_11] + 7) % 12) * 30 + 29.4)"/>
-</Arc>
-<Arc centerX="225" centerY="225" width="370" height="370" startAngle="14" endAngle="16">
-<Stroke color="#00000000" thickness="3" cap="ROUND">
-<Transform target="color" value="(([WEATHER.IS_AVAILABLE] &amp;&amp; [WEATHER.HOURS.7.IS_AVAILABLE]) &amp;&amp; [WEATHER.HOURS.7.UV_INDEX] &gt;= 6 ? colorArgb(255, 195, 139, 255) : colorArgb(0, 0, 0, 0))"/>
-</Stroke>
-<Transform target="startAngle" value="((([HOUR_0_11] + 7) % 12) * 30 + 0.6) + 13.4"/>
-<Transform target="endAngle" value="((([HOUR_0_11] + 7) % 12) * 30 + 0.6) + 15.4"/>
 </Arc>
 </PartDraw>
 <PartDraw name="ring_hour_8" x="0" y="0" width="450" height="450">
 <Arc centerX="225" centerY="225" width="386" height="386" startAngle="0.6" endAngle="29.4">
 <Stroke color="#00000000" thickness="6">
-<Transform target="color" value="(([WEATHER.IS_AVAILABLE] &amp;&amp; [WEATHER.HOURS.8.IS_AVAILABLE]) ? colorArgb(0, 0, 0, 0) : colorArgb(255, 26, 35, 44))"/>
+<Transform target="color" value="(([WEATHER.IS_AVAILABLE] &amp;&amp; [WEATHER.HOURS.8.CONDITION] &gt; 0) ? colorArgb(0, 0, 0, 0) : colorArgb(255, 26, 35, 44))"/>
 </Stroke>
 <Transform target="startAngle" value="((([HOUR_0_11] + 8) % 12) * 30 + 0.6)"/>
 <Transform target="endAngle" value="((([HOUR_0_11] + 8) % 12) * 30 + 29.4)"/>
 </Arc>
 <Arc centerX="225" centerY="225" width="436" height="436" startAngle="0.6" endAngle="29.4">
 <Stroke color="#00000000" thickness="4">
-<Transform target="color" value="(([WEATHER.IS_AVAILABLE] &amp;&amp; [WEATHER.HOURS.8.IS_AVAILABLE]) ? ([WEATHER.HOURS.8.IS_DAY] ? colorArgb(140, 233, 196, 106) : colorArgb(204, 51, 70, 160)) : colorArgb(0, 0, 0, 0))"/>
+<Transform target="color" value="(([WEATHER.IS_AVAILABLE] &amp;&amp; [WEATHER.HOURS.8.CONDITION] &gt; 0) ? ([WEATHER.HOURS.8.IS_DAY] ? colorArgb(140, 233, 196, 106) : colorArgb(204, 51, 70, 160)) : colorArgb(0, 0, 0, 0))"/>
 </Stroke>
 <Transform target="startAngle" value="((([HOUR_0_11] + 8) % 12) * 30 + 0.6)"/>
 <Transform target="endAngle" value="((([HOUR_0_11] + 8) % 12) * 30 + 29.4)"/>
 </Arc>
 <Arc centerX="225" centerY="225" width="388" height="388" startAngle="0.6" endAngle="29.4">
 <Stroke color="#00000000" thickness="8">
-<Transform target="color" value="(([WEATHER.IS_AVAILABLE] &amp;&amp; [WEATHER.HOURS.8.IS_AVAILABLE]) ? (([WEATHER.HOURS.8.CONDITION] == 4 || [WEATHER.HOURS.8.CONDITION] == 6 || [WEATHER.HOURS.8.CONDITION] == 10 || [WEATHER.HOURS.8.CONDITION] == 12) ? colorArgb(66, 69, 200, 255) : (([WEATHER.HOURS.8.CONDITION] == 5 || [WEATHER.HOURS.8.CONDITION] == 7 || [WEATHER.HOURS.8.CONDITION] == 11) ? colorArgb(66, 230, 243, 255) : ([WEATHER.HOURS.8.CONDITION] == 9 ? colorArgb(66, 177, 132, 255) : (([WEATHER.HOURS.8.CONDITION] == 1 || [WEATHER.HOURS.8.CONDITION] == 8) ? ([WEATHER.HOURS.8.IS_DAY] ? colorArgb(66, 243, 217, 160) : colorArgb(66, 175, 192, 238)) : ([WEATHER.HOURS.8.CONDITION] == 14 ? colorArgb(66, 200, 211, 224) : (([WEATHER.HOURS.8.CONDITION] == 2 || [WEATHER.HOURS.8.CONDITION] == 3 || [WEATHER.HOURS.8.CONDITION] == 13) ? colorArgb(66, 126, 140, 163) : ([WEATHER.HOURS.8.CONDITION] == 15 ? colorArgb(66, 79, 209, 181) : colorArgb(66, 70, 82, 94)))))))) : colorArgb(0, 0, 0, 0))"/>
+<Transform target="color" value="(([WEATHER.IS_AVAILABLE] &amp;&amp; [WEATHER.HOURS.8.CONDITION] &gt; 0) ? (([WEATHER.HOURS.8.CONDITION] == 4 || [WEATHER.HOURS.8.CONDITION] == 6 || [WEATHER.HOURS.8.CONDITION] == 10 || [WEATHER.HOURS.8.CONDITION] == 12) ? colorArgb(66, 69, 200, 255) : (([WEATHER.HOURS.8.CONDITION] == 5 || [WEATHER.HOURS.8.CONDITION] == 7 || [WEATHER.HOURS.8.CONDITION] == 11) ? colorArgb(66, 230, 243, 255) : ([WEATHER.HOURS.8.CONDITION] == 9 ? colorArgb(66, 177, 132, 255) : (([WEATHER.HOURS.8.CONDITION] == 1 || [WEATHER.HOURS.8.CONDITION] == 8) ? ([WEATHER.HOURS.8.IS_DAY] ? colorArgb(66, 243, 217, 160) : colorArgb(66, 175, 192, 238)) : ([WEATHER.HOURS.8.CONDITION] == 14 ? colorArgb(66, 200, 211, 224) : (([WEATHER.HOURS.8.CONDITION] == 2 || [WEATHER.HOURS.8.CONDITION] == 3 || [WEATHER.HOURS.8.CONDITION] == 13) ? colorArgb(66, 126, 140, 163) : ([WEATHER.HOURS.8.CONDITION] == 15 ? colorArgb(66, 79, 209, 181) : colorArgb(66, 70, 82, 94)))))))) : colorArgb(0, 0, 0, 0))"/>
 <Transform target="thickness" value="(4 + 20 * clamp(([WEATHER.HOURS.8.TEMPERATURE] - [WEATHER.DAY_TEMPERATURE_LOW]) / ([WEATHER.DAY_TEMPERATURE_HIGH] - [WEATHER.DAY_TEMPERATURE_LOW] &gt; 1 ? [WEATHER.DAY_TEMPERATURE_HIGH] - [WEATHER.DAY_TEMPERATURE_LOW] : 1), 0, 1))"/>
 </Stroke>
 <Transform target="startAngle" value="((([HOUR_0_11] + 8) % 12) * 30 + 0.6)"/>
@@ -698,7 +641,7 @@
 </Arc>
 <Arc centerX="225" centerY="225" width="396" height="396" startAngle="0.6" endAngle="29.4">
 <Stroke color="#00000000" thickness="1.8">
-<Transform target="color" value="(([WEATHER.IS_AVAILABLE] &amp;&amp; [WEATHER.HOURS.8.IS_AVAILABLE]) ? (([WEATHER.HOURS.8.CONDITION] == 4 || [WEATHER.HOURS.8.CONDITION] == 6 || [WEATHER.HOURS.8.CONDITION] == 10 || [WEATHER.HOURS.8.CONDITION] == 12) ? colorArgb(242, 69, 200, 255) : (([WEATHER.HOURS.8.CONDITION] == 5 || [WEATHER.HOURS.8.CONDITION] == 7 || [WEATHER.HOURS.8.CONDITION] == 11) ? colorArgb(242, 230, 243, 255) : ([WEATHER.HOURS.8.CONDITION] == 9 ? colorArgb(242, 177, 132, 255) : (([WEATHER.HOURS.8.CONDITION] == 1 || [WEATHER.HOURS.8.CONDITION] == 8) ? ([WEATHER.HOURS.8.IS_DAY] ? colorArgb(242, 243, 217, 160) : colorArgb(242, 175, 192, 238)) : ([WEATHER.HOURS.8.CONDITION] == 14 ? colorArgb(242, 200, 211, 224) : (([WEATHER.HOURS.8.CONDITION] == 2 || [WEATHER.HOURS.8.CONDITION] == 3 || [WEATHER.HOURS.8.CONDITION] == 13) ? colorArgb(242, 126, 140, 163) : ([WEATHER.HOURS.8.CONDITION] == 15 ? colorArgb(242, 79, 209, 181) : colorArgb(242, 70, 82, 94)))))))) : colorArgb(0, 0, 0, 0))"/>
+<Transform target="color" value="(([WEATHER.IS_AVAILABLE] &amp;&amp; [WEATHER.HOURS.8.CONDITION] &gt; 0) ? (([WEATHER.HOURS.8.CONDITION] == 4 || [WEATHER.HOURS.8.CONDITION] == 6 || [WEATHER.HOURS.8.CONDITION] == 10 || [WEATHER.HOURS.8.CONDITION] == 12) ? colorArgb(242, 69, 200, 255) : (([WEATHER.HOURS.8.CONDITION] == 5 || [WEATHER.HOURS.8.CONDITION] == 7 || [WEATHER.HOURS.8.CONDITION] == 11) ? colorArgb(242, 230, 243, 255) : ([WEATHER.HOURS.8.CONDITION] == 9 ? colorArgb(242, 177, 132, 255) : (([WEATHER.HOURS.8.CONDITION] == 1 || [WEATHER.HOURS.8.CONDITION] == 8) ? ([WEATHER.HOURS.8.IS_DAY] ? colorArgb(242, 243, 217, 160) : colorArgb(242, 175, 192, 238)) : ([WEATHER.HOURS.8.CONDITION] == 14 ? colorArgb(242, 200, 211, 224) : (([WEATHER.HOURS.8.CONDITION] == 2 || [WEATHER.HOURS.8.CONDITION] == 3 || [WEATHER.HOURS.8.CONDITION] == 13) ? colorArgb(242, 126, 140, 163) : ([WEATHER.HOURS.8.CONDITION] == 15 ? colorArgb(242, 79, 209, 181) : colorArgb(242, 70, 82, 94)))))))) : colorArgb(0, 0, 0, 0))"/>
 </Stroke>
 <Transform target="startAngle" value="((([HOUR_0_11] + 8) % 12) * 30 + 0.6)"/>
 <Transform target="endAngle" value="((([HOUR_0_11] + 8) % 12) * 30 + 29.4)"/>
@@ -707,44 +650,37 @@
 </Arc>
 <Arc centerX="225" centerY="225" width="392" height="392" startAngle="0.6" endAngle="29.4">
 <Stroke color="#00000000" thickness="7" dashIntervals="1.2 4.6">
-<Transform target="color" value="(([WEATHER.IS_AVAILABLE] &amp;&amp; [WEATHER.HOURS.8.IS_AVAILABLE]) &amp;&amp; (([WEATHER.HOURS.8.CONDITION] == 4 || [WEATHER.HOURS.8.CONDITION] == 6 || [WEATHER.HOURS.8.CONDITION] == 10 || [WEATHER.HOURS.8.CONDITION] == 12) || [WEATHER.HOURS.8.CONDITION] == 9) ? colorArgb(230, 69, 200, 255) : colorArgb(0, 0, 0, 0))"/>
+<Transform target="color" value="(([WEATHER.IS_AVAILABLE] &amp;&amp; [WEATHER.HOURS.8.CONDITION] &gt; 0) &amp;&amp; (([WEATHER.HOURS.8.CONDITION] == 4 || [WEATHER.HOURS.8.CONDITION] == 6 || [WEATHER.HOURS.8.CONDITION] == 10 || [WEATHER.HOURS.8.CONDITION] == 12) || [WEATHER.HOURS.8.CONDITION] == 9) ? colorArgb(230, 69, 200, 255) : colorArgb(0, 0, 0, 0))"/>
 </Stroke>
 <Transform target="startAngle" value="((([HOUR_0_11] + 8) % 12) * 30 + 0.6)"/>
 <Transform target="endAngle" value="((([HOUR_0_11] + 8) % 12) * 30 + 29.4)"/>
 </Arc>
 <Arc centerX="225" centerY="225" width="394" height="394" startAngle="0.6" endAngle="29.4">
 <Stroke color="#00000000" thickness="2.4" dashIntervals="0.1 5" cap="ROUND">
-<Transform target="color" value="(([WEATHER.IS_AVAILABLE] &amp;&amp; [WEATHER.HOURS.8.IS_AVAILABLE]) &amp;&amp; ([WEATHER.HOURS.8.CONDITION] == 5 || [WEATHER.HOURS.8.CONDITION] == 7 || [WEATHER.HOURS.8.CONDITION] == 11) ? colorArgb(240, 230, 243, 255) : colorArgb(0, 0, 0, 0))"/>
+<Transform target="color" value="(([WEATHER.IS_AVAILABLE] &amp;&amp; [WEATHER.HOURS.8.CONDITION] &gt; 0) &amp;&amp; ([WEATHER.HOURS.8.CONDITION] == 5 || [WEATHER.HOURS.8.CONDITION] == 7 || [WEATHER.HOURS.8.CONDITION] == 11) ? colorArgb(240, 230, 243, 255) : colorArgb(0, 0, 0, 0))"/>
 </Stroke>
 <Transform target="startAngle" value="((([HOUR_0_11] + 8) % 12) * 30 + 0.6)"/>
 <Transform target="endAngle" value="((([HOUR_0_11] + 8) % 12) * 30 + 29.4)"/>
-</Arc>
-<Arc centerX="225" centerY="225" width="370" height="370" startAngle="14" endAngle="16">
-<Stroke color="#00000000" thickness="3" cap="ROUND">
-<Transform target="color" value="(([WEATHER.IS_AVAILABLE] &amp;&amp; [WEATHER.HOURS.8.IS_AVAILABLE]) &amp;&amp; [WEATHER.HOURS.8.UV_INDEX] &gt;= 6 ? colorArgb(255, 195, 139, 255) : colorArgb(0, 0, 0, 0))"/>
-</Stroke>
-<Transform target="startAngle" value="((([HOUR_0_11] + 8) % 12) * 30 + 0.6) + 13.4"/>
-<Transform target="endAngle" value="((([HOUR_0_11] + 8) % 12) * 30 + 0.6) + 15.4"/>
 </Arc>
 </PartDraw>
 <PartDraw name="ring_hour_9" x="0" y="0" width="450" height="450">
 <Arc centerX="225" centerY="225" width="386" height="386" startAngle="0.6" endAngle="29.4">
 <Stroke color="#00000000" thickness="6">
-<Transform target="color" value="(([WEATHER.IS_AVAILABLE] &amp;&amp; [WEATHER.HOURS.9.IS_AVAILABLE]) ? colorArgb(0, 0, 0, 0) : colorArgb(255, 26, 35, 44))"/>
+<Transform target="color" value="(([WEATHER.IS_AVAILABLE] &amp;&amp; [WEATHER.HOURS.9.CONDITION] &gt; 0) ? colorArgb(0, 0, 0, 0) : colorArgb(255, 26, 35, 44))"/>
 </Stroke>
 <Transform target="startAngle" value="((([HOUR_0_11] + 9) % 12) * 30 + 0.6)"/>
 <Transform target="endAngle" value="((([HOUR_0_11] + 9) % 12) * 30 + 29.4)"/>
 </Arc>
 <Arc centerX="225" centerY="225" width="436" height="436" startAngle="0.6" endAngle="29.4">
 <Stroke color="#00000000" thickness="4">
-<Transform target="color" value="(([WEATHER.IS_AVAILABLE] &amp;&amp; [WEATHER.HOURS.9.IS_AVAILABLE]) ? ([WEATHER.HOURS.9.IS_DAY] ? colorArgb(140, 233, 196, 106) : colorArgb(204, 51, 70, 160)) : colorArgb(0, 0, 0, 0))"/>
+<Transform target="color" value="(([WEATHER.IS_AVAILABLE] &amp;&amp; [WEATHER.HOURS.9.CONDITION] &gt; 0) ? ([WEATHER.HOURS.9.IS_DAY] ? colorArgb(140, 233, 196, 106) : colorArgb(204, 51, 70, 160)) : colorArgb(0, 0, 0, 0))"/>
 </Stroke>
 <Transform target="startAngle" value="((([HOUR_0_11] + 9) % 12) * 30 + 0.6)"/>
 <Transform target="endAngle" value="((([HOUR_0_11] + 9) % 12) * 30 + 29.4)"/>
 </Arc>
 <Arc centerX="225" centerY="225" width="388" height="388" startAngle="0.6" endAngle="29.4">
 <Stroke color="#00000000" thickness="8">
-<Transform target="color" value="(([WEATHER.IS_AVAILABLE] &amp;&amp; [WEATHER.HOURS.9.IS_AVAILABLE]) ? (([WEATHER.HOURS.9.CONDITION] == 4 || [WEATHER.HOURS.9.CONDITION] == 6 || [WEATHER.HOURS.9.CONDITION] == 10 || [WEATHER.HOURS.9.CONDITION] == 12) ? colorArgb(66, 69, 200, 255) : (([WEATHER.HOURS.9.CONDITION] == 5 || [WEATHER.HOURS.9.CONDITION] == 7 || [WEATHER.HOURS.9.CONDITION] == 11) ? colorArgb(66, 230, 243, 255) : ([WEATHER.HOURS.9.CONDITION] == 9 ? colorArgb(66, 177, 132, 255) : (([WEATHER.HOURS.9.CONDITION] == 1 || [WEATHER.HOURS.9.CONDITION] == 8) ? ([WEATHER.HOURS.9.IS_DAY] ? colorArgb(66, 243, 217, 160) : colorArgb(66, 175, 192, 238)) : ([WEATHER.HOURS.9.CONDITION] == 14 ? colorArgb(66, 200, 211, 224) : (([WEATHER.HOURS.9.CONDITION] == 2 || [WEATHER.HOURS.9.CONDITION] == 3 || [WEATHER.HOURS.9.CONDITION] == 13) ? colorArgb(66, 126, 140, 163) : ([WEATHER.HOURS.9.CONDITION] == 15 ? colorArgb(66, 79, 209, 181) : colorArgb(66, 70, 82, 94)))))))) : colorArgb(0, 0, 0, 0))"/>
+<Transform target="color" value="(([WEATHER.IS_AVAILABLE] &amp;&amp; [WEATHER.HOURS.9.CONDITION] &gt; 0) ? (([WEATHER.HOURS.9.CONDITION] == 4 || [WEATHER.HOURS.9.CONDITION] == 6 || [WEATHER.HOURS.9.CONDITION] == 10 || [WEATHER.HOURS.9.CONDITION] == 12) ? colorArgb(66, 69, 200, 255) : (([WEATHER.HOURS.9.CONDITION] == 5 || [WEATHER.HOURS.9.CONDITION] == 7 || [WEATHER.HOURS.9.CONDITION] == 11) ? colorArgb(66, 230, 243, 255) : ([WEATHER.HOURS.9.CONDITION] == 9 ? colorArgb(66, 177, 132, 255) : (([WEATHER.HOURS.9.CONDITION] == 1 || [WEATHER.HOURS.9.CONDITION] == 8) ? ([WEATHER.HOURS.9.IS_DAY] ? colorArgb(66, 243, 217, 160) : colorArgb(66, 175, 192, 238)) : ([WEATHER.HOURS.9.CONDITION] == 14 ? colorArgb(66, 200, 211, 224) : (([WEATHER.HOURS.9.CONDITION] == 2 || [WEATHER.HOURS.9.CONDITION] == 3 || [WEATHER.HOURS.9.CONDITION] == 13) ? colorArgb(66, 126, 140, 163) : ([WEATHER.HOURS.9.CONDITION] == 15 ? colorArgb(66, 79, 209, 181) : colorArgb(66, 70, 82, 94)))))))) : colorArgb(0, 0, 0, 0))"/>
 <Transform target="thickness" value="(4 + 20 * clamp(([WEATHER.HOURS.9.TEMPERATURE] - [WEATHER.DAY_TEMPERATURE_LOW]) / ([WEATHER.DAY_TEMPERATURE_HIGH] - [WEATHER.DAY_TEMPERATURE_LOW] &gt; 1 ? [WEATHER.DAY_TEMPERATURE_HIGH] - [WEATHER.DAY_TEMPERATURE_LOW] : 1), 0, 1))"/>
 </Stroke>
 <Transform target="startAngle" value="((([HOUR_0_11] + 9) % 12) * 30 + 0.6)"/>
@@ -754,7 +690,7 @@
 </Arc>
 <Arc centerX="225" centerY="225" width="396" height="396" startAngle="0.6" endAngle="29.4">
 <Stroke color="#00000000" thickness="1.8">
-<Transform target="color" value="(([WEATHER.IS_AVAILABLE] &amp;&amp; [WEATHER.HOURS.9.IS_AVAILABLE]) ? (([WEATHER.HOURS.9.CONDITION] == 4 || [WEATHER.HOURS.9.CONDITION] == 6 || [WEATHER.HOURS.9.CONDITION] == 10 || [WEATHER.HOURS.9.CONDITION] == 12) ? colorArgb(242, 69, 200, 255) : (([WEATHER.HOURS.9.CONDITION] == 5 || [WEATHER.HOURS.9.CONDITION] == 7 || [WEATHER.HOURS.9.CONDITION] == 11) ? colorArgb(242, 230, 243, 255) : ([WEATHER.HOURS.9.CONDITION] == 9 ? colorArgb(242, 177, 132, 255) : (([WEATHER.HOURS.9.CONDITION] == 1 || [WEATHER.HOURS.9.CONDITION] == 8) ? ([WEATHER.HOURS.9.IS_DAY] ? colorArgb(242, 243, 217, 160) : colorArgb(242, 175, 192, 238)) : ([WEATHER.HOURS.9.CONDITION] == 14 ? colorArgb(242, 200, 211, 224) : (([WEATHER.HOURS.9.CONDITION] == 2 || [WEATHER.HOURS.9.CONDITION] == 3 || [WEATHER.HOURS.9.CONDITION] == 13) ? colorArgb(242, 126, 140, 163) : ([WEATHER.HOURS.9.CONDITION] == 15 ? colorArgb(242, 79, 209, 181) : colorArgb(242, 70, 82, 94)))))))) : colorArgb(0, 0, 0, 0))"/>
+<Transform target="color" value="(([WEATHER.IS_AVAILABLE] &amp;&amp; [WEATHER.HOURS.9.CONDITION] &gt; 0) ? (([WEATHER.HOURS.9.CONDITION] == 4 || [WEATHER.HOURS.9.CONDITION] == 6 || [WEATHER.HOURS.9.CONDITION] == 10 || [WEATHER.HOURS.9.CONDITION] == 12) ? colorArgb(242, 69, 200, 255) : (([WEATHER.HOURS.9.CONDITION] == 5 || [WEATHER.HOURS.9.CONDITION] == 7 || [WEATHER.HOURS.9.CONDITION] == 11) ? colorArgb(242, 230, 243, 255) : ([WEATHER.HOURS.9.CONDITION] == 9 ? colorArgb(242, 177, 132, 255) : (([WEATHER.HOURS.9.CONDITION] == 1 || [WEATHER.HOURS.9.CONDITION] == 8) ? ([WEATHER.HOURS.9.IS_DAY] ? colorArgb(242, 243, 217, 160) : colorArgb(242, 175, 192, 238)) : ([WEATHER.HOURS.9.CONDITION] == 14 ? colorArgb(242, 200, 211, 224) : (([WEATHER.HOURS.9.CONDITION] == 2 || [WEATHER.HOURS.9.CONDITION] == 3 || [WEATHER.HOURS.9.CONDITION] == 13) ? colorArgb(242, 126, 140, 163) : ([WEATHER.HOURS.9.CONDITION] == 15 ? colorArgb(242, 79, 209, 181) : colorArgb(242, 70, 82, 94)))))))) : colorArgb(0, 0, 0, 0))"/>
 </Stroke>
 <Transform target="startAngle" value="((([HOUR_0_11] + 9) % 12) * 30 + 0.6)"/>
 <Transform target="endAngle" value="((([HOUR_0_11] + 9) % 12) * 30 + 29.4)"/>
@@ -763,30 +699,23 @@
 </Arc>
 <Arc centerX="225" centerY="225" width="392" height="392" startAngle="0.6" endAngle="29.4">
 <Stroke color="#00000000" thickness="7" dashIntervals="1.2 4.6">
-<Transform target="color" value="(([WEATHER.IS_AVAILABLE] &amp;&amp; [WEATHER.HOURS.9.IS_AVAILABLE]) &amp;&amp; (([WEATHER.HOURS.9.CONDITION] == 4 || [WEATHER.HOURS.9.CONDITION] == 6 || [WEATHER.HOURS.9.CONDITION] == 10 || [WEATHER.HOURS.9.CONDITION] == 12) || [WEATHER.HOURS.9.CONDITION] == 9) ? colorArgb(230, 69, 200, 255) : colorArgb(0, 0, 0, 0))"/>
+<Transform target="color" value="(([WEATHER.IS_AVAILABLE] &amp;&amp; [WEATHER.HOURS.9.CONDITION] &gt; 0) &amp;&amp; (([WEATHER.HOURS.9.CONDITION] == 4 || [WEATHER.HOURS.9.CONDITION] == 6 || [WEATHER.HOURS.9.CONDITION] == 10 || [WEATHER.HOURS.9.CONDITION] == 12) || [WEATHER.HOURS.9.CONDITION] == 9) ? colorArgb(230, 69, 200, 255) : colorArgb(0, 0, 0, 0))"/>
 </Stroke>
 <Transform target="startAngle" value="((([HOUR_0_11] + 9) % 12) * 30 + 0.6)"/>
 <Transform target="endAngle" value="((([HOUR_0_11] + 9) % 12) * 30 + 29.4)"/>
 </Arc>
 <Arc centerX="225" centerY="225" width="394" height="394" startAngle="0.6" endAngle="29.4">
 <Stroke color="#00000000" thickness="2.4" dashIntervals="0.1 5" cap="ROUND">
-<Transform target="color" value="(([WEATHER.IS_AVAILABLE] &amp;&amp; [WEATHER.HOURS.9.IS_AVAILABLE]) &amp;&amp; ([WEATHER.HOURS.9.CONDITION] == 5 || [WEATHER.HOURS.9.CONDITION] == 7 || [WEATHER.HOURS.9.CONDITION] == 11) ? colorArgb(240, 230, 243, 255) : colorArgb(0, 0, 0, 0))"/>
+<Transform target="color" value="(([WEATHER.IS_AVAILABLE] &amp;&amp; [WEATHER.HOURS.9.CONDITION] &gt; 0) &amp;&amp; ([WEATHER.HOURS.9.CONDITION] == 5 || [WEATHER.HOURS.9.CONDITION] == 7 || [WEATHER.HOURS.9.CONDITION] == 11) ? colorArgb(240, 230, 243, 255) : colorArgb(0, 0, 0, 0))"/>
 </Stroke>
 <Transform target="startAngle" value="((([HOUR_0_11] + 9) % 12) * 30 + 0.6)"/>
 <Transform target="endAngle" value="((([HOUR_0_11] + 9) % 12) * 30 + 29.4)"/>
-</Arc>
-<Arc centerX="225" centerY="225" width="370" height="370" startAngle="14" endAngle="16">
-<Stroke color="#00000000" thickness="3" cap="ROUND">
-<Transform target="color" value="(([WEATHER.IS_AVAILABLE] &amp;&amp; [WEATHER.HOURS.9.IS_AVAILABLE]) &amp;&amp; [WEATHER.HOURS.9.UV_INDEX] &gt;= 6 ? colorArgb(255, 195, 139, 255) : colorArgb(0, 0, 0, 0))"/>
-</Stroke>
-<Transform target="startAngle" value="((([HOUR_0_11] + 9) % 12) * 30 + 0.6) + 13.4"/>
-<Transform target="endAngle" value="((([HOUR_0_11] + 9) % 12) * 30 + 0.6) + 15.4"/>
 </Arc>
 </PartDraw>
 <PartDraw name="ring_label_bg_9" x="0" y="0" width="40" height="18">
 <Transform target="x" value="225 + 204 * sin(rad(((([HOUR_0_11] + 9) % 12) * 30 + 0.6) + 14.4)) - 20"/>
 <Transform target="y" value="225 - 204 * cos(rad(((([HOUR_0_11] + 9) % 12) * 30 + 0.6) + 14.4)) - 9"/>
-<Transform target="alpha" value="([WEATHER.IS_AVAILABLE] &amp;&amp; [WEATHER.HOURS.9.IS_AVAILABLE]) ? 255 : 0"/>
+<Transform target="alpha" value="([WEATHER.IS_AVAILABLE] &amp;&amp; [WEATHER.HOURS.9.CONDITION] &gt; 0) ? 255 : 0"/>
 <RoundRectangle x="0" y="0" width="40" height="18" cornerRadiusX="9" cornerRadiusY="9">
 <Fill color="#C8000000"/>
 </RoundRectangle>
@@ -794,7 +723,7 @@
 <PartText name="ring_label_9" x="0" y="0" width="40" height="18">
 <Transform target="x" value="225 + 204 * sin(rad(((([HOUR_0_11] + 9) % 12) * 30 + 0.6) + 14.4)) - 20"/>
 <Transform target="y" value="225 - 204 * cos(rad(((([HOUR_0_11] + 9) % 12) * 30 + 0.6) + 14.4)) - 9"/>
-<Transform target="alpha" value="([WEATHER.IS_AVAILABLE] &amp;&amp; [WEATHER.HOURS.9.IS_AVAILABLE]) ? 255 : 0"/>
+<Transform target="alpha" value="([WEATHER.IS_AVAILABLE] &amp;&amp; [WEATHER.HOURS.9.CONDITION] &gt; 0) ? 255 : 0"/>
 <Text align="CENTER" ellipsis="TRUE">
 <Font family="plex_mono_semibold" size="13" color="#FFFFFFFF">
 <Template>%s°<Parameter expression="[WEATHER.HOURS.9.TEMPERATURE]"/>
@@ -805,21 +734,21 @@
 <PartDraw name="ring_hour_10" x="0" y="0" width="450" height="450">
 <Arc centerX="225" centerY="225" width="386" height="386" startAngle="0.6" endAngle="29.4">
 <Stroke color="#00000000" thickness="6">
-<Transform target="color" value="(([WEATHER.IS_AVAILABLE] &amp;&amp; [WEATHER.HOURS.10.IS_AVAILABLE]) ? colorArgb(0, 0, 0, 0) : colorArgb(255, 26, 35, 44))"/>
+<Transform target="color" value="(([WEATHER.IS_AVAILABLE] &amp;&amp; [WEATHER.HOURS.10.CONDITION] &gt; 0) ? colorArgb(0, 0, 0, 0) : colorArgb(255, 26, 35, 44))"/>
 </Stroke>
 <Transform target="startAngle" value="((([HOUR_0_11] + 10) % 12) * 30 + 0.6)"/>
 <Transform target="endAngle" value="((([HOUR_0_11] + 10) % 12) * 30 + 29.4)"/>
 </Arc>
 <Arc centerX="225" centerY="225" width="436" height="436" startAngle="0.6" endAngle="29.4">
 <Stroke color="#00000000" thickness="4">
-<Transform target="color" value="(([WEATHER.IS_AVAILABLE] &amp;&amp; [WEATHER.HOURS.10.IS_AVAILABLE]) ? ([WEATHER.HOURS.10.IS_DAY] ? colorArgb(140, 233, 196, 106) : colorArgb(204, 51, 70, 160)) : colorArgb(0, 0, 0, 0))"/>
+<Transform target="color" value="(([WEATHER.IS_AVAILABLE] &amp;&amp; [WEATHER.HOURS.10.CONDITION] &gt; 0) ? ([WEATHER.HOURS.10.IS_DAY] ? colorArgb(140, 233, 196, 106) : colorArgb(204, 51, 70, 160)) : colorArgb(0, 0, 0, 0))"/>
 </Stroke>
 <Transform target="startAngle" value="((([HOUR_0_11] + 10) % 12) * 30 + 0.6)"/>
 <Transform target="endAngle" value="((([HOUR_0_11] + 10) % 12) * 30 + 29.4)"/>
 </Arc>
 <Arc centerX="225" centerY="225" width="388" height="388" startAngle="0.6" endAngle="29.4">
 <Stroke color="#00000000" thickness="8">
-<Transform target="color" value="(([WEATHER.IS_AVAILABLE] &amp;&amp; [WEATHER.HOURS.10.IS_AVAILABLE]) ? (([WEATHER.HOURS.10.CONDITION] == 4 || [WEATHER.HOURS.10.CONDITION] == 6 || [WEATHER.HOURS.10.CONDITION] == 10 || [WEATHER.HOURS.10.CONDITION] == 12) ? colorArgb(66, 69, 200, 255) : (([WEATHER.HOURS.10.CONDITION] == 5 || [WEATHER.HOURS.10.CONDITION] == 7 || [WEATHER.HOURS.10.CONDITION] == 11) ? colorArgb(66, 230, 243, 255) : ([WEATHER.HOURS.10.CONDITION] == 9 ? colorArgb(66, 177, 132, 255) : (([WEATHER.HOURS.10.CONDITION] == 1 || [WEATHER.HOURS.10.CONDITION] == 8) ? ([WEATHER.HOURS.10.IS_DAY] ? colorArgb(66, 243, 217, 160) : colorArgb(66, 175, 192, 238)) : ([WEATHER.HOURS.10.CONDITION] == 14 ? colorArgb(66, 200, 211, 224) : (([WEATHER.HOURS.10.CONDITION] == 2 || [WEATHER.HOURS.10.CONDITION] == 3 || [WEATHER.HOURS.10.CONDITION] == 13) ? colorArgb(66, 126, 140, 163) : ([WEATHER.HOURS.10.CONDITION] == 15 ? colorArgb(66, 79, 209, 181) : colorArgb(66, 70, 82, 94)))))))) : colorArgb(0, 0, 0, 0))"/>
+<Transform target="color" value="(([WEATHER.IS_AVAILABLE] &amp;&amp; [WEATHER.HOURS.10.CONDITION] &gt; 0) ? (([WEATHER.HOURS.10.CONDITION] == 4 || [WEATHER.HOURS.10.CONDITION] == 6 || [WEATHER.HOURS.10.CONDITION] == 10 || [WEATHER.HOURS.10.CONDITION] == 12) ? colorArgb(66, 69, 200, 255) : (([WEATHER.HOURS.10.CONDITION] == 5 || [WEATHER.HOURS.10.CONDITION] == 7 || [WEATHER.HOURS.10.CONDITION] == 11) ? colorArgb(66, 230, 243, 255) : ([WEATHER.HOURS.10.CONDITION] == 9 ? colorArgb(66, 177, 132, 255) : (([WEATHER.HOURS.10.CONDITION] == 1 || [WEATHER.HOURS.10.CONDITION] == 8) ? ([WEATHER.HOURS.10.IS_DAY] ? colorArgb(66, 243, 217, 160) : colorArgb(66, 175, 192, 238)) : ([WEATHER.HOURS.10.CONDITION] == 14 ? colorArgb(66, 200, 211, 224) : (([WEATHER.HOURS.10.CONDITION] == 2 || [WEATHER.HOURS.10.CONDITION] == 3 || [WEATHER.HOURS.10.CONDITION] == 13) ? colorArgb(66, 126, 140, 163) : ([WEATHER.HOURS.10.CONDITION] == 15 ? colorArgb(66, 79, 209, 181) : colorArgb(66, 70, 82, 94)))))))) : colorArgb(0, 0, 0, 0))"/>
 <Transform target="thickness" value="(4 + 20 * clamp(([WEATHER.HOURS.10.TEMPERATURE] - [WEATHER.DAY_TEMPERATURE_LOW]) / ([WEATHER.DAY_TEMPERATURE_HIGH] - [WEATHER.DAY_TEMPERATURE_LOW] &gt; 1 ? [WEATHER.DAY_TEMPERATURE_HIGH] - [WEATHER.DAY_TEMPERATURE_LOW] : 1), 0, 1))"/>
 </Stroke>
 <Transform target="startAngle" value="((([HOUR_0_11] + 10) % 12) * 30 + 0.6)"/>
@@ -829,7 +758,7 @@
 </Arc>
 <Arc centerX="225" centerY="225" width="396" height="396" startAngle="0.6" endAngle="29.4">
 <Stroke color="#00000000" thickness="1.8">
-<Transform target="color" value="(([WEATHER.IS_AVAILABLE] &amp;&amp; [WEATHER.HOURS.10.IS_AVAILABLE]) ? (([WEATHER.HOURS.10.CONDITION] == 4 || [WEATHER.HOURS.10.CONDITION] == 6 || [WEATHER.HOURS.10.CONDITION] == 10 || [WEATHER.HOURS.10.CONDITION] == 12) ? colorArgb(242, 69, 200, 255) : (([WEATHER.HOURS.10.CONDITION] == 5 || [WEATHER.HOURS.10.CONDITION] == 7 || [WEATHER.HOURS.10.CONDITION] == 11) ? colorArgb(242, 230, 243, 255) : ([WEATHER.HOURS.10.CONDITION] == 9 ? colorArgb(242, 177, 132, 255) : (([WEATHER.HOURS.10.CONDITION] == 1 || [WEATHER.HOURS.10.CONDITION] == 8) ? ([WEATHER.HOURS.10.IS_DAY] ? colorArgb(242, 243, 217, 160) : colorArgb(242, 175, 192, 238)) : ([WEATHER.HOURS.10.CONDITION] == 14 ? colorArgb(242, 200, 211, 224) : (([WEATHER.HOURS.10.CONDITION] == 2 || [WEATHER.HOURS.10.CONDITION] == 3 || [WEATHER.HOURS.10.CONDITION] == 13) ? colorArgb(242, 126, 140, 163) : ([WEATHER.HOURS.10.CONDITION] == 15 ? colorArgb(242, 79, 209, 181) : colorArgb(242, 70, 82, 94)))))))) : colorArgb(0, 0, 0, 0))"/>
+<Transform target="color" value="(([WEATHER.IS_AVAILABLE] &amp;&amp; [WEATHER.HOURS.10.CONDITION] &gt; 0) ? (([WEATHER.HOURS.10.CONDITION] == 4 || [WEATHER.HOURS.10.CONDITION] == 6 || [WEATHER.HOURS.10.CONDITION] == 10 || [WEATHER.HOURS.10.CONDITION] == 12) ? colorArgb(242, 69, 200, 255) : (([WEATHER.HOURS.10.CONDITION] == 5 || [WEATHER.HOURS.10.CONDITION] == 7 || [WEATHER.HOURS.10.CONDITION] == 11) ? colorArgb(242, 230, 243, 255) : ([WEATHER.HOURS.10.CONDITION] == 9 ? colorArgb(242, 177, 132, 255) : (([WEATHER.HOURS.10.CONDITION] == 1 || [WEATHER.HOURS.10.CONDITION] == 8) ? ([WEATHER.HOURS.10.IS_DAY] ? colorArgb(242, 243, 217, 160) : colorArgb(242, 175, 192, 238)) : ([WEATHER.HOURS.10.CONDITION] == 14 ? colorArgb(242, 200, 211, 224) : (([WEATHER.HOURS.10.CONDITION] == 2 || [WEATHER.HOURS.10.CONDITION] == 3 || [WEATHER.HOURS.10.CONDITION] == 13) ? colorArgb(242, 126, 140, 163) : ([WEATHER.HOURS.10.CONDITION] == 15 ? colorArgb(242, 79, 209, 181) : colorArgb(242, 70, 82, 94)))))))) : colorArgb(0, 0, 0, 0))"/>
 </Stroke>
 <Transform target="startAngle" value="((([HOUR_0_11] + 10) % 12) * 30 + 0.6)"/>
 <Transform target="endAngle" value="((([HOUR_0_11] + 10) % 12) * 30 + 29.4)"/>
@@ -838,44 +767,37 @@
 </Arc>
 <Arc centerX="225" centerY="225" width="392" height="392" startAngle="0.6" endAngle="29.4">
 <Stroke color="#00000000" thickness="7" dashIntervals="1.2 4.6">
-<Transform target="color" value="(([WEATHER.IS_AVAILABLE] &amp;&amp; [WEATHER.HOURS.10.IS_AVAILABLE]) &amp;&amp; (([WEATHER.HOURS.10.CONDITION] == 4 || [WEATHER.HOURS.10.CONDITION] == 6 || [WEATHER.HOURS.10.CONDITION] == 10 || [WEATHER.HOURS.10.CONDITION] == 12) || [WEATHER.HOURS.10.CONDITION] == 9) ? colorArgb(230, 69, 200, 255) : colorArgb(0, 0, 0, 0))"/>
+<Transform target="color" value="(([WEATHER.IS_AVAILABLE] &amp;&amp; [WEATHER.HOURS.10.CONDITION] &gt; 0) &amp;&amp; (([WEATHER.HOURS.10.CONDITION] == 4 || [WEATHER.HOURS.10.CONDITION] == 6 || [WEATHER.HOURS.10.CONDITION] == 10 || [WEATHER.HOURS.10.CONDITION] == 12) || [WEATHER.HOURS.10.CONDITION] == 9) ? colorArgb(230, 69, 200, 255) : colorArgb(0, 0, 0, 0))"/>
 </Stroke>
 <Transform target="startAngle" value="((([HOUR_0_11] + 10) % 12) * 30 + 0.6)"/>
 <Transform target="endAngle" value="((([HOUR_0_11] + 10) % 12) * 30 + 29.4)"/>
 </Arc>
 <Arc centerX="225" centerY="225" width="394" height="394" startAngle="0.6" endAngle="29.4">
 <Stroke color="#00000000" thickness="2.4" dashIntervals="0.1 5" cap="ROUND">
-<Transform target="color" value="(([WEATHER.IS_AVAILABLE] &amp;&amp; [WEATHER.HOURS.10.IS_AVAILABLE]) &amp;&amp; ([WEATHER.HOURS.10.CONDITION] == 5 || [WEATHER.HOURS.10.CONDITION] == 7 || [WEATHER.HOURS.10.CONDITION] == 11) ? colorArgb(240, 230, 243, 255) : colorArgb(0, 0, 0, 0))"/>
+<Transform target="color" value="(([WEATHER.IS_AVAILABLE] &amp;&amp; [WEATHER.HOURS.10.CONDITION] &gt; 0) &amp;&amp; ([WEATHER.HOURS.10.CONDITION] == 5 || [WEATHER.HOURS.10.CONDITION] == 7 || [WEATHER.HOURS.10.CONDITION] == 11) ? colorArgb(240, 230, 243, 255) : colorArgb(0, 0, 0, 0))"/>
 </Stroke>
 <Transform target="startAngle" value="((([HOUR_0_11] + 10) % 12) * 30 + 0.6)"/>
 <Transform target="endAngle" value="((([HOUR_0_11] + 10) % 12) * 30 + 29.4)"/>
-</Arc>
-<Arc centerX="225" centerY="225" width="370" height="370" startAngle="14" endAngle="16">
-<Stroke color="#00000000" thickness="3" cap="ROUND">
-<Transform target="color" value="(([WEATHER.IS_AVAILABLE] &amp;&amp; [WEATHER.HOURS.10.IS_AVAILABLE]) &amp;&amp; [WEATHER.HOURS.10.UV_INDEX] &gt;= 6 ? colorArgb(255, 195, 139, 255) : colorArgb(0, 0, 0, 0))"/>
-</Stroke>
-<Transform target="startAngle" value="((([HOUR_0_11] + 10) % 12) * 30 + 0.6) + 13.4"/>
-<Transform target="endAngle" value="((([HOUR_0_11] + 10) % 12) * 30 + 0.6) + 15.4"/>
 </Arc>
 </PartDraw>
 <PartDraw name="ring_hour_11" x="0" y="0" width="450" height="450">
 <Arc centerX="225" centerY="225" width="386" height="386" startAngle="0.6" endAngle="29.4">
 <Stroke color="#00000000" thickness="6">
-<Transform target="color" value="(([WEATHER.IS_AVAILABLE] &amp;&amp; [WEATHER.HOURS.11.IS_AVAILABLE]) ? colorArgb(0, 0, 0, 0) : colorArgb(255, 26, 35, 44))"/>
+<Transform target="color" value="(([WEATHER.IS_AVAILABLE] &amp;&amp; [WEATHER.HOURS.11.CONDITION] &gt; 0) ? colorArgb(0, 0, 0, 0) : colorArgb(255, 26, 35, 44))"/>
 </Stroke>
 <Transform target="startAngle" value="((([HOUR_0_11] + 11) % 12) * 30 + 0.6)"/>
 <Transform target="endAngle" value="((([HOUR_0_11] + 11) % 12) * 30 + 29.4)"/>
 </Arc>
 <Arc centerX="225" centerY="225" width="436" height="436" startAngle="0.6" endAngle="29.4">
 <Stroke color="#00000000" thickness="4">
-<Transform target="color" value="(([WEATHER.IS_AVAILABLE] &amp;&amp; [WEATHER.HOURS.11.IS_AVAILABLE]) ? ([WEATHER.HOURS.11.IS_DAY] ? colorArgb(140, 233, 196, 106) : colorArgb(204, 51, 70, 160)) : colorArgb(0, 0, 0, 0))"/>
+<Transform target="color" value="(([WEATHER.IS_AVAILABLE] &amp;&amp; [WEATHER.HOURS.11.CONDITION] &gt; 0) ? ([WEATHER.HOURS.11.IS_DAY] ? colorArgb(140, 233, 196, 106) : colorArgb(204, 51, 70, 160)) : colorArgb(0, 0, 0, 0))"/>
 </Stroke>
 <Transform target="startAngle" value="((([HOUR_0_11] + 11) % 12) * 30 + 0.6)"/>
 <Transform target="endAngle" value="((([HOUR_0_11] + 11) % 12) * 30 + 29.4)"/>
 </Arc>
 <Arc centerX="225" centerY="225" width="388" height="388" startAngle="0.6" endAngle="29.4">
 <Stroke color="#00000000" thickness="8">
-<Transform target="color" value="(([WEATHER.IS_AVAILABLE] &amp;&amp; [WEATHER.HOURS.11.IS_AVAILABLE]) ? (([WEATHER.HOURS.11.CONDITION] == 4 || [WEATHER.HOURS.11.CONDITION] == 6 || [WEATHER.HOURS.11.CONDITION] == 10 || [WEATHER.HOURS.11.CONDITION] == 12) ? colorArgb(66, 69, 200, 255) : (([WEATHER.HOURS.11.CONDITION] == 5 || [WEATHER.HOURS.11.CONDITION] == 7 || [WEATHER.HOURS.11.CONDITION] == 11) ? colorArgb(66, 230, 243, 255) : ([WEATHER.HOURS.11.CONDITION] == 9 ? colorArgb(66, 177, 132, 255) : (([WEATHER.HOURS.11.CONDITION] == 1 || [WEATHER.HOURS.11.CONDITION] == 8) ? ([WEATHER.HOURS.11.IS_DAY] ? colorArgb(66, 243, 217, 160) : colorArgb(66, 175, 192, 238)) : ([WEATHER.HOURS.11.CONDITION] == 14 ? colorArgb(66, 200, 211, 224) : (([WEATHER.HOURS.11.CONDITION] == 2 || [WEATHER.HOURS.11.CONDITION] == 3 || [WEATHER.HOURS.11.CONDITION] == 13) ? colorArgb(66, 126, 140, 163) : ([WEATHER.HOURS.11.CONDITION] == 15 ? colorArgb(66, 79, 209, 181) : colorArgb(66, 70, 82, 94)))))))) : colorArgb(0, 0, 0, 0))"/>
+<Transform target="color" value="(([WEATHER.IS_AVAILABLE] &amp;&amp; [WEATHER.HOURS.11.CONDITION] &gt; 0) ? (([WEATHER.HOURS.11.CONDITION] == 4 || [WEATHER.HOURS.11.CONDITION] == 6 || [WEATHER.HOURS.11.CONDITION] == 10 || [WEATHER.HOURS.11.CONDITION] == 12) ? colorArgb(66, 69, 200, 255) : (([WEATHER.HOURS.11.CONDITION] == 5 || [WEATHER.HOURS.11.CONDITION] == 7 || [WEATHER.HOURS.11.CONDITION] == 11) ? colorArgb(66, 230, 243, 255) : ([WEATHER.HOURS.11.CONDITION] == 9 ? colorArgb(66, 177, 132, 255) : (([WEATHER.HOURS.11.CONDITION] == 1 || [WEATHER.HOURS.11.CONDITION] == 8) ? ([WEATHER.HOURS.11.IS_DAY] ? colorArgb(66, 243, 217, 160) : colorArgb(66, 175, 192, 238)) : ([WEATHER.HOURS.11.CONDITION] == 14 ? colorArgb(66, 200, 211, 224) : (([WEATHER.HOURS.11.CONDITION] == 2 || [WEATHER.HOURS.11.CONDITION] == 3 || [WEATHER.HOURS.11.CONDITION] == 13) ? colorArgb(66, 126, 140, 163) : ([WEATHER.HOURS.11.CONDITION] == 15 ? colorArgb(66, 79, 209, 181) : colorArgb(66, 70, 82, 94)))))))) : colorArgb(0, 0, 0, 0))"/>
 <Transform target="thickness" value="(4 + 20 * clamp(([WEATHER.HOURS.11.TEMPERATURE] - [WEATHER.DAY_TEMPERATURE_LOW]) / ([WEATHER.DAY_TEMPERATURE_HIGH] - [WEATHER.DAY_TEMPERATURE_LOW] &gt; 1 ? [WEATHER.DAY_TEMPERATURE_HIGH] - [WEATHER.DAY_TEMPERATURE_LOW] : 1), 0, 1))"/>
 </Stroke>
 <Transform target="startAngle" value="((([HOUR_0_11] + 11) % 12) * 30 + 0.6)"/>
@@ -885,7 +807,7 @@
 </Arc>
 <Arc centerX="225" centerY="225" width="396" height="396" startAngle="0.6" endAngle="29.4">
 <Stroke color="#00000000" thickness="1.8">
-<Transform target="color" value="(([WEATHER.IS_AVAILABLE] &amp;&amp; [WEATHER.HOURS.11.IS_AVAILABLE]) ? (([WEATHER.HOURS.11.CONDITION] == 4 || [WEATHER.HOURS.11.CONDITION] == 6 || [WEATHER.HOURS.11.CONDITION] == 10 || [WEATHER.HOURS.11.CONDITION] == 12) ? colorArgb(242, 69, 200, 255) : (([WEATHER.HOURS.11.CONDITION] == 5 || [WEATHER.HOURS.11.CONDITION] == 7 || [WEATHER.HOURS.11.CONDITION] == 11) ? colorArgb(242, 230, 243, 255) : ([WEATHER.HOURS.11.CONDITION] == 9 ? colorArgb(242, 177, 132, 255) : (([WEATHER.HOURS.11.CONDITION] == 1 || [WEATHER.HOURS.11.CONDITION] == 8) ? ([WEATHER.HOURS.11.IS_DAY] ? colorArgb(242, 243, 217, 160) : colorArgb(242, 175, 192, 238)) : ([WEATHER.HOURS.11.CONDITION] == 14 ? colorArgb(242, 200, 211, 224) : (([WEATHER.HOURS.11.CONDITION] == 2 || [WEATHER.HOURS.11.CONDITION] == 3 || [WEATHER.HOURS.11.CONDITION] == 13) ? colorArgb(242, 126, 140, 163) : ([WEATHER.HOURS.11.CONDITION] == 15 ? colorArgb(242, 79, 209, 181) : colorArgb(242, 70, 82, 94)))))))) : colorArgb(0, 0, 0, 0))"/>
+<Transform target="color" value="(([WEATHER.IS_AVAILABLE] &amp;&amp; [WEATHER.HOURS.11.CONDITION] &gt; 0) ? (([WEATHER.HOURS.11.CONDITION] == 4 || [WEATHER.HOURS.11.CONDITION] == 6 || [WEATHER.HOURS.11.CONDITION] == 10 || [WEATHER.HOURS.11.CONDITION] == 12) ? colorArgb(242, 69, 200, 255) : (([WEATHER.HOURS.11.CONDITION] == 5 || [WEATHER.HOURS.11.CONDITION] == 7 || [WEATHER.HOURS.11.CONDITION] == 11) ? colorArgb(242, 230, 243, 255) : ([WEATHER.HOURS.11.CONDITION] == 9 ? colorArgb(242, 177, 132, 255) : (([WEATHER.HOURS.11.CONDITION] == 1 || [WEATHER.HOURS.11.CONDITION] == 8) ? ([WEATHER.HOURS.11.IS_DAY] ? colorArgb(242, 243, 217, 160) : colorArgb(242, 175, 192, 238)) : ([WEATHER.HOURS.11.CONDITION] == 14 ? colorArgb(242, 200, 211, 224) : (([WEATHER.HOURS.11.CONDITION] == 2 || [WEATHER.HOURS.11.CONDITION] == 3 || [WEATHER.HOURS.11.CONDITION] == 13) ? colorArgb(242, 126, 140, 163) : ([WEATHER.HOURS.11.CONDITION] == 15 ? colorArgb(242, 79, 209, 181) : colorArgb(242, 70, 82, 94)))))))) : colorArgb(0, 0, 0, 0))"/>
 </Stroke>
 <Transform target="startAngle" value="((([HOUR_0_11] + 11) % 12) * 30 + 0.6)"/>
 <Transform target="endAngle" value="((([HOUR_0_11] + 11) % 12) * 30 + 29.4)"/>
@@ -894,24 +816,17 @@
 </Arc>
 <Arc centerX="225" centerY="225" width="392" height="392" startAngle="0.6" endAngle="29.4">
 <Stroke color="#00000000" thickness="7" dashIntervals="1.2 4.6">
-<Transform target="color" value="(([WEATHER.IS_AVAILABLE] &amp;&amp; [WEATHER.HOURS.11.IS_AVAILABLE]) &amp;&amp; (([WEATHER.HOURS.11.CONDITION] == 4 || [WEATHER.HOURS.11.CONDITION] == 6 || [WEATHER.HOURS.11.CONDITION] == 10 || [WEATHER.HOURS.11.CONDITION] == 12) || [WEATHER.HOURS.11.CONDITION] == 9) ? colorArgb(230, 69, 200, 255) : colorArgb(0, 0, 0, 0))"/>
+<Transform target="color" value="(([WEATHER.IS_AVAILABLE] &amp;&amp; [WEATHER.HOURS.11.CONDITION] &gt; 0) &amp;&amp; (([WEATHER.HOURS.11.CONDITION] == 4 || [WEATHER.HOURS.11.CONDITION] == 6 || [WEATHER.HOURS.11.CONDITION] == 10 || [WEATHER.HOURS.11.CONDITION] == 12) || [WEATHER.HOURS.11.CONDITION] == 9) ? colorArgb(230, 69, 200, 255) : colorArgb(0, 0, 0, 0))"/>
 </Stroke>
 <Transform target="startAngle" value="((([HOUR_0_11] + 11) % 12) * 30 + 0.6)"/>
 <Transform target="endAngle" value="((([HOUR_0_11] + 11) % 12) * 30 + 29.4)"/>
 </Arc>
 <Arc centerX="225" centerY="225" width="394" height="394" startAngle="0.6" endAngle="29.4">
 <Stroke color="#00000000" thickness="2.4" dashIntervals="0.1 5" cap="ROUND">
-<Transform target="color" value="(([WEATHER.IS_AVAILABLE] &amp;&amp; [WEATHER.HOURS.11.IS_AVAILABLE]) &amp;&amp; ([WEATHER.HOURS.11.CONDITION] == 5 || [WEATHER.HOURS.11.CONDITION] == 7 || [WEATHER.HOURS.11.CONDITION] == 11) ? colorArgb(240, 230, 243, 255) : colorArgb(0, 0, 0, 0))"/>
+<Transform target="color" value="(([WEATHER.IS_AVAILABLE] &amp;&amp; [WEATHER.HOURS.11.CONDITION] &gt; 0) &amp;&amp; ([WEATHER.HOURS.11.CONDITION] == 5 || [WEATHER.HOURS.11.CONDITION] == 7 || [WEATHER.HOURS.11.CONDITION] == 11) ? colorArgb(240, 230, 243, 255) : colorArgb(0, 0, 0, 0))"/>
 </Stroke>
 <Transform target="startAngle" value="((([HOUR_0_11] + 11) % 12) * 30 + 0.6)"/>
 <Transform target="endAngle" value="((([HOUR_0_11] + 11) % 12) * 30 + 29.4)"/>
-</Arc>
-<Arc centerX="225" centerY="225" width="370" height="370" startAngle="14" endAngle="16">
-<Stroke color="#00000000" thickness="3" cap="ROUND">
-<Transform target="color" value="(([WEATHER.IS_AVAILABLE] &amp;&amp; [WEATHER.HOURS.11.IS_AVAILABLE]) &amp;&amp; [WEATHER.HOURS.11.UV_INDEX] &gt;= 6 ? colorArgb(255, 195, 139, 255) : colorArgb(0, 0, 0, 0))"/>
-</Stroke>
-<Transform target="startAngle" value="((([HOUR_0_11] + 11) % 12) * 30 + 0.6) + 13.4"/>
-<Transform target="endAngle" value="((([HOUR_0_11] + 11) % 12) * 30 + 0.6) + 15.4"/>
 </Arc>
 </PartDraw>
 <PartDraw name="ring_elapsed" x="0" y="0" width="450" height="450">
@@ -1688,39 +1603,11 @@
 </Stroke>
 </Ellipse>
 </PartDraw>
-<BooleanConfiguration id="parallax">
-<BooleanOption id="TRUE">
-<Condition>
-<Expressions>
-<Expression name="c">
-<![CDATA[[BATTERY_PERCENT] > 20 && [REFERENCE.psave] < 0.5]]>
-</Expression>
-</Expressions>
-<Compare expression="c">
-<PartDraw name="glass_highlight" x="0" y="0" width="450" height="450">
-<Gyro x="clamp([ACCELEROMETER_ANGLE_X], -30, 30) * -0.2" y="clamp([ACCELEROMETER_ANGLE_Y], -30, 30) * -0.2"/>
-<Arc centerX="225" centerY="225" width="202" height="202" startAngle="292" endAngle="334">
-<Stroke color="#24FFFFFF" thickness="4" cap="ROUND"/>
-</Arc>
-</PartDraw>
-</Compare>
-<Default>
 <PartDraw name="glass_highlight" x="0" y="0" width="450" height="450">
 <Arc centerX="225" centerY="225" width="202" height="202" startAngle="292" endAngle="334">
 <Stroke color="#24FFFFFF" thickness="4" cap="ROUND"/>
 </Arc>
 </PartDraw>
-</Default>
-</Condition>
-</BooleanOption>
-<BooleanOption id="FALSE">
-<PartDraw name="glass_highlight" x="0" y="0" width="450" height="450">
-<Arc centerX="225" centerY="225" width="202" height="202" startAngle="292" endAngle="334">
-<Stroke color="#24FFFFFF" thickness="4" cap="ROUND"/>
-</Arc>
-</PartDraw>
-</BooleanOption>
-</BooleanConfiguration>
 <BooleanConfiguration id="secs">
 <BooleanOption id="TRUE">
 <Condition>
@@ -1771,7 +1658,7 @@
 </BooleanConfiguration>
 </Group>
 <Group name="ambient" x="0" y="0" width="450" height="450" alpha="0">
-<Variant mode="AMBIENT" target="alpha" value="255"/>
+<Variant mode="AMBIENT" target="alpha" value="255" duration="0"/>
 <PartDraw name="amb_dots" x="0" y="0" width="450" height="450">
 <Ellipse x="222.8" y="8.8" width="4.4" height="4.4">
 <Fill color="#FF56616C"/>
@@ -2007,7 +1894,7 @@
 </PartImage>
 </Complication>
 <Complication type="EMPTY"/>
-<Variant mode="AMBIENT" target="alpha" value="0"/>
+<Variant mode="AMBIENT" target="alpha" value="0" duration="0"/>
 </ComplicationSlot>
 <ComplicationSlot slotId="1" name="pod_2" displayName="pod_2" x="326" y="116" width="64" height="64" isCustomizable="TRUE" supportedTypes="GOAL_PROGRESS RANGED_VALUE SHORT_TEXT MONOCHROMATIC_IMAGE SMALL_IMAGE EMPTY">
 <DefaultProviderPolicy defaultSystemProvider="EMPTY" defaultSystemProviderType="EMPTY" primaryProvider="com.bobbfwed.emberphase.health/com.bobbfwed.emberphase.health.watch.MinutesDataSource" primaryProviderType="GOAL_PROGRESS"/>
@@ -2111,7 +1998,7 @@
 </PartImage>
 </Complication>
 <Complication type="EMPTY"/>
-<Variant mode="AMBIENT" target="alpha" value="0"/>
+<Variant mode="AMBIENT" target="alpha" value="0" duration="0"/>
 </ComplicationSlot>
 <ComplicationSlot slotId="2" name="pod_4" displayName="pod_4" x="326" y="270" width="64" height="64" isCustomizable="TRUE" supportedTypes="GOAL_PROGRESS RANGED_VALUE SHORT_TEXT MONOCHROMATIC_IMAGE SMALL_IMAGE EMPTY">
 <DefaultProviderPolicy defaultSystemProvider="EMPTY" defaultSystemProviderType="EMPTY" primaryProvider="com.bobbfwed.emberphase.health/com.bobbfwed.emberphase.health.watch.CaloriesDataSource" primaryProviderType="GOAL_PROGRESS"/>
@@ -2215,7 +2102,7 @@
 </PartImage>
 </Complication>
 <Complication type="EMPTY"/>
-<Variant mode="AMBIENT" target="alpha" value="0"/>
+<Variant mode="AMBIENT" target="alpha" value="0" duration="0"/>
 </ComplicationSlot>
 <ComplicationSlot slotId="3" name="pod_8" displayName="pod_8" x="60" y="270" width="64" height="64" isCustomizable="TRUE" supportedTypes="GOAL_PROGRESS RANGED_VALUE SHORT_TEXT MONOCHROMATIC_IMAGE SMALL_IMAGE EMPTY">
 <DefaultProviderPolicy defaultSystemProvider="HEART_RATE" defaultSystemProviderType="SHORT_TEXT"/>
@@ -2319,7 +2206,7 @@
 </PartImage>
 </Complication>
 <Complication type="EMPTY"/>
-<Variant mode="AMBIENT" target="alpha" value="0"/>
+<Variant mode="AMBIENT" target="alpha" value="0" duration="0"/>
 </ComplicationSlot>
 <ComplicationSlot slotId="4" name="event_bar" displayName="event_bar" x="145" y="370" width="160" height="24" isCustomizable="TRUE" supportedTypes="LONG_TEXT SHORT_TEXT EMPTY">
 <DefaultProviderPolicy defaultSystemProvider="NEXT_EVENT" defaultSystemProviderType="LONG_TEXT"/>
@@ -2347,7 +2234,7 @@
 </PartText>
 </Complication>
 <Complication type="EMPTY"/>
-<Variant mode="AMBIENT" target="alpha" value="0"/>
+<Variant mode="AMBIENT" target="alpha" value="0" duration="0"/>
 </ComplicationSlot>
 <ComplicationSlot slotId="5" name="core_tap" x="109" y="109" width="232" height="232" isCustomizable="FALSE" supportedTypes="RANGED_VALUE EMPTY">
 <DefaultProviderPolicy defaultSystemProvider="EMPTY" defaultSystemProviderType="EMPTY" primaryProvider="com.bobbfwed.emberphase.health/com.bobbfwed.emberphase.health.watch.CoreTapDataSource" primaryProviderType="RANGED_VALUE"/>

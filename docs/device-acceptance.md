@@ -13,8 +13,8 @@ changed in `scripts/meniscus/geometry.mjs`, then a regenerate and reinstall.
 1. Both APKs install; the face appears under **Add watch face** as Meniscus,
    alongside the mechanical Emberphase face.
 2. The picker preview and the app icon look right.
-3. The editor shows: Fluid colour, Core fluid shows, Gravity tilt, Glass
-   parallax, Seconds spark, Samsung Health steps target, four pods and the
+3. The editor shows: Fluid colour, Core fluid shows, Gravity tilt, Seconds
+   spark, Samsung Health steps target, four pods and the
    event bar. Labels have no formatting errors.
 
 ## Core

@@ -25,8 +25,7 @@ in [docs/DESIGN.md](docs/DESIGN.md).
 * **Waterline numerals.** Custom monoline digits invert at the surface.
 * **Chronocast ring.** Each clock hour carries that hour's forecast:
   temperature as terrain depth, conditions as colour (rain streaks, snow
-  dots), day and night as an outer band, and UV peaks as violet marks. The
-  hour cursor walks into the forecast; the elapsed part of the hour is dimmed.
+  dots), and day and night as an outer band. The hour cursor walks into the forecast; the elapsed part of the hour is dimmed.
 * **Four data pods** at 10, 2, 4 and 8 o'clock for any complication, with
   progress arcs. A pod's conduit to the core lights up when a real goal is
   reached. Defaults: steps, active minutes, active calories, heart rate.
@@ -34,17 +33,16 @@ in [docs/DESIGN.md](docs/DESIGN.md).
 * **Notification bubbles** rise in the fluid, one per unread notification.
 * **Slosh.** Tap the core and the fluid swings and settles over about three
   seconds (needs the Emberphase Health watch companion).
-* **Seconds spark** with a fading tail on the glass rim, and a glass
-  highlight that shifts slightly as the watch tilts.
+* **Seconds spark** with a fading tail on the glass rim.
 * **Fluid colours:** Plasma, Ion, Ember and Chlorophyll.
 * **Always-on:** outline digits split at the waterline, the hour cursor, ring
   dots and the date on black, with no sensors.
 
-Tilt, parallax, seconds and slosh stop at 20 percent battery or below and in
+Tilt, seconds and slosh stop at 20 percent battery or below and in
 Android power saving (reported by the watch companion). The accelerometer is
 never used in always-on. While the screen is awake the watch-face runtime keeps
-it subscribed whenever **Gravity tilt** or **Glass parallax** is on, even when
-low battery has stopped the motion; turn both off in the editor to release it.
+it subscribed whenever **Gravity tilt** is on, even when low battery has
+stopped the motion; turn it off in the editor to release it.
 The face has no executable code, network access or polling.
 
 ## Compatibility
@@ -167,7 +165,6 @@ Long-press the face and open its editor:
 | Fluid colour | Plasma, Ion, Ember or Chlorophyll |
 | Core fluid shows | Battery (default), day remaining, or a pod's goal progress |
 | Gravity tilt | Fluid follows wrist roll (accelerometer) |
-| Glass parallax | Glass highlight shifts with tilt |
 | Seconds spark | Spark on the glass rim, once per second |
 | Samsung Health steps target | Treat a zero-based steps range maximum as the goal (10 o'clock pod) |
 

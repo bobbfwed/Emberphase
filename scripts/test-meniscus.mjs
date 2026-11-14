@@ -153,8 +153,9 @@ test('every weather condition maps to its colour family', () => {
   const s = X.hourSource(2);
   for (let c = 0; c <= 15; c++) {
     for (const day of [true, false]) {
-      const env = { 'WEATHER.IS_AVAILABLE': true, 'WEATHER.HOURS.2.IS_AVAILABLE': true, 'WEATHER.HOURS.2.CONDITION': c, 'WEATHER.HOURS.2.IS_DAY': day };
+      const env = { 'WEATHER.IS_AVAILABLE': true, 'WEATHER.HOURS.2.CONDITION': c, 'WEATHER.HOURS.2.IS_DAY': day };
       const col = wff(X.familyColor(s, 200), env);
+      if (c === 0) continue; // condition 0 means no forecast for that hour
       const fam = expect[c] === 'clear' ? (day ? 'clearDay' : 'clearNight') : expect[c];
       assert.deepEqual([col.r, col.g, col.b], G.FAMILY_RGB[fam], `condition ${c}`);
       assert.equal(col.a, 200);
@@ -162,10 +163,10 @@ test('every weather condition maps to its colour family', () => {
       assert.equal(wff(X.snowColor(s), env).a > 0, [5, 7, 11].includes(c));
     }
   }
-  const off = { 'WEATHER.IS_AVAILABLE': true, 'WEATHER.HOURS.2.IS_AVAILABLE': false, 'WEATHER.HOURS.2.CONDITION': 4, 'WEATHER.HOURS.2.IS_DAY': true, 'WEATHER.HOURS.2.UV_INDEX': 9 };
+  const off = { 'WEATHER.IS_AVAILABLE': true, 'WEATHER.HOURS.2.CONDITION': 0, 'WEATHER.HOURS.2.IS_DAY': true };
   assert.equal(wff(X.familyColor(s, 200), off).a, 0);
   assert.equal(wff(X.bandColor(s), off).a, 0);
-  assert.equal(wff(X.uvColor(s), off).a, 0);
+  assert.equal(wff(X.rainColor(s), off).a, 0);
   assert.equal(wff(X.placeholderColor(s), off).a, 255);
 });
 test('ring labels sit on the ring', () => {
@@ -239,13 +240,21 @@ test('sensors and millisecond sources stay inside their gates', () => {
     return spans;
   };
   const inside = (idx, spans) => spans.some(([a, b]) => idx > a && idx < b);
-  const gated = [...blocks('<BooleanConfiguration id="tilt">', '</BooleanConfiguration>'), ...blocks('<BooleanConfiguration id="parallax">', '</BooleanConfiguration>')];
+  const gated = blocks('<BooleanConfiguration id="tilt">', '</BooleanConfiguration>');
   for (const m of xml.matchAll(/ACCELEROMETER/g)) assert.ok(inside(m.index, gated), 'accelerometer outside its editor gate');
   const conditions = blocks('<Condition>', '</Condition>');
   const sloshBlocks = conditions.filter(([a, b]) => xml.slice(a, b).includes('[REFERENCE.tap] &gt; 0') || xml.slice(a, b).includes('[REFERENCE.tap] > 0'));
   for (const m of xml.matchAll(/\[MILLISECOND\]/g)) assert.ok(inside(m.index, sloshBlocks), 'millisecond clock outside the slosh branch');
   const secs = blocks('<BooleanConfiguration id="secs">', '</BooleanConfiguration>');
   for (const m of xml.matchAll(/\[SECOND\]/g)) assert.ok(inside(m.index, secs), 'seconds outside the seconds setting');
+});
+test('scene stays within what Samsung runtime 4.0.00.16 survives', () => {
+  // The runtime crashed (ConcurrentModificationException) at screen-state
+  // changes with 63 weather sources, a Gyro transform and 1 s Variants.
+  const weather = new Set(xml.match(/\[WEATHER\.[A-Z0-9_.]+\]/g));
+  assert.ok(weather.size <= 40, `${weather.size} weather sources`);
+  assert.ok(!xml.includes('<Gyro'), 'Gyro transform');
+  for (const m of xml.matchAll(/<Variant [^>]*>/g)) assert.match(m[0], /duration="0"/, m[0]);
 });
 test('complication slots keep their order and do not overlap', () => {
   const ids = [...xml.matchAll(/<ComplicationSlot slotId="(\d+)"/g)].map((m) => Number(m[1]));

@@ -1,6 +1,6 @@
 # Meniscus: design and build plan
 
-Status: **built (face 0.1.0, watch companion 0.1.10).** Rendering, slosh, tilt,
+Status: **built (face 0.1.1, watch companion 0.1.10).** Rendering, slosh, tilt,
 always-on, low battery, power saving and the editor were checked on the Wear OS 6
 emulator with sample data; the physical-watch checks in
 [device-acceptance.md](device-acceptance.md) are pending. The interactive concept
@@ -70,8 +70,8 @@ up when a goal is met, and a tap on the core makes the fluid slosh.
 * **Body.** Vertical gradient from the theme's bright tone at the surface to its
   deep tone at the bottom, with a static low-contrast caustic texture. A
   battery level under 20 percent turns the fluid ember-red, whatever the theme.
-* **Glass.** Dark interior, metallic rim, and a specular arc whose position
-  shifts slightly with `Gyro`, giving the glass depth.
+* **Glass.** Dark interior, metallic rim, and a fixed specular arc. (A `Gyro`
+  parallax on the arc was removed in 0.1.1; see Implementation notes.)
 
 ### Waterline numerals
 
@@ -98,11 +98,12 @@ Mono, bundled under the SIL Open Font License.
   slate, rain and sleet in cyan with short streaks, snow in ice white with
   dots, thunderstorms in violet, wind in teal.
 * **Day/night band** from `HOURS.n.IS_DAY`: gold by day, indigo by night.
-* Temperature labels at +3, +6 and +9 hours. A small violet mark where UV ≥ 6.
+* Temperature labels at +3, +6 and +9 hours. (Per-hour UV marks were removed
+  in 0.1.1 to keep the weather subscription small.)
 * **Hour cursor:** a bright bar with an inward chevron at
   `HOUR_0_11_MINUTE × 30°`. The elapsed part of the current hour's sector is
   dimmed, so the ring reads as "from now onward".
-* Hours without forecast data show a dotted placeholder. With no weather at
+* Hours without forecast data (condition 0, unknown) show a dotted placeholder. With no weather at
   all, the ring becomes plain hour sectors and the cursor still tells time.
 
 ### Data pods and conduits
@@ -120,7 +121,7 @@ Mono, bundled under the SIL Open Font License.
 ### Intrinsic data
 
 Time, seconds, date, current weather with high and low, the 12-hour forecast,
-day/night, UV, battery (as the default core fluid) and unread notification
+day/night, battery (as the default core fluid) and unread notification
 count. None of these needs a complication.
 
 ### Notification bubbles
@@ -150,22 +151,22 @@ colours stay the same in every theme so they keep their meaning.
 
 | State | Behaviour |
 | --- | --- |
-| Active | Everything shown. Accelerometer tilt, Gyro parallax and seconds on (each can be turned off in the editor) |
-| Power saving, or battery ≤ 20 percent | Accelerometer, Gyro, seconds and slosh off; the surface is level relative to the watch |
+| Active | Everything shown. Accelerometer tilt and seconds on (each can be turned off in the editor) |
+| Power saving, or battery ≤ 20 percent | Accelerometer tilt, seconds and slosh off; the surface is level relative to the watch |
 | Battery ≤ 15 percent | As above, plus the seconds spark is hidden whatever the setting |
 | Always-on | Black. Core outline, outline numerals, a horizontal waterline hairline at the core level, digits below it at lower brightness, 12 ring dots with the hour cursor, small date. No fluid fill, pods, weather or sensors |
 
 The face stays resource-only: no code, network or polling. The accelerometer
 is never used in always-on. While awake, the watch-face runtime keeps it
-subscribed whenever Gravity tilt or Glass parallax is on, even after low battery
-or power saving has stopped the motion (observed on the emulator); turning both
-settings off releases it. Tilt is quantized to 2° steps so sensor noise does not
+subscribed whenever Gravity tilt is on, even after low battery or power saving
+has stopped the motion (observed on the emulator); turning the setting off
+releases it. Tilt is quantized to 2° steps so sensor noise does not
 redraw the face continuously.
 
 ## Editor settings and slots
 
 Settings: Core fluid (Battery · Day remaining · a pod's progress), Fluid colour,
-Gravity tilt (on/off), Glass parallax (on/off), Seconds spark (on/off),
+Gravity tilt (on/off), Seconds spark (on/off),
 Samsung Health steps target (on/off).
 
 Slots, in fixed declaration order: 0 pod 10 o'clock, 1 pod 2 o'clock, 2 pod
@@ -234,5 +235,12 @@ check, the Node tests that exist by then, and a commit.
   a gradient cannot read its colours from a colour setting.
 * The submerged digits are a second set of numerals masked by the rotated
   fluid shape and offset by (3, 2) at 1.03 scale.
+* **Samsung runtime stability (0.1.1).** On the watch, Samsung's WFF runtime
+  4.0.00.16 crashed with `ConcurrentModificationException` at screen-state
+  changes while the face was worn. 0.1.0 read 63 weather sources (five per
+  forecast hour), animated a `Gyro` highlight and used the default 1-second
+  ambient `Variant` transition. 0.1.1 reads 40 weather sources (hourly
+  availability comes from condition 0), has no `Gyro`, and switches always-on
+  instantly. A test keeps those limits.
 * The fake-data build (`Build-WatchFace.ps1 -Fake`) exists only for emulator
   testing.
