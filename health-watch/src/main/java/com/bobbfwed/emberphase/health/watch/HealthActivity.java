@@ -37,6 +37,12 @@ public final class HealthActivity extends Activity {
         TextView help = new TextView(this);
         help.setText("In the face editor, select the MIN value and choose Emberphase · Active minutes. Select CAL and choose Emberphase · Active calories.");
         help.setTextSize(15); content.addView(help);
+        TextView notifications = new TextView(this);
+        notifications.setTextSize(15);
+        notifications.setText(NotificationCount.accessGranted(this)
+                ? "Notification count: on."
+                : "Notification count: off. Allow notification access for Emberphase Health so faces can show all notifications, not only unread.");
+        content.addView(notifications);
         setContentView(scroll);
         PhoneRefresh.loadCache(this);
     }

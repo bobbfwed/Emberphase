@@ -199,7 +199,7 @@ test('goal and ranged progress never invent goals', () => {
 
 // --------------------------------------------------------------- Bubbles
 test('notification bubbles stay inside the core and hide when read', () => {
-  const at = (count, sy, i) => wff(X.bubbleY(i), { UNREAD_NOTIFICATION_COUNT: count, ...R({ sy }) });
+  const at = (count, sy, i) => wff(X.bubbleY(i), { UNREAD_NOTIFICATION_COUNT: count, ...R({ sy, nsrc: 0, ncount: 0 }) });
   for (let i = 0; i < X.BUBBLES; i++) assert.ok(at(0, 185, i) - G.C > G.CORE, 'hidden below the mask');
   for (const sy of [130, 185, 260]) for (const count of [1, 3, 6, 9]) {
     for (let i = 0; i < Math.min(count, 6); i++) {
@@ -208,10 +208,18 @@ test('notification bubbles stay inside the core and hide when read', () => {
       if (sy <= 185) assert.ok(y > sy, 'below the surface when there is room');
     }
   }
+  // Without notification access the slot's carriers read their default 0.
+  const noCompanion = R({ nsrc: 0, ncount: 0 });
   assert.equal(wff(X.BUBBLES_VISIBLE, R({ sy: 185 })), 255);
   assert.equal(wff(X.BUBBLES_VISIBLE, R({ sy: G.CORE_BOTTOM - 20 })), 0, 'hidden when the fluid is shallow');
-  assert.equal(wff(X.BUBBLE_LABEL, { UNREAD_NOTIFICATION_COUNT: 9 }), '6+');
-  assert.equal(wff(X.BUBBLE_LABEL, { UNREAD_NOTIFICATION_COUNT: 2 }), 2);
+  assert.equal(wff(X.BUBBLE_LABEL, { UNREAD_NOTIFICATION_COUNT: 9, ...noCompanion }), '6+');
+  assert.equal(wff(X.BUBBLE_LABEL, { UNREAD_NOTIFICATION_COUNT: 2, ...noCompanion }), 2);
+  // The companion's total wins over Samsung's 0-or-1 unread flag.
+  const total = (n) => ({ UNREAD_NOTIFICATION_COUNT: 1, ...R({ nsrc: 1, ncount: n }) });
+  assert.equal(wff(X.BUBBLE_COUNT, total(4)), 4);
+  assert.equal(wff(X.BUBBLE_COUNT, total(0)), 0);
+  assert.equal(wff(X.BUBBLE_LABEL, total(11)), '6+');
+  assert.equal(wff(X.BUBBLE_COUNT, { UNREAD_NOTIFICATION_COUNT: 1, ...noCompanion }), 1);
 });
 
 // ----------------------------------------------------- Structure of the XML
@@ -258,7 +266,7 @@ test('scene stays within what Samsung runtime 4.0.00.16 survives', () => {
 });
 test('complication slots keep their order and do not overlap', () => {
   const ids = [...xml.matchAll(/<ComplicationSlot slotId="(\d+)"/g)].map((m) => Number(m[1]));
-  assert.deepEqual(ids, [0, 1, 2, 3, 4, 5, 6]);
+  assert.deepEqual(ids, [0, 1, 2, 3, 4, 5, 6, 7]);
   assert.ok(ids.length <= 8);
   const shapes = SLOT_BOUNDS.map((b) => ({ ...b, cx: b.x + b.w / 2, cy: b.y + b.h / 2 }));
   const overlap = (a, b) => {

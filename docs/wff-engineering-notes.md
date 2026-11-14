@@ -76,6 +76,11 @@ Watch6 Classic SM-R950, Wear OS 6 / API 36, WFF version 4.
   `FATAL EXCEPTION` in `com.samsung.wear.watchface.runtime`.
 * `Variant` defaults to a 1-second transition; `duration="0"` makes
   always-on switch instantly.
+* **`UNREAD_NOTIFICATION_COUNT` is only 0 or 1 on this watch** (77 runtime
+  updates, never above 1, with four notifications present). For a real count
+  use the companion's notification-listener provider. Wear OS has no
+  notification-access screen; grant it with `adb shell cmd notification
+  allow_listener <component>`.
 * Treat `WEATHER.HOURS.n.CONDITION == 0` as "no forecast for that hour"
   instead of reading `HOURS.n.IS_AVAILABLE`.
 * **System auto-rotate is on by default** on this firmware

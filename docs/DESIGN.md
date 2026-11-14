@@ -1,6 +1,6 @@
 # Meniscus: design and build plan
 
-Status: **built (face 0.1.1, watch companion 0.1.10).** Rendering, slosh, tilt,
+Status: **built (face 0.1.2, watch companion 0.1.11).** Rendering, slosh, tilt,
 always-on, low battery, power saving and the editor were checked on the Wear OS 6
 emulator with sample data; the physical-watch checks in
 [device-acceptance.md](device-acceptance.md) are pending. The interactive concept
@@ -19,7 +19,7 @@ Around the core, the rim of the dial shows the future. Each clock hour
 position carries the weather forecast for that hour, so the hour cursor walks
 into the next twelve hours of temperature, conditions, daylight and darkness.
 
-Everything else follows the same physical logic: unread notifications are
+Everything else follows the same physical logic: notifications are
 bubbles in the fluid, data pods dock to the core through conduits that light
 up when a goal is met, and a tap on the core makes the fluid slosh.
 
@@ -32,7 +32,7 @@ up when a goal is met, and a tap on the core makes the fluid slosh.
 3. **Chronocast ring.** The next 12 hours of forecast are drawn at the clock
    positions where those hours will occur, with a day/night horizon band
    showing sunset and sunrise at their actual hours.
-4. **Notification bubbles.** Unread notifications rise as bubbles in the fluid.
+4. **Notification bubbles.** Notifications rise as bubbles in the fluid.
 5. **Slosh.** Tapping the core sets off a damped wave in the fluid.
 6. **Charged conduits.** A pod's conduit to the core lights up when its goal
    is reached.
@@ -121,15 +121,21 @@ Mono, bundled under the SIL Open Font License.
 ### Intrinsic data
 
 Time, seconds, date, current weather with high and low, the 12-hour forecast,
-day/night, battery (as the default core fluid) and unread notification
+day/night, battery (as the default core fluid) and notification
 count. None of these needs a complication.
 
 ### Notification bubbles
 
-`UNREAD_NOTIFICATION_COUNT` is drawn as up to six bubbles near the bottom of the
+The number of notifications on the watch is drawn as up to six bubbles near the bottom of the
 fluid, with a small count beside the top bubble (`6+` above six). When the
 count changes, the bubbles rise into place with one short animation. Zero
 shows no bubbles.
+
+The count comes from the watch companion's **Notifications** provider on fixed
+slot 7 (it needs notification access). Samsung reports
+`UNREAD_NOTIFICATION_COUNT` only as 0 or 1, and Wear OS clears it once the
+list is opened, so it is used only as a fallback when the companion publishes
+no data.
 
 ### Slosh
 
@@ -171,7 +177,8 @@ Samsung Health steps target (on/off).
 
 Slots, in fixed declaration order: 0 pod 10 o'clock, 1 pod 2 o'clock, 2 pod
 4 o'clock, 3 pod 8 o'clock, 4 event bar, 5 core tap (fixed companion
-provider), 6 power saving (fixed companion provider). Once this ships, new
+provider), 6 power saving (fixed companion provider), 7 notification count
+(fixed companion provider, added in 0.1.2; WFF allows no more than 8 slots). Once this ships, new
 slots may only be appended.
 
 ## Identity

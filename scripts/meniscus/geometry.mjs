@@ -118,5 +118,6 @@ export const PROVIDERS = {
   powerSave: `${COMPANION}/${COMPANION}.watch.PowerSaveDataSource`,
   minutes: `${COMPANION}/${COMPANION}.watch.MinutesDataSource`,
   calories: `${COMPANION}/${COMPANION}.watch.CaloriesDataSource`,
+  notifications: `${COMPANION}/${COMPANION}.watch.NotificationCountDataSource`,
   samsungSteps: 'com.samsung.android.wear.shealth/com.samsung.android.wear.shealth.complications.steps.StepsComplicationProviderService'
 };

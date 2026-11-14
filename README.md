@@ -30,7 +30,9 @@ in [docs/DESIGN.md](docs/DESIGN.md).
   progress arcs. A pod's conduit to the core lights up when a real goal is
   reached. Defaults: steps, active minutes, active calories, heart rate.
 * **Event bar** for the next calendar event or any text complication.
-* **Notification bubbles** rise in the fluid, one per unread notification.
+* **Notification bubbles** rise in the fluid, one per notification on the
+  watch (needs the watch companion with notification access; otherwise one
+  bubble means something is unread).
 * **Slosh.** Tap the core and the fluid swings and settles over about three
   seconds (needs the Emberphase Health watch companion).
 * **Seconds spark** with a fading tail on the glass rim.
@@ -154,7 +156,19 @@ own application ID so installing one does not replace another.
 
 Install the updated **watch companion** too (see
 [companion setup](docs/health-companion.md)): it supplies active minutes and
-calories, the core tap for the slosh, and the power-saving signal.
+calories, the core tap for the slosh, the power-saving signal and the
+notification count.
+
+The notification count needs notification access, and the watch has no screen
+to grant it. With the watch connected over ADB, run:
+
+```powershell
+adb shell cmd notification allow_listener com.bobbfwed.emberphase.health/com.bobbfwed.emberphase.health.watch.NotificationCountListener
+```
+
+The companion only counts notifications; it never reads their contents.
+Without access, the bubbles fall back to Samsung's unread flag, which is only 0
+or 1.
 
 ## Customize the face
 

@@ -41,14 +41,18 @@ export const SURFACE_VISIBLE = `${ref('lvl')} > 0.005 && ${ref('lvl')} < 0.995`;
 // ---- Notification bubbles ----
 export const BUBBLES = 6;
 export const BUBBLE_BOTTOM = G.CORE_BOTTOM - 24;
-export const BUBBLE_COUNT = `clamp([UNREAD_NOTIFICATION_COUNT], 0, ${BUBBLES})`;
+// Total notifications from the companion (slot 7). Samsung reports
+// UNREAD_NOTIFICATION_COUNT only as 0 or 1, so it is just the fallback when the
+// companion has no notification access (its carriers then read 0).
+export const NOTIFICATIONS = `(${ref('nsrc')} > 0.5 ? ${ref('ncount')} : [UNREAD_NOTIFICATION_COUNT])`;
+export const BUBBLE_COUNT = `clamp(${NOTIFICATIONS}, 0, ${BUBBLES})`;
 export const BUBBLE_STEP = `clamp(clamp(${BUBBLE_BOTTOM} - ${ref('sy')} - 10, 8, 300) / (${BUBBLE_COUNT} > 0 ? ${BUBBLE_COUNT} : 1), 4, 13)`;
 export const bubbleRadius = (i) => 2.4 + (i % 3) * 0.8;
 export const bubbleX = (i) => G.C - 42 + Math.sin(i * 1.7) * 5;
 export const bubbleY = (i) => `${BUBBLE_COUNT} > ${i} ? ${BUBBLE_BOTTOM} - ${i} * ${BUBBLE_STEP} - ${n(bubbleRadius(i))} : ${BUBBLE_BOTTOM + 40}`;
 // Bubbles need about 50 units of fluid; below that they would crowd the level tag.
 export const BUBBLES_VISIBLE = `${ref('sy')} < ${G.CORE_BOTTOM - 50} ? 255 : 0`;
-export const BUBBLE_LABEL =`[UNREAD_NOTIFICATION_COUNT] > ${BUBBLES} ? "6+" : [UNREAD_NOTIFICATION_COUNT]`;
+export const BUBBLE_LABEL = `${NOTIFICATIONS} > ${BUBBLES} ? "6+" : round(${NOTIFICATIONS})`;
 
 // ---- Chronocast ring ----
 export const sectorStart = (k) => `((([HOUR_0_11] + ${k}) % 12) * 30 + ${G.RING.sectorGap / 2})`;

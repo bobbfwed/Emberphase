@@ -256,7 +256,7 @@ function bubbles() {
     draw('bubble_set', {}, ...ellipses),
     text('bubble_count', [G.C - 30, 0, 28, 16], {
       family: SEMIBOLD, size: 11, color: G.INK.replace('#', '#FF'), align: 'START', template: '%s', params: [X.BUBBLE_LABEL],
-      transforms: [T('y', topY), T('alpha', '[UNREAD_NOTIFICATION_COUNT] > 0 ? 255 : 0')]
+      transforms: [T('y', topY), T('alpha', `${X.NOTIFICATIONS} > 0 ? 255 : 0`)]
     }));
 }
 
@@ -407,18 +407,20 @@ function slots() {
     text(`event_text_${type}`, [10, 3, E.w - 20, E.h - 6], { size: 13, color: '#FFC9D2DA', template: '%s %s', params: ['[COMPLICATION.TITLE]', '[COMPLICATION.TEXT]'] }))),
   el('Complication', { type: 'EMPTY' }), ambientHide));
 
-  const fixed = (slotId, name, provider, bounds, refName) => {
+  const fixed = (slotId, name, provider, bounds, refName, flagName) => {
     SLOT_BOUNDS.push({ slotId, x: bounds[0], y: bounds[1], w: bounds[2], h: bounds[3], shape: 'fixed' });
     return el('ComplicationSlot', {
       slotId, name, x: bounds[0], y: bounds[1], width: bounds[2], height: bounds[3], isCustomizable: 'FALSE',
       supportedTypes: 'RANGED_VALUE EMPTY'
     }, el('DefaultProviderPolicy', { defaultSystemProvider: 'EMPTY', defaultSystemProviderType: 'EMPTY', primaryProvider: provider, primaryProviderType: 'RANGED_VALUE' }),
     el('BoundingOval', { x: 0, y: 0, width: bounds[2], height: bounds[3] }),
-    el('Complication', { type: 'RANGED_VALUE' }, carrier(refName, '[COMPLICATION.RANGED_VALUE_VALUE]')),
+    el('Complication', { type: 'RANGED_VALUE' }, one([carrier(refName, '[COMPLICATION.RANGED_VALUE_VALUE]'), flagName ? carrier(flagName, 1) : []])),
     el('Complication', { type: 'EMPTY' }));
   };
   out.push(fixed(5, 'core_tap', G.PROVIDERS.coreTap, [G.C - G.RIM, G.C - G.RIM, 2 * G.RIM, 2 * G.RIM], 'tap'));
   out.push(fixed(6, 'power_saving', G.PROVIDERS.powerSave, [205, 24, 40, 10], 'psave'));
+  // Appended last: Samsung maps provider choices by slot order. WFF allows 8.
+  out.push(fixed(7, 'notifications', G.PROVIDERS.notifications, [205, 414, 40, 10], 'ncount', 'nsrc'));
   return out;
 }
 

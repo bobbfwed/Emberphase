@@ -96,6 +96,17 @@ or network:
   (six-second window). Both tap providers share `TapTiming`.
 * **Emberphase · Power saving** publishes 1 while Android power saving or the
   watch's low-power mode is on, and only when that changes.
+* **Emberphase · Notifications** (0.1.11) publishes how many notifications are
+  on the watch, for Meniscus's bubbles. Samsung reports the face's own
+  `UNREAD_NOTIFICATION_COUNT` only as 0 or 1, and Wear OS marks everything read
+  once the list is opened. A `NotificationListenerService` recounts on every
+  post and removal, skipping ongoing, foreground-service and group-summary
+  notifications, and asks the face to refresh only when the number changes. It
+  never reads notification contents. It needs notification access, which the
+  watch has no screen for; grant it over ADB:
+  `adb shell cmd notification allow_listener com.bobbfwed.emberphase.health/com.bobbfwed.emberphase.health.watch.NotificationCountListener`.
+  Without access the provider publishes no data and the face falls back to
+  the unread flag.
 
 Every provider lists all the Emberphase faces (`com.bobbfwed.emberphase`, `.mechanical`,
 `.apsis` and `.meniscus`) in `SAFE_WATCH_FACES`, so one companion serves each

@@ -61,8 +61,9 @@ changed in `scripts/meniscus/geometry.mjs`, then a regenerate and reinstall.
 20. Each pod and the event bar can be selected on its own in the editor; the
     core cannot (it is the fixed core-tap slot).
 21. The event bar shows the next calendar event.
-22. Unread notifications appear as bubbles with a count (`6+` above six);
-    reading them all removes the bubbles. New bubbles rise into place.
+22. With notification access granted (README), the bubbles match the number of
+    notifications on the watch (`6+` above six); opening the list does not
+    remove them, dismissing does. New bubbles rise into place.
 23. The weekday and date are correct and fit.
 
 ## Always-on and power
