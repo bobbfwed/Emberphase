@@ -1,6 +1,6 @@
 # Meniscus: design and build plan
 
-Status: **built (face 0.1.0, watch companion 0.1.9).** Rendering, slosh, tilt,
+Status: **built (face 0.1.0, watch companion 0.1.10).** Rendering, slosh, tilt,
 always-on, low battery, power saving and the editor were checked on the Wear OS 6
 emulator with sample data; the physical-watch checks in
 [device-acceptance.md](device-acceptance.md) are pending. The interactive concept

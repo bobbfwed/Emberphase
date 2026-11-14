@@ -2,7 +2,7 @@
 
 Target: Galaxy Watch6 Classic SM-R950, Wear OS 6. Install the face
 (`artifacts/meniscus-debug.apk`) and the updated watch companion
-(`health-watch-debug.apk`, 0.1.9). The phone companion does not change.
+(`health-watch-debug.apk`, 0.1.10). The phone companion does not change.
 
 Record each result with the date, face and companion versions, and a
 screenshot where it helps. Items marked **calibrate** may need a constant

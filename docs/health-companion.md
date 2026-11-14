@@ -88,7 +88,7 @@ key and register the phone app's package and release SHA-256 with Samsung.
 The watch app also hosts three fixed providers that need no phone, permission
 or network:
 
-* **Emberphase · Core tap** (0.1.9) lets Meniscus slosh its fluid. A tap on the
+* **Emberphase · Core tap** (0.1.9, current 0.1.10) lets Meniscus slosh its fluid. A tap on the
   core records the time and publishes it in a short timeline (3.5 seconds,
   rounded up to a whole second) that returns to idle on its own. Taps at
   15 percent battery or less, or while a slosh is running, are ignored.
@@ -97,7 +97,9 @@ or network:
 * **Emberphase · Power saving** publishes 1 while Android power saving or the
   watch's low-power mode is on, and only when that changes.
 
-Every provider lists the mechanical face and Meniscus in `SAFE_WATCH_FACES`.
+Every provider lists all the Emberphase faces (`com.bobbfwed.emberphase`, `.mechanical`,
+`.apsis` and `.meniscus`) in `SAFE_WATCH_FACES`, so one companion serves each
+face and switching faces needs no reinstall.
 
 ## Data, cadence, and stopping
 

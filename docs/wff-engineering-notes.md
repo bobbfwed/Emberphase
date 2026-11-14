@@ -97,6 +97,8 @@ Watch6 Classic SM-R950, Wear OS 6 / API 36, WFF version 4.
   watch's low-power settings change. Use it to switch off decorative motion.
 * Every companion provider lists the faces allowed to use it in
   `SAFE_WATCH_FACES`. Add the face's application ID there when it changes.
+  Other branches build the same companion package: install the build whose
+  lists cover every face on the watch, or a later install drops the others.
 
 ## Device workflow
 
