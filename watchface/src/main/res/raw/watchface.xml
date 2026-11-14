@@ -1358,10 +1358,10 @@
 </Transform>
 </Ellipse>
 </PartDraw>
-<PartText name="bubble_count" x="195" y="0" width="28" height="16">
-<Transform target="y" value="311 - (clamp(([REFERENCE.nsrc] &gt; 0.5 ? [REFERENCE.ncount] : [UNREAD_NOTIFICATION_COUNT]), 0, 6) - 1) * clamp(clamp(311 - [REFERENCE.sy] - 10, 8, 300) / (clamp(([REFERENCE.nsrc] &gt; 0.5 ? [REFERENCE.ncount] : [UNREAD_NOTIFICATION_COUNT]), 0, 6) &gt; 0 ? clamp(([REFERENCE.nsrc] &gt; 0.5 ? [REFERENCE.ncount] : [UNREAD_NOTIFICATION_COUNT]), 0, 6) : 1), 4, 13) - 9"/>
+<PartText name="bubble_count" x="144" y="0" width="28" height="16">
+<Transform target="y" value="clamp(311 - (clamp(([REFERENCE.nsrc] &gt; 0.5 ? [REFERENCE.ncount] : [UNREAD_NOTIFICATION_COUNT]), 0, 6) - 1) * clamp(clamp(311 - [REFERENCE.sy] - 10, 8, 300) / (clamp(([REFERENCE.nsrc] &gt; 0.5 ? [REFERENCE.ncount] : [UNREAD_NOTIFICATION_COUNT]), 0, 6) &gt; 0 ? clamp(([REFERENCE.nsrc] &gt; 0.5 ? [REFERENCE.ncount] : [UNREAD_NOTIFICATION_COUNT]), 0, 6) : 1), 4, 13) - 9, 0, 282)"/>
 <Transform target="alpha" value="([REFERENCE.nsrc] &gt; 0.5 ? [REFERENCE.ncount] : [UNREAD_NOTIFICATION_COUNT]) &gt; 0 ? 255 : 0"/>
-<Text align="START" ellipsis="TRUE">
+<Text align="END" ellipsis="TRUE">
 <Font family="plex_mono_semibold" size="11" color="#FF04090D">
 <Template>%s<Parameter expression="([REFERENCE.nsrc] &gt; 0.5 ? [REFERENCE.ncount] : [UNREAD_NOTIFICATION_COUNT]) &gt; 6 ? &quot;6+&quot; : round(([REFERENCE.nsrc] &gt; 0.5 ? [REFERENCE.ncount] : [UNREAD_NOTIFICATION_COUNT]))"/>
 </Template>
@@ -1398,6 +1398,16 @@
 <Transform target="centerX" value="225 + sqrt(clamp(12100 - pow([REFERENCE.sy] - 225, 2), 0, 12100)) - 7"/>
 <Transform target="centerY" value="[REFERENCE.sy] - 7"/>
 </Arc>
+</PartDraw>
+<PartDraw name="level_chip" x="0" y="0" width="104" height="16">
+<Transform target="x" value="225 + sqrt(clamp(12100 - pow([REFERENCE.sy] - 225, 2), 0, 12100)) - 124"/>
+<Transform target="y" value="[REFERENCE.sy] + 4"/>
+<Transform target="alpha" value="335 - [REFERENCE.sy] &gt; 20 ? 255 : 0"/>
+<RoundRectangle x="0" y="0" width="40" height="16" cornerRadiusX="8" cornerRadiusY="8">
+<Fill color="#D9E6FBFF"/>
+<Transform target="x" value="100 - ((([REFERENCE.kind] == 2 ? 3 : 4) + 2 + (round([REFERENCE.lvl] * 100) &gt;= 100 ? 3 : (round([REFERENCE.lvl] * 100) &gt;= 10 ? 2 : 1))) * 7.15 + 8)"/>
+<Transform target="width" value="(([REFERENCE.kind] == 2 ? 3 : 4) + 2 + (round([REFERENCE.lvl] * 100) &gt;= 100 ? 3 : (round([REFERENCE.lvl] * 100) &gt;= 10 ? 2 : 1))) * 7.15 + 8"/>
+</RoundRectangle>
 </PartDraw>
 <PartText name="level_tag" x="0" y="0" width="96" height="16">
 <Transform target="x" value="225 + sqrt(clamp(12100 - pow([REFERENCE.sy] - 225, 2), 0, 12100)) - 124"/>

@@ -208,6 +208,13 @@ test('notification bubbles stay inside the core and hide when read', () => {
       if (sy <= 185) assert.ok(y > sy, 'below the surface when there is room');
     }
   }
+  // The count label stays inside the fluid and clear of the bubble column.
+  for (const count of [1, 3, 6, 9]) for (const sy of [130, 185, 260]) {
+    const y = wff(X.BUBBLE_LABEL_Y, { UNREAD_NOTIFICATION_COUNT: count, ...R({ sy, nsrc: 0, ncount: 0 }) });
+    const B = X.BUBBLE_LABEL_BOX;
+    for (const cy of [y, y + B.h]) assert.ok(Math.hypot(B.x - G.C, cy - G.C) < G.CORE, `label inside core (${count}, ${sy})`);
+    assert.ok(B.x + B.w < X.bubbleX(0) - 4 - 1 && B.x + B.w < Math.min(...[0, 1, 2, 3, 4, 5].map((i) => X.bubbleX(i) - X.bubbleRadius(i))), 'label left of the bubbles');
+  }
   // Without notification access the slot's carriers read their default 0.
   const noCompanion = R({ nsrc: 0, ncount: 0 });
   assert.equal(wff(X.BUBBLES_VISIBLE, R({ sy: 185 })), 255);

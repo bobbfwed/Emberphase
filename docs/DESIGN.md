@@ -1,6 +1,6 @@
 # Meniscus: design and build plan
 
-Status: **built (face 0.1.2, watch companion 0.1.11).** Rendering, slosh, tilt,
+Status: **built (face 0.1.3, watch companion 0.1.12, phone companion 0.1.4).** Rendering, slosh, tilt,
 always-on, low battery, power saving and the editor were checked on the Wear OS 6
 emulator with sample data; the physical-watch checks in
 [device-acceptance.md](device-acceptance.md) are pending. The interactive concept
@@ -65,7 +65,8 @@ up when a goal is met, and a tap on the core makes the fluid slosh.
   Holding the watch face-up or tilted toward you gives a level surface; only
   rolling the wrist turns it.
 * **Surface.** A bright meniscus line across the chord, with small upward curls
-  where it meets the glass. A level tag (for example `68%` with a source glyph)
+  where it meets the glass. A level tag (for example `BATT 68%`, on a light chip so it
+  stays readable where it crosses a digit)
   rides the surface near the right wall.
 * **Body.** Vertical gradient from the theme's bright tone at the surface to its
   deep tone at the bottom, with a static low-contrast caustic texture. A
@@ -127,7 +128,8 @@ count. None of these needs a complication.
 ### Notification bubbles
 
 The number of notifications on the watch is drawn as up to six bubbles near the bottom of the
-fluid, with a small count beside the top bubble (`6+` above six). When the
+fluid, with a small count left of the top bubble, clear of the digits (`6+` above
+six). When the
 count changes, the bubbles rise into place with one short animation. Zero
 shows no bubbles.
 

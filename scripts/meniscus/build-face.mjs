@@ -236,6 +236,11 @@ function surface() {
       el('Line', { startX: 0, startY: 0, endX: 1, endY: 0 }, stroke('#40FFFFFF', 5, { cap: 'ROUND' }), ...lineT),
       el('Line', { startX: 0, startY: 0, endX: 1, endY: 0 }, stroke('#F2FFFFFF', 1.6, { cap: 'ROUND' }), ...lineT),
       curlArc(-1), curlArc(1)),
+    // A light chip keeps the tag readable where it crosses a submerged digit.
+    draw('level_chip', { x: 0, y: 0, width: 104, height: 16 },
+      T('x', `${G.C} + ${half} - 124`), T('y', `${sy} + 4`), T('alpha', `${G.CORE_BOTTOM} - ${sy} > 20 ? 255 : 0`),
+      el('RoundRectangle', { x: 0, y: 0, width: 40, height: 16, cornerRadiusX: 8, cornerRadiusY: 8 },
+        fill(G.LIT.replace('#', '#D9')), T('x', `100 - (${X.LEVEL_CHIP_W})`), T('width', X.LEVEL_CHIP_W))),
     text('level_tag', [0, 0, 96, 16], {
       family: SEMIBOLD, size: 11, color: G.INK.replace('#', '#FF'), align: 'END', spacing: 0.05, template: '%s %s%s',
       params: [X.KIND_LABEL, `round(${X.ref('lvl')} * 100)`, '"%"'],
@@ -251,12 +256,11 @@ function bubbles() {
       fill('#46FFFFFF'), stroke('#E6FFFFFF', 0.9),
       T('y', X.bubbleY(i), { interpolation: 'EASE_OUT', duration: 0.9, fps: 30 })));
   }
-  const topY = `${X.BUBBLE_BOTTOM} - (${X.BUBBLE_COUNT} - 1) * ${X.BUBBLE_STEP} - 9`;
   return group('bubbles', { pivotX: 0.5, pivotY: 0.5 }, ...rotated, T('alpha', X.BUBBLES_VISIBLE),
     draw('bubble_set', {}, ...ellipses),
-    text('bubble_count', [G.C - 30, 0, 28, 16], {
-      family: SEMIBOLD, size: 11, color: G.INK.replace('#', '#FF'), align: 'START', template: '%s', params: [X.BUBBLE_LABEL],
-      transforms: [T('y', topY), T('alpha', `${X.NOTIFICATIONS} > 0 ? 255 : 0`)]
+    text('bubble_count', [X.BUBBLE_LABEL_BOX.x, 0, X.BUBBLE_LABEL_BOX.w, X.BUBBLE_LABEL_BOX.h], {
+      family: SEMIBOLD, size: 11, color: G.INK.replace('#', '#FF'), align: 'END', template: '%s', params: [X.BUBBLE_LABEL],
+      transforms: [T('y', X.BUBBLE_LABEL_Y), T('alpha', `${X.NOTIFICATIONS} > 0 ? 255 : 0`)]
     }));
 }
 

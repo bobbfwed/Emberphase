@@ -20,6 +20,9 @@ export const FEED_REFS = ['lv0', 'lv1', 'lv2', 'lv3', 'lv4', 'lv5'];
 export const LEVEL = `clamp(${FEED_REFS.map(ref).join(' + ')}, 0, 1)`;
 export const KIND = ['kd0', 'kd1', 'kd2', 'kd3', 'kd4', 'kd5'].map(ref).join(' + ');
 export const KIND_LABEL = `${ref('kind')} == 1 ? "BATT" : (${ref('kind')} == 2 ? "DAY" : "GOAL")`;
+// Width of the level tag's backing chip: IBM Plex Mono advances 0.6 em, plus
+// 0.05 em letter spacing, at size 11; 8 units of padding.
+export const LEVEL_CHIP_W = `((${ref('kind')} == 2 ? 3 : 4) + 2 + (round(${ref('lvl')} * 100) >= 100 ? 3 : (round(${ref('lvl')} * 100) >= 10 ? 2 : 1))) * 7.15 + 8`;
 export const WARN_FLUID = `${ref('kind')} == 1 && [BATTERY_PERCENT] < 20`;
 
 // ---- Tilt and slosh ----
@@ -52,6 +55,10 @@ export const bubbleX = (i) => G.C - 42 + Math.sin(i * 1.7) * 5;
 export const bubbleY = (i) => `${BUBBLE_COUNT} > ${i} ? ${BUBBLE_BOTTOM} - ${i} * ${BUBBLE_STEP} - ${n(bubbleRadius(i))} : ${BUBBLE_BOTTOM + 40}`;
 // Bubbles need about 50 units of fluid; below that they would crowd the level tag.
 export const BUBBLES_VISIBLE = `${ref('sy')} < ${G.CORE_BOTTOM - 50} ? 255 : 0`;
+// The count sits left of the bubble column; to its right are the digits.
+export const BUBBLE_LABEL_BOX = { x: G.C - 81, w: 28, h: 16 };
+// Capped so the box's lower-left corner stays inside the fluid circle.
+export const BUBBLE_LABEL_Y = `clamp(${BUBBLE_BOTTOM} - (${BUBBLE_COUNT} - 1) * ${BUBBLE_STEP} - 9, 0, 282)`;
 export const BUBBLE_LABEL = `${NOTIFICATIONS} > ${BUBBLES} ? "6+" : round(${NOTIFICATIONS})`;
 
 // ---- Chronocast ring ----
