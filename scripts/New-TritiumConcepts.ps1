@@ -607,6 +607,8 @@ function Draw-Sky($cfg,[string]$part) {
     if($part -eq 'all' -or $part -eq 'sky') {
         $b=Blend-Brush 138 44 174 76 @('#03091a','#071631','#0b1f3c') ([single[]]@(0,0.55,1)) 90
         $script:g.FillPath($b,$dome); $b.Dispose()
+    }
+    if(($part -eq 'all' -or $part -eq 'sky') -and $cfg.Haze -gt 0) {
         # A faint moonlit haze around the disc.
         $haze=New-Object System.Drawing.Drawing2D.GraphicsPath; $hr=$cfg.MoonD*0.95
         $haze.AddEllipse(($cfg.MoonX-$hr),($cfg.MoonY-$hr),($hr*2),($hr*2))
@@ -622,8 +624,111 @@ function Draw-Sky($cfg,[string]$part) {
             Ellipse $color ($s[0]-$s[2]/2) ($s[1]-$s[2]/2) $s[2] $s[2]
         }
     }
-    if($part -eq 'all' -or $part -eq 'moon') { Draw-Moon $cfg.MoonX $cfg.MoonY $cfg.MoonD $fixturePhase }
+    if($part -eq 'all' -or $part -eq 'moon') {
+        if($cfg.MoonStyle -eq 'mechanical') { Draw-MechMoon 'all' } else { Draw-Moon $cfg.MoonX $cfg.MoonY $cfg.MoonD $fixturePhase }
+    }
     $dome.Dispose()
+}
+
+# ---------------------------------------------------------------------------
+# Mechanical moon (round 2): an upright engraved metal disc that travels
+# across the window, with a blued-steel shade covering exactly its unlit part.
+# The dial frame is drawn over it afterwards, so the frame hides whatever
+# passes behind the arch rim or the calendar lip.
+# ---------------------------------------------------------------------------
+$mechR=22
+$script:mechPhase=$fixturePhase
+function Get-MechCenter([double]$p) {
+    $s=2*$p-1; $a=[math]::Abs($s); $sg=1; if($s -lt 0) { $sg=-1 }
+    if($a -le 0.9) { return @((225+62*$s),(80+10*$s*$s)) }
+    $t=($a-0.9)/0.1; $x0=225+$sg*62*0.9; $y0=80+10*0.81
+    return @(($x0+(225+$sg*108-$x0)*$t),($y0+(100-$y0)*$t))
+}
+# Terminator x_t(y) = c * sqrt(R^2 - y^2) from the top pole to the bottom pole
+# (moon-centred, y down); mirrored for waning. Sampled densely near the poles.
+function Get-TerminatorPoints([double]$c,[bool]$waning,[double]$R) {
+    $pts=New-Object System.Collections.Generic.List[System.Drawing.PointF]
+    for($i=0;$i -le 120;$i++) {
+        $y=-$R*[math]::Cos([math]::PI*$i/120); $x=$c*[math]::Sqrt([math]::Max(0,$R*$R-$y*$y)); if($waning) { $x=-$x }
+        $pts.Add([System.Drawing.PointF]::new($x,$y))
+    }
+    return ,$pts.ToArray()
+}
+function Get-ShadePath([double]$c,[bool]$waning,[double]$R) {
+    $path=New-Object System.Drawing.Drawing2D.GraphicsPath
+    $path.AddLines((Get-TerminatorPoints $c $waning $R))
+    $ro=$R+1
+    # Outer edge follows the limb at R+1 on the shaded side, bottom back to top.
+    if($waning) { $path.AddArc(-$ro,-$ro,2*$ro,2*$ro,90,-180) } else { $path.AddArc(-$ro,-$ro,2*$ro,2*$ro,90,180) }
+    $path.CloseFigure(); return $path
+}
+function Draw-MechMoon([string]$part='all') {
+    $p=$script:mechPhase; $R=$mechR
+    $center=Get-MechCenter $p
+    $k=(1-[math]::Cos(2*[math]::PI*$p))/2; $c=1-2*$k; $waning=($p -gt 0.5)
+    # Supersampled offscreen drawing at 8 px per unit, then scaled into the layer.
+    $scale=8; $pad=4; $size=[int](2*($R+$pad)*$scale)
+    $bmp=New-Object System.Drawing.Bitmap($size,$size,[System.Drawing.Imaging.PixelFormat]::Format32bppArgb)
+    $mg=[System.Drawing.Graphics]::FromImage($bmp); $mg.SmoothingMode='AntiAlias'; $mg.Clear([System.Drawing.Color]::Transparent)
+    $mg.TranslateTransform(($size/2),($size/2)); $mg.ScaleTransform($scale,$scale)
+    $outer=$script:g; $script:g=$mg
+    $discRect=[System.Drawing.RectangleF]::new(-$R,-$R,2*$R,2*$R)
+    if($part -eq 'all' -or $part -eq 'moon') {
+        # Production moon art (New-DialAssets.ps1): cream metallic gradient and
+        # engraved craters, scaled from radius 26 to 22.
+        $b=New-Object System.Drawing.Drawing2D.LinearGradientBrush($discRect,(C '#fff2d7'),(C '#8d8b83'),45)
+        $mg.FillEllipse($b,$discRect); $b.Dispose()
+        $state=$mg.Save(); $clip=New-Object System.Drawing.Drawing2D.GraphicsPath; $clip.AddEllipse($discRect); $mg.SetClip($clip)
+        $f=$R/26
+        foreach($crater in @(@(-8,-5,10),@(12.5,7.5,13),@(-2.5,16.5,7),@(15,-12,6),@(-16,10,4))) {
+            $x=$crater[0]*$f; $y=$crater[1]*$f; $d=$crater[2]*$f
+            Ellipse '#888b87' ($x-$d/2) ($y-$d/2) $d $d; Ellipse '#b9b8ac' ($x-$d/2+$f) ($y-$d/2+$f) ($d-2*$f) ($d-2*$f)
+        }
+        # Slight domed shading: a soft highlight up-left, darkening toward the rim.
+        $dome=New-Object System.Drawing.Drawing2D.PathGradientBrush($clip)
+        $dome.CenterPoint=[System.Drawing.PointF]::new((-0.32*$R),(-0.36*$R))
+        $dome.CenterColor=[System.Drawing.Color]::FromArgb(70,255,250,236); $dome.SurroundColors=@([System.Drawing.Color]::FromArgb(70,52,46,36))
+        $mg.FillPath($dome,$clip); $dome.Dispose()
+        $mg.Restore($state); $clip.Dispose()
+        $pen=New-Object System.Drawing.Pen((C '#5f5b50'),0.7); $mg.DrawEllipse($pen,(-$R+0.35),(-$R+0.35),(2*$R-0.7),(2*$R-0.7)); $pen.Dispose()
+    }
+    if(($part -eq 'all' -or $part -eq 'shade') -and $k -lt 0.995) {
+        $shade=Get-ShadePath $c $waning $R
+        $term=Get-TerminatorPoints $c $waning $R
+        # Soft shadow cast by the shade onto the lit surface (about 1.5 units).
+        $lit=New-Object System.Drawing.Region($discRect); $lit.Exclude($shade)
+        $state=$mg.Save(); $mg.SetClip($lit,'Replace')
+        foreach($w in @(@(3.0,34),@(2.0,40),@(1.0,52))) {
+            $pen=New-Object System.Drawing.Pen([System.Drawing.Color]::FromArgb($w[1],0,0,0),$w[0]); $mg.DrawLines($pen,$term); $pen.Dispose()
+        }
+        $mg.Restore($state); $lit.Dispose()
+        # Blued steel with faint brushed lines.
+        $b=Blend-Brush (-$R-1) (-$R-1) (2*$R+2) (2*$R+2) @('#16233d','#1d2d4b','#24375c') ([single[]]@(0,0.5,1)) 60
+        $mg.FillPath($b,$shade); $b.Dispose()
+        $state=$mg.Save(); $mg.SetClip($shade)
+        $rnd=New-Object System.Random(3101)
+        for($ly=-$R-1;$ly -le $R+1;$ly+=0.45) {
+            $tone=255; if($rnd.NextDouble() -lt 0.5) { $tone=0 }
+            $pen=New-Object System.Drawing.Pen([System.Drawing.Color]::FromArgb((6+$rnd.Next(0,12)),$tone,$tone,$tone),0.22)
+            $mg.DrawLine($pen,(-$R-1),$ly,($R+1),($ly+0.6)); $pen.Dispose()
+        }
+        # Polished highlight along the terminator edge, kept inside the shade.
+        $pen=New-Object System.Drawing.Pen([System.Drawing.Color]::FromArgb(180,143,163,196),1.6); $pen.LineJoin='Round'
+        $mg.DrawLines($pen,$term); $pen.Dispose()
+        $mg.Restore($state); $shade.Dispose()
+    }
+    $script:g=$outer; $mg.Dispose()
+    $attributes=New-Object System.Drawing.Imaging.ImageAttributes; $attributes.SetWrapMode('TileFlipXY')
+    $half=$R+$pad
+    $state=$script:g.Save(); $script:g.InterpolationMode='HighQualityBicubic'
+    $script:g.TranslateTransform(($center[0]-$half),($center[1]-$half)); $script:g.ScaleTransform((2*$half/$size),(2*$half/$size))
+    $script:g.DrawImage($bmp,([System.Drawing.Rectangle]::new(0,0,$size,$size)),0,0,$size,$size,[System.Drawing.GraphicsUnit]::Pixel,$attributes)
+    $script:g.Restore($state); $attributes.Dispose(); $bmp.Dispose()
+}
+# Restricts drawing to what the window shows: the dome, above the calendar lip.
+function Set-WindowClip {
+    $dome=Dome-Path; $script:g.SetClip($dome)
+    $script:g.SetClip([System.Drawing.RectangleF]::new(0,0,450,116),[System.Drawing.Drawing2D.CombineMode]::Intersect); $dome.Dispose()
 }
 
 # Readouts that match normal.png. Groups let low-light exceptions redraw a
@@ -938,8 +1043,9 @@ $concepts=@(
                          @{Level=0.30;Desat=0;Tint=@(1,1,1);Draw={ Draw-Readouts 'steps'; Sleep-Reactor 'values' }})}}
 )
 
-function Compose-Face($cfg,[string]$mode) {
+function Compose-Face($cfg,[string]$mode,[double]$mechPhase=-1,[switch]$Keep) {
     $script:cfg=$cfg
+    $script:mechPhase=$fixturePhase; if($mechPhase -ge 0) { $script:mechPhase=$mechPhase }
     $D=New-Layer; Use-Layer $D; $script:g.Clear([System.Drawing.Color]::Black)
     Asset 'balance_wheel' 151 151 148 148 0
     Draw-Sky $cfg 'all'
@@ -974,6 +1080,8 @@ function Compose-Face($cfg,[string]$mode) {
         Close-Layer $E
         $HL=New-Layer; Use-Layer $HL; Draw-HandLume $cfg 'glow'; [TritiumFx]::Over($D.Bitmap,$HL.Bitmap); Close-Layer $HL
     }
+    # -Keep hands the 2x layer to the caller (for window crops) instead of saving.
+    if($Keep) { $script:keptLayer=$D; return }
     $suffix='normal'; if($mode -ne 'normal') { $suffix='lowlight' }
     $path=Join-Path $outRoot ($cfg.Key+'-'+$suffix+'.png')
     Save-Layer $D $path; Close-Layer $D
@@ -1033,6 +1141,82 @@ $sheet.Save((Join-Path $outRoot 'comparison.png'),[System.Drawing.Imaging.ImageF
 $white.Dispose(); $grey.Dispose(); $titleFont.Dispose(); $rowFont.Dispose(); $sg.Dispose(); $sheet.Dispose()
 
 # ---------------------------------------------------------------------------
+# Round 2: the selected "Ember Field" pair with the mechanical moon
+# ---------------------------------------------------------------------------
+$warm=@(1.0,0.62,0.38)
+$emberField=@{Key='06-emberfield';Title='Ember Field';Name='Ember Field'
+    HourLume=$emberLume;MinuteLume=$emberLume;Markers='tubes';MarkerLume=$emberLume;TwelveLume=$emberLume;SixLume=$emberLume;Flank=$true
+    Numerals=$allNumerals;HourBars=$false;FaceCenter='#121414';FaceEdge='#030404'
+    MoonStyle='mechanical';MoonX=-999;MoonY=-999;MoonD=0;Haze=0;StarMaxR=82;StarMask=@()
+    Sleep={ param($part) }
+    Low=@{Level=0.14;Desat=0.85;Tint=$warm;Hand=0.22;Wide=4.2;WidePeak=0.45;Tight=1.2;TightPeak=0.55
+          Exceptions=@(@{Level=0.34;Desat=0.85;Tint=$warm;Draw={ Draw-Readouts 'monthday'; Draw-Readouts 'steps' }},
+                       @{Level=0.52;Desat=0;Tint=@(1.0,0.85,0.7);Draw={ Draw-Readouts 'weekday' }},
+                       # The lit moon stays at 0.34 amber; the shade dims with the dial and is redrawn over it.
+                       @{Level=0.34;Desat=0.85;Tint=$warm;Draw={ Set-WindowClip; Draw-MechMoon 'moon'; $script:g.ResetClip() }},
+                       @{Level=0.14;Desat=0.85;Tint=$warm;Draw={ Set-WindowClip; Draw-MechMoon 'shade'; $script:g.ResetClip() }})}}
+foreach($mode in @('normal','lowlight')) { $null=Compose-Face $emberField $mode }
+Write-Host 'Rendered round 2: Ember Field'
+
+# Mechanical moon strip: window crops (x 128-322, y 34-128) of the real face
+# composition at 2x, normal and low light, for a set of illuminated fractions.
+$mechColumns=@(@('New',0.0,$false),@('Thin crescent',0.03,$false),@('Waxing crescent',0.15,$false),@('First quarter',0.5,$false),
+               @('Waxing gibbous',0.85,$false),@('Full',1.0,$false),@('Waning gibbous',0.85,$true),@('Last quarter',0.5,$true),@('Waning crescent',0.15,$true))
+$cropX=128; $cropY=34; $cropW=194; $cropH=94
+$colW=$cropW*2; $colH=$cropH*2; $colGap=14; $labelW=170; $headH=74; $rowGap=16; $mg2=24
+$stripW=$mg2*2+$labelW+9*$colW+8*$colGap; $stripH=$mg2+$headH+2*$colH+$rowGap+$mg2
+$strip2=New-Object System.Drawing.Bitmap($stripW,$stripH)
+$s2=[System.Drawing.Graphics]::FromImage($strip2)
+$s2.SmoothingMode='AntiAlias'; $s2.TextRenderingHint='AntiAliasGridFit'; $s2.Clear((C '#1b1c1e'))
+$nameFont=New-Object System.Drawing.Font('Segoe UI Semibold',24,[System.Drawing.GraphicsUnit]::Pixel)
+$pctFont=New-Object System.Drawing.Font('Segoe UI',19,[System.Drawing.GraphicsUnit]::Pixel)
+$rowFont2=New-Object System.Drawing.Font('Segoe UI',21,[System.Drawing.GraphicsUnit]::Pixel)
+$cfmt=New-Object System.Drawing.StringFormat; $cfmt.Alignment='Center'; $cfmt.LineAlignment='Center'
+$lfmt=New-Object System.Drawing.StringFormat; $lfmt.Alignment='Near'; $lfmt.LineAlignment='Center'
+$white=Brush '#f0f0ee'; $grey=Brush '#a7abb0'
+for($i=0;$i -lt $mechColumns.Count;$i++) {
+    $k=[double]$mechColumns[$i][1]; $p=[math]::Acos(1-2*$k)/(2*[math]::PI); if($mechColumns[$i][2]) { $p=1-$p }
+    $x=$mg2+$labelW+$i*($colW+$colGap)
+    $s2.DrawString($mechColumns[$i][0],$nameFont,$white,([System.Drawing.RectangleF]::new($x,$mg2,$colW,40)),$cfmt)
+    $s2.DrawString(('{0:0}% lit' -f ($k*100)),$pctFont,$grey,([System.Drawing.RectangleF]::new($x,($mg2+38),$colW,30)),$cfmt)
+    for($row=0;$row -lt 2;$row++) {
+        Compose-Face $emberField (@('normal','lowlight')[$row]) $p -Keep
+        $y=$mg2+$headH+$row*($colH+$rowGap)
+        $s2.DrawImage($script:keptLayer.Bitmap,([System.Drawing.Rectangle]::new($x,$y,$colW,$colH)),($cropX*2),($cropY*2),$colW,$colH,[System.Drawing.GraphicsUnit]::Pixel)
+        Close-Layer $script:keptLayer
+    }
+}
+foreach($row in 0,1) {
+    $y=$mg2+$headH+$row*($colH+$rowGap)
+    $s2.DrawString(@('Normal','Low light')[$row],$rowFont2,$grey,([System.Drawing.RectangleF]::new($mg2,$y,$labelW,$colH)),$lfmt)
+}
+$strip2.Save((Join-Path $outRoot 'moon-mechanical-phases.png'),[System.Drawing.Imaging.ImageFormat]::Png)
+$s2.Dispose(); $nameFont.Dispose(); $pctFont.Dispose(); $rowFont2.Dispose()
+
+# Selected sheet: both faces at native size with the strip underneath at half size.
+$selMargin=28; $selGap=24; $selTitleH=52; $selLabelH=36
+$halfStripW=[int]($stripW/2); $halfStripH=[int]($stripH/2)
+$selW=[math]::Max($selMargin*2+2*450+$selGap,$selMargin*2+$halfStripW)
+$selH=$selMargin+$selTitleH+$selLabelH+450+$selGap+$halfStripH+$selMargin
+$sel=New-Object System.Drawing.Bitmap($selW,$selH)
+$sg=[System.Drawing.Graphics]::FromImage($sel)
+$sg.SmoothingMode='AntiAlias'; $sg.TextRenderingHint='AntiAliasGridFit'; $sg.InterpolationMode='HighQualityBicubic'; $sg.Clear((C '#1b1c1e'))
+$titleFont=New-Object System.Drawing.Font('Segoe UI Semibold',28,[System.Drawing.GraphicsUnit]::Pixel)
+$rowFont=New-Object System.Drawing.Font('Segoe UI',18,[System.Drawing.GraphicsUnit]::Pixel)
+$sg.DrawString('Ember Field',$titleFont,$white,([System.Drawing.RectangleF]::new(0,$selMargin,$selW,$selTitleH)),$cfmt)
+$facesX=($selW-(2*450+$selGap))/2
+for($i=0;$i -lt 2;$i++) {
+    $x=$facesX+$i*(450+$selGap); $y=$selMargin+$selTitleH
+    $sg.DrawString(@('Normal brightness','Low light (15% or below)')[$i],$rowFont,$grey,([System.Drawing.RectangleF]::new($x,$y,450,$selLabelH)),$cfmt)
+    $img=[System.Drawing.Image]::FromFile((Join-Path $outRoot ('06-emberfield-'+@('normal','lowlight')[$i]+'.png')))
+    $sg.DrawImage($img,[float]$x,[float]($y+$selLabelH),[float]450,[float]450); $img.Dispose()
+}
+$img=[System.Drawing.Image]::FromFile((Join-Path $outRoot 'moon-mechanical-phases.png'))
+$sg.DrawImage($img,[float](($selW-$halfStripW)/2),[float]($selMargin+$selTitleH+$selLabelH+450+$selGap),[float]$halfStripW,[float]$halfStripH); $img.Dispose()
+$sel.Save((Join-Path $outRoot 'selected.png'),[System.Drawing.Imaging.ImageFormat]::Png)
+$white.Dispose(); $grey.Dispose(); $titleFont.Dispose(); $rowFont.Dispose(); $sg.Dispose(); $sel.Dispose(); $strip2.Dispose()
+
+# ---------------------------------------------------------------------------
 # Static index page (no external resources)
 # ---------------------------------------------------------------------------
 $cells=New-Object System.Text.StringBuilder
@@ -1061,11 +1245,33 @@ $html=@"
   .legend { color: #a9adb2; margin: 0 0 12px; }
   img.wide { max-width: 100%; height: auto; display: block; margin: 8px 0 24px; }
   a { color: #f0a868; }
+  .round2 { border-bottom: 1px solid #34363a; margin-bottom: 28px; padding-bottom: 8px; }
+  .round2 h2 { font-size: 22px; font-weight: 600; margin: 0 0 8px; }
+  p.r2 { color: #c9ccd0; margin: 0 0 4px; max-width: 70em; }
+  .pair { display: flex; flex-wrap: wrap; gap: 24px; margin: 16px 0 8px; }
+  .pair figure { margin: 0; }
+  .pair img { display: block; width: 450px; height: 450px; border-radius: 50%; }
+  .pair figcaption { color: #a9adb2; text-align: center; margin-top: 8px; }
+  h2.round1 { font-size: 22px; font-weight: 600; color: #a9adb2; margin: 0 0 6px; }
 </style>
 </head>
 <body>
-<h1>Emberphase: tritium, sleep and moon concepts</h1>
-<p class="note">These are illustrative composites with sample data (sleep 7 h 42 min, score 86; 1 November 2026), not device screenshots. Top image in each column: normal brightness. Bottom image: low light (15% or below), showing the pixels the face would draw.</p>
+<h1>Emberphase: tritium and moon concepts</h1>
+<p class="note">These are illustrative composites with sample data (1 November 2026), not device screenshots. Low-light images show the pixels the face would draw at 15% brightness or below.</p>
+<section class="round2">
+<h2>Round 2: Ember Field</h2>
+<p class="r2">Orange tritium tubes on Field's hour layout, with the 12 and 6 numerals kept as on the current dial and flanked by pairs of tubes.</p>
+<p class="r2">There is no sleep readout.</p>
+<p class="r2">The moon travels across its window and a blued-steel shade covers exactly its unlit part, so each phase has its true shape and the window is empty at new moon.</p>
+<div class="pair">
+  <figure><a href="06-emberfield-normal.png"><img src="06-emberfield-normal.png" width="450" height="450" alt="Ember Field, normal brightness"></a><figcaption>Normal brightness</figcaption></figure>
+  <figure><a href="06-emberfield-lowlight.png"><img src="06-emberfield-lowlight.png" width="450" height="450" alt="Ember Field, low light"></a><figcaption>Low light (15% or below)</figcaption></figure>
+</div>
+<img class="wide" src="moon-mechanical-phases.png" alt="The mechanical moon in nine phases, normal and low light">
+<p><a href="selected.png">Selected sheet (both faces and the moon strip)</a></p>
+</section>
+<h2 class="round1">Round 1 (superseded)</h2>
+<p class="note">Five earlier concepts, with sleep readouts (sample: 7 h 42 min, score 86). Top image in each column: normal brightness. Bottom image: low light.</p>
 <div class="grid">
 $($cells.ToString())</div>
 <h2>Moon phases</h2>
