@@ -8,7 +8,11 @@ The face is hand-written in native Watch Face Format 4. Its resource-only APK
 contains no executable app code. Wear OS scales the circular 450-unit layout
 to the watch display.
 
-![Illustrative Emberphase preview](docs/previews/normal.png)
+| Normal | Always-on |
+| :---: | :---: |
+| <img src="docs/previews/normal.png" alt="Illustrative preview of Emberphase in normal mode" width="380"> | <img src="docs/previews/ambient.png" alt="Illustrative preview of Emberphase in always-on mode" width="380"> |
+
+Illustrative previews with sample data, not device screenshots.
 
 ## Features
 
@@ -48,12 +52,12 @@ Try the [interactive mechanical sweep preview](docs/previews/mechanical-sweep.ht
 by downloading it and opening it in a browser. It is a standalone file with
 sample weather/activity data. See [center-tap setup and behavior](docs/mechanical-sweep.md).
 
-See the [always-on](docs/previews/ambient.png),
-[low-battery](docs/previews/low-battery.png),
+See also the [low-battery](docs/previews/low-battery.png),
 [always-on low-battery](docs/previews/ambient-low-battery.png), and
-[unavailable-data](docs/previews/unavailable.png) previews. These are illustrative
-artwork composites with sample data, not device screenshots. The design references
-are the [original mockup](Mockup%20Images/Original%20Mockup.png) and
+[unavailable-data](docs/previews/unavailable.png) previews. Like the two images
+at the top, these are illustrative artwork composites with sample data, not
+device screenshots. The design references are the
+[original mockup](Mockup%20Images/Original%20Mockup.png) and
 [always-on mockup](Mockup%20Images/Always%20On%20Original%20Mockup.png).
 
 ## Compatibility and current limitations
