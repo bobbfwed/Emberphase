@@ -13,7 +13,13 @@ The face is hand-written in native Watch Face Format 4. Its resource-only APK
 contains no executable app code. Wear OS scales the circular 450-unit layout
 to the watch display.
 
-![Illustrative Emberphase preview](docs/previews/normal.png)
+| Normal | Always-on | Low light |
+| :---: | :---: | :---: |
+| <img src="docs/previews/normal.png" width="260" alt="Emberphase Tritium at normal brightness"> | <img src="docs/previews/ambient.png" width="260" alt="Emberphase Tritium always-on display"> | <img src="docs/previews/low-light.png" width="260" alt="Emberphase Tritium low-light dial"> |
+| The full dial at normal screen brightness. | The simplified display while the watch is idle. | The dimmed dial with glowing tritium when screen brightness is 15% or below. |
+
+These three images are illustrative artwork composites with sample data, not
+device screenshots.
 
 ## Features
 
@@ -57,12 +63,10 @@ Try the [interactive mechanical sweep preview](docs/previews/mechanical-sweep.ht
 by downloading it and opening it in a browser. It is a standalone file with
 sample weather/activity data. See [center-tap setup and behavior](docs/mechanical-sweep.md).
 
-See the [low-light](docs/previews/low-light.png),
-[always-on](docs/previews/ambient.png),
-[low-battery](docs/previews/low-battery.png),
+See also the [low-battery](docs/previews/low-battery.png),
 [always-on low-battery](docs/previews/ambient-low-battery.png), and
-[unavailable-data](docs/previews/unavailable.png) previews. These are illustrative
-artwork composites with sample data, not device screenshots. The design references
+[unavailable-data](docs/previews/unavailable.png) previews, which are composites
+of the same kind. The design references
 are the [original mockup](Mockup%20Images/Original%20Mockup.png) and
 [always-on mockup](Mockup%20Images/Always%20On%20Original%20Mockup.png).
 
