@@ -9,6 +9,8 @@ import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 
 public final class HealthActivity extends Activity {
+    private TextView brightness;
+
     @Override public void onCreate(Bundle state) {
         super.onCreate(state);
         ScrollView scroll = new ScrollView(this);
@@ -43,7 +45,17 @@ public final class HealthActivity extends Activity {
                 ? "Notification count: on."
                 : "Notification count: off. Allow notification access for Emberphase Health so faces can show all notifications, not only unread.");
         content.addView(notifications);
+        brightness = new TextView(this);
+        brightness.setTextSize(15);
+        content.addView(brightness);
         setContentView(scroll);
         PhoneRefresh.loadCache(this);
+    }
+
+    // Refreshed on every return so the owner can move the slider and look again.
+    @Override protected void onResume() {
+        super.onResume();
+        BrightnessSignals.request(this);
+        brightness.setText(BrightnessSignals.read(this).describe());
     }
 }

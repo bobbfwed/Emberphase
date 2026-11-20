@@ -83,6 +83,84 @@ key and register the phone app's package and release SHA-256 with Samsung.
    **Emberphase · Active calories**. Save the face. Existing selections persist
    across face updates, so changing default providers does not replace them.
 
+## Watch-only providers
+
+The watch app also hosts fixed providers that need no phone, permission
+or network:
+
+* **Emberphase · Core tap** (0.1.9, current 0.1.10) lets Meniscus slosh its fluid. A tap on the
+  core records the time and publishes it in a short timeline (3.5 seconds,
+  rounded up to a whole second) that returns to idle on its own. Taps at
+  15 percent battery or less, or while a slosh is running, are ignored.
+* **Emberphase · Mechanical sweep** is unchanged for the mechanical face
+  (six-second window). Both tap providers share `TapTiming`. The tritium face
+  uses the same provider for its centre-tap sweep.
+* **Emberphase · Power saving** publishes 1 while Android power saving or the
+  watch's low-power mode is on, and only when that changes.
+* **Emberphase · Low light** (0.1.14) publishes 1 while the screen brightness is
+  low. See [Low-light signal](#low-light-signal).
+* **Emberphase · Notifications** (0.1.11) publishes how many notifications are
+  on the watch, for Meniscus's bubbles. Samsung reports the face's own
+  `UNREAD_NOTIFICATION_COUNT` only as 0 or 1, and Wear OS marks everything read
+  once the list is opened. A `NotificationListenerService` recounts on every
+  post and removal, skipping ongoing, foreground-service and group-summary
+  notifications, and asks the face to refresh only when the number changes. It
+  never reads notification contents. It needs notification access, which the
+  watch has no screen for; grant it over ADB:
+  `adb shell cmd notification allow_listener com.bobbfwed.emberphase.health/com.bobbfwed.emberphase.health.watch.NotificationCountListener`.
+  Without access the provider publishes no data. Forwarded phone
+  notifications are not visible to it (see the engineering notes), so
+  Meniscus also reads the unread flag and shows whichever is larger.
+
+Every provider lists all the Emberphase faces (`com.bobbfwed.emberphase`, `.mechanical`,
+`.apsis`, `.meniscus` and `.tritium`) in `SAFE_WATCH_FACES`, so one companion serves each
+face and switching faces needs no reinstall.
+
+## Low-light signal
+
+Watch companion 0.1.14 adds **Emberphase · Low light**
+(`com.bobbfwed.emberphase.health/com.bobbfwed.emberphase.health.watch.BrightnessDataSource`).
+The tritium face reads it through a hidden slot to switch to its low-light dial.
+It publishes a ranged value from 0 to 1 titled "Low light": 1 ("On") in low
+light and 0 ("Off") otherwise. Editor previews show 0.
+
+**What it reads.** Only the system setting `screen_brightness`. The value is
+converted to a whole percentage (rounded) of the device's slider range, taken
+from the framework's `config_screenBrightnessSettingMinimum` and
+`config_screenBrightnessSettingMaximum` (0 and 255 on the tested Watch6
+Classic; 1 to 255 is used if a device does not publish them).
+It watches `screen_brightness`, `screen_brightness_mode` and Samsung's
+`screen_auto_brightness_adj` for changes. It does not read the light sensor
+and uses no timer, polling, alarm or foreground service.
+
+**Thresholds.** Low light turns on at 15 percent or less and off at 20 percent
+or more. Between the two it keeps its previous state, so a slider resting near
+one threshold does not flicker the dial. An unreadable setting counts as off.
+Both numbers are constants in `BrightnessLevel`. On the tested watch, raw 39 or
+less is on (39/255 rounds to 15 percent) and raw 51 or more is off.
+
+**Delivery.** The face is asked to refresh only when the 0/1 state changes, and
+the delivered state is stored only after the face has received it. The
+provider also declares `UPDATE_PERIOD_SECONDS` = 600. This is the one deliberate
+periodic refresh in the watch companion: if a change is missed, the face heals
+within about ten minutes. Each such refresh only reads the setting.
+
+**Limits.** The change observers live only while the companion process is
+alive. Android can stop the process; it restarts for the next provider request
+(the ten-minute refresh at the latest), registers the observers again and
+publishes the current state. Whether automatic brightness writes its result
+into `screen_brightness` on every ambient-light change has not been confirmed on
+the watch. On 2026-11-20 the setting read 39 in a dark room with automatic
+brightness on, and the display's applied brightness was 39/255, which suggests
+it does. If the dial does not follow the room light, check this first.
+
+**Permissions.** None. Reading system settings needs no permission.
+
+**Checking it.** Open **Emberphase Health** on the watch. The last line shows,
+for example, `Brightness 39/255 (15%) · low light on`. Change the brightness,
+return to the app and read the line again. Over ADB the same raw value is
+`adb shell settings get system screen_brightness`.
+
 ## Data, cadence, and stopping
 
 The phone reads today's ungrouped `TOTAL_ACTIVE_TIME` (whole minutes) and
