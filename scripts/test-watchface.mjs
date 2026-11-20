@@ -245,12 +245,47 @@ for (const [name, id] of [['steps',20], ['minutes',30], ['calories',40]]) {
   const edge=face.match(new RegExp('<Group name="'+name+'_track_cut_edge"[\\s\\S]*?</Group>'))[0];
   const edgeExpression=unescapeXml(edge.match(/<Transform target="angle" value="([^"]+)"/)[1]);
   const targetText=part(name+'_target_display');
+  // Leading-end tubes: the normal one rides in the cut-edge group; the low-light
+  // one rotates by the exported fill end. Both sit on the track at clock 180.
+  const radius={steps:150,minutes:168,calories:186}[name];
+  assert.match(edge,new RegExp('<PartImage name="'+name+'_track_edge" x="222" y="'+(225+radius-8)+'" width="6" height="16">\\s*<Image resource="track_edge" />'));
+  const fillEndSource=element('Group',name+'_fill_end_source');
+  assert.match(fillEndSource,new RegExp('<Reference name="'+name+'_fill_end" source="angle" defaultValue="214"'));
+  assert.equal(transformOf(fillEndSource,'angle'),endExpression,'The exported fill end is the same expression as the fill end angle');
+  assert.ok(face.indexOf('<Group name="'+name+'_fill_end_source"')<face.indexOf('<Condition>',face.indexOf('<Group name="'+name+'_track_render"')),'The fill-end source is never hidden by the track condition');
+  const lowEdge=element('Group',name+'_lowlight_edge');
+  assert.ok(lowEdge.includes('pivotX="0.5" pivotY="0.5">'),'Low-light edge turns about the dial centre');
+  assert.equal(transformOf(lowEdge,'angle'),'[REFERENCE.'+name+'_fill_end] - 180');
+  assert.match(lowEdge,new RegExp('<PartImage x="212" y="'+(225+radius-18)+'" width="26" height="36">\\s*<Image resource="lowlight_track_edge" />'));
+  const lowEdgeAngle=transformOf(lowEdge,'angle');
+  assert.equal(expressions.get(name+'_lowlight_edge_visible'),expressions.get(name+'_track_visible'),'Low-light edge shows exactly when the fill does');
+  const rangeValid=exportedExpression(name+'_range_valid');
+  // Every edge angle must equal the fill end, at rest and through the sweep.
+  const sweepStates=[{},...[0,0.1,0.24,0.5,0.75,0.9,0.999].map(p=>{
+    const st={'REFERENCE.sweep_progress':p};
+    for(const k of ['home','turn','settle']) st['REFERENCE.sweep_'+k]=evaluate(transformOf(element('Group','sweep_'+k+'_source'),'angle'),st);
+    return st;
+  })];
+  const checkEdges=(refs,shown)=>{
+    for(const st of sweepStates) {
+      const r={...refs,...st};
+      const fillEnd=evaluate(endExpression,r);
+      const visible=!!evaluate(expressions.get(name+'_track_visible'),r);
+      assert.equal(visible,shown || r['REFERENCE.sweep_progress']<1,'track '+name+' visibility');
+      assert.ok(Math.abs(evaluate(edgeExpression,r)+180-fillEnd)<1e-9,'normal edge at fill end');
+      assert.ok(Math.abs(evaluate(lowEdgeAngle,{...r,['REFERENCE.'+name+'_fill_end']:evaluate(transformOf(fillEndSource,'angle'),r)})+180-fillEnd)<1e-9,'low-light edge at fill end');
+      assert.ok(fillEnd>=146-1e-9 && fillEnd<=214+1e-9,'edge stays on the track');
+    }
+  };
   for(const target of [-1,0,60,8000]) for(const value of [-5,0,1,42,8000,10000]) {
     const data={'COMPLICATION.GOAL_PROGRESS_VALUE':value,'COMPLICATION.GOAL_PROGRESS_TARGET_VALUE':target};
     const angle=evaluate(goalEnd,data);
     const refs={...referenceDefaults,['REFERENCE.'+name+'_goal_end']:angle,['REFERENCE.'+name+'_goal_target']:evaluate(goalTarget,data)};
     const valid=target>0 && value>0;
-    assert.equal(evaluate(expressions.get(name+'_track_visible'),refs),valid);
+    // A goal provider is shown (fill, cut edge, tube) whenever it has a goal, including zero progress.
+    assert.equal(evaluate(expressions.get(name+'_track_visible'),refs),target>0);
+    checkEdges(refs,target>0);
+    if(target>0 && value<=0) assert.equal(angle,214,'Zero progress puts the tube at the start');
     assert.equal(evaluate(targetText,refs),target>0?numberFormat('#,##0',target):'—');
     if(valid) {
       assert.ok(Number.isFinite(angle) && angle>=146 && angle<214);
@@ -262,9 +297,10 @@ for (const [name, id] of [['steps',20], ['minutes',30], ['calories',40]]) {
   for(const [min,max,value] of [[0,0,0],[1,0,5],[10,100,10],[10,100,55],[10,100,200],[-10,100,-11],[0,6000,2199]]) {
     const data={'COMPLICATION.RANGED_VALUE_MIN':min,'COMPLICATION.RANGED_VALUE_MAX':max,'COMPLICATION.RANGED_VALUE_VALUE':value};
     const angle=evaluate(rangeEnd,data);
-    const refs={...referenceDefaults,['REFERENCE.'+name+'_range_end']:angle};
+    const refs={...referenceDefaults,['REFERENCE.'+name+'_range_end']:angle,['REFERENCE.'+name+'_range_valid']:evaluate(rangeValid,data)};
     const valid=max>min && value>min;
-    assert.equal(evaluate(expressions.get(name+'_track_visible'),refs),valid);
+    assert.equal(evaluate(expressions.get(name+'_track_visible'),refs),max>min);
+    checkEdges(refs,max>min);
     assert.equal(evaluate(targetText,refs),'—','Disabled Samsung option and generic ranges must not invent personal targets');
     if(valid) {
       assert.ok(angle>=146 && angle<214);
@@ -282,6 +318,7 @@ for (const [name, id] of [['steps',20], ['minutes',30], ['calories',40]]) {
   }
   assert.equal(evaluate(targetText,referenceDefaults),'—');
   assert.equal(evaluate(expressions.get(name+'_track_visible'),referenceDefaults),false);
+  checkEdges(referenceDefaults,false);
   assert.doesNotMatch(slot,/<Arc\b|width="43" height="18"/,'Detached tracks and goals must not enlarge the editor slot');
   if(name==='steps') {
     assert.match(slot,/<BooleanConfiguration id="samsung_steps_target">/);
@@ -462,6 +499,23 @@ assert.match(lowlightDial,/<PartImage x="0" y="0" width="450" height="450">\s*<I
 const overlayIndex=face.indexOf('<Group name="lowlight_dial"');
 assert.ok(overlayIndex>face.indexOf('<Group name="calories_track_render"') && overlayIndex<face.indexOf('<Group name="ambient_dial"') && overlayIndex<face.indexOf('<Group name="normal_hands"'),'The overlay covers the whole dial and sits under the hands');
 for(const signal of [0,1]) assert.equal(evaluate(transformOf(lowlightDial,'alpha'),{'REFERENCE.low_light':signal}),signal?255:0);
+// Glowing parts above the overlay: battery level line and track leading ends.
+const lowlightGlow=element('Group','lowlight_glow');
+assert.match(lowlightGlow,/^<Group name="lowlight_glow" x="0" y="0" width="450" height="450">\s*<Variant mode="AMBIENT" target="alpha" value="0" \/>/);
+for(const signal of [0,1]) assert.equal(evaluate(transformOf(lowlightGlow,'alpha'),{'REFERENCE.low_light':signal}),signal?255:0);
+const glowIndex=face.indexOf('<Group name="lowlight_glow"');
+assert.ok(glowIndex>overlayIndex && glowIndex<face.indexOf('<Group name="ambient_dial"') && glowIndex<face.indexOf('<Group name="normal_hands"'),'Glowing parts sit above the overlay and under the hands');
+const lowSlider=element('PartImage','lowlight_battery_slider');
+assert.match(lowSlider,/^<PartImage name="lowlight_battery_slider" x="349" y="264" width="41" height="33">/);
+const lowSliderExpression=transformOf(lowSlider,'y');
+const normalSliderTag=face.match(/<PartImage name="battery_slider" x="(\d+)" y="(\d+)" width="21" height="13">/);
+assert.equal(Number(normalSliderTag[1])-10,349,'Low-light line image starts 10 units left of the indicator');
+let sliderChecks=0;
+for(let battery=0;battery<=100;battery++) for(const st of [{},{'REFERENCE.sweep_home':0,'REFERENCE.sweep_turn':0.4,'REFERENCE.sweep_settle':0},{'REFERENCE.sweep_home':0.3,'REFERENCE.sweep_turn':1,'REFERENCE.sweep_settle':0.6}]) {
+  const data={BATTERY_PERCENT:battery,...st};
+  assert.ok(Math.abs(evaluate(lowSliderExpression,data)-(evaluate(sliderExpression,data)-10))<1e-9,'Low-light level line tracks the indicator at '+battery+' percent');
+  sliderChecks++;
+}
 
 // Hands: exactly one set shows in every state.
 const handGroups=Object.fromEntries(['normal_hands','lowlight_hands','sweep_hands','sweep_normal_hands','sweep_lowlight_hands','optional_ticking_seconds','optional_sweep_seconds','center_caps'].map(n=>[n,element('Group',n)]));
@@ -521,7 +575,7 @@ assert.equal(buildScript.match(/--version-code (\d+)/)[1],gradle.match(/versionC
 assert.equal(buildScript.match(/--version-name '([^']+)'/)[1],gradle.match(/versionName = "([^"]+)"/)[1],'Version names agree');
 assert.equal(strings.get('watch_face_name'),'Emberphase Tritium');
 console.log(`PASS: ${calendarCases} calendar dates; activity goals/ranges/empty states; detached reference-driven gauges and disjoint editor targets; battery bounds; seconds cutoff; battery policy.`);
-console.log(`PASS: low-light truth table (3 modes x 2 signals); slot 70 signal, geometry and order; ${handStates} hand-visibility states; app ID ${gradleId} ${gradle.match(/versionName = "([^"]+)"/)[1]}.`);
+console.log(`PASS: low-light truth table (3 modes x 2 signals); slot 70 signal, geometry and order; ${handStates} hand-visibility states; low-light level line over ${sliderChecks} battery/sweep cases; track leading ends at the fill end; app ID ${gradleId} ${gradle.match(/versionName = "([^"]+)"/)[1]}.`);
 
 // Artwork. Runs last so a missing file from the art pipeline does not hide other results.
 const drawables=path.join(root,'watchface/src/main/res/drawable-nodpi');
@@ -530,6 +584,7 @@ const cupResources=resources.filter(name=>name.startsWith('moon_cup_')).sort();
 assert.deepEqual(cupResources,cupFrames.map(k=>'moon_cup_'+String(k).padStart(2,'0')),'Cup frames are exactly 00..59 without 30');
 const expectedSizes={moon_sky:[174,72],moon_carrier:[140,140],dial_frame:[450,450],hour_hand:[22,150],minute_hand:[16,198],
   lowlight_dial:[450,450],lowlight_hour_hand:[44,172],lowlight_minute_hand:[38,220],lowlight_center_cap:[28,28],center_cap:[28,28],
+  battery_slider:[21,13],lowlight_battery_slider:[41,33],track_edge:[6,16],lowlight_track_edge:[26,36],ambient_indices:[450,450],ambient_battery_slider:[21,13],
   ...Object.fromEntries(cupResources.map(name=>[name,[58,58]]))};
 const missing=[],wrongSize=[];
 for(const name of resources) {

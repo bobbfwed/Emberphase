@@ -170,6 +170,22 @@ public static class EmberphaseArt {
     // Blurs the emission layer and screens it onto dst; the blurred alpha is
     // normalised so its strongest point reaches 'peak'.
     public static void Bloom(Bitmap dst, Bitmap emit, double sigma, double peak) {
+        double m = MaxBlur(emit, sigma);
+        if (m > 0) BloomScaled(dst, emit, sigma, peak / m);
+    }
+    // Strongest blurred alpha of an emission layer (Bloom's normaliser).
+    public static double MaxBlur(Bitmap emit, double sigma) {
+        int w = emit.Width, h = emit.Height, n = w * h;
+        byte[] E = Copy(emit);
+        float[] a = new float[n];
+        for (int i = 0; i < n; i++) a[i] = E[i * 4 + 3] / 255f;
+        Gauss(a, w, h, sigma);
+        float m = 0; for (int i = 0; i < n; i++) if (a[i] > m) m = a[i];
+        return m;
+    }
+    // Bloom with a fixed scale k, so separate small images glow at the same
+    // absolute level as a reference tube (k = peak / MaxBlur(reference)).
+    public static void BloomScaled(Bitmap dst, Bitmap emit, double sigma, double k) {
         int w = emit.Width, h = emit.Height, n = w * h;
         byte[] E = Copy(emit);
         float[] r = new float[n], g = new float[n], b = new float[n], a = new float[n];
@@ -177,10 +193,7 @@ public static class EmberphaseArt {
             float al = E[i * 4 + 3] / 255f; a[i] = al;
             b[i] = E[i * 4] / 255f * al; g[i] = E[i * 4 + 1] / 255f * al; r[i] = E[i * 4 + 2] / 255f * al;
         }
-        Gauss(r, w, h, sigma); Gauss(g, w, h, sigma); Gauss(b, w, h, sigma); Gauss(a, w, h, sigma);
-        float m = 0; for (int i = 0; i < n; i++) if (a[i] > m) m = a[i];
-        if (m <= 0) return;
-        double k = peak / m;
+        Gauss(r, w, h, sigma); Gauss(g, w, h, sigma); Gauss(b, w, h, sigma);
         BitmapData dd; byte[] D = Read(dst, out dd);
         for (int i = 0; i < n; i++) {
             int j = i * 4;
@@ -355,8 +368,52 @@ function Tube([float]$x,[float]$y,[float]$w,[float]$h,[string]$style) {
         $mid=Mix $pal.Glow $pal.Core 0.62
         $b=Blend-Brush $x $y $w $h @($pal.Glow,$mid,$pal.Core,$pal.Core,$mid,$pal.Glow) ([single[]]@(0,0.22,0.42,0.58,0.78,1))
         $script:g.FillPath($b,$path); $b.Dispose()
-    } else { Fill-Path $path $pal.Glow }
+    } elseif($style -eq 'ambient') { Fill-Path $path '#d94c20' }
+    else { Fill-Path $path $pal.Glow }
     $path.Dispose()
+}
+# Horizontal tube centred on (cx,cy): length along x, thickness along y. The
+# specular line lands on the upper side.
+function HTube([float]$cx,[float]$cy,[float]$length,[float]$thickness,[string]$style) {
+    $state=$script:g.Save(); $script:g.TranslateTransform($cx,$cy); $script:g.RotateTransform(90)
+    Tube (-$thickness/2) (-$length/2) $thickness $length $style
+    $script:g.Restore($state)
+}
+# Battery gauge end markers, 2.6 x 13 units, inlaid in the gauge frame's top
+# and bottom rims, symmetric about the frame (y 161-290). Both lie outside the
+# indicator's travel (y 175-287), so neither is ever covered; "E" fits
+# between the two low-battery lamps (x 358-363 and 377-382).
+$batteryMarkers=@(@(369.5,162.4),@(369.5,288.6))
+function Draw-BatteryMarkers([string]$style) {
+    foreach($m in $batteryMarkers) { HTube $m[0] $m[1] 13 2.6 $style }
+}
+# Track edge tube: radial, spanning the 12-unit track, 2.6 units thick.
+$trackEdge=@{W=6;H=16;TubeW=2.6;TubeL=12}
+# Bloom scale of one dial hour tube (4.4 x 15) at 2 px per unit, so separate
+# small glowing images match the hour tubes' absolute glow level.
+function Get-HourTubeBloomScale {
+    if(-not $script:hourBloomScale) {
+        $saved=$script:g
+        $ref=New-Offscreen 40 40 2; $script:g.TranslateTransform(20,20); Tube -2.2 -7.5 4.4 15 'emit'
+        $script:hourBloomScale=@((0.45/[EmberphaseArt]::MaxBlur($ref.Bitmap,8.4)),(0.55/[EmberphaseArt]::MaxBlur($ref.Bitmap,2.4)))
+        Close-Offscreen $ref; $script:g=$saved
+    }
+    return $script:hourBloomScale
+}
+# A transparent canvas holding only a glowing tube and its bloom. $draw is a
+# script block that draws the tube for a given style in canvas units.
+function Save-GlowAsset([string]$name,[int]$width,[int]$height,[scriptblock]$draw) {
+    $scale=Get-HourTubeBloomScale
+    Canvas $width $height
+    $canvasG=$script:g
+    $emit=New-Offscreen $width $height 2; & $draw 'emit'
+    $light=New-Offscreen $width $height 2; $script:g.Clear([System.Drawing.Color]::Black)
+    [EmberphaseArt]::BloomScaled($light.Bitmap,$emit.Bitmap,8.4,$scale[0])
+    [EmberphaseArt]::BloomScaled($light.Bitmap,$emit.Bitmap,2.4,$scale[1])
+    [EmberphaseArt]::AddLight($script:bitmap,$light.Bitmap)
+    Close-Offscreen $emit; Close-Offscreen $light
+    $script:g=$canvasG; & $draw 'glow'
+    Save $name
 }
 # Clock angles of the tube pairs flanking "12" and "6": each tube sits 3.5
 # units clear of the numeral glyph (plus its 0.9-unit seat) at radius 205.
@@ -655,6 +712,8 @@ for($i=0;$i -le 10;$i++) { $y=175+$i*10; Line '#b3b9b7' 1 374 $y 381 $y }
 Label 'F' 343 169 14 '#e7e8e6' 16; Label 'BAT' 324 216 13 '#e7e8e6' 36; Label 'E' 343 273 14 '#e7e8e6' 16
 RoundFill '#202016' 366 274 5 13 2; RoundFill '#241415' 385 274 5 13 2
 $script:g.Restore($batteryState)
+Draw-BatteryMarkers 'seat'
+if($tubeStyle -ne 'none') { Draw-BatteryMarkers $tubeStyle }
 Label 'STEPS' 188 292 12 '#e2e3df' 74
 Runner 160 310 '#00d8eb'; Label 'MIN' 176 328 11 '#e2e3df' 42
 Flame 240 309 '#72f000'; Label 'CAL' 257 328 11 '#e2e3df' 50
@@ -747,13 +806,15 @@ $b=Brush '#ffffff'; $script:g.FillRectangle($b,195,134,60,35); $script:g.FillRec
 $week=New-Offscreen 450 450 2
 $b=Brush '#ffffff'; $script:g.FillRectangle($b,135,134,60,35); $b.Dispose()
 [EmberphaseArt]::Veil($script:bitmap,$lift.Bitmap,$week.Bitmap,2.4,384,450,450,10,5,3,0.86,0.66,0.48)
-$emit=New-Offscreen 450 450 2; Draw-HourTubes 'emit'
+$emit=New-Offscreen 450 450 2; Draw-HourTubes 'emit'; Draw-BatteryMarkers 'emit'
 $light=New-Offscreen 450 450 2; $script:g.Clear([System.Drawing.Color]::Black)
 [EmberphaseArt]::Bloom($light.Bitmap,$emit.Bitmap,8.4,0.45)
 [EmberphaseArt]::Bloom($light.Bitmap,$emit.Bitmap,2.4,0.55)
 [EmberphaseArt]::AddLight($script:bitmap,$light.Bitmap)
 foreach($off in @($lift,$week,$emit,$light)) { Close-Offscreen $off }
 $script:g=$canvasG
+# The battery end markers lie inside the veil, so their glowing tubes go on top.
+Draw-BatteryMarkers 'glow'
 Save 'lowlight_dial'
 
 # Always-on skeleton hands use orange metal and transparent cutouts on black.
@@ -806,15 +867,26 @@ RoundFill '#8e2900' 0 0 21 13 2
 $rect=[System.Drawing.RectangleF]::new(1,1,19,11)
 $b=New-Object System.Drawing.Drawing2D.LinearGradientBrush($rect,(C '#ffb056'),(C '#ff5900'),90)
 $p=RoundPath 1 1 19 11 2; $script:g.FillPath($b,$p); $b.Dispose(); $p.Dispose()
+# Level line: a thin tube across the middle, 11 x 2, clear of the lamps that
+# overlap the indicator's two ends at low battery.
+HTube 10.5 6.5 11 2 'seat'; HTube 10.5 6.5 11 2 'glass'
 Save 'battery_slider'
+# Low light: only the glowing level line and its bloom, with a 10-unit margin
+# (drawn at the indicator's position minus 10 in x and y).
+Save-GlowAsset 'lowlight_battery_slider' 41 33 { param($style) HTube 20.5 16.5 11 2 $style }
+
+# Activity track leading-end tubes (radial, 2.6 x 12 in a 6 x 16 image; the
+# low-light version adds a 10-unit margin for the bloom).
+Canvas $trackEdge.W $trackEdge.H
+Tube (($trackEdge.W-$trackEdge.TubeW)/2) (($trackEdge.H-$trackEdge.TubeL)/2) $trackEdge.TubeW $trackEdge.TubeL 'seat'
+Tube (($trackEdge.W-$trackEdge.TubeW)/2) (($trackEdge.H-$trackEdge.TubeL)/2) $trackEdge.TubeW $trackEdge.TubeL 'glass'
+Save 'track_edge'
+Save-GlowAsset 'lowlight_track_edge' ($trackEdge.W+20) ($trackEdge.H+20) { param($style) Tube (10+($trackEdge.W-$trackEdge.TubeW)/2) (10+($trackEdge.H-$trackEdge.TubeL)/2) $trackEdge.TubeW $trackEdge.TubeL $style }
 
 Canvas 450 450
-# The 12 and 6 numerals sit on those hour ticks, so those marks are omitted.
-foreach($i in @(5,10,15,20,25,35,40,45,50,55)) {
-    $a=$i*6*[math]::PI/180
-    $p=Pen '#d94c20' 6; $p.StartCap='Flat'; $p.EndCap='Flat'
-    $script:g.DrawLine($p,[float](225+197*[math]::Sin($a)),[float](225-197*[math]::Cos($a)),[float](225+213*[math]::Sin($a)),[float](225-213*[math]::Cos($a))); $p.Dispose()
-}
+# Hour ticks: the normal face's hour tubes (4.4 x 15, rounded, radius
+# 197.5-212.5, with the flanking pairs beside "12" and "6") as flat shapes.
+Draw-HourTubes 'ambient'
 # Match the interactive dial: same hours, radii, and sizes. Hours 5 and 7
 # stay unmarked so the lower face matches the active layout.
 foreach($hour in @(1,2,3,4,6,8,9,10,11,12)) {

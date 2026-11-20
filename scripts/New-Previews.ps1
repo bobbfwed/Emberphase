@@ -39,6 +39,10 @@ function FillGauge([float]$radius,[float]$ratio,[string[]]$colors) {
     $angle=214-68*$ratio
     $p=Pen $colors[3] 1; $p.StartCap='Flat'; $p.EndCap='Flat'
     $script:g.DrawLine($p,(RingPoint ($radius-5.5) $angle),(RingPoint ($radius+5.5) $angle)); $p.Dispose()
+    # Leading-end tube, as the face draws it: a 6 x 16 image centred on the
+    # track at clock 180, turned about the dial centre by (end angle - 180).
+    Asset 'track_edge' 222 (225+$radius-8) 6 16 ($angle-180) 0.5 ((8-$radius)/16)
+    $script:gaugeEnds+=,@($radius,$angle)
 }
 function DrumLabel([string]$text,[float]$x,[float]$y,[float]$width,[bool]$receding,[string]$color='#f6f6f0',[float]$size=22) {
     $state=$script:g.Save()
@@ -83,6 +87,7 @@ function MoonWindow([double]$angle) {
 
 foreach($mode in @('normal','low-battery','ambient','ambient-low-battery','unavailable','seconds','balance-right','balance-overlay','low-light')) {
     Canvas 450 450
+    $script:gaugeEnds=@()
     if($mode -ne 'balance-overlay') { $script:g.Clear([System.Drawing.Color]::Black) }
     if($mode.StartsWith('ambient')) {
         Asset 'ambient_indices' 0 0 450 450
@@ -130,8 +135,12 @@ foreach($mode in @('normal','low-battery','ambient','ambient-low-battery','unava
         }
         if($mode -eq 'low-light') {
             # The face draws the full normal dial, then the low-light overlay,
-            # the low-light hands (11-unit margins), the second hand at 25 %.
+            # its glowing parts, the low-light hands (11-unit margins), the second hand at 25 %.
             Asset 'lowlight_dial' 0 0 450 450
+            # Glowing parts above the overlay: the battery level line (10-unit
+            # margin) and each track's leading-end tube (10-unit margin).
+            Asset 'lowlight_battery_slider' 349 (264-99*$battery/100) 41 33
+            foreach($end in $script:gaugeEnds) { Asset 'lowlight_track_edge' 212 (225+$end[0]-18) 26 36 ($end[1]-180) 0.5 ((18-$end[0])/36) }
             Asset 'lowlight_hour_hand' 203 82 44 172 305 0.5 (143/172)
             Asset 'lowlight_minute_hand' 206 34 38 220 60 0.5 (191/220)
             Asset 'second_hand' 222 23 6 230 132 0.5 0.8782609 0.25

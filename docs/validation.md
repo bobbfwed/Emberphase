@@ -283,3 +283,26 @@ slot 70 geometry and order, artwork sizes against the asset interface, and
 agreement of the application ID and version between Gradle and
 `Build-WatchFace.ps1`. The full SDK-native build, memory check and physical
 checks in `low-light.md` and `device-acceptance.md` are pending.
+
+Face 0.6.1 (versionCode 35) adds tritium battery markers, a tritium level
+line on the battery indicator and a tritium tube at the leading end of each
+activity track, all glowing in low light, and redraws the always-on hour
+ticks in the shape and positions of the normal hour tubes. The **F** and **E**
+markers (2.6 x 13 units) are inlaid in the gauge frame's top and bottom rims
+at y 162.4 and 288.6, outside the indicator's travel and between the
+low-battery lamps. Each track now shows its fill, cut edge and end tube
+whenever its provider has data, including a value of zero (the tube then sits
+at the start); it is still hidden when the provider is unavailable. Range
+providers export a new `<track>_range_valid` flag for this, and each track
+exports its fill end as `REFERENCE.<track>_fill_end` for the low-light tube.
+The always-on lit-pixel share of `ambient.png` went from 5.721% to 5.714%.
+
+The full SDK-native build passes: WFF validator 1.7.0 (format 4), resource
+compilation, signing, the memory-footprint check (10 MiB active / 4 MiB
+ambient) and the DEX check. The Node checks add the low-light level line
+against the indicator at every battery percentage 0-100 (at rest and in two
+sweep states), each track end's angle against its fill end for the zero,
+partial, at-goal, over-goal and unavailable cases at rest and through the
+sweep, and the new asset sizes. `test-sweep.mjs`, `Test-MoonAperture.ps1` and
+`Test-BalanceWindows.ps1` pass. The new parts have not yet been checked on the
+watch.

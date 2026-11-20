@@ -4,7 +4,7 @@ const root=new URL('../',import.meta.url);
 const model=loadSweepModel(new URL('watchface/src/main/res/raw/watchface.xml',root));
 // Moon window: static sky, two-moon carrier and the phase-cup frames (00..59 without 30).
 const cups=[...Array(60).keys()].filter(k=>k!==30).map(k=>'moon_cup_'+String(k).padStart(2,'0'));
-const images=Object.fromEntries(['moon_sky','moon_carrier',...cups,'dial_frame','calendar_bezel','balance_wheel','battery_slider','hour_hand','minute_hand','second_hand','center_cap','wx_14'].map(name=>[
+const images=Object.fromEntries(['moon_sky','moon_carrier',...cups,'dial_frame','calendar_bezel','balance_wheel','battery_slider','hour_hand','minute_hand','second_hand','center_cap','wx_14','track_edge'].map(name=>[
   name,'data:image/png;base64,'+fs.readFileSync(new URL('watchface/src/main/res/drawable-nodpi/'+name+'.png',root)).toString('base64')]));
 const html=`<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Emberphase · mechanical sweep</title><style>
@@ -22,7 +22,9 @@ const canvas=document.getElementById('face'),ctx=canvas.getContext('2d'),art={};
 let start=-Infinity,lastFrame=-Infinity;
 function asset(name,x,y,w,h,angle=0,px=.5,py=.5){ctx.save();ctx.translate(x+w*px,y+h*py);ctx.rotate(angle*Math.PI/180);ctx.drawImage(art[name],-w*px,-h*py,w,h);ctx.restore();}
 function label(text,x,y,w,size,color='#f6f6f0',scaleY=1){ctx.save();ctx.translate(x+w/2,y+size*.675);ctx.scale(1,scaleY);ctx.font='bold '+size+'px "Arial Narrow", sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillStyle=color;ctx.fillText(text,0,0,w);ctx.restore();}
-function track(radius,end,colors){const ratio=(214-end)/68;if(ratio<=0)return;const g=ctx.createRadialGradient(225,225,radius-6,225,225,radius+6);[0,.12,.32,.45,.58,.84,1].forEach((p,i)=>g.addColorStop(p,colors[i]));ctx.strokeStyle=g;ctx.lineWidth=12;ctx.lineCap='butt';ctx.beginPath();ctx.arc(225,225,radius,124*Math.PI/180,(124-68*ratio)*Math.PI/180,true);ctx.stroke();const a=end*Math.PI/180;ctx.beginPath();ctx.moveTo(225+(radius-5.5)*Math.sin(a),225-(radius-5.5)*Math.cos(a));ctx.lineTo(225+(radius+5.5)*Math.sin(a),225-(radius+5.5)*Math.cos(a));ctx.lineWidth=.8;ctx.strokeStyle=colors[3];ctx.stroke();}
+function track(radius,end,colors){const ratio=(214-end)/68;if(ratio>0){const g=ctx.createRadialGradient(225,225,radius-6,225,225,radius+6);[0,.12,.32,.45,.58,.84,1].forEach((p,i)=>g.addColorStop(p,colors[i]));ctx.strokeStyle=g;ctx.lineWidth=12;ctx.lineCap='butt';ctx.beginPath();ctx.arc(225,225,radius,124*Math.PI/180,(124-68*ratio)*Math.PI/180,true);ctx.stroke();const a=end*Math.PI/180;ctx.beginPath();ctx.moveTo(225+(radius-5.5)*Math.sin(a),225-(radius-5.5)*Math.cos(a));ctx.lineTo(225+(radius+5.5)*Math.sin(a),225-(radius+5.5)*Math.cos(a));ctx.lineWidth=.8;ctx.strokeStyle=colors[3];ctx.stroke();}
+ // Leading-end tube, turned about the dial centre like the face (shown from zero).
+ asset('track_edge',222,225+radius-8,6,16,end-180,.5,(8-radius)/16);}
 function draw(now){
  if(now-lastFrame<1000/30){requestAnimationFrame(draw);return;}lastFrame=now;
  const date=new Date(),dayOfYear=Math.floor((Date.UTC(date.getUTCFullYear(),date.getUTCMonth(),date.getUTCDate())-Date.UTC(date.getUTCFullYear(),0,1))/86400000)+1;

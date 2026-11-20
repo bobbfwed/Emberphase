@@ -4,7 +4,7 @@ Emberphase is an open-source mechanical-style analog watch face for **Wear OS 6
 (Android API 36) and later**. Build it for your watch, customize the design, or
 fork it to create your own version.
 
-This branch builds **Emberphase Tritium** (version 0.6.0): the same mechanical
+This branch builds **Emberphase Tritium** (version 0.6.1): the same mechanical
 face with tritium-style luminous hands and markers, a geared two-moon window
 with phase cups, and a low-light dial. It installs alongside the mechanical
 Emberphase face under its own application ID.
@@ -49,16 +49,23 @@ device screenshots.
   on each moon and shades it to show the current phase; it advances twice a day.
 * A low-light dial that switches on when the watch's screen brightness is set
   low, with an editor override (**Low-light dial: Auto / Always normal / Always
-  low-light**). Auto requires the Emberphase Health watch companion.
+  low-light**). The hour tubes, hands, battery markers and level line, and the
+  activity-track end tubes glow; the rest of the dial dims. Auto requires the
+  Emberphase Health watch companion.
 * Mechanical calendar drums showing **weekday, month, date**, with partially
   visible adjacent entries.
-* A battery slider with steady low-battery indicators.
+* A battery gauge with tritium **F** and **E** markers inlaid in its frame, a
+  tritium level line on the sliding indicator, and steady low-battery lamps.
 * Weather showing current temperature, daily high, and conditions, or a
   customizable complication in the same inset.
 * Three concentric activity tracks for steps, active minutes, and activity
-  calories, with metallic fills, sharp edges, and exposed rack teeth.
+  calories, with metallic fills, exposed rack teeth, and a thin tritium tube
+  at the leading end of each fill (at the start of the track when today's
+  value is zero).
 * A simplified always-on display with orange hands, the same date placement,
-  and a battery gauge, plus the active face's hour numerals on black.
+  and a battery gauge, plus the active face's hour numerals on black. Its hour
+  ticks are flat orange shapes of the normal face's hour tubes, in the same
+  positions (including the pairs beside 12 and 6).
 
 The design prioritizes battery efficiency through static artwork, native WFF
 rendering, and provider-driven data updates. Seconds and the balance disappear

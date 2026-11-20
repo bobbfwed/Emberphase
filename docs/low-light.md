@@ -33,7 +33,13 @@ The preview is an illustrative composite, not a device screenshot.
 4. In low light the face:
    * draws the `lowlight_dial` overlay over the whole normal dial (moon
      window, balance, calendar, battery, weather or custom inset, activity
-     numbers and tracks), under the hands;
+     numbers and tracks), under the hands. The overlay carries the glowing
+     hour tubes and the glowing **F** and **E** battery markers;
+   * draws, above the overlay, a glowing level line on the battery
+     indicator (`lowlight_battery_slider`, moving with the indicator) and a
+     glowing tube at the leading end of each activity track
+     (`lowlight_track_edge`, shown whenever the track has data, at the start
+     of the track when the value is zero);
    * replaces the hour and minute hands with the larger low-light tritium
      hands (same pivot at the dial centre);
    * keeps the mechanical second hand and its tick, drawn at 25% of its
@@ -50,7 +56,11 @@ is read with native `ListConfiguration` branches, as the left inset is; the
 Auto and Always low-light branches each export a flag, and a small source
 group combines them into `REFERENCE.low_light` (1 or 0). Each hand set and
 overlay is toggled by an alpha transform on that reference. None of these
-sources is hidden in interactive mode.
+sources is hidden in interactive mode. From 0.6.1 the glowing parts above the
+overlay sit in one group, `lowlight_glow`: the level line uses the indicator's
+own position expression (offset by its 10-unit bloom margin), and each track
+end turns by `REFERENCE.<track>_fill_end`, which each track renderer exports
+from the same expression that ends its fill.
 
 ## Limits
 
@@ -81,8 +91,11 @@ sources is hidden in interactive mode.
 2. Confirm the editor shows **Low-light dial** with **Auto**, **Always
    normal** and **Always low-light**, and that Auto is the default.
 3. **Always low-light**: the overlay, low-light hands, low-light cap and the
-   dimmed second hand appear immediately. Check that weather, activity numbers
-   and the date remain as legible as intended, and nothing is clipped.
+   dimmed second hand appear immediately. The **F** / **E** battery markers,
+   the indicator's level line and the three track-end tubes glow; the level
+   line and track ends sit exactly on the indicator and the fills. Check that
+   weather, activity numbers and the date remain as legible as intended, and
+   nothing is clipped.
 4. **Always normal**: the normal dial and hands return, at any brightness.
 5. **Auto**: lower the brightness setting step by step and note the level
    where the face switches to low light; raise it and note where it switches

@@ -790,6 +790,10 @@
                     <Transform target="angle" value="[COMPLICATION.RANGED_VALUE_MAX] &gt; [COMPLICATION.RANGED_VALUE_MIN] &amp;&amp; [COMPLICATION.RANGED_VALUE_VALUE] &gt; [COMPLICATION.RANGED_VALUE_MIN] ? 214 - 68 * clamp(([COMPLICATION.RANGED_VALUE_VALUE] - [COMPLICATION.RANGED_VALUE_MIN]) / ([COMPLICATION.RANGED_VALUE_MAX] - [COMPLICATION.RANGED_VALUE_MIN]), 0, 1) : 214" />
                     <Reference name="steps_range_end" source="angle" defaultValue="214" />
                 </Group>
+                <Group name="steps_range_valid_export" x="169" y="259" width="112" height="39" angle="0">
+                    <Transform target="angle" value="[COMPLICATION.RANGED_VALUE_MAX] &gt; [COMPLICATION.RANGED_VALUE_MIN] ? 1 : 0" />
+                    <Reference name="steps_range_valid" source="angle" defaultValue="0" />
+                </Group>
                 <Group name="samsung_steps_range_target" x="0" y="0" width="450" height="450">
                     <BooleanConfiguration id="samsung_steps_target">
                         <BooleanOption id="TRUE">
@@ -854,6 +858,10 @@
                     <Transform target="angle" value="[COMPLICATION.RANGED_VALUE_MAX] &gt; [COMPLICATION.RANGED_VALUE_MIN] &amp;&amp; [COMPLICATION.RANGED_VALUE_VALUE] &gt; [COMPLICATION.RANGED_VALUE_MIN] ? 214 - 68 * clamp(([COMPLICATION.RANGED_VALUE_VALUE] - [COMPLICATION.RANGED_VALUE_MIN]) / ([COMPLICATION.RANGED_VALUE_MAX] - [COMPLICATION.RANGED_VALUE_MIN]), 0, 1) : 214" />
                     <Reference name="minutes_range_end" source="angle" defaultValue="214" />
                 </Group>
+                <Group name="minutes_range_valid_export" x="178" y="309" width="53" height="29" angle="0">
+                    <Transform target="angle" value="[COMPLICATION.RANGED_VALUE_MAX] &gt; [COMPLICATION.RANGED_VALUE_MIN] ? 1 : 0" />
+                    <Reference name="minutes_range_valid" source="angle" defaultValue="0" />
+                </Group>
             </Complication>
             <Complication type="SHORT_TEXT">
                 <PartText x="178" y="309" width="53" height="29">
@@ -904,6 +912,10 @@
                 <Group name="calories_range_end_export" x="262" y="309" width="57" height="29" angle="214">
                     <Transform target="angle" value="[COMPLICATION.RANGED_VALUE_MAX] &gt; [COMPLICATION.RANGED_VALUE_MIN] &amp;&amp; [COMPLICATION.RANGED_VALUE_VALUE] &gt; [COMPLICATION.RANGED_VALUE_MIN] ? 214 - 68 * clamp(([COMPLICATION.RANGED_VALUE_VALUE] - [COMPLICATION.RANGED_VALUE_MIN]) / ([COMPLICATION.RANGED_VALUE_MAX] - [COMPLICATION.RANGED_VALUE_MIN]), 0, 1) : 214" />
                     <Reference name="calories_range_end" source="angle" defaultValue="214" />
+                </Group>
+                <Group name="calories_range_valid_export" x="262" y="309" width="57" height="29" angle="0">
+                    <Transform target="angle" value="[COMPLICATION.RANGED_VALUE_MAX] &gt; [COMPLICATION.RANGED_VALUE_MIN] ? 1 : 0" />
+                    <Reference name="calories_range_valid" source="angle" defaultValue="0" />
                 </Group>
             </Complication>
             <Complication type="SHORT_TEXT">
@@ -965,13 +977,17 @@
         </ComplicationSlot>
         <Group name="steps_track_render" x="0" y="0" width="450" height="450">
             <Variant mode="AMBIENT" target="alpha" value="0" />
+            <Group name="steps_fill_end_source" x="0" y="0" width="1" height="1" angle="214">
+                <Transform target="angle" value="(214 - (214 - ([REFERENCE.steps_goal_end] &lt; 214 ? [REFERENCE.steps_goal_end] : [REFERENCE.steps_range_end])) * [REFERENCE.sweep_home] - 68 * [REFERENCE.sweep_turn] * (1 - [REFERENCE.sweep_settle]) - (214 - ([REFERENCE.steps_goal_end] &lt; 214 ? [REFERENCE.steps_goal_end] : [REFERENCE.steps_range_end])) * [REFERENCE.sweep_settle])" />
+                <Reference name="steps_fill_end" source="angle" defaultValue="214" />
+            </Group>
             <PartText name="steps_target_display" x="312" y="320" width="43" height="18">
                 <Text align="CENTER" isAutoSize="TRUE"><Font family="sans-serif-condensed" size="13">
                     <Template>%s<Parameter expression="[REFERENCE.steps_goal_target] &gt; 0 ? numberFormat(&quot;#,##0&quot;, [REFERENCE.steps_goal_target]) : [REFERENCE.steps_range_target] &gt; 0 ? numberFormat(&quot;#,##0&quot;, [REFERENCE.steps_range_target]) : &quot;—&quot;" /></Template>
                 </Font></Text>
             </PartText>
             <Condition>
-                <Expressions><Expression name="steps_track_visible">([REFERENCE.steps_goal_end] &lt; 214 || [REFERENCE.steps_range_end] &lt; 214) || [REFERENCE.sweep_progress] &lt; 1</Expression></Expressions>
+                <Expressions><Expression name="steps_track_visible">[REFERENCE.steps_goal_target] &gt; 0 || [REFERENCE.steps_range_valid] &gt; 0 || [REFERENCE.sweep_progress] &lt; 1</Expression></Expressions>
                 <Compare expression="steps_track_visible">
                     <PartDraw name="steps_progress_band" x="0" y="0" width="450" height="450">
                         <Arc centerX="225" centerY="225" width="300" height="300" startAngle="214" endAngle="214" direction="COUNTER_CLOCKWISE">
@@ -991,19 +1007,26 @@
                                     <Stroke color="#FFD79B" thickness="0.8" cap="BUTT" />
                                 </Line>
                             </PartDraw>
+                            <PartImage name="steps_track_edge" x="222" y="367" width="6" height="16">
+                                <Image resource="track_edge" />
+                            </PartImage>
                         </Group>
                 </Compare>
             </Condition>
         </Group>
         <Group name="minutes_track_render" x="0" y="0" width="450" height="450">
             <Variant mode="AMBIENT" target="alpha" value="0" />
+            <Group name="minutes_fill_end_source" x="0" y="0" width="1" height="1" angle="214">
+                <Transform target="angle" value="(214 - (214 - ([REFERENCE.minutes_goal_end] &lt; 214 ? [REFERENCE.minutes_goal_end] : [REFERENCE.minutes_range_end])) * [REFERENCE.sweep_home] - 68 * [REFERENCE.sweep_turn] * (1 - [REFERENCE.sweep_settle]) - (214 - ([REFERENCE.minutes_goal_end] &lt; 214 ? [REFERENCE.minutes_goal_end] : [REFERENCE.minutes_range_end])) * [REFERENCE.sweep_settle])" />
+                <Reference name="minutes_fill_end" source="angle" defaultValue="214" />
+            </Group>
             <PartText name="minutes_target_display" x="325" y="333" width="43" height="18">
                 <Text align="CENTER" isAutoSize="TRUE"><Font family="sans-serif-condensed" size="13">
                     <Template>%s<Parameter expression="[REFERENCE.minutes_goal_target] &gt; 0 ? numberFormat(&quot;#,##0&quot;, [REFERENCE.minutes_goal_target]) : &quot;—&quot;" /></Template>
                 </Font></Text>
             </PartText>
             <Condition>
-                <Expressions><Expression name="minutes_track_visible">([REFERENCE.minutes_goal_end] &lt; 214 || [REFERENCE.minutes_range_end] &lt; 214) || [REFERENCE.sweep_progress] &lt; 1</Expression></Expressions>
+                <Expressions><Expression name="minutes_track_visible">[REFERENCE.minutes_goal_target] &gt; 0 || [REFERENCE.minutes_range_valid] &gt; 0 || [REFERENCE.sweep_progress] &lt; 1</Expression></Expressions>
                 <Compare expression="minutes_track_visible">
                     <PartDraw name="minutes_progress_band" x="0" y="0" width="450" height="450">
                         <Arc centerX="225" centerY="225" width="336" height="336" startAngle="214" endAngle="214" direction="COUNTER_CLOCKWISE">
@@ -1023,19 +1046,26 @@
                                     <Stroke color="#B2FAFF" thickness="0.8" cap="BUTT" />
                                 </Line>
                             </PartDraw>
+                            <PartImage name="minutes_track_edge" x="222" y="385" width="6" height="16">
+                                <Image resource="track_edge" />
+                            </PartImage>
                         </Group>
                 </Compare>
             </Condition>
         </Group>
         <Group name="calories_track_render" x="0" y="0" width="450" height="450">
             <Variant mode="AMBIENT" target="alpha" value="0" />
+            <Group name="calories_fill_end_source" x="0" y="0" width="1" height="1" angle="214">
+                <Transform target="angle" value="(214 - (214 - ([REFERENCE.calories_goal_end] &lt; 214 ? [REFERENCE.calories_goal_end] : [REFERENCE.calories_range_end])) * [REFERENCE.sweep_home] - 68 * [REFERENCE.sweep_turn] * (1 - [REFERENCE.sweep_settle]) - (214 - ([REFERENCE.calories_goal_end] &lt; 214 ? [REFERENCE.calories_goal_end] : [REFERENCE.calories_range_end])) * [REFERENCE.sweep_settle])" />
+                <Reference name="calories_fill_end" source="angle" defaultValue="214" />
+            </Group>
             <PartText name="calories_target_display" x="337" y="345" width="43" height="18">
                 <Text align="CENTER" isAutoSize="TRUE"><Font family="sans-serif-condensed" size="13">
                     <Template>%s<Parameter expression="[REFERENCE.calories_goal_target] &gt; 0 ? numberFormat(&quot;#,##0&quot;, [REFERENCE.calories_goal_target]) : &quot;—&quot;" /></Template>
                 </Font></Text>
             </PartText>
             <Condition>
-                <Expressions><Expression name="calories_track_visible">([REFERENCE.calories_goal_end] &lt; 214 || [REFERENCE.calories_range_end] &lt; 214) || [REFERENCE.sweep_progress] &lt; 1</Expression></Expressions>
+                <Expressions><Expression name="calories_track_visible">[REFERENCE.calories_goal_target] &gt; 0 || [REFERENCE.calories_range_valid] &gt; 0 || [REFERENCE.sweep_progress] &lt; 1</Expression></Expressions>
                 <Compare expression="calories_track_visible">
                     <PartDraw name="calories_progress_band" x="0" y="0" width="450" height="450">
                         <Arc centerX="225" centerY="225" width="372" height="372" startAngle="214" endAngle="214" direction="COUNTER_CLOCKWISE">
@@ -1055,6 +1085,9 @@
                                     <Stroke color="#E0FFAD" thickness="0.8" cap="BUTT" />
                                 </Line>
                             </PartDraw>
+                            <PartImage name="calories_track_edge" x="222" y="403" width="6" height="16">
+                                <Image resource="track_edge" />
+                            </PartImage>
                         </Group>
                 </Compare>
             </Condition>
@@ -1092,6 +1125,50 @@
             <PartImage x="0" y="0" width="450" height="450">
                 <Image resource="lowlight_dial" />
             </PartImage>
+        </Group>
+        <!-- Low-light glow above the overlay: the battery level line (10-unit
+             bloom margin, same position expression as the indicator) and each
+             activity track's leading-end tube (rotated by its fill's end angle). -->
+        <Group name="lowlight_glow" x="0" y="0" width="450" height="450">
+            <Variant mode="AMBIENT" target="alpha" value="0" />
+            <Transform target="alpha" value="[REFERENCE.low_light] == 1 ? 255 : 0" />
+            <PartImage name="lowlight_battery_slider" x="349" y="264" width="41" height="33">
+                <Transform target="y" value="264 - 99 * ((clamp([BATTERY_PERCENT], 0, 100) / 100) * [REFERENCE.sweep_home] + [REFERENCE.sweep_turn] * (1 - [REFERENCE.sweep_settle]) + (clamp([BATTERY_PERCENT], 0, 100) / 100) * [REFERENCE.sweep_settle])" />
+                <Image resource="lowlight_battery_slider" />
+            </PartImage>
+            <Condition>
+                <Expressions><Expression name="steps_lowlight_edge_visible">[REFERENCE.steps_goal_target] &gt; 0 || [REFERENCE.steps_range_valid] &gt; 0 || [REFERENCE.sweep_progress] &lt; 1</Expression></Expressions>
+                <Compare expression="steps_lowlight_edge_visible">
+                    <Group name="steps_lowlight_edge" x="0" y="0" width="450" height="450" pivotX="0.5" pivotY="0.5">
+                        <Transform target="angle" value="[REFERENCE.steps_fill_end] - 180" />
+                        <PartImage x="212" y="357" width="26" height="36">
+                            <Image resource="lowlight_track_edge" />
+                        </PartImage>
+                    </Group>
+                </Compare>
+            </Condition>
+            <Condition>
+                <Expressions><Expression name="minutes_lowlight_edge_visible">[REFERENCE.minutes_goal_target] &gt; 0 || [REFERENCE.minutes_range_valid] &gt; 0 || [REFERENCE.sweep_progress] &lt; 1</Expression></Expressions>
+                <Compare expression="minutes_lowlight_edge_visible">
+                    <Group name="minutes_lowlight_edge" x="0" y="0" width="450" height="450" pivotX="0.5" pivotY="0.5">
+                        <Transform target="angle" value="[REFERENCE.minutes_fill_end] - 180" />
+                        <PartImage x="212" y="375" width="26" height="36">
+                            <Image resource="lowlight_track_edge" />
+                        </PartImage>
+                    </Group>
+                </Compare>
+            </Condition>
+            <Condition>
+                <Expressions><Expression name="calories_lowlight_edge_visible">[REFERENCE.calories_goal_target] &gt; 0 || [REFERENCE.calories_range_valid] &gt; 0 || [REFERENCE.sweep_progress] &lt; 1</Expression></Expressions>
+                <Compare expression="calories_lowlight_edge_visible">
+                    <Group name="calories_lowlight_edge" x="0" y="0" width="450" height="450" pivotX="0.5" pivotY="0.5">
+                        <Transform target="angle" value="[REFERENCE.calories_fill_end] - 180" />
+                        <PartImage x="212" y="393" width="26" height="36">
+                            <Image resource="lowlight_track_edge" />
+                        </PartImage>
+                    </Group>
+                </Compare>
+            </Condition>
         </Group>
         <Group name="ambient_dial" x="0" y="0" width="450" height="450" alpha="0">
             <Variant mode="AMBIENT" target="alpha" value="255" />
