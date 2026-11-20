@@ -715,6 +715,7 @@ function Draw-Sky($cfg,[string]$part) {
     if($part -eq 'all' -or $part -eq 'moon') {
         if($cfg.MoonStyle -eq 'mechanical') { Draw-MechMoon 'all' }
         elseif($cfg.MoonStyle -in @('A','B','C')) { Draw-MoonWindow $cfg.MoonStyle }
+        elseif($cfg.MoonStyle -eq 'carrier') { Draw-CarrierWindow $cfg 'all' }
         else { Draw-Moon $cfg.MoonX $cfg.MoonY $cfg.MoonD $fixturePhase }
     }
     $dome.Dispose()
@@ -973,6 +974,77 @@ function Draw-MoonWindow([string]$version) {
         foreach($side in @(-1,1)) { $pt=Polar 55 ($side*($beta+9)); Draw-Screw $pt.X $pt.Y 1.8 0 $false }
     }
     if($cup) { Close-Layer $cup }; Close-Layer $disc
+    $script:g=$face
+    $attributes=New-Object System.Drawing.Imaging.ImageAttributes; $attributes.SetWrapMode('TileFlipXY')
+    $state=$script:g.Save(); $script:g.InterpolationMode='HighQualityBicubic'
+    $script:g.TranslateTransform($winX,$winY); $script:g.ScaleTransform((1.0/$winS),(1.0/$winS))
+    $script:g.DrawImage($O.Bitmap,([System.Drawing.Rectangle]::new(0,0,$O.Bitmap.Width,$O.Bitmap.Height)),0,0,$O.Bitmap.Width,$O.Bitmap.Height,[System.Drawing.GraphicsUnit]::Pixel,$attributes)
+    $script:g.Restore($state); $attributes.Dispose(); Close-Layer $O
+}
+
+# ---------------------------------------------------------------------------
+# Round 4: two moons half a turn apart on a geared brass carrier whose pivot
+# sits on the visible horizon H (the calendar lip starts hiding at y = 116).
+# ---------------------------------------------------------------------------
+$carrierH=116
+function PolarAt([double]$cx,[double]$cy,[double]$r,[double]$deg) { $a=$deg*[math]::PI/180; [System.Drawing.PointF]::new(($cx+$r*[math]::Sin($a)),($cy-$r*[math]::Cos($a))) }
+function Draw-CarrierWheel([double]$alpha,[double]$rim,[double]$hub) {
+    $px=225; $py=$carrierH
+    $rect=[System.Drawing.RectangleF]::new(($px-$rim-6),($py-$rim-6),(2*$rim+12),(2*$rim+12))
+    $brass=New-Object System.Drawing.Drawing2D.LinearGradientBrush($rect,(C '#d6b06a'),(C '#7d6230'),60)
+    $dark=C '#3e2f14'
+    $p=New-Object System.Drawing.Pen($dark,2.5); $script:g.DrawEllipse($p,($px-$rim),($py-$rim),(2*$rim),(2*$rim))
+    for($n=0;$n -lt 6;$n++) { $script:g.DrawLine($p,(PolarAt $px $py ($hub-1) ($alpha+$n*60)),(PolarAt $px $py $rim ($alpha+$n*60))) }; $p.Dispose()
+    $p=New-Object System.Drawing.Pen($brass,1.8); $script:g.DrawEllipse($p,($px-$rim),($py-$rim),(2*$rim),(2*$rim)); $p.Dispose()
+    $p=New-Object System.Drawing.Pen($brass,1.6); $p.StartCap='Flat'; $p.EndCap='Flat'
+    for($n=0;$n -lt 6;$n++) { $script:g.DrawLine($p,(PolarAt $px $py $hub ($alpha+$n*60)),(PolarAt $px $py $rim ($alpha+$n*60))) }; $p.Dispose()
+    # Toothed hub: 20 teeth from r = hub to hub + 3.5, turning with the carrier.
+    $pts=@()
+    for($i=0;$i -lt 20;$i++) {
+        $t=$alpha+$i*18
+        $pts+=PolarAt $px $py $hub ($t-5.4); $pts+=PolarAt $px $py ($hub+3.5) ($t-2.9); $pts+=PolarAt $px $py ($hub+3.5) ($t+2.9); $pts+=PolarAt $px $py $hub ($t+5.4)
+    }
+    $gear=New-Object System.Drawing.Drawing2D.GraphicsPath; $gear.AddPolygon([System.Drawing.PointF[]]$pts)
+    $script:g.FillPath($brass,$gear); $p=New-Object System.Drawing.Pen($dark,0.4); $script:g.DrawPath($p,$gear)
+    $e=$hub*0.72; $script:g.DrawEllipse($p,($px-$e),($py-$e),(2*$e),(2*$e)); $p.Dispose(); $gear.Dispose(); $brass.Dispose()
+    Draw-Screw $px $py ([math]::Min(3.2,$hub*0.4)) ($alpha+35)
+}
+# Parts: 'all' (wheel, moons, cups, screws), 'moons' (moon art only) or
+# 'over' (cups and screws only), so low light can lift just the lit moons.
+function Draw-CarrierWindow($cfg,[string]$part='all') {
+    $alpha=($script:mechPhase-0.5)*180
+    $R=[double]$cfg.CarrierR; $orbit=[double]$cfg.CarrierOrbit
+    $moons=@()
+    foreach($offset in @(0,180)) {
+        $a=$alpha+$offset; while($a -gt 180) { $a-=360 }; while($a -le -180) { $a+=360 }
+        $ar=$a*[math]::PI/180
+        $cx=225+$orbit*[math]::Sin($ar); $cy=$carrierH-$orbit*[math]::Cos($ar)
+        # Beyond 90 degrees from the top the moon is fully covered by its cup.
+        if([math]::Abs($a) -ge 90) { $c=1.0 } else { $c=-[math]::Cos(2*$ar) }
+        $moons+=,@($a,$cx,$cy,$c,((1-$c)/2),[math]::Sin($ar),(-[math]::Cos($ar)))
+    }
+    $face=$script:g
+    $O=New-WinLayer; Use-Layer $O
+    if($part -eq 'all') { Draw-CarrierWheel $alpha $orbit ([double]$cfg.CarrierHub) }
+    if($part -eq 'all' -or $part -eq 'moons') {
+        foreach($m in $moons) { $s=Enter-MoonFrame $m[1] $m[2] $m[0]; Draw-MoonArt $R; $script:g.Restore($s) }
+    }
+    if($part -eq 'all' -or $part -eq 'over') {
+        foreach($m in $moons) {
+            if($m[4] -lt 0.995) {
+                $disc=$null
+                if($part -eq 'all') { $disc=New-WinLayer; Use-Layer $disc; Ellipse '#ffffff' ($m[1]-$R) ($m[2]-$R) (2*$R) (2*$R) }
+                $cup=New-WinLayer; Use-Layer $cup
+                $s=Enter-MoonFrame $m[1] $m[2] $m[0]; $sp=Get-ShadePath $m[3] ($m[0] -gt 0) $R ($R+1.5); Fill-Path $sp '#ffffff'; $sp.Dispose(); $script:g.Restore($s)
+                $tex=New-WinLayer; Use-Layer $tex; $s=Enter-MoonFrame $m[1] $m[2] $m[0]; Draw-CupTexture $R; $script:g.Restore($s)
+                $discBitmap=$null; if($disc) { $discBitmap=$disc.Bitmap }
+                [TritiumParts]::Part($O.Bitmap,$cup.Bitmap,$tex.Bitmap,$discBitmap,6.4,143,163,196,180,12,0.5)
+                Close-Layer $tex; Close-Layer $cup; if($disc) { Close-Layer $disc }
+            }
+            Use-Layer $O
+            foreach($sign in @(1,-1)) { Draw-Screw ($m[1]+$sign*($R+1.5)*$m[5]) ($m[2]+$sign*($R+1.5)*$m[6]) 2.4 ($m[0]+20+$sign*25) }
+        }
+    }
     $script:g=$face
     $attributes=New-Object System.Drawing.Imaging.ImageAttributes; $attributes.SetWrapMode('TileFlipXY')
     $state=$script:g.Save(); $script:g.InterpolationMode='HighQualityBicubic'
@@ -1543,6 +1615,113 @@ $wg.Dispose(); $wsheet.Dispose()
 $headFont.Dispose(); $pctFont.Dispose(); $nameFont.Dispose(); $descFont.Dispose(); $smallFont.Dispose(); $white.Dispose(); $grey.Dispose(); $dim.Dispose()
 
 # ---------------------------------------------------------------------------
+# Round 4: two moons on the geared carrier
+# ---------------------------------------------------------------------------
+$carrierVariants=@(
+    @{Id='48';Name='Moon 48';R=24;Orbit=40;Hub=10},
+    @{Id='52';Name='Moon 52';R=26;Orbit=38;Hub=7.5},
+    @{Id='44';Name='Moon 44';R=22;Orbit=42;Hub=13})
+# The full moon's outermost point sits Orbit + (133 - H) + R from the arch
+# centre; it must clear the rim's inner edge (85.5) by at least 1.5 units.
+foreach($v in $carrierVariants) {
+    $reach=$v.Orbit+(133-$carrierH)+$v.R
+    if($reach -gt 85.5-1.5) { $v.Orbit=$v.Orbit-($reach-84); Write-Warning ('{0}: orbit reduced to {1}' -f $v.Name,$v.Orbit) }
+    Write-Host ('{0}: moon diameter {1}, path radius {2}, hub {3}; full moon clears the rim by {4} units' -f $v.Name,(2*$v.R),$v.Orbit,$v.Hub,(85.5-($v.Orbit+(133-$carrierH)+$v.R)))
+}
+function New-CarrierConfig($variant,[string]$key) {
+    $cfgCarrier=$emberField.Clone(); $cfgCarrier.Key=$key
+    $cfgCarrier.MoonStyle='carrier'; $cfgCarrier.CarrierR=$variant.R; $cfgCarrier.CarrierOrbit=$variant.Orbit; $cfgCarrier.CarrierHub=$variant.Hub
+    $low=$emberField.Low.Clone()
+    $low.Exceptions=@($emberField.Low.Exceptions[0],$emberField.Low.Exceptions[1],
+        # The lit moons stay at 0.34 amber; cups, screws, wheel and sky dim with the dial.
+        @{Level=0.34;Desat=0.85;Tint=$warm;Draw={ Set-WindowClip; Draw-CarrierWindow $script:cfg 'moons'; $script:g.ResetClip() }},
+        @{Level=0.14;Desat=0.85;Tint=$warm;Draw={ Set-WindowClip; Draw-CarrierWindow $script:cfg 'over'; $script:g.ResetClip() }})
+    $cfgCarrier.Low=$low
+    return $cfgCarrier
+}
+$carrierFace=New-CarrierConfig $carrierVariants[0] '07-emberfield-carrier'
+foreach($mode in @('normal','lowlight')) { $null=Compose-Face $carrierFace $mode }
+Compose-Face $carrierFace 'normal' 0 -Keep
+Save-Layer $script:keptLayer (Join-Path $outRoot '07-emberfield-carrier-newmoon.png'); Close-Layer $script:keptLayer
+Write-Host 'Rendered round 4 faces'
+
+$carrierColumns=@(@('New',0.0,$false),@('Waxing',0.05,$false),@('Waxing',0.20,$false),@('First quarter',0.5,$false),@('Waxing',0.80,$false),
+                  @('Full',1.0,$false),@('Waning',0.80,$true),@('Last quarter',0.5,$true),@('Waning',0.20,$true),@('Waning',0.05,$true))
+$headFont=New-Object System.Drawing.Font('Segoe UI Semibold',22,[System.Drawing.GraphicsUnit]::Pixel)
+$pctFont=New-Object System.Drawing.Font('Segoe UI',18,[System.Drawing.GraphicsUnit]::Pixel)
+$nameFont=New-Object System.Drawing.Font('Segoe UI Semibold',26,[System.Drawing.GraphicsUnit]::Pixel)
+$descFont=New-Object System.Drawing.Font('Segoe UI',18,[System.Drawing.GraphicsUnit]::Pixel)
+$smallFont=New-Object System.Drawing.Font('Segoe UI',15,[System.Drawing.GraphicsUnit]::Pixel)
+$white=Brush '#f0f0ee'; $grey=Brush '#a7abb0'; $dim=Brush '#7d8187'
+# One row image: label column, then the chosen columns at 2x with 1x underneath.
+function Build-CropRow([string]$name,[string]$desc,[int[]]$cols,$crops) {
+    $w=24*2+330+$cols.Count*388+($cols.Count-1)*12; $h=24+64+188+8+94+22
+    $row=New-Object System.Drawing.Bitmap($w,$h)
+    $rg=[System.Drawing.Graphics]::FromImage($row); $rg.SmoothingMode='AntiAlias'; $rg.TextRenderingHint='AntiAliasGridFit'; $rg.Clear((C '#1b1c1e'))
+    $rg.DrawString($name,$nameFont,$white,([System.Drawing.RectangleF]::new(24,(24+64),310,40)),$tfmt)
+    $rg.DrawString($desc,$descFont,$grey,([System.Drawing.RectangleF]::new(24,(24+64+44),300,150)),$tfmt)
+    $rg.DrawString('True size (1x)',$smallFont,$dim,([System.Drawing.RectangleF]::new(24,(24+64+188+8+36),300,24)),$tfmt)
+    for($j=0;$j -lt $cols.Count;$j++) {
+        $i=$cols[$j]; $x=24+330+$j*(388+12)
+        $rg.DrawString($carrierColumns[$i][0],$headFont,$white,([System.Drawing.RectangleF]::new($x,24,388,34)),$cfmt)
+        $rg.DrawString(('{0:0}% lit' -f ([double]$carrierColumns[$i][1]*100)),$pctFont,$grey,([System.Drawing.RectangleF]::new($x,(24+32),388,28)),$cfmt)
+        $rg.DrawImage($crops[$i][0],$x,(24+64)); $rg.DrawImage($crops[$i][1],($x+97),(24+64+188+8))
+    }
+    $rg.Dispose(); return $row
+}
+$carrierRows=@(); $row1Halves=@()
+foreach($v in $carrierVariants) {
+    $cfgV=New-CarrierConfig $v ('carrier-'+$v.Id)
+    $crops=@()
+    foreach($col in $carrierColumns) {
+        $kk=[double]$col[1]; $p=[math]::Acos(1-2*$kk)/(2*[math]::PI); if($col[2]) { $p=1-$p }
+        Compose-Face $cfgV 'normal' $p -Keep
+        $crops+=,(Get-WindowCrop $script:keptLayer); Close-Layer $script:keptLayer
+    }
+    $desc=('Moon diameter {0}, path radius {1}, hub {2} (teeth to {3}).' -f (2*$v.R),$v.Orbit,$v.Hub,($v.Hub+3.5))
+    $row=Build-CropRow $v.Name $desc (0..9) $crops
+    $row.Save((Join-Path $outRoot ('moon-carrier-'+$v.Id+'.png')),[System.Drawing.Imaging.ImageFormat]::Png)
+    $carrierRows+=$row
+    if($v.Id -eq '48') { $row1Halves=@((Build-CropRow $v.Name $desc (0..4) $crops),(Build-CropRow $v.Name $desc (5..9) $crops)) }
+    foreach($pair in $crops) { $pair[0].Dispose(); $pair[1].Dispose() }
+    Write-Host ('Rendered carrier row {0}' -f $v.Name)
+}
+$crW=$carrierRows[0].Width; $crH=$carrierRows[0].Height
+$csheet=New-Object System.Drawing.Bitmap($crW,(3*$crH+2*10))
+$cg=[System.Drawing.Graphics]::FromImage($csheet); $cg.Clear((C '#111214'))
+for($i=0;$i -lt 3;$i++) { $cg.DrawImage($carrierRows[$i],0,($i*($crH+10))); $carrierRows[$i].Dispose() }
+$csheet.Save((Join-Path $outRoot 'moon-carrier-versions.png'),[System.Drawing.Imaging.ImageFormat]::Png)
+$cg.Dispose(); $csheet.Dispose()
+
+# Selected sheet: three faces at native size, Row 1 strip underneath in two
+# halves at 75 % so the column labels stay readable.
+$selMargin=28; $selGap=24; $selTitleH=52; $selLabelH=36; $halfScale=0.75
+$hw=[int]($row1Halves[0].Width*$halfScale); $hh=[int]($row1Halves[0].Height*$halfScale)
+$selW=[math]::Max(($selMargin*2+3*450+2*$selGap),($selMargin*2+$hw))
+$selH=$selMargin+$selTitleH+$selLabelH+450+$selGap+2*$hh+8+$selMargin
+$sel=New-Object System.Drawing.Bitmap($selW,$selH)
+$sg=[System.Drawing.Graphics]::FromImage($sel)
+$sg.SmoothingMode='AntiAlias'; $sg.TextRenderingHint='AntiAliasGridFit'; $sg.InterpolationMode='HighQualityBicubic'; $sg.Clear((C '#1b1c1e'))
+$titleFont=New-Object System.Drawing.Font('Segoe UI Semibold',28,[System.Drawing.GraphicsUnit]::Pixel)
+$sg.DrawString('Ember Field with two moons on the geared carrier',$titleFont,$white,([System.Drawing.RectangleF]::new(0,$selMargin,$selW,$selTitleH)),$cfmt)
+$facesX=($selW-(3*450+2*$selGap))/2
+$faceFiles=@('07-emberfield-carrier-normal.png','07-emberfield-carrier-lowlight.png','07-emberfield-carrier-newmoon.png')
+$faceLabels=@('Normal brightness','Low light (15% or below)','At new moon')
+for($i=0;$i -lt 3;$i++) {
+    $x=$facesX+$i*(450+$selGap); $y=$selMargin+$selTitleH
+    $sg.DrawString($faceLabels[$i],$descFont,$grey,([System.Drawing.RectangleF]::new($x,$y,450,$selLabelH)),$cfmt)
+    $img=[System.Drawing.Image]::FromFile((Join-Path $outRoot $faceFiles[$i]))
+    $sg.DrawImage($img,[float]$x,[float]($y+$selLabelH),[float]450,[float]450); $img.Dispose()
+}
+for($i=0;$i -lt 2;$i++) {
+    $y=$selMargin+$selTitleH+$selLabelH+450+$selGap+$i*($hh+8)
+    $sg.DrawImage($row1Halves[$i],[float](($selW-$hw)/2),[float]$y,[float]$hw,[float]$hh); $row1Halves[$i].Dispose()
+}
+$sel.Save((Join-Path $outRoot 'carrier-selected.png'),[System.Drawing.Imaging.ImageFormat]::Png)
+$sg.Dispose(); $sel.Dispose(); $titleFont.Dispose()
+$headFont.Dispose(); $pctFont.Dispose(); $nameFont.Dispose(); $descFont.Dispose(); $smallFont.Dispose(); $white.Dispose(); $grey.Dispose(); $dim.Dispose()
+
+# ---------------------------------------------------------------------------
 # Static index page (no external resources)
 # ---------------------------------------------------------------------------
 $cells=New-Object System.Text.StringBuilder
@@ -1587,7 +1766,16 @@ $html=@"
 <h1>Emberphase: tritium and moon concepts</h1>
 <p class="note">These are illustrative composites with sample data (1 November 2026), not device screenshots. Low-light images show the pixels the face would draw at 15% brightness or below.</p>
 <section class="round2">
-<h2>Round 3: moon window versions</h2>
+<h2>Round 4: two moons on the geared carrier</h2>
+<p class="r2">The brass wheel carries two moons half a turn apart, each with its own blued cup.</p>
+<p class="r2">At new moon both sit half above the calendar edge, fully covered, one rising at the left and one setting at the right.</p>
+<p><a href="carrier-selected.png"><img class="wide" src="carrier-selected.png" alt="Ember Field with the two-moon carrier: normal, low light and new moon"></a></p>
+<p class="legend">Three sizes of moon and wheel (rows: moon 48, 52 and 44), each at 2x with true size underneath:</p>
+<img class="wide" src="moon-carrier-versions.png" alt="Three versions of the two-moon carrier in ten phases">
+<p><a href="moon-carrier-48.png">Moon 48 row</a> &middot; <a href="moon-carrier-52.png">Moon 52 row</a> &middot; <a href="moon-carrier-44.png">Moon 44 row</a></p>
+</section>
+<section class="round2">
+<h2>Round 3: moon window versions (superseded)</h2>
 <p class="r2">The moon rides its carrier in a circle as in the current face; moving mechanical parts hide its dark side, so the visible lit part keeps the true phase shape. Each row shows the window at 2x with the same crops at true size underneath.</p>
 <ul class="versions">
 $($windowVersions | ForEach-Object { '  <li><b>' + [System.Net.WebUtility]::HtmlEncode($_.Name) + '</b>: ' + [System.Net.WebUtility]::HtmlEncode($_.Desc) + ' <a href="' + $_.File + '">row image</a></li>' } | Out-String)</ul>
