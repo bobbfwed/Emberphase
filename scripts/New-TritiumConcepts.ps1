@@ -313,6 +313,94 @@ public static class TritiumFx {
 '@
 }
 
+# Round 3 helpers: antialiased part masks, polished edges and cast shadows.
+if (-not ('TritiumParts' -as [type])) {
+Add-Type -ReferencedAssemblies System.Drawing -TypeDefinition @'
+using System;
+using System.Drawing;
+using System.Drawing.Imaging;
+using System.Runtime.InteropServices;
+
+public static class TritiumParts {
+    static byte[] Read(Bitmap b, out BitmapData d) {
+        d = b.LockBits(new Rectangle(0, 0, b.Width, b.Height), ImageLockMode.ReadWrite, PixelFormat.Format32bppArgb);
+        byte[] buf = new byte[d.Stride * b.Height];
+        Marshal.Copy(d.Scan0, buf, 0, buf.Length);
+        return buf;
+    }
+    static void Write(Bitmap b, BitmapData d, byte[] buf) { Marshal.Copy(buf, 0, d.Scan0, buf.Length); b.UnlockBits(d); }
+    static byte B(double v) { v = Math.Round(v); return (byte)(v < 0 ? 0 : (v > 255 ? 255 : v)); }
+    static double Smooth(double e0, double e1, double x) { double t = (x - e0) / (e1 - e0); t = t < 0 ? 0 : (t > 1 ? 1 : t); return t * t * (3 - 2 * t); }
+
+    // Chamfer distance (pixels) from every pixel to the nearest target pixel.
+    static float[] Distance(bool[] target, int w, int h) {
+        float[] d = new float[w * h]; const float A = 1f, D = 1.41421356f;
+        for (int i = 0; i < d.Length; i++) d[i] = target[i] ? 0 : 1e9f;
+        for (int y = 0; y < h; y++) for (int x = 0; x < w; x++) {
+            int i = y * w + x; float v = d[i];
+            if (x > 0) v = Math.Min(v, d[i - 1] + A);
+            if (y > 0) { v = Math.Min(v, d[i - w] + A); if (x > 0) v = Math.Min(v, d[i - w - 1] + D); if (x < w - 1) v = Math.Min(v, d[i - w + 1] + D); }
+            d[i] = v;
+        }
+        for (int y = h - 1; y >= 0; y--) for (int x = w - 1; x >= 0; x--) {
+            int i = y * w + x; float v = d[i];
+            if (x < w - 1) v = Math.Min(v, d[i + 1] + A);
+            if (y < h - 1) { v = Math.Min(v, d[i + w] + A); if (x < w - 1) v = Math.Min(v, d[i + w + 1] + D); if (x > 0) v = Math.Min(v, d[i + w - 1] + D); }
+            d[i] = v;
+        }
+        return d;
+    }
+
+    // body := max(min(body, 1 - hole), add). Keeps antialiased edges and
+    // gives one seamless mask for a part made of several shapes.
+    public static void Combine(Bitmap body, Bitmap hole, Bitmap add) {
+        BitmapData bd, hd, ad; byte[] Bo = Read(body, out bd);
+        byte[] H = null; if (hole != null) { H = Read(hole, out hd); hole.UnlockBits(hd); }
+        byte[] Ad = null; if (add != null) { Ad = Read(add, out ad); add.UnlockBits(ad); }
+        for (int i = 0; i < Bo.Length; i += 4) {
+            int a = Bo[i + 3];
+            if (H != null) a = Math.Min(a, 255 - H[i + 3]);
+            if (Ad != null) a = Math.Max(a, Ad[i + 3]);
+            Bo[i] = 255; Bo[i + 1] = 255; Bo[i + 2] = 255; Bo[i + 3] = (byte)a;
+        }
+        Write(body, bd, Bo);
+    }
+
+    // Composites a metal part: texture through the mask, a polished highlight
+    // band just inside the outline, and a soft shadow cast onto the 'shadowOn'
+    // surface (the lit moon) beside the part.
+    public static void Part(Bitmap dst, Bitmap mask, Bitmap tex, Bitmap shadowOn, double hiPx, int hr, int hg, int hb, int ha, double shadowPx, double shadowMax) {
+        int w = dst.Width, h = dst.Height, n = w * h;
+        BitmapData dd, md, td, sd;
+        byte[] M = Read(mask, out md); mask.UnlockBits(md);
+        byte[] T = Read(tex, out td); tex.UnlockBits(td);
+        byte[] S = null; if (shadowOn != null) { S = Read(shadowOn, out sd); shadowOn.UnlockBits(sd); }
+        bool[] inside = new bool[n], outside = new bool[n];
+        for (int i = 0; i < n; i++) { inside[i] = M[i * 4 + 3] >= 128; outside[i] = !inside[i]; }
+        float[] din = Distance(outside, w, h), dout = Distance(inside, w, h);
+        byte[] Dst = Read(dst, out dd);
+        for (int i = 0; i < n; i++) {
+            int j = i * 4;
+            if (S != null && !inside[i] && S[j + 3] > 0 && dout[i] < shadowPx) {
+                double f = 1 - dout[i] / shadowPx; double k = 1 - shadowMax * f * f * S[j + 3] / 255.0;
+                Dst[j] = B(Dst[j] * k); Dst[j + 1] = B(Dst[j + 1] * k); Dst[j + 2] = B(Dst[j + 2] * k);
+            }
+            double ma = M[j + 3] / 255.0; if (ma <= 0) continue;
+            double dist = inside[i] ? din[i] - 0.5 : 0;
+            double hw = Smooth(hiPx, hiPx * 0.4, dist) * ha / 255.0;
+            double tb = T[j] + (hb - T[j]) * hw, tg = T[j + 1] + (hg - T[j + 1]) * hw, tr = T[j + 2] + (hr - T[j + 2]) * hw;
+            double da = Dst[j + 3] / 255.0, oa = ma + da * (1 - ma);
+            Dst[j] = B((tb * ma + Dst[j] * da * (1 - ma)) / oa);
+            Dst[j + 1] = B((tg * ma + Dst[j + 1] * da * (1 - ma)) / oa);
+            Dst[j + 2] = B((tr * ma + Dst[j + 2] * da * (1 - ma)) / oa);
+            Dst[j + 3] = B(oa * 255);
+        }
+        Write(dst, dd, Dst);
+    }
+}
+'@
+}
+
 # ---------------------------------------------------------------------------
 # Layers, colours, text
 # ---------------------------------------------------------------------------
@@ -625,7 +713,9 @@ function Draw-Sky($cfg,[string]$part) {
         }
     }
     if($part -eq 'all' -or $part -eq 'moon') {
-        if($cfg.MoonStyle -eq 'mechanical') { Draw-MechMoon 'all' } else { Draw-Moon $cfg.MoonX $cfg.MoonY $cfg.MoonD $fixturePhase }
+        if($cfg.MoonStyle -eq 'mechanical') { Draw-MechMoon 'all' }
+        elseif($cfg.MoonStyle -in @('A','B','C')) { Draw-MoonWindow $cfg.MoonStyle }
+        else { Draw-Moon $cfg.MoonX $cfg.MoonY $cfg.MoonD $fixturePhase }
     }
     $dome.Dispose()
 }
@@ -654,10 +744,10 @@ function Get-TerminatorPoints([double]$c,[bool]$waning,[double]$R) {
     }
     return ,$pts.ToArray()
 }
-function Get-ShadePath([double]$c,[bool]$waning,[double]$R) {
+function Get-ShadePath([double]$c,[bool]$waning,[double]$R,[double]$outerR=-1) {
     $path=New-Object System.Drawing.Drawing2D.GraphicsPath
     $path.AddLines((Get-TerminatorPoints $c $waning $R))
-    $ro=$R+1
+    $ro=$R+1; if($outerR -gt 0) { $ro=$outerR }
     # Outer edge follows the limb at R+1 on the shaded side, bottom back to top.
     if($waning) { $path.AddArc(-$ro,-$ro,2*$ro,2*$ro,90,-180) } else { $path.AddArc(-$ro,-$ro,2*$ro,2*$ro,90,180) }
     $path.CloseFigure(); return $path
@@ -725,6 +815,172 @@ function Draw-MechMoon([string]$part='all') {
     $script:g.DrawImage($bmp,([System.Drawing.Rectangle]::new(0,0,$size,$size)),0,0,$size,$size,[System.Drawing.GraphicsUnit]::Pixel,$attributes)
     $script:g.Restore($state); $attributes.Dispose(); $bmp.Dispose()
 }
+# ---------------------------------------------------------------------------
+# Round 3: moon window versions. The moon rides a carrier disc about the arch
+# centre P = (225,133) at radius 55 (as in production), rotated by
+# alpha = (p - 0.5) * 180. Mechanics are drawn at 8 px per unit into a window
+# layer (x 130-320, y 40-122) and scaled into the face; the frame covers them.
+# ---------------------------------------------------------------------------
+$winX=130; $winY=40; $winW=190; $winH=82; $winS=8
+$moonR3=26
+function New-WinLayer {
+    $bmp=New-Object System.Drawing.Bitmap(($winW*$winS),($winH*$winS),[System.Drawing.Imaging.PixelFormat]::Format32bppArgb)
+    $gr=[System.Drawing.Graphics]::FromImage($bmp); $gr.SmoothingMode='AntiAlias'; $gr.Clear([System.Drawing.Color]::Transparent)
+    $gr.ScaleTransform($winS,$winS); $gr.TranslateTransform(-$winX,-$winY)
+    return [pscustomobject]@{ Bitmap=$bmp; G=$gr; W=$winW; H=$winH }
+}
+function Polar([double]$r,[double]$deg) { $a=$deg*[math]::PI/180; [System.Drawing.PointF]::new((225+$r*[math]::Sin($a)),(133-$r*[math]::Cos($a))) }
+function Enter-MoonFrame($cx,$cy,$alpha) { $s=$script:g.Save(); $script:g.TranslateTransform($cx,$cy); $script:g.RotateTransform($alpha); return $s }
+# Mechanical moon art at the origin (production colours and craters, R = 26).
+function Draw-MoonArt([double]$R) {
+    $rect=[System.Drawing.RectangleF]::new(-$R,-$R,2*$R,2*$R)
+    $b=New-Object System.Drawing.Drawing2D.LinearGradientBrush($rect,(C '#fff2d7'),(C '#8d8b83'),45)
+    $script:g.FillEllipse($b,$rect); $b.Dispose()
+    $state=$script:g.Save(); $clip=New-Object System.Drawing.Drawing2D.GraphicsPath; $clip.AddEllipse($rect); $script:g.SetClip($clip)
+    $f=$R/26
+    foreach($crater in @(@(-8,-5,10),@(12.5,7.5,13),@(-2.5,16.5,7),@(15,-12,6),@(-16,10,4))) {
+        $x=$crater[0]*$f; $y=$crater[1]*$f; $d=$crater[2]*$f
+        Ellipse '#888b87' ($x-$d/2) ($y-$d/2) $d $d; Ellipse '#b9b8ac' ($x-$d/2+$f) ($y-$d/2+$f) ($d-2*$f) ($d-2*$f)
+    }
+    $dome=New-Object System.Drawing.Drawing2D.PathGradientBrush($clip)
+    $dome.CenterPoint=[System.Drawing.PointF]::new((-0.32*$R),(-0.36*$R))
+    $dome.CenterColor=[System.Drawing.Color]::FromArgb(70,255,250,236); $dome.SurroundColors=@([System.Drawing.Color]::FromArgb(70,52,46,36))
+    $script:g.FillPath($dome,$clip); $dome.Dispose()
+    $script:g.Restore($state); $clip.Dispose()
+    $pen=New-Object System.Drawing.Pen((C '#5f5b50'),0.7); $script:g.DrawEllipse($pen,(-$R+0.35),(-$R+0.35),(2*$R-0.7),(2*$R-0.7)); $pen.Dispose()
+}
+# Domed steel screw (slot) or rivet (no slot) at a world position.
+function Draw-Screw([double]$x,[double]$y,[double]$r,[double]$slotDeg,[bool]$slot=$true) {
+    $path=New-Object System.Drawing.Drawing2D.GraphicsPath; $path.AddEllipse(($x-$r),($y-$r),(2*$r),(2*$r))
+    $b=New-Object System.Drawing.Drawing2D.PathGradientBrush($path)
+    $b.CenterPoint=[System.Drawing.PointF]::new(($x-$r*0.35),($y-$r*0.35)); $b.CenterColor=C '#eef1f4'; $b.SurroundColors=@((C '#565e67'))
+    $script:g.FillPath($b,$path); $b.Dispose()
+    $p=Pen '#22272c' 0.35; $script:g.DrawPath($p,$path); $p.Dispose(); $path.Dispose()
+    if($slot) {
+        $a=$slotDeg*[math]::PI/180; $dx=$r*0.8*[math]::Cos($a); $dy=$r*0.8*[math]::Sin($a)
+        $p=Pen '#1b1f23' ($r*0.36); $script:g.DrawLine($p,($x-$dx),($y-$dy),($x+$dx),($y+$dy)); $p.Dispose()
+    }
+}
+# Blued-steel texture for a cup in moon-local coordinates.
+function Draw-CupTexture([double]$R) {
+    $e=$R+3
+    $b=Blend-Brush (-$e) (-$e) (2*$e) (2*$e) @('#16233d','#1d2d4b','#24375c') ([single[]]@(0,0.5,1)) 60
+    $script:g.FillRectangle($b,(-$e),(-$e),(2*$e),(2*$e)); $b.Dispose()
+    $rnd=New-Object System.Random(3101)
+    for($ly=-$e;$ly -le $e;$ly+=0.45) {
+        $tone=255; if($rnd.NextDouble() -lt 0.5) { $tone=0 }
+        $pen=New-Object System.Drawing.Pen([System.Drawing.Color]::FromArgb((6+$rnd.Next(0,12)),$tone,$tone,$tone),0.22)
+        $script:g.DrawLine($pen,(-$e),$ly,$e,($ly+0.6)); $pen.Dispose()
+    }
+}
+# Blued-steel texture for the blades: radial shading about P, brushed along the orbit.
+function Draw-BladeTexture {
+    $path=New-Object System.Drawing.Drawing2D.GraphicsPath; $path.AddEllipse(125,33,200,200)
+    $b=New-Object System.Drawing.Drawing2D.PathGradientBrush($path)
+    $b.CenterColor=C '#0f1a2e'; $b.SurroundColors=@((C '#2a3f66'))
+    $script:g.FillRectangle((Brush '#2a3f66'),$winX,$winY,$winW,$winH); $script:g.FillPath($b,$path); $b.Dispose(); $path.Dispose()
+    $rnd=New-Object System.Random(4111)
+    for($r=20;$r -le 100;$r+=0.45) {
+        $tone=255; if($rnd.NextDouble() -lt 0.5) { $tone=0 }
+        $pen=New-Object System.Drawing.Pen([System.Drawing.Color]::FromArgb((6+$rnd.Next(0,12)),$tone,$tone,$tone),0.22)
+        $script:g.DrawEllipse($pen,(225-$r),(133-$r),(2*$r),(2*$r)); $pen.Dispose()
+    }
+}
+function Get-BladePath([int]$side,[double]$beta,[double]$wf) {
+    $outer=@(); $inner=@()
+    for($i=0;$i -le 80;$i++) {
+        $d=55*$i/80; $w=$wf*[math]::Pow([math]::Max(0,1-$d/55),0.6); $th=$side*($beta+$d)
+        $outer+=Polar (55+$w) $th; $inner+=Polar (55-$w) $th
+    }
+    [array]::Reverse($inner)
+    $path=New-Object System.Drawing.Drawing2D.GraphicsPath; $path.AddPolygon([System.Drawing.PointF[]]($outer+$inner)); return $path
+}
+function Draw-BrassWheel([double]$alpha) {
+    $rect=[System.Drawing.RectangleF]::new(165,73,120,120)
+    $brass=New-Object System.Drawing.Drawing2D.LinearGradientBrush($rect,(C '#d6b06a'),(C '#7d6230'),60)
+    $dark=C '#3e2f14'
+    # Dark under-strokes give rim and spokes a thin outline.
+    $p=New-Object System.Drawing.Pen($dark,2.5); $script:g.DrawEllipse($p,170,78,110,110)
+    for($n=0;$n -lt 6;$n++) { $script:g.DrawLine($p,(Polar 23 ($alpha+$n*60)),(Polar 55 ($alpha+$n*60))) }; $p.Dispose()
+    $p=New-Object System.Drawing.Pen($brass,1.8); $script:g.DrawEllipse($p,170,78,110,110); $p.Dispose()
+    $p=New-Object System.Drawing.Pen($brass,1.6); $p.StartCap='Flat'; $p.EndCap='Flat'
+    for($n=0;$n -lt 6;$n++) { $script:g.DrawLine($p,(Polar 24 ($alpha+$n*60)),(Polar 55 ($alpha+$n*60))) }; $p.Dispose()
+    # Toothed hub: 30 teeth from r 24 to r 28.5, turning with the carrier.
+    $pts=@()
+    for($i=0;$i -lt 30;$i++) {
+        $t=$alpha+$i*12
+        $pts+=Polar 24 ($t-3.6); $pts+=Polar 28.5 ($t-1.9); $pts+=Polar 28.5 ($t+1.9); $pts+=Polar 24 ($t+3.6)
+    }
+    $gear=New-Object System.Drawing.Drawing2D.GraphicsPath; $gear.AddPolygon([System.Drawing.PointF[]]$pts)
+    $script:g.FillPath($brass,$gear); $p=New-Object System.Drawing.Pen($dark,0.4); $script:g.DrawPath($p,$gear)
+    $script:g.DrawEllipse($p,207,115,36,36); $script:g.DrawEllipse($p,216,124,18,18); $p.Dispose(); $gear.Dispose()
+    $brass.Dispose()
+    Draw-Screw 225 133 3.2 ($alpha+35)
+}
+# Draws the moon window mechanics for version 'A', 'B' or 'C' at the current
+# $script:mechPhase into the current face layer.
+function Draw-MoonWindow([string]$version) {
+    $p=$script:mechPhase; $alpha=($p-0.5)*180; $a=$alpha*[math]::PI/180; $R=$moonR3
+    $cx=225+55*[math]::Sin($a); $cy=133-55*[math]::Cos($a)
+    $k=(1-[math]::Cos(2*[math]::PI*$p))/2; $c=-[math]::Cos(2*$a); $waning=($alpha -gt 0)
+    $nx=[math]::Sin($a); $ny=-[math]::Cos($a)
+    $face=$script:g
+    $O=New-WinLayer; Use-Layer $O
+    if($version -eq 'C') { Draw-BrassWheel $alpha }
+    if($version -eq 'A') {
+        $s=Enter-MoonFrame $cx $cy $alpha
+        $steel=New-Object System.Drawing.Drawing2D.LinearGradientBrush(([System.Drawing.RectangleF]::new(-31,-31,62,62)),(C '#c3cad2'),(C '#5d6670'),70)
+        # Stem from the inner pole screw toward the pivot (local +y points at P).
+        $stem=RoundPath -1.5 ($R+4) 3 8 0.8
+        $script:g.FillPath($steel,$stem); $pp=Pen '#2b3035' 0.35; $script:g.DrawPath($pp,$stem); $pp.Dispose(); $stem.Dispose()
+        $pp=Pen '#2b3035' 2.1; $script:g.DrawEllipse($pp,(-$R-4),(-$R-4),(2*$R+8),(2*$R+8)); $pp.Dispose()
+        $pp=New-Object System.Drawing.Pen($steel,1.4); $script:g.DrawEllipse($pp,(-$R-4),(-$R-4),(2*$R+8),(2*$R+8)); $pp.Dispose()
+        $steel.Dispose(); $script:g.Restore($s)
+    }
+    $s=Enter-MoonFrame $cx $cy $alpha; Draw-MoonArt $R; $script:g.Restore($s)
+    # Moon disc mask: receives cast shadows and is cut out of blade bodies.
+    $disc=New-WinLayer; Use-Layer $disc; Ellipse '#ffffff' ($cx-$R) ($cy-$R) (2*$R) (2*$R)
+    $cup=$null
+    if($k -lt 0.995) {
+        $cup=New-WinLayer; Use-Layer $cup
+        $s=Enter-MoonFrame $cx $cy $alpha; $sp=Get-ShadePath $c $waning $R ($R+1.5); Fill-Path $sp '#ffffff'; $sp.Dispose(); $script:g.Restore($s)
+    }
+    if($version -eq 'A' -or $version -eq 'C') {
+        if($cup) {
+            $tex=New-WinLayer; Use-Layer $tex; $s=Enter-MoonFrame $cx $cy $alpha; Draw-CupTexture $R; $script:g.Restore($s)
+            [TritiumParts]::Part($O.Bitmap,$cup.Bitmap,$tex.Bitmap,$disc.Bitmap,6.4,143,163,196,180,12,0.5); Close-Layer $tex
+        }
+        Use-Layer $O
+        $rs=$R+4; if($version -eq 'C') { $rs=$R+1.5 }
+        foreach($sign in @(1,-1)) { Draw-Screw ($cx+$sign*$rs*$nx) ($cy+$sign*$rs*$ny) 2.4 ($alpha+20+$sign*25) }
+    } else {
+        $c2=[math]::Cos(2*$a)
+        $beta=[math]::Abs($alpha)+27.08*[math]::Max(0,$c2)
+        $wf=$R+2; if($c2 -gt 0) { $wf=($R+2)*(1-0.55*$c2) }
+        $tex=New-WinLayer; Use-Layer $tex; Draw-BladeTexture
+        $darkSide=-1; if($waning) { $darkSide=1 }
+        foreach($side in @(-1,1)) {
+            $body=New-WinLayer; Use-Layer $body
+            $bp=Get-BladePath $side $beta $wf; Fill-Path $bp '#ffffff'; $bp.Dispose()
+            $add=$null; if($side -eq $darkSide -and $cup) { $add=$cup.Bitmap }
+            # Body minus the whole moon disc, plus the cup on the dark side: one part.
+            [TritiumParts]::Combine($body.Bitmap,$disc.Bitmap,$add)
+            [TritiumParts]::Part($O.Bitmap,$body.Bitmap,$tex.Bitmap,$disc.Bitmap,6.4,143,163,196,180,12,0.5)
+            Close-Layer $body
+        }
+        Close-Layer $tex
+        Use-Layer $O
+        foreach($side in @(-1,1)) { $pt=Polar 55 ($side*($beta+9)); Draw-Screw $pt.X $pt.Y 1.8 0 $false }
+    }
+    if($cup) { Close-Layer $cup }; Close-Layer $disc
+    $script:g=$face
+    $attributes=New-Object System.Drawing.Imaging.ImageAttributes; $attributes.SetWrapMode('TileFlipXY')
+    $state=$script:g.Save(); $script:g.InterpolationMode='HighQualityBicubic'
+    $script:g.TranslateTransform($winX,$winY); $script:g.ScaleTransform((1.0/$winS),(1.0/$winS))
+    $script:g.DrawImage($O.Bitmap,([System.Drawing.Rectangle]::new(0,0,$O.Bitmap.Width,$O.Bitmap.Height)),0,0,$O.Bitmap.Width,$O.Bitmap.Height,[System.Drawing.GraphicsUnit]::Pixel,$attributes)
+    $script:g.Restore($state); $attributes.Dispose(); Close-Layer $O
+}
+
 # Restricts drawing to what the window shows: the dome, above the calendar lip.
 function Set-WindowClip {
     $dome=Dome-Path; $script:g.SetClip($dome)
@@ -1217,6 +1473,76 @@ $sel.Save((Join-Path $outRoot 'selected.png'),[System.Drawing.Imaging.ImageForma
 $white.Dispose(); $grey.Dispose(); $titleFont.Dispose(); $rowFont.Dispose(); $sg.Dispose(); $sel.Dispose(); $strip2.Dispose()
 
 # ---------------------------------------------------------------------------
+# Round 3: moon window versions (Ember Field surroundings, normal face)
+# ---------------------------------------------------------------------------
+$windowColumns=@(@('Waxing',0.05,$false),@('Waxing',0.20,$false),@('First quarter',0.5,$false),@('Waxing',0.80,$false),
+                 @('Full',1.0,$false),@('Waning',0.80,$true),@('Last quarter',0.5,$true),@('Waning',0.20,$true))
+$windowVersions=@(
+    @{Id='0';File='moon-window-0-original.png';Name='Original 0.5.16';Desc='Current face: full disc sliding behind fixed cut-outs.'},
+    @{Id='A';File='moon-window-A-cup.png';Name='A  Cup on a yoke';Desc='A blued half-shell pivots on two screws at the moon''s poles, held in a steel ring.'},
+    @{Id='B';File='moon-window-B-blades.png';Name='B  Side blades';Desc='Two blued blades close in from the sides along the moon''s path; the blade on the dark side covers it.'},
+    @{Id='C';File='moon-window-C-carrier.png';Name='C  Geared carrier';Desc='The cup from A, with the moon''s brass carrier wheel showing: rim, spokes and a toothed hub.'})
+function Get-WindowCrop($layer) {
+    $big=New-Object System.Drawing.Bitmap(388,188)
+    $bg=[System.Drawing.Graphics]::FromImage($big)
+    $bg.DrawImage($layer.Bitmap,([System.Drawing.Rectangle]::new(0,0,388,188)),256,68,388,188,[System.Drawing.GraphicsUnit]::Pixel); $bg.Dispose()
+    $small=New-Object System.Drawing.Bitmap(194,94)
+    $sg2=[System.Drawing.Graphics]::FromImage($small); $sg2.InterpolationMode='HighQualityBicubic'; $sg2.PixelOffsetMode='HighQuality'
+    $sg2.DrawImage($big,0,0,194,94); $sg2.Dispose()
+    return ,@($big,$small)
+}
+$rowW=24*2+330+8*388+7*12; $rowH=24+64+188+8+94+22
+$headFont=New-Object System.Drawing.Font('Segoe UI Semibold',22,[System.Drawing.GraphicsUnit]::Pixel)
+$pctFont=New-Object System.Drawing.Font('Segoe UI',18,[System.Drawing.GraphicsUnit]::Pixel)
+$nameFont=New-Object System.Drawing.Font('Segoe UI Semibold',26,[System.Drawing.GraphicsUnit]::Pixel)
+$descFont=New-Object System.Drawing.Font('Segoe UI',18,[System.Drawing.GraphicsUnit]::Pixel)
+$smallFont=New-Object System.Drawing.Font('Segoe UI',15,[System.Drawing.GraphicsUnit]::Pixel)
+$cfmt=New-Object System.Drawing.StringFormat; $cfmt.Alignment='Center'; $cfmt.LineAlignment='Center'
+$tfmt=New-Object System.Drawing.StringFormat; $tfmt.Alignment='Near'; $tfmt.LineAlignment='Near'
+$white=Brush '#f0f0ee'; $grey=Brush '#a7abb0'; $dim=Brush '#7d8187'
+$rowBitmaps=@()
+foreach($version in $windowVersions) {
+    $row=New-Object System.Drawing.Bitmap($rowW,$rowH)
+    $rg=[System.Drawing.Graphics]::FromImage($row); $rg.SmoothingMode='AntiAlias'; $rg.TextRenderingHint='AntiAliasGridFit'; $rg.Clear((C '#1b1c1e'))
+    $rg.DrawString($version.Name,$nameFont,$white,([System.Drawing.RectangleF]::new(24,(24+64),310,40)),$tfmt)
+    $rg.DrawString($version.Desc,$descFont,$grey,([System.Drawing.RectangleF]::new(24,(24+64+44),300,150)),$tfmt)
+    $rg.DrawString('True size (1x)',$smallFont,$dim,([System.Drawing.RectangleF]::new(24,(24+64+188+8+36),300,24)),$tfmt)
+    for($i=0;$i -lt $windowColumns.Count;$i++) {
+        $kk=[double]$windowColumns[$i][1]; $p=[math]::Acos(1-2*$kk)/(2*[math]::PI); if($windowColumns[$i][2]) { $p=1-$p }
+        $x=24+330+$i*(388+12)
+        $rg.DrawString($windowColumns[$i][0],$headFont,$white,([System.Drawing.RectangleF]::new($x,24,388,34)),$cfmt)
+        $rg.DrawString(('{0:0}% lit' -f ($kk*100)),$pctFont,$grey,([System.Drawing.RectangleF]::new($x,(24+32),388,28)),$cfmt)
+        if($version.Id -eq '0') {
+            # Production art, unchanged: twin-moon disc at the same carrier angle under dial_frame.
+            $L=New-Layer; Use-Layer $L; $script:g.Clear([System.Drawing.Color]::Black)
+            Asset 'moon_disc' 135 43 180 180 (($p-0.5)*180)
+            Asset 'balance_wheel' 151 151 148 148 0
+            Asset 'dial_frame' 0 0 450 450
+            Draw-Readouts 'all'
+            $script:keptLayer=$L
+        } else {
+            $cfgW=$emberField.Clone(); $cfgW.MoonStyle=$version.Id
+            Compose-Face $cfgW 'normal' $p -Keep
+        }
+        $crops=Get-WindowCrop $script:keptLayer; Close-Layer $script:keptLayer
+        $rg.DrawImage($crops[0],$x,(24+64))
+        $rg.DrawImage($crops[1],($x+97),(24+64+188+8))
+        $crops[0].Dispose(); $crops[1].Dispose()
+    }
+    $rg.Dispose()
+    $row.Save((Join-Path $outRoot $version.File),[System.Drawing.Imaging.ImageFormat]::Png)
+    $rowBitmaps+=$row
+    Write-Host ('Rendered moon window row {0}' -f $version.Name)
+}
+$sheetGap=10; $sheetH=4*$rowH+3*$sheetGap
+$wsheet=New-Object System.Drawing.Bitmap($rowW,$sheetH)
+$wg=[System.Drawing.Graphics]::FromImage($wsheet); $wg.Clear((C '#111214'))
+for($i=0;$i -lt 4;$i++) { $wg.DrawImage($rowBitmaps[$i],0,($i*($rowH+$sheetGap))); $rowBitmaps[$i].Dispose() }
+$wsheet.Save((Join-Path $outRoot 'moon-window-versions.png'),[System.Drawing.Imaging.ImageFormat]::Png)
+$wg.Dispose(); $wsheet.Dispose()
+$headFont.Dispose(); $pctFont.Dispose(); $nameFont.Dispose(); $descFont.Dispose(); $smallFont.Dispose(); $white.Dispose(); $grey.Dispose(); $dim.Dispose()
+
+# ---------------------------------------------------------------------------
 # Static index page (no external resources)
 # ---------------------------------------------------------------------------
 $cells=New-Object System.Text.StringBuilder
@@ -1252,6 +1578,8 @@ $html=@"
   .pair figure { margin: 0; }
   .pair img { display: block; width: 450px; height: 450px; border-radius: 50%; }
   .pair figcaption { color: #a9adb2; text-align: center; margin-top: 8px; }
+  ul.versions { color: #c9ccd0; margin: 8px 0 12px; padding-left: 20px; }
+  ul.versions li { margin: 3px 0; }
   h2.round1 { font-size: 22px; font-weight: 600; color: #a9adb2; margin: 0 0 6px; }
 </style>
 </head>
@@ -1259,7 +1587,14 @@ $html=@"
 <h1>Emberphase: tritium and moon concepts</h1>
 <p class="note">These are illustrative composites with sample data (1 November 2026), not device screenshots. Low-light images show the pixels the face would draw at 15% brightness or below.</p>
 <section class="round2">
-<h2>Round 2: Ember Field</h2>
+<h2>Round 3: moon window versions</h2>
+<p class="r2">The moon rides its carrier in a circle as in the current face; moving mechanical parts hide its dark side, so the visible lit part keeps the true phase shape. Each row shows the window at 2x with the same crops at true size underneath.</p>
+<ul class="versions">
+$($windowVersions | ForEach-Object { '  <li><b>' + [System.Net.WebUtility]::HtmlEncode($_.Name) + '</b>: ' + [System.Net.WebUtility]::HtmlEncode($_.Desc) + ' <a href="' + $_.File + '">row image</a></li>' } | Out-String)</ul>
+<img class="wide" src="moon-window-versions.png" alt="Four versions of the moon window in eight phases">
+</section>
+<section class="round2">
+<h2>Round 2: Ember Field (superseded)</h2>
 <p class="r2">Orange tritium tubes on Field's hour layout, with the 12 and 6 numerals kept as on the current dial and flanked by pairs of tubes.</p>
 <p class="r2">There is no sleep readout.</p>
 <p class="r2">The moon travels across its window and a blued-steel shade covers exactly its unlit part, so each phase has its true shape and the window is empty at new moon.</p>
