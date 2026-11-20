@@ -22,6 +22,8 @@ final class BrightnessSignals {
     static final String STATE = "state";
     /** Last state handed to the face. Written only after a successful send. */
     static final String DELIVERED = "delivered";
+    /** State the request logic last acted on; stops repeat requests no face answers. */
+    static final String REQUESTED = "requested";
     /** Samsung/AOSP auto-brightness adjustment; present on the tested watch. Trigger only. */
     private static final String AUTO_ADJUST = "screen_auto_brightness_adj";
 
@@ -58,14 +60,22 @@ final class BrightnessSignals {
                 Settings.System.SCREEN_BRIGHTNESS_MODE, AUTO_ADJUST}) {
             app.getContentResolver().registerContentObserver(Settings.System.getUriFor(name), false, observer);
         }
-        request(app);
+        request(app, true);
     }
 
-    /** Asks the face to reread low light only when the 0/1 state differs from what it last received. */
-    static void request(Context context) {
+    /** Asks the face to reread low light once per state change, and only if it may hold another state. */
+    static void request(Context context) { request(context, false); }
+
+    private static synchronized void request(Context context, boolean processStart) {
         boolean current = read(context).lowLight;
         SharedPreferences prefs = context.getSharedPreferences(PREFS, Context.MODE_PRIVATE);
-        if (!BrightnessDelivery.shouldRequest(current, prefs.contains(DELIVERED), prefs.getBoolean(DELIVERED, false))) return;
+        boolean hasRequested = prefs.contains(REQUESTED);
+        boolean requested = prefs.getBoolean(REQUESTED, false);
+        boolean ask = BrightnessDelivery.shouldRequest(current, prefs.contains(DELIVERED),
+                prefs.getBoolean(DELIVERED, false), hasRequested, requested, processStart);
+        // Written only when the state changes, never per observer callback.
+        if (BrightnessDelivery.shouldStore(current, hasRequested, requested)) prefs.edit().putBoolean(REQUESTED, current).apply();
+        if (!ask) return;
         ComplicationDataSourceUpdateRequester.create(context,
                 new ComponentName(context, BrightnessDataSource.class)).requestUpdateAll();
     }
@@ -85,7 +95,7 @@ final class BrightnessSignals {
         SharedPreferences prefs = context.getSharedPreferences(PREFS, Context.MODE_PRIVATE);
         boolean previous = prefs.getBoolean(STATE, false);
         boolean low = BrightnessLevel.lowLight(percent, previous);
-        if (low != previous || !prefs.contains(STATE)) prefs.edit().putBoolean(STATE, low).apply();
+        if (BrightnessDelivery.shouldStore(low, prefs.contains(STATE), previous)) prefs.edit().putBoolean(STATE, low).apply();
         return new Reading(raw, bounds[0], bounds[1], percent, low);
     }
 

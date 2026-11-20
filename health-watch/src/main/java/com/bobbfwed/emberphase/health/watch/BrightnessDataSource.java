@@ -19,8 +19,12 @@ public final class BrightnessDataSource extends ComplicationDataSourceService {
         float value = BrightnessSignals.current(this);
         try {
             listener.onComplicationData(data(value));
-            getSharedPreferences(BrightnessSignals.PREFS, MODE_PRIVATE).edit()
-                    .putBoolean(BrightnessSignals.DELIVERED, value > 0).apply();
+            var prefs = getSharedPreferences(BrightnessSignals.PREFS, MODE_PRIVATE);
+            boolean low = value > 0;
+            if (BrightnessDelivery.shouldStore(low, prefs.contains(BrightnessSignals.DELIVERED),
+                    prefs.getBoolean(BrightnessSignals.DELIVERED, false))) {
+                prefs.edit().putBoolean(BrightnessSignals.DELIVERED, low).apply();
+            }
         } catch (android.os.RemoteException disconnected) {
             // Leave the stored value unchanged so the next signal asks again.
         }

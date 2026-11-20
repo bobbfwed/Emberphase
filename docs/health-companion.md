@@ -144,6 +144,10 @@ the delivered state is stored only after the face has received it. The
 provider also declares `UPDATE_PERIOD_SECONDS` = 600. This is the one deliberate
 periodic refresh in the watch companion: if a change is missed, the face heals
 within about ten minutes. Each such refresh only reads the setting.
+The companion also remembers the last state it asked about, so while the active
+face has no low-light slot (and so never takes delivery) it sends one request
+per state change instead of one per brightness write; a process start retries
+once if the face may still hold an old state.
 
 **Limits.** The change observers live only while the companion process is
 alive. Android can stop the process; it restarts for the next provider request
