@@ -13,10 +13,23 @@ The face is hand-written in native Watch Face Format 4. Its resource-only APK
 contains no executable app code. Wear OS scales the circular 450-unit layout
 to the watch display.
 
-| Normal | Always-on | Low light |
-| :---: | :---: | :---: |
-| <img src="docs/previews/normal.png" width="260" alt="Emberphase Tritium at normal brightness"> | <img src="docs/previews/ambient.png" width="260" alt="Emberphase Tritium always-on display"> | <img src="docs/previews/low-light.png" width="260" alt="Emberphase Tritium low-light dial"> |
-| The full dial at normal screen brightness. | The simplified display while the watch is idle. | The dimmed dial with glowing tritium when screen brightness is 15% or below. |
+<p align="center">
+  <img src="docs/previews/normal.png" width="420" alt="Emberphase Tritium at normal brightness">
+</p>
+<p align="center">
+  <b>Normal</b>: the full dial at normal screen brightness.
+</p>
+
+<p align="center">
+  <img src="docs/previews/ambient.png" width="240" alt="Emberphase Tritium always-on display">
+  &nbsp;&nbsp;&nbsp;&nbsp;
+  <img src="docs/previews/low-light.png" width="240" alt="Emberphase Tritium low-light dial">
+</p>
+<p align="center">
+  <b>Always-on</b> (left): the simplified display while the watch is idle.<br>
+  <b>Low light</b> (right): the dimmed dial with glowing tritium when screen
+  brightness is 15% or below.
+</p>
 
 These three images are illustrative artwork composites with sample data, not
 device screenshots.
