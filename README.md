@@ -4,6 +4,11 @@ Emberphase is an open-source mechanical-style analog watch face for **Wear OS 6
 (Android API 36) and later**. Build it for your watch, customize the design, or
 fork it to create your own version.
 
+This branch builds **Emberphase Tritium** (version 0.6.0): the same mechanical
+face with tritium-style luminous hands and markers, a geared two-moon window
+with phase cups, and a low-light dial. It installs alongside the mechanical
+Emberphase face under its own application ID.
+
 The face is hand-written in native Watch Face Format 4. Its resource-only APK
 contains no executable app code. Wear OS scales the circular 450-unit layout
 to the watch display.
@@ -12,8 +17,8 @@ to the watch display.
 
 ## Features
 
-* Skeleton analog hands and an optional mechanical second hand with a brief
-  overshoot on each tick.
+* Tritium-style hour and minute hands and hour markers, and an optional
+  mechanical second hand with a brief overshoot on each tick.
 * An optional hidden balance rim glimpsed through two curved inner openings,
   swapping the two openings every second.
 * An editor setting turns off the seconds overshoot and the balance step.
@@ -21,7 +26,11 @@ to the watch display.
   when the first low-battery lamp is on.
 * A center-hub tap runs a six-second mechanical sweep, then settles onto the
   live time, date and indicators. Requires the Emberphase Health watch companion.
-* A rotating twin-moon disc behind a recessed aperture.
+* A moon window with a geared two-moon brass carrier. A small phase cup rides
+  on each moon and shades it to show the current phase; it advances twice a day.
+* A low-light dial that switches on when the watch's screen brightness is set
+  low, with an editor override (**Low-light dial: Auto / Always normal / Always
+  low-light**). Auto requires the Emberphase Health watch companion.
 * Mechanical calendar drums showing **weekday, month, date**, with partially
   visible adjacent entries.
 * A battery slider with steady low-battery indicators.
@@ -48,7 +57,8 @@ Try the [interactive mechanical sweep preview](docs/previews/mechanical-sweep.ht
 by downloading it and opening it in a browser. It is a standalone file with
 sample weather/activity data. See [center-tap setup and behavior](docs/mechanical-sweep.md).
 
-See the [always-on](docs/previews/ambient.png),
+See the [low-light](docs/previews/low-light.png),
+[always-on](docs/previews/ambient.png),
 [low-battery](docs/previews/low-battery.png),
 [always-on low-battery](docs/previews/ambient-low-battery.png), and
 [unavailable-data](docs/previews/unavailable.png) previews. These are illustrative
@@ -73,9 +83,22 @@ The companion reads Samsung Health's totals and daily goals with permission.
 Without the companion and consent, these displays remain `—`.
 See [companion setup and current testing status](docs/health-companion.md).
 
-The moon disc uses an offline date-based approximation of the lunar cycle,
-advancing twice a day at midnight and noon UTC. Its mechanical aperture gives
-a stylized view of the phase. See [the calculation and accuracy limits](docs/moon-phase.md).
+The moon window uses an offline date-based approximation of the lunar cycle,
+advancing twice a day at midnight and noon UTC. A geared brass carrier holds two
+moons; as it turns, one moon rises into the window from the left while waxing,
+is fully uncovered at the top at full moon, and sets to the right while waning.
+A phase cup on each moon covers the unlit part in 3-degree steps, and the moon
+below the window is always fully covered. This is a stylized mechanical
+indication, not a rendering of the real terminator. See
+[the calculation, geometry and accuracy limits](docs/moon-phase.md).
+
+The low-light dial is chosen by the **Low-light dial** editor option. In
+**Auto**, the Emberphase Health watch companion reports whether the watch's
+screen brightness setting is low, through a hidden complication slot; the face
+then draws a dimmer overlay over the whole dial and swaps to the low-light
+hands, with the second hand dimmed. Without the companion, Auto stays on the
+normal dial. Always-on mode is unchanged. See [low-light behavior and
+limits](docs/low-light.md).
 
 ## Build from source
 
@@ -162,17 +185,24 @@ To install an APK you already built, use:
 ```
 
 Long-press the current watch face, choose **Add watch face**, and select
-**Emberphase**. Open its editor to configure the data sources, second hand,
-and hidden balance.
+**Emberphase Tritium**. Open its editor to configure the data sources, second
+hand, hidden balance and low-light dial.
 
-Emberphase stays installed and available under **Add watch face** when another
-face is active. Add it once to keep it in the watch's face carousel for quick
-switching. The mechanical face uses the package ID
-`com.bobbfwed.emberphase.mechanical`, so it can coexist with PARALLAX or other
-forks that use the original `com.bobbfwed.emberphase` ID. This is a separate
-installation from older Emberphase builds; configure its complications once.
-Future updates to this package preserve its settings. Give other watch-face
-forks their own application IDs so installing one does not replace another.
+Emberphase Tritium uses the application ID `com.bobbfwed.emberphase.tritium`.
+It installs side by side with the mechanical Emberphase face
+(`com.bobbfwed.emberphase.mechanical`) and with PARALLAX or other forks that use
+the original `com.bobbfwed.emberphase` ID; installing it replaces none of them.
+It stays available under **Add watch face** when another face is active. Add it
+once to keep it in the watch's face carousel for quick switching.
+
+Because it is a separate installation, it does not inherit settings from the
+mechanical face. After adding it, set up its complications once: the steps,
+active-minute and calorie providers, and the left inset if you use a custom
+complication. The hidden center-hub, power-saving and brightness slots bind to
+the Emberphase Health watch companion automatically when it is installed and
+allows this face. Future updates to this package preserve its settings. Give
+other watch-face forks their own application IDs so installing one does not
+replace another.
 
 ## Customize the displays
 
@@ -216,6 +246,10 @@ the companion, then select **Emberphase · Active minutes** for MIN and
 providers when installed; existing selections may need changing once. The combined
 Samsung Health Daily Activity display cannot supply these numeric fields independently.
 
+Use **Low-light dial** to choose **Auto** (follow the watch's brightness setting
+through the companion), **Always normal** or **Always low-light**. See
+[low-light behavior](docs/low-light.md).
+
 For the technical findings, see [data sources](docs/data-sources.md) and
 [Samsung provider availability](docs/device-providers.md).
 
@@ -247,8 +281,10 @@ powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\scripts\Test-BalanceWi
 ```
 
 The checks cover calendar rollover and leap years, activity ranges and goals,
-battery bounds, the seconds and balance cutoffs, artwork references, selection
-geometry, balance-window masking, and animated-preview timing.
+battery bounds, the seconds and balance cutoffs, moon phase-cup frames for both
+moons, the low-light option and signal, hand-set visibility in every mode,
+artwork references and sizes, the application ID, selection geometry,
+balance-window masking, and animated-preview timing.
 The build additionally uses Google's WFF validator and memory checker, with
 10 MiB active and 4 MiB ambient memory limits. See
 [validation details](docs/validation.md) and the

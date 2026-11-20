@@ -140,7 +140,13 @@ does not by itself confirm the face appears in every picker view.
     lamps; orange hour markers and 12/3/6/9; black background. No weather,
     activity tracks, moon, neighboring drum labels, or seconds. Check
     ambient transitions, burn-in shifting, lock/unlock, wake, and relaunch.
-11. Measure a representative full-day battery run against a stock face with
+11. Low-light dial (0.6.0): check **Always low-light**, **Always normal** and
+    **Auto** with the brightness setting stepped down and up; record the
+    switch level and delay, the low-light hands, cap and 25% second hand, the
+    sweep in low light, unchanged always-on, and Auto without the companion.
+    Check the moon window's phase cups against a known phase date. See
+    `low-light.md` and `moon-phase.md`.
+12. Measure a representative full-day battery run against a stock face with
     equal AOD, brightness, connectivity, and activity settings. Turn off wireless
     debugging during battery comparisons. No measured-life claim is made yet.
 

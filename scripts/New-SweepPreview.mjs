@@ -2,7 +2,9 @@ import fs from 'node:fs';
 import {loadSweepModel,evaluateWff,sweepFrame} from './lib/sweep-model.mjs';
 const root=new URL('../',import.meta.url);
 const model=loadSweepModel(new URL('watchface/src/main/res/raw/watchface.xml',root));
-const images=Object.fromEntries(['moon_disc','dial_frame','calendar_bezel','balance_wheel','battery_slider','hour_hand','minute_hand','second_hand','center_cap','wx_14'].map(name=>[
+// Moon window: static sky, two-moon carrier and the phase-cup frames (00..59 without 30).
+const cups=[...Array(60).keys()].filter(k=>k!==30).map(k=>'moon_cup_'+String(k).padStart(2,'0'));
+const images=Object.fromEntries(['moon_sky','moon_carrier',...cups,'dial_frame','calendar_bezel','balance_wheel','battery_slider','hour_hand','minute_hand','second_hand','center_cap','wx_14'].map(name=>[
   name,'data:image/png;base64,'+fs.readFileSync(new URL('watchface/src/main/res/drawable-nodpi/'+name+'.png',root)).toString('base64')]));
 const html=`<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Emberphase · mechanical sweep</title><style>
@@ -29,7 +31,10 @@ function draw(now){
  'REFERENCE.steps_goal_end':214-68*6482/8000,'REFERENCE.minutes_goal_end':214-68*42/60,'REFERENCE.calories_goal_end':214-68*380/500};
  const elapsed=now-start,active=elapsed>=0&&elapsed<model.durationMs,f=sweepFrame(model,Math.min(model.durationMs,elapsed),fixture,!active);
  ctx.fillStyle='black';ctx.fillRect(0,0,450,450);
- asset('moon_disc',135,43,180,180,f.moon);ctx.save();ctx.translate(225,225);asset('balance_wheel',-74,-74,148,148,f.balance);ctx.restore();asset('dial_frame',0,0,450,450);
+ asset('moon_sky',138,46,174,72);asset('moon_carrier',155,46,140,140,f.moon);
+ // Each cup turns with its moon about the carrier pivot (225,116); frame 30 (full) has no cup.
+ [f.moonFrame1,f.moonFrame2].forEach((k,i)=>{if(k!==30)asset('moon_cup_'+String(k).padStart(2,'0'),196,49,58,58,f.moon+180*i,.5,67/58);});
+ ctx.save();ctx.translate(225,225);asset('balance_wheel',-74,-74,148,148,f.balance);ctx.restore();asset('dial_frame',0,0,450,450);
  for(const [kind,x,w] of [['weekday',136,57],['month',197,55],['date',258,55]]){label(f[kind+'_prev'],x,112,w,22,'#c3c3c3',.58);label(f[kind],x,134,w,26,kind==='weekday'?'#ff6a15':'#f6f6f0');label(f[kind+'_next'],x,164,w,22,'#c3c3c3',.58);}
  asset('calendar_bezel',125,114,200,79);asset('battery_slider',359,f.battery,21,13);asset('wx_14',63,194,47,47);
  label('56°',52,236,75,29);label('H 61°F',52,267,75,14);label('6,482',169,257,112,34);label('42',178,307,53,23);label('380',262,307,57,23);

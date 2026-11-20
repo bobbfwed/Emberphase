@@ -38,10 +38,10 @@ Check-Exit 'Resource compilation'
 
 # Keep the AGP manifest namespace-free; aapt2's standalone path needs package.
 [xml]$manifest = Get-Content -LiteralPath (Join-Path $sourceRoot 'AndroidManifest.xml') -Raw
-$manifest.manifest.SetAttribute('package','com.bobbfwed.emberphase.mechanical')
+$manifest.manifest.SetAttribute('package','com.bobbfwed.emberphase.tritium')
 $manifestPath = Join-Path $buildRoot 'AndroidManifest.xml'
 $manifest.Save($manifestPath)
-& $aapt2 link -o (Join-Path $buildRoot 'unsigned.apk') --manifest $manifestPath -I (Join-Path $sdkRoot 'platforms\android-36\android.jar') --min-sdk-version 36 --target-sdk-version 36 --version-code 33 --version-name '0.5.16' --auto-add-overlay -R (Join-Path $buildRoot 'resources.zip')
+& $aapt2 link -o (Join-Path $buildRoot 'unsigned.apk') --manifest $manifestPath -I (Join-Path $sdkRoot 'platforms\android-36\android.jar') --min-sdk-version 36 --target-sdk-version 36 --version-code 34 --version-name '0.6.0' --auto-add-overlay -R (Join-Path $buildRoot 'resources.zip')
 Check-Exit 'APK linking'
 & (Join-Path $buildTools 'zipalign.exe') -f -p 4 (Join-Path $buildRoot 'unsigned.apk') (Join-Path $buildRoot 'aligned.apk')
 Check-Exit 'APK alignment'

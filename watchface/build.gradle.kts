@@ -7,12 +7,13 @@ android {
     compileSdk = 36
     buildToolsVersion = "36.0.0"
     defaultConfig {
-        // Keep the mechanical face installed alongside forks such as PARALLAX.
-        applicationId = "com.bobbfwed.emberphase.mechanical"
+        // Keep the tritium face installed alongside mechanical Emberphase and
+        // forks such as PARALLAX.
+        applicationId = "com.bobbfwed.emberphase.tritium"
         minSdk = 36
         targetSdk = 36
-        versionCode = 33
-        versionName = "0.5.16"
+        versionCode = 34
+        versionName = "0.6.0"
     }
     buildTypes {
         // AGP emits resource R classes even without source code. R8 removes

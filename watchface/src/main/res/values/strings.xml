@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="watch_face_name">Emberphase</string>
+    <string name="watch_face_name">Emberphase Tritium</string>
     <string name="left_inset">Left inset</string>
     <string name="native_weather">Weather · current / high / conditions</string>
     <string name="custom_complication">Custom complication</string>
@@ -14,4 +14,9 @@
     <string name="sweep_slot">Center hub · mechanical sweep</string>
     <string name="motion_detail">Overshoot and balance motion</string>
     <string name="power_saving_slot">Power saving state</string>
+    <string name="light_mode">Low-light dial</string>
+    <string name="light_mode_auto">Auto</string>
+    <string name="light_mode_normal">Always normal</string>
+    <string name="light_mode_low">Always low-light</string>
+    <string name="brightness_slot">Screen brightness state</string>
 </resources>

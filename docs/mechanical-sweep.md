@@ -10,7 +10,8 @@ The weekday/month/date drums traverse complete rings and return to the live
 calendar. The moon rotates, and the battery/activity bands
 travel through their ranges before settling. The balance keeps its normal
 one-slice step; the sweep does not add a separate wheel motion. The optional second hand joins
-the sweep only when enabled. Numeric health readings, goals and weather remain
+the sweep only when enabled. With the low-light dial active, the sweep uses the
+low-light hands and the dimmed second hand. Numeric health readings, goals and weather remain
 live; the sweep never writes or invents health data.
 
 The sequence is disabled at 15% battery or below and hidden in always-on mode.

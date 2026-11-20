@@ -269,3 +269,17 @@ two-second cycle. Expression tests, WFF schema validation, the memory-footprint
 check, and the signed APK build pass. A later install on the SM-R950
 succeeded; the watch reports version 0.5.2. The new arc openings have not yet
 been inspected on the device.
+
+Face 0.6.0 (Emberphase Tritium, application ID `com.bobbfwed.emberphase.tritium`,
+versionCode 34) replaces the moon disc with a geared two-moon carrier and 59
+phase-cup frames per moon, removes the old aperture calibration so the carrier
+angle is linear in phase (quarters at exactly 45 degrees), adds tritium hands and a low-light dial driven by
+hidden slot 70 and the **Low-light dial** editor option. The Google WFF
+validator 1.7.0 passes for format 4. The Node checks add both moons' cup frames
+for 4,384 half-days and the USNO fixtures (full 30, first quarter 15, last
+quarter 43, new 00/01/59, all within one day of carrier turn), the low-light truth table, hand-set
+visibility in 64 combinations of ambient, low light, battery and sweep state,
+slot 70 geometry and order, artwork sizes against the asset interface, and
+agreement of the application ID and version between Gradle and
+`Build-WatchFace.ps1`. The full SDK-native build, memory check and physical
+checks in `low-light.md` and `device-acceptance.md` are pending.

@@ -56,11 +56,32 @@ function DrumLabel([string]$text,[float]$x,[float]$y,[float]$width,[bool]$recedi
 # Never use the build date or the platform's coarse moon-phase field in previews.
 $moonFixture=[DateTime]::new(2026,11,1,12,0,0,[DateTimeKind]::Utc)
 [xml]$faceXml=Get-Content -LiteralPath (Join-Path $PSScriptRoot '..\watchface\src\main\res\raw\watchface.xml') -Raw -Encoding UTF8
-$moonExpression=$faceXml.SelectSingleNode('//PartImage[@name="moon_disc_rotation"]/Transform').value
+# Find the angle transform of the element named moon_disc_rotation, whatever
+# its element type, image resource or position in the tree.
+$moonTransform=$faceXml.SelectSingleNode('(//*[@name="moon_disc_rotation"]//Transform[@target="angle"])[1]')
+if(-not $moonTransform) { throw 'watchface.xml has no angle transform on moon_disc_rotation.' }
+$moonExpression=$moonTransform.value
 $moonExpression=$moonExpression.Replace('[YEAR]',[string]$moonFixture.Year).Replace('[DAY_OF_YEAR]',[string]$moonFixture.DayOfYear).Replace('[AMPM_STATE]','1').Replace('floor(', '[math]::Floor(').Replace('sin(', '[math]::Sin(')
 $moonAngle=& ([scriptblock]::Create($moonExpression))
 
-foreach($mode in @('normal','low-battery','ambient','ambient-low-battery','unavailable','seconds','balance-right','balance-overlay')) {
+# Moon window, composed the way the face does it: sky, the carrier turned by
+# the moon angle, then one cup frame per moon (frame 30, the full moon, has no
+# cup; at or beyond 88.5 degrees from the top the moon gets the closed cup 00).
+function MoonWindow([double]$angle) {
+    Asset 'moon_sky' 138 46 174 72
+    Asset 'moon_carrier' 155 46 140 140 $angle
+    foreach($offset in @(0,180)) {
+        $a=$angle+$offset
+        while($a -gt 180) { $a-=360 }; while($a -le -180) { $a+=360 }
+        $frame=0; if([math]::Abs($a) -lt 88.5) { $frame=[int][math]::Round(($a+90)/3) }
+        if($frame -eq 30) { continue }
+        $rad=$a*[math]::PI/180
+        $cx=225+38*[math]::Sin($rad); $cy=116-38*[math]::Cos($rad)
+        Asset ('moon_cup_{0:00}' -f $frame) ($cx-29) ($cy-29) 58 58 $a
+    }
+}
+
+foreach($mode in @('normal','low-battery','ambient','ambient-low-battery','unavailable','seconds','balance-right','balance-overlay','low-light')) {
     Canvas 450 450
     if($mode -ne 'balance-overlay') { $script:g.Clear([System.Drawing.Color]::Black) }
     if($mode.StartsWith('ambient')) {
@@ -74,7 +95,7 @@ foreach($mode in @('normal','low-battery','ambient','ambient-low-battery','unava
         Asset 'ambient_minute_hand' 217 45 16 198 60 0.5 0.9090909
         Asset 'ambient_center_cap' 211 211 28 28
     } else {
-        Asset 'moon_disc' 135 43 180 180 $moonAngle
+        MoonWindow $moonAngle
         if($mode -ne 'low-battery' -and $mode -ne 'balance-overlay') {
             $state=$script:g.Save()
             $script:g.TranslateTransform(225,225); $script:g.ScaleTransform(1,1); $script:g.TranslateTransform(-225,-225)
@@ -107,24 +128,38 @@ foreach($mode in @('normal','low-battery','ambient','ambient-low-battery','unava
             FillGauge 186 (380/500) @('#254d00','#4a9700','#79ef06','#e0ffad','#a0ff30','#65c900','#2b5b00')
             Label '8,000' 312 318 13 '#eeeeeb' 43; Label '60' 325 331 13 '#eeeeeb' 43; Label '500' 337 343 13 '#eeeeeb' 43
         }
-        Asset 'hour_hand' 214 93 22 150 305 0.5 0.88
-        Asset 'minute_hand' 217 45 16 198 60 0.5 0.9090909
-        if($battery -gt 15) { Asset 'second_hand' 222 23 6 230 132 0.5 0.8782609 }
-        Asset 'center_cap' 211 211 28 28
+        if($mode -eq 'low-light') {
+            # The face draws the full normal dial, then the low-light overlay,
+            # the low-light hands (11-unit margins), the second hand at 25 %.
+            Asset 'lowlight_dial' 0 0 450 450
+            Asset 'lowlight_hour_hand' 203 82 44 172 305 0.5 (143/172)
+            Asset 'lowlight_minute_hand' 206 34 38 220 60 0.5 (191/220)
+            Asset 'second_hand' 222 23 6 230 132 0.5 0.8782609 0.25
+            Asset 'lowlight_center_cap' 211 211 28 28
+        } else {
+            Asset 'hour_hand' 214 93 22 150 305 0.5 0.88
+            Asset 'minute_hand' 217 45 16 198 60 0.5 0.9090909
+            if($battery -gt 15) { Asset 'second_hand' 222 23 6 230 132 0.5 0.8782609 }
+            Asset 'center_cap' 211 211 28 28
+        }
     }
     Save $mode
 }
 Copy-Item -LiteralPath (Join-Path $assetRoot 'normal.png') -Destination (Join-Path $sourceAssetRoot 'preview.png') -Force
-Canvas 800 150
+$phases=@(@('NEW',0),@('WAXING CRESCENT',0.125),@('FIRST QUARTER',0.25),@('WAXING GIBBOUS',0.375),@('FULL',0.5),@('WANING GIBBOUS',0.625),@('LAST QUARTER',0.75),@('WANING CRESCENT',0.875))
+Canvas (200*$phases.Count) 150
 $script:g.Clear([System.Drawing.Color]::Black)
-$phases=@(@('NEW',0),@('FIRST QUARTER',0.25),@('FULL',0.5),@('LAST QUARTER',0.75))
 for($i=0;$i -lt $phases.Count;$i++) {
     $state=$script:g.Save()
     $script:g.SetClip([System.Drawing.RectangleF]::new(($i*200),0,200,110))
     $script:g.TranslateTransform(($i*200-125),-30)
-    $linearAngle=-90+180*$phases[$i][1]
-    Asset 'moon_disc' 135 43 180 180 ($linearAngle+7.5*[math]::Sin($linearAngle*[math]::PI/90))
+    # Same mapping as the face: -90 at new moon, 180 degrees per lunation,
+    # plus the old display easing only if the face's expression still has it.
+    $stripAngle=-90+180*$phases[$i][1]
+    if($moonExpression -match 'Sin\(') { $stripAngle+=7.5*[math]::Sin($stripAngle*[math]::PI/90) }
+    MoonWindow $stripAngle
     Asset 'dial_frame' 0 0 450 450
+    Asset 'calendar_bezel' 125 114 200 79
     $script:g.Restore($state)
     Label $phases[$i][0] ($i*200) 118 12 '#eeeeee' 200
 }

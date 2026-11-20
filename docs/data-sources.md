@@ -121,8 +121,13 @@ second hand and the still balance remain until the 15% cutoff. Power saving is
 a fixed watch-companion value with no periodic refresh. The companion reads
 Android power-save mode and the watch's low-power settings, and publishes a
 change when one of those changes. The slot sits on the dial so the runtime
-keeps it active. Date drums and the mechanical
-disc use date fields rather than millisecond expressions. The moon calculation
+keeps it active. A second hidden slot (70, `brightness_state`) works the same
+way for the low-light dial: `BrightnessDataSource` in the watch companion
+reports 1 while the watch's screen brightness setting is at or below its
+low-light threshold, otherwise 0, publishing only on change. The face reads it
+only when the **Low-light dial** option is Auto; without the companion it stays
+on the normal dial. See [low-light dial](low-light.md). Date drums and the
+mechanical moon carrier use date fields rather than millisecond expressions. The moon calculation
 uses UTC year, day-of-year, and AM/PM, so its time inputs change only twice daily.
 It estimates the phase from a known new moon and the mean synodic month, with no
 moon API or native moon-phase source. See [moon calculation](moon-phase.md) for

@@ -61,13 +61,9 @@ function moonAngle(date) {
   const year=date.getUTCFullYear();
   return evaluate(moonExpression, {YEAR:year,DAY_OF_YEAR:Math.floor((+date-Date.UTC(year,0,1))/86400000)+1,AMPM_STATE:date.getUTCHours()<12?0:1});
 }
-const calibratedAngle=angle=>angle+7.5*Math.sin(angle*Math.PI/90);
+// The carrier angle is linear in phase: a = (p - 0.5) * 180 for the moon in view.
 function meanPhase(date) {
-  // Undo the monotonic aperture calibration to check astronomical cycle age.
-  const target=moonAngle(date);
-  let lo=-90,hi=270;
-  for(let i=0;i<48;i++) { const mid=(lo+hi)/2; if(calibratedAngle(mid)<target) lo=mid; else hi=mid; }
-  return wrap(((lo+hi)/2+90)/180,1);
+  return wrap((moonAngle(date)+90)/180,1);
 }
 let moonCases=0;
 for (const year of [1902,1999,2000,2024,2026,2100]) {
@@ -77,7 +73,7 @@ for (const year of [1902,1999,2000,2024,2026,2100]) {
       const angle=moonAngle(start);
       assert.ok(angle>=-90 && angle<270);
       const midpoint=+start+6*3600000;
-      const expected=calibratedAngle(-90+180*wrap((midpoint-moonEpoch)/86400000/lunarMonth,2));
+      const expected=-90+180*wrap((midpoint-moonEpoch)/86400000/lunarMonth,2);
       assert.ok(Math.abs(angle-expected)<1e-7, 'Gregorian date math must match an independent UTC timestamp calculation');
       assert.equal(moonAngle(new Date(+start+43199999)),angle, 'Moon must stay fixed throughout a UTC half-day');
       const next=moonAngle(new Date(+start+43200000));
@@ -103,6 +99,92 @@ for (const [time,expected] of lunarFixtures) {
 const currentPhase=meanPhase(new Date('2026-11-03T03:00Z'));
 assert.ok(currentPhase>0.75 && currentPhase<0.9, 'Early November 2026 must be waning after last quarter');
 console.log(`PASS: ${moonCases} moon half-days; twice-daily UTC cadence; phase wrap/direction; 12 USNO phase fixtures (max mean-cycle error ${maxMoonErrorDays.toFixed(2)} days).`);
+
+// Returns one element by tag and name, including nested elements of the same tag.
+function element(tag,name) {
+  const start=face.indexOf('<'+tag+' name="'+name+'"');
+  assert.ok(start>=0,'Missing '+tag+' '+name);
+  const open=new RegExp('<'+tag+'\\b[^>]*?(/?)>|</'+tag+'>','g');
+  open.lastIndex=start;
+  let depth=0;
+  for(let m;(m=open.exec(face));) {
+    if(m[0].startsWith('</')) depth--; else if(!m[1]) depth++;
+    if(depth===0) return face.slice(start,open.lastIndex);
+  }
+  throw new Error('Unclosed '+tag+' '+name);
+}
+const transformOf=(xml,target)=>unescapeXml(xml.match(new RegExp('<Transform target="'+target+'" value="([^"]+)"'))[1]);
+const numberAttr=(tag,name)=>Number(tag.match(new RegExp('\\b'+name+'="([^"]+)"'))[1]);
+
+// Moon window: sky, a 140x140 two-moon carrier and one phase cup per moon.
+assert.doesNotMatch(face,/moon_disc"|resource="moon_disc/,'moon_disc is replaced by moon_carrier');
+const moonSweep=element('Group','moon_sweep');
+assert.match(moonSweep,/^<Group name="moon_sweep" x="155" y="46" width="140" height="140" pivotX="0.5" pivotY="0.5">/);
+assert.equal(transformOf(moonSweep,'angle'),'360 * [REFERENCE.sweep_turn]');
+assert.match(moonPart,/<PartImage name="moon_disc_rotation" x="0" y="0" width="140" height="140" pivotX="0.5" pivotY="0.5">/);
+assert.match(moonPart,/<Image resource="moon_carrier" \/>/);
+assert.match(moonPart,/<Reference name="moon_angle" source="angle"/);
+const skyIndex=face.indexOf('<PartImage name="moon_sky" x="138" y="46" width="174" height="72">');
+assert.ok(skyIndex>=0 && skyIndex<face.indexOf('<Group name="moon_sweep"') && !moonSweep.includes('moon_sky'),'The sky is static and drawn before the carrier');
+assert.ok(face.indexOf('<Group name="moon_sweep"')>face.indexOf('<Group name="interactive_dial"') && face.indexOf('<Group name="moon_sweep"')<face.indexOf('<Group name="optional_balance"'),'The moon window stays inside the ambient-hidden interactive dial');
+assert.equal(face.split('[DAY_OF_YEAR]').length,moonPart.split('[DAY_OF_YEAR]').length,'The long moon expression is not repeated; other parts read REFERENCE.moon_angle');
+const frameExpressions=[1,2].map(n=>transformOf(element('Group','moon_frame_'+n+'_source'),'angle'));
+const cupGroups=[1,2].map(n=>element('Group','moon_cups_'+n));
+assert.equal(transformOf(cupGroups[0],'angle'),'[REFERENCE.moon_angle]');
+assert.equal(transformOf(cupGroups[1],'angle'),'[REFERENCE.moon_angle] + 180');
+const cupFrames=[...Array(60).keys()].filter(k=>k!==30);
+for(const [index,group] of cupGroups.entries()) {
+  assert.match(group,/^<Group name="moon_cups_\d" x="0" y="0" width="140" height="140" pivotX="0.5" pivotY="0.5">/);
+  const images=[...group.matchAll(/<Compare expression="([^"]+)"><PartImage x="41" y="3" width="58" height="58"><Image resource="moon_cup_(\d\d)" \/><\/PartImage><\/Compare>/g)];
+  assert.deepEqual(images.map(m=>Number(m[2])),cupFrames,'Each moon selects among cup frames 00..59 without 30');
+  for(const [,name,frame] of images) {
+    assert.equal(expressions.get(name),'[REFERENCE.moon_frame_'+(index+1)+'] == '+Number(frame));
+    for(const k of [...cupFrames,30]) assert.equal(evaluate(expressions.get(name),{['REFERENCE.moon_frame_'+(index+1)]:k}),k===Number(frame));
+  }
+  assert.doesNotMatch(group,/<Default>/,'Frame 30 (full) shows no cup');
+}
+const wrap180=a=>{const w=wrap(a+180,360)-180;return w===-180?180:w;};
+const expectedFrame=a=>Math.abs(a)>=88.5?0:Math.round((a+90)/3);
+const moonFrames=angle=>frameExpressions.map(e=>evaluate(e,{'REFERENCE.moon_angle':angle}));
+// Exact geometry: new (-90 or 90), quarters at -45/45, full at 0, both moon positions.
+for(const [angle,expected] of [[-90,[0,0]],[90,[0,0]],[270-1e-9,[0,0]],[-45,[15,0]],[0,[30,0]],[45,[45,0]],[135,[0,15]],[180,[0,30]],[225,[0,45]],[-88.4,[1,0]],[88.4,[59,0]],[-88.5,[0,0]],[88.5,[0,0]],[1.4,[30,0]],[-1.6,[29,0]]]) {
+  assert.deepEqual(moonFrames(angle),expected,'Cup frames at carrier angle '+angle);
+}
+assert.deepEqual(moonFrames(referenceDefaults['REFERENCE.moon_angle']),[0,0],'A missing moon angle closes both cups');
+let cupCases=0;
+for (const year of [1902,1999,2000,2024,2026,2100]) {
+  for (let date=new Date(Date.UTC(year,0,1)); date.getUTCFullYear()===year; date=new Date(+date+43200000)) {
+    const angle=moonAngle(date);
+    const frames=moonFrames(angle);
+    for(const [i,frame] of frames.entries()) {
+      const a=wrap180(angle+180*i);
+      assert.ok(Number.isInteger(frame) && frame>=0 && frame<=60,'Frame index is an integer 0..60');
+      assert.notEqual(frame,60);
+      assert.equal(frame,expectedFrame(a),'Frame k = round((a + 90) / 3) for moon '+(i+1));
+      if(frame===30) assert.ok(Math.abs(a)<1.5,'No cup only within 1.5 degrees of full');
+      if(Math.abs(a)>90) assert.equal(frame,0,'The lower moon is always fully covered');
+    }
+    assert.ok(frames[0]===0 || frames[1]===0,'The two moons are never both partly lit');
+    cupCases++;
+  }
+}
+// USNO events. Only the mean-cycle error (under one day, 6.1 degrees of carrier
+// turn) separates the shown frame from the ideal 00/15/30/45: at most two cup steps.
+const fixtureFrames=[];
+for (const [time,phase] of lunarFixtures) {
+  const date=new Date(time),sample=new Date(Math.floor(+date/43200000)*43200000);
+  const angle=moonAngle(sample),frames=moonFrames(angle);
+  const visible=frames.findIndex(k=>k!==0),a=wrap180(angle+180*Math.max(visible,0));
+  fixtureFrames.push(time.slice(0,10)+'='+frames.join('/'));
+  const ideal={0:-90,0.25:-45,0.5:0,0.75:45}[phase];
+  const offset=phase===0?Math.min(Math.abs(wrap180(angle)+90),Math.abs(wrap180(angle)-90)):Math.abs(a-ideal);
+  assert.ok(offset<=180/lunarMonth,'Fixture '+time+' is within one day of carrier turn, off by '+offset.toFixed(2)+' degrees');
+  if(phase===0) assert.ok(frames.every(k=>[0,1,2,58,59].includes(k)),'New moon fixture '+time+' shows closed cups, saw '+frames);
+  if(phase===0.5) assert.ok(visible>=0 && Math.abs(a)<6.1 && Math.abs(frames[visible]-30)<=2,'Full moon fixture '+time+' shows the top moon, saw '+frames);
+  if(phase===0.25) assert.ok(a<0 && Math.abs(frames[visible]-15)<=2,'First quarter '+time+' is on the left at frame 15 +/- 2, saw '+frames);
+  if(phase===0.75) assert.ok(a>0 && Math.abs(frames[visible]-45)<=2,'Last quarter '+time+' is on the right at frame 45 +/- 2, saw '+frames);
+}
+console.log(`PASS: ${cupCases} half-days of phase-cup frames for both moons; USNO fixture frames ${fixtureFrames.join(' ')}.`);
 const months = ['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'];
 const weekdays = ['SUN','MON','TUE','WED','THU','FRI','SAT'];
 let calendarCases = 0;
@@ -274,8 +356,9 @@ assert.doesNotMatch(face, /\u00c2\u00b0|\u00e2\u20ac\u201d/);
 assert.match(manifest, /android:hasCode="false"/);
 assert.doesNotMatch(manifest, /<service\b|<activity\b|<uses-permission\b/);
 const slotIds = [...face.matchAll(/<ComplicationSlot slotId="(\d+)"/g)].map(m => m[1]);
-assert.equal(new Set(slotIds).size, 6);
-assert.deepEqual(slotIds,['10','20','30','40','50','60'],'Append new slots: Samsung maps saved selections by declaration order');
+assert.equal(new Set(slotIds).size, 7);
+assert.ok(slotIds.length<=8,'WFF allows at most eight complication slots');
+assert.deepEqual(slotIds,['10','20','30','40','50','60','70'],'Append new slots: Samsung maps saved selections by declaration order');
 assert.match(face, /BooleanConfiguration id="motion_detail"[^>]*defaultValue="TRUE"/);
 assert.equal([...face.matchAll(/<Tick\b/g)].length, 1, 'Only the powered motion branch overshoots');
 assert.match(face, /<SecondHand\b[^>]*\/>/, 'Seconds remain available without the overshoot tick');
@@ -317,7 +400,27 @@ for(const [id,name] of [[20,'steps'],[30,'minutes'],[40,'calories']]) {
     assert.ok(x-7>=0 && y-7>=0 && x+7<=450 && y+7<=450,'Track must fit the scene viewport');
   }
 }
-const slotBounds=new Map([[10,{x:52,y:194,width:76,height:94}],[50,{x:205,y:205,width:40,height:40}],...activityBounds]);
+const hiddenSlotBounds=new Map();
+for(const [id,name,provider,display] of [[60,'power_saving_state','PowerSaveDataSource','power_saving_slot'],[70,'brightness_state','BrightnessDataSource','brightness_slot']]) {
+  const slot=face.match(new RegExp('<ComplicationSlot slotId="'+id+'"[\\s\\S]*?</ComplicationSlot>'))[0];
+  const tag=slot.match(/<ComplicationSlot[^>]+/)[0];
+  assert.match(tag,new RegExp('name="'+name+'" x="400" y="'+(id===60?220:232)+'" width="8" height="8" supportedTypes="RANGED_VALUE EMPTY" displayName="'+display+'" isCustomizable="FALSE"'));
+  assert.match(slot,/<Variant mode="AMBIENT" target="alpha" value="0" duration="0" \/>\s*<BoundingBox x="0" y="0" width="8" height="8" \/>/);
+  assert.ok(slot.includes('primaryProvider="com.bobbfwed.emberphase.health/com.bobbfwed.emberphase.health.watch.'+provider+'" primaryProviderType="RANGED_VALUE" defaultSystemProvider="EMPTY" defaultSystemProviderType="EMPTY"'));
+  const box=slot.match(/<BoundingBox[^>]+/)[0];
+  const b={x:attribute(tag,'x')+attribute(box,'x'),y:attribute(tag,'y')+attribute(box,'y'),width:attribute(box,'width'),height:attribute(box,'height')};
+  for(const [x,y] of [[b.x,b.y],[b.x+b.width,b.y],[b.x,b.y+b.height],[b.x+b.width,b.y+b.height]]) {
+    assert.ok(Math.hypot(x-225,y-225)<225,'Hidden slot '+id+' must sit inside the dial circle so it activates');
+  }
+  hiddenSlotBounds.set(id,b);
+}
+// Slot 70: 1 only for a 0..1 range whose value is above zero; anything else is normal.
+const lowLightSignal=exportedExpression('low_light_signal');
+for(const [max,value,expected] of [[1,1,1],[1,0,0],[1,0.5,1],[100,50,0],[0,0,0],[1,-1,0]]) {
+  assert.equal(evaluate(lowLightSignal,{'COMPLICATION.RANGED_VALUE_MAX':max,'COMPLICATION.RANGED_VALUE_VALUE':value}),expected,`brightness signal max ${max} value ${value}`);
+}
+assert.equal(referenceDefaults['REFERENCE.low_light_signal'],0,'A missing companion leaves the dial normal');
+const slotBounds=new Map([[10,{x:52,y:194,width:76,height:94}],[50,{x:205,y:205,width:40,height:40}],...activityBounds,...hiddenSlotBounds]);
 for (const [id,provider] of [[30,'MinutesDataSource'],[40,'CaloriesDataSource']]) {
   const slot=face.match(new RegExp('<ComplicationSlot slotId="'+id+'"[\\s\\S]*?</ComplicationSlot>'))[0];
   assert.ok(slot.includes('primaryProvider="com.bobbfwed.emberphase.health/com.bobbfwed.emberphase.health.watch.'+provider+'" primaryProviderType="GOAL_PROGRESS"'));
@@ -331,7 +434,115 @@ for(const [id,x,y] of [[20,225,275],[30,204,325],[40,290,325]]) {
   const hits=[...slotBounds].filter(([,b])=>x>b.x && y>b.y && x<b.x+b.width && y<b.y+b.height).map(([id])=>id);
   assert.deepEqual(hits,[id],'Each activity number must select only its own provider');
 }
-for (const match of face.matchAll(/\bresource="([a-z][a-z0-9_]*)"/g)) {
-  assert.ok(fs.existsSync(path.join(root, 'watchface/src/main/res/drawable-nodpi', match[1]+'.png')), `Missing ${match[1]}`);
+
+// Low-light: editor option x companion signal.
+assert.match(face,/<ListConfiguration id="light_mode" displayName="light_mode" defaultValue="0">\s*<ListOption id="0" displayName="light_mode_auto" \/>\s*<ListOption id="1" displayName="light_mode_normal" \/>\s*<ListOption id="2" displayName="light_mode_low" \/>\s*<\/ListConfiguration>\s*<\/UserConfigurations>/,'light_mode is the last editor option with Auto as default');
+assert.equal(strings.get('light_mode'),'Low-light dial');
+const lightBranches=new Map([...element('Group','light_mode_source').match(/<ListConfiguration id="light_mode">([\s\S]*?)<\/ListConfiguration>/)[1]
+  .matchAll(/<ListOption id="(\d)">([\s\S]*?)<\/ListOption>/g)].map(m=>[Number(m[1]),Object.fromEntries([...m[2].matchAll(/<Transform target="angle" value="([^"]+)" \/>\s*<Reference name="([^"]+)"/g)].map(r=>['REFERENCE.'+r[2],Number(r[1])]))]));
+assert.deepEqual([...lightBranches.keys()],[0,1,2]);
+const lowLightSource=element('Group','low_light_source');
+assert.match(lowLightSource,/<Reference name="low_light" source="angle" defaultValue="0"/);
+const lowLightExpression=transformOf(lowLightSource,'angle');
+const lowLight=(mode,signal)=>evaluate(lowLightExpression,{...lightBranches.get(mode),'REFERENCE.low_light_signal':signal});
+for(const [mode,signal,expected] of [[0,0,0],[0,1,1],[1,0,0],[1,1,0],[2,0,1],[2,1,1]]) {
+  assert.equal(lowLight(mode,signal),expected,`low_light for light_mode ${mode} and signal ${signal}`);
 }
-console.log(`PASS: ${calendarCases} calendar dates; activity goals/ranges/empty states; detached reference-driven gauges and disjoint editor targets; battery bounds; seconds cutoff; resources and battery policy.`);
+assert.equal(evaluate(lowLightExpression,{}),0,'Defaults give the normal dial');
+// Reference sources must not sit inside anything hidden in interactive mode.
+for(const name of ['light_mode_source','low_light_source']) {
+  const source=element('Group',name);
+  assert.doesNotMatch(source,/<Variant|target="alpha"/);
+  const index=face.indexOf('<Group name="'+name+'"');
+  assert.ok(index>face.lastIndexOf('</ComplicationSlot>') && index<face.indexOf('<Group name="lowlight_dial"'),name+' is a top-level scene group');
+}
+const lowlightDial=element('Group','lowlight_dial');
+assert.match(lowlightDial,/^<Group name="lowlight_dial" x="0" y="0" width="450" height="450">\s*<Variant mode="AMBIENT" target="alpha" value="0" \/>/);
+assert.match(lowlightDial,/<PartImage x="0" y="0" width="450" height="450">\s*<Image resource="lowlight_dial" \/>/);
+const overlayIndex=face.indexOf('<Group name="lowlight_dial"');
+assert.ok(overlayIndex>face.indexOf('<Group name="calories_track_render"') && overlayIndex<face.indexOf('<Group name="ambient_dial"') && overlayIndex<face.indexOf('<Group name="normal_hands"'),'The overlay covers the whole dial and sits under the hands');
+for(const signal of [0,1]) assert.equal(evaluate(transformOf(lowlightDial,'alpha'),{'REFERENCE.low_light':signal}),signal?255:0);
+
+// Hands: exactly one set shows in every state.
+const handGroups=Object.fromEntries(['normal_hands','lowlight_hands','sweep_hands','sweep_normal_hands','sweep_lowlight_hands','optional_ticking_seconds','optional_sweep_seconds','center_caps'].map(n=>[n,element('Group',n)]));
+for(const name of ['normal_hands','lowlight_hands','sweep_hands','optional_ticking_seconds','center_caps']) {
+  assert.match(handGroups[name],new RegExp('^<Group name="'+name+'"[^>]*>\\s*<Variant mode="AMBIENT" target="alpha" value="0"'),name+' hides in ambient');
+}
+assert.match(handGroups.lowlight_hands,/<HourHand resource="lowlight_hour_hand" x="203" y="82" width="44" height="172" pivotX="0.5" pivotY="0.8313953" \/>/);
+assert.match(handGroups.lowlight_hands,/<MinuteHand resource="lowlight_minute_hand" x="206" y="34" width="38" height="220" pivotX="0.5" pivotY="0.8681818" \/>/);
+for(const hand of face.matchAll(/<(?:(?:HourHand|MinuteHand|SecondHand)\b|PartImage name="sweep_\w+_hand")[^>]*/g)) {
+  const tag=hand[0];
+  const x=numberAttr(tag,'x')+numberAttr(tag,'width')*numberAttr(tag,'pivotX'),y=numberAttr(tag,'y')+numberAttr(tag,'height')*numberAttr(tag,'pivotY');
+  assert.ok(Math.abs(x-225)<0.01 && Math.abs(y-225)<0.01,'Every hand pivots on the dial centre: '+tag);
+}
+for(const name of ['hour','minute']) {
+  assert.equal(transformOf(element('PartImage','sweep_lowlight_'+name+'_hand'),'angle'),transformOf(element('PartImage','sweep_'+name+'_hand'),'angle'),'Low-light sweep '+name+' follows the same path');
+}
+assert.match(handGroups.sweep_lowlight_hands,/resource="lowlight_hour_hand"[\s\S]*resource="lowlight_minute_hand"/);
+const alphaOf=(name,data)=>evaluate(transformOf(handGroups[name],'alpha'),data);
+let handStates=0;
+for(const ambientMode of [false,true]) for(const low of [0,1]) for(const [battery,requested] of [[73,false],[73,true],[10,false],[10,true]]) for(const progress of [0,0.5,0.999,1]) {
+  // The sweep references exist only while sweep_requested is true; otherwise they keep defaults.
+  const start=requested?1:0;
+  const sweeping=evaluate(expressions.get('sweep_requested'),{'REFERENCE.sweep_start':start,BATTERY_PERCENT:battery});
+  const data={BATTERY_PERCENT:battery,'REFERENCE.low_light':low,'REFERENCE.sweep_progress':sweeping?progress:referenceDefaults['REFERENCE.sweep_progress']};
+  const sweepShown=!ambientMode && evaluate(expressions.get('sweep_hands_visible'),data);
+  const sets={
+    normal:!ambientMode && alphaOf('normal_hands',data)>0,
+    lowlight:!ambientMode && alphaOf('lowlight_hands',data)>0,
+    sweepNormal:sweepShown && alphaOf('sweep_normal_hands',data)>0,
+    sweepLowlight:sweepShown && alphaOf('sweep_lowlight_hands',data)>0,
+    ambient:ambientMode,
+  };
+  const shown=Object.keys(sets).filter(k=>sets[k]);
+  const expected=ambientMode?'ambient':data['REFERENCE.sweep_progress']<1?(low?'sweepLowlight':'sweepNormal'):(low?'lowlight':'normal');
+  assert.deepEqual(shown,[expected],`hand sets for ambient ${ambientMode}, low_light ${low}, battery ${battery}, progress ${data['REFERENCE.sweep_progress']}`);
+  if(!ambientMode) {
+    for(const name of ['optional_ticking_seconds','optional_sweep_seconds']) assert.equal(alphaOf(name,data),low?64:255,name+' dims to 25 percent in low light');
+    const caps=['normal_center_cap','lowlight_center_cap'].map(n=>evaluate(transformOf(element('PartImage',n),'alpha'),data));
+    assert.deepEqual(caps,low?[0,255]:[255,0],'One centre cap at a time');
+  }
+  handStates++;
+}
+assert.equal([...face.matchAll(/<SecondHand\b/g)].length,3,'The ticking seconds block is not duplicated for low light');
+assert.match(element('PartImage','normal_center_cap'),/resource="center_cap"/);
+assert.match(element('PartImage','lowlight_center_cap'),/x="211" y="211" width="28" height="28"[\s\S]*resource="lowlight_center_cap"/);
+assert.deepEqual([...element('Group','ambient_dial').matchAll(/resource="([^"]+)"/g)].map(m=>m[1]),['ambient_indices','ambient_battery_slider','ambient_hour_hand','ambient_minute_hand','ambient_center_cap'],'Ambient mode is unchanged');
+assert.doesNotMatch(element('Group','ambient_dial'),/low_light|lowlight/);
+
+// The face installs side by side with mechanical Emberphase under its own ID.
+const gradle=fs.readFileSync(path.join(root,'watchface/build.gradle.kts'),'utf8');
+const buildScript=fs.readFileSync(path.join(root,'scripts/Build-WatchFace.ps1'),'utf8');
+const gradleId=gradle.match(/applicationId = "([^"]+)"/)[1];
+const scriptId=buildScript.match(/SetAttribute\('package','([^']+)'\)/)[1];
+assert.equal(scriptId,gradleId,'Build-WatchFace.ps1 and Gradle must build the same application ID');
+assert.equal(gradleId,'com.bobbfwed.emberphase.tritium');
+assert.equal(buildScript.match(/--version-code (\d+)/)[1],gradle.match(/versionCode = (\d+)/)[1],'Version codes agree');
+assert.equal(buildScript.match(/--version-name '([^']+)'/)[1],gradle.match(/versionName = "([^"]+)"/)[1],'Version names agree');
+assert.equal(strings.get('watch_face_name'),'Emberphase Tritium');
+console.log(`PASS: ${calendarCases} calendar dates; activity goals/ranges/empty states; detached reference-driven gauges and disjoint editor targets; battery bounds; seconds cutoff; battery policy.`);
+console.log(`PASS: low-light truth table (3 modes x 2 signals); slot 70 signal, geometry and order; ${handStates} hand-visibility states; app ID ${gradleId} ${gradle.match(/versionName = "([^"]+)"/)[1]}.`);
+
+// Artwork. Runs last so a missing file from the art pipeline does not hide other results.
+const drawables=path.join(root,'watchface/src/main/res/drawable-nodpi');
+const resources=[...new Set([...face.matchAll(/\bresource="([a-z][a-z0-9_]*)"/g)].map(m=>m[1]))];
+const cupResources=resources.filter(name=>name.startsWith('moon_cup_')).sort();
+assert.deepEqual(cupResources,cupFrames.map(k=>'moon_cup_'+String(k).padStart(2,'0')),'Cup frames are exactly 00..59 without 30');
+const expectedSizes={moon_sky:[174,72],moon_carrier:[140,140],dial_frame:[450,450],hour_hand:[22,150],minute_hand:[16,198],
+  lowlight_dial:[450,450],lowlight_hour_hand:[44,172],lowlight_minute_hand:[38,220],lowlight_center_cap:[28,28],center_cap:[28,28],
+  ...Object.fromEntries(cupResources.map(name=>[name,[58,58]]))};
+const missing=[],wrongSize=[];
+for(const name of resources) {
+  const file=path.join(drawables,name+'.png');
+  if(!fs.existsSync(file)) { missing.push(name); continue; }
+  const header=fs.readFileSync(file).subarray(0,24);
+  assert.equal(header.toString('latin1',1,4),'PNG',name+'.png is a PNG');
+  const size=[header.readUInt32BE(16),header.readUInt32BE(20)];
+  if(expectedSizes[name] && (size[0]!==expectedSizes[name][0] || size[1]!==expectedSizes[name][1])) wrongSize.push(`${name} is ${size.join('x')}, expected ${expectedSizes[name].join('x')}`);
+}
+if(missing.length || wrongSize.length) {
+  if(missing.length) console.error(`FAIL: ${missing.length} artwork file(s) referenced by watchface.xml are missing from drawable-nodpi: ${missing.join(', ')}`);
+  if(wrongSize.length) console.error(`FAIL: artwork with the wrong size: ${wrongSize.join('; ')}`);
+  process.exit(1);
+}
+console.log(`PASS: all ${resources.length} referenced artwork files exist at their interface sizes, including ${cupResources.length} cup frames.`);

@@ -12,6 +12,9 @@ export function loadSweepModel(file) {
   for(const name of ['progress','home','turn','settle']) expressions[name]=expression('sweep_'+name+'_source');
   for(const name of ['hour','minute','second']) expressions[name]=expression('sweep_'+name+'_hand');
   expressions.moon=expression('moon_disc_rotation');
+  // Cup frame index per moon; both read REFERENCE.moon_angle (the unswept carrier angle).
+  expressions.moonFrame1=expression('moon_frame_1_source');
+  expressions.moonFrame2=expression('moon_frame_2_source');
   expressions.balance=expression('balance_oscillator');
   expressions.balanceSweep=expression('balance_sweep');
   expressions.battery=expression('battery_slider');
@@ -38,6 +41,7 @@ export function evaluateWff(expression,data) {
 export function sweepFrame(model,elapsed,fixture,idle=false) {
   const data={...model.defaults,...fixture,'REFERENCE.sweep_start':43200001,UTC_TIMESTAMP:43200000+elapsed};
   if(!idle) for(const name of ['progress','home','turn','settle']) data['REFERENCE.sweep_'+name]=evaluateWff(model.expressions[name],data);
+  data['REFERENCE.moon_angle']=evaluateWff(model.expressions.moon,data);
   const result={data};
   for(const [key,expr] of Object.entries(model.expressions)) result[key]=evaluateWff(expr,data);
   result.moon+=360*data['REFERENCE.sweep_turn'];
